@@ -1,6 +1,6 @@
 .header {
-  background: $color-bg;
-  border-bottom: 1px solid $color-border-light;
+  background: #000000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
   z-index: $z-header;
@@ -28,7 +28,7 @@
   
   &__logo {
     text-decoration: none;
-    color: $color-text;
+    color: #ffffff;
     
     &:hover {
       text-decoration: none;
@@ -38,14 +38,14 @@
   &__title {
     @include heading-3;
     margin: 0;
-    color: $color-primary;
+    color: #ffffff;
     font-weight: $font-weight-bold;
   }
   
   &__tagline {
     margin: $spacing-xs 0 0 0;
     @include body-small;
-    color: $color-text-light;
+    color: rgba(255, 255, 255, 0.7);
     
     @include bp('md') {
       margin-top: $spacing-sm;
@@ -72,19 +72,19 @@
   
   &__link {
     @include body-normal;
-    color: $color-text-light;
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     font-weight: $font-weight-medium;
     transition: color $transition-fast;
     position: relative;
     
     &:hover {
-      color: $color-text;
+      color: #ffffff;
       text-decoration: none;
     }
     
     &--active {
-      color: $color-text;
+      color: #ffffff;
       
       &::after {
         content: '';
@@ -115,14 +115,14 @@
     height: 40px;
     background: none;
     border: none;
-    color: $color-text-light;
+    color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
     border-radius: $border-radius-md;
     transition: all $transition-fast;
     
     &:hover {
-      color: $color-text;
-      background-color: $color-bg-light;
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.1);
     }
     
     svg {

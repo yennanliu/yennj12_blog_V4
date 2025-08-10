@@ -1,6 +1,10 @@
-# YennJ12 Engineering Blog
+#  Engineering Blog
 
 A clean, minimal Hugo blog inspired by Uber's engineering blog design. Built with modern web technologies and optimized for technical content.
+
+- http://localhost:1313
+
+- https://yennj12.js.org/yennj12_blog_V4/
 
 ## Features
 

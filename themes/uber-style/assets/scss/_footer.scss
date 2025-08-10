@@ -1,6 +1,6 @@
 .footer {
-  background: $color-bg-light;
-  border-top: 1px solid $color-border-light;
+  background: #000000;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: $spacing-6xl;
   
   &__content {
@@ -27,12 +27,12 @@
   &__title {
     @include heading-3;
     margin-bottom: $spacing-md;
-    color: $color-text;
+    color: #ffffff;
   }
   
   &__description {
     @include body-normal;
-    color: $color-text-light;
+    color: rgba(255, 255, 255, 0.7);
     margin: 0;
     max-width: 400px;
   }
@@ -54,7 +54,7 @@
   &__section-title {
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
-    color: $color-text;
+    color: #ffffff;
     margin: 0 0 $spacing-md 0;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -72,12 +72,12 @@
   
   &__link {
     @include body-small;
-    color: $color-text-light;
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     transition: color $transition-fast;
     
     &:hover {
-      color: $color-accent;
+      color: #ffffff;
       text-decoration: none;
     }
   }
@@ -87,7 +87,7 @@
     @include flex-between;
     padding-top: $spacing-xl;
     padding-bottom: $spacing-xl;
-    border-top: 1px solid $color-border-light;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     flex-direction: column;
     gap: $spacing-sm;
     
@@ -100,15 +100,15 @@
   &__copyright,
   &__built {
     @include body-small;
-    color: $color-text-muted;
+    color: rgba(255, 255, 255, 0.5);
     margin: 0;
   }
   
   &__built a {
-    color: $color-text-light;
+    color: rgba(255, 255, 255, 0.7);
     
     &:hover {
-      color: $color-accent;
+      color: #ffffff;
     }
   }
 }
