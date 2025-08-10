@@ -1,0 +1,50 @@
+# Alternative deployment method if GitHub Pages isn't enabled
+name: Build Hugo Site (Alternative)
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HUGO_VERSION: 0.121.1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install Hugo CLI
+        run: |
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
+          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
+
+      - name: Install Dart Sass
+        run: sudo snap install dart-sass
+
+      - name: Build
+        run: hugo --minify
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: hugo-site
+          path: public/
+          retention-days: 30
+
+      - name: Show build info
+        run: |
+          echo "✅ Hugo site built successfully!"
+          echo "📁 Static files are in the 'public' directory"
+          echo "🔗 To enable GitHub Pages:"
+          echo "   1. Go to Settings → Pages"
+          echo "   2. Select 'GitHub Actions' as source"
+          echo "   3. Re-run the main deployment workflow"
+          ls -la public/
