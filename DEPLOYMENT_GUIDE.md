@@ -1,8 +1,12 @@
 # GitHub Pages Deployment Guide
 
-## 🚨 Fixing the Current Deployment Error
+## 🚨 Fixing Deployment Errors
 
-The error you encountered indicates that **GitHub Pages is not enabled** in your repository settings. Here's how to fix it:
+### Current Issue: Deprecated Action Version
+GitHub has deprecated `actions/upload-artifact@v3`. The workflows have been updated to use the latest versions.
+
+### Previous Issue: GitHub Pages Not Enabled
+If you see "Pages not enabled" errors, GitHub Pages needs to be configured in repository settings.
 
 ### Step 1: Enable GitHub Pages
 
@@ -11,10 +15,20 @@ The error you encountered indicates that **GitHub Pages is not enabled** in your
 3. **Under "Source"**, select **"GitHub Actions"**
 4. **Save the settings**
 
-### Step 2: Re-run the Workflow
+### Step 2: Choose Your Deployment Method
+
+You now have **3 workflow options**:
+
+1. **`hugo.yml`** - Main deployment workflow (updated with latest action versions)
+2. **`hugo-latest.yml`** - Simplified workflow using peaceiris/actions-hugo (recommended)
+3. **`deploy-alternative.yml`** - Backup workflow that just builds the site
+
+**Recommended**: Use `hugo-latest.yml` for the most reliable deployment.
+
+### Step 3: Re-run the Workflow
 
 1. Go to the **Actions** tab in your repository
-2. Find the failed workflow run
+2. Find the failed workflow run (or manually trigger "Deploy Hugo to GitHub Pages (Latest)")
 3. Click **"Re-run jobs"** → **"Re-run all jobs"**
 
 ## 📋 Complete Setup Checklist
