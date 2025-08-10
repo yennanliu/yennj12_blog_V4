@@ -2,7 +2,7 @@
 title: "Database Performance Optimization: From Slow Queries to Sub-millisecond Response Times"
 date: 2024-08-08T14:30:00Z
 draft: false
-authors: ["sarah-chen"]
+authors: ["yen"]
 categories: ["engineering", "data"]
 tags: ["database", "performance", "optimization", "postgresql", "redis"]
 summary: "A comprehensive guide to database performance optimization techniques that helped us reduce query response times from seconds to milliseconds."

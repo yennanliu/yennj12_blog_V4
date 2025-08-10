@@ -2,7 +2,7 @@
 title: "Building Resilient Systems: Handling Failure at Scale"
 date: 2024-08-05T09:15:00Z
 draft: false
-authors: ["alex-rodriguez"]
+authors: ["yen"]
 categories: ["engineering", "architecture"]
 tags: ["resilience", "fault-tolerance", "reliability", "distributed-systems"]
 summary: "How we built systems that gracefully handle failures and maintain service availability even when components fail."
