@@ -1,0 +1,114 @@
+.footer {
+  background: $color-bg-light;
+  border-top: 1px solid $color-border-light;
+  margin-top: $spacing-6xl;
+  
+  &__content {
+    @include container;
+    padding-top: $spacing-4xl;
+    padding-bottom: $spacing-3xl;
+    
+    @include bp('md') {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: $spacing-4xl;
+      align-items: start;
+    }
+  }
+  
+  &__info {
+    margin-bottom: $spacing-3xl;
+    
+    @include bp('md') {
+      margin-bottom: 0;
+    }
+  }
+  
+  &__title {
+    @include heading-3;
+    margin-bottom: $spacing-md;
+    color: $color-text;
+  }
+  
+  &__description {
+    @include body-normal;
+    color: $color-text-light;
+    margin: 0;
+    max-width: 400px;
+  }
+  
+  &__links {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+    
+    @include bp('sm') {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  &__section {
+    
+  }
+  
+  &__section-title {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-text;
+    margin: 0 0 $spacing-md 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  &__list li {
+    margin-bottom: $spacing-sm;
+  }
+  
+  &__link {
+    @include body-small;
+    color: $color-text-light;
+    text-decoration: none;
+    transition: color $transition-fast;
+    
+    &:hover {
+      color: $color-accent;
+      text-decoration: none;
+    }
+  }
+  
+  &__bottom {
+    @include container;
+    @include flex-between;
+    padding-top: $spacing-xl;
+    padding-bottom: $spacing-xl;
+    border-top: 1px solid $color-border-light;
+    flex-direction: column;
+    gap: $spacing-sm;
+    
+    @include bp('md') {
+      flex-direction: row;
+      gap: 0;
+    }
+  }
+  
+  &__copyright,
+  &__built {
+    @include body-small;
+    color: $color-text-muted;
+    margin: 0;
+  }
+  
+  &__built a {
+    color: $color-text-light;
+    
+    &:hover {
+      color: $color-accent;
+    }
+  }
+}

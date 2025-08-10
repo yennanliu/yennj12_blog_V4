@@ -1,0 +1,214 @@
+.header {
+  background: $color-bg;
+  border-bottom: 1px solid $color-border-light;
+  position: sticky;
+  top: 0;
+  z-index: $z-header;
+  
+  &__content {
+    @include container;
+    @include flex-between;
+    padding-top: $spacing-lg;
+    padding-bottom: $spacing-lg;
+    min-height: $header-height;
+    
+    @include bp('md') {
+      padding-top: $spacing-xl;
+      padding-bottom: $spacing-xl;
+    }
+  }
+  
+  &__brand {
+    flex: 1;
+    
+    @include bp('md') {
+      flex: none;
+    }
+  }
+  
+  &__logo {
+    text-decoration: none;
+    color: $color-text;
+    
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  
+  &__title {
+    @include heading-3;
+    margin: 0;
+    color: $color-primary;
+    font-weight: $font-weight-bold;
+  }
+  
+  &__tagline {
+    margin: $spacing-xs 0 0 0;
+    @include body-small;
+    color: $color-text-light;
+    
+    @include bp('md') {
+      margin-top: $spacing-sm;
+    }
+  }
+  
+  &__nav {
+    @include flex-between;
+    gap: $spacing-lg;
+  }
+}
+
+.nav {
+  &__menu {
+    display: none;
+    align-items: center;
+    gap: $spacing-lg;
+    
+    @include bp('md') {
+      display: flex;
+      gap: $spacing-xl;
+    }
+  }
+  
+  &__link {
+    @include body-normal;
+    color: $color-text-light;
+    text-decoration: none;
+    font-weight: $font-weight-medium;
+    transition: color $transition-fast;
+    position: relative;
+    
+    &:hover {
+      color: $color-text;
+      text-decoration: none;
+    }
+    
+    &--active {
+      color: $color-text;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -$spacing-lg;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: $color-accent;
+        
+        @include bp('md') {
+          bottom: -$spacing-xl;
+        }
+      }
+    }
+  }
+  
+  &__search {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.search {
+  &__toggle {
+    @include flex-center;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    color: $color-text-light;
+    cursor: pointer;
+    border-radius: $border-radius-md;
+    transition: all $transition-fast;
+    
+    &:hover {
+      color: $color-text;
+      background-color: $color-bg-light;
+    }
+    
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: $z-search;
+    opacity: 0;
+    visibility: hidden;
+    transition: all $transition-normal;
+    
+    &--open {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+  
+  &__modal {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 600px;
+    background: $color-bg;
+    border-radius: $border-radius-xl;
+    box-shadow: $shadow-xl;
+    max-height: 80vh;
+    overflow: hidden;
+  }
+  
+  &__header {
+    @include flex-between;
+    padding: $spacing-lg;
+    border-bottom: 1px solid $color-border-light;
+  }
+  
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: $font-size-lg;
+    font-family: $font-family-base;
+    background: none;
+    color: $color-text;
+    
+    &::placeholder {
+      color: $color-text-muted;
+    }
+  }
+  
+  &__close {
+    @include flex-center;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    color: $color-text-light;
+    cursor: pointer;
+    border-radius: $border-radius-md;
+    margin-left: $spacing-md;
+    transition: all $transition-fast;
+    
+    &:hover {
+      color: $color-text;
+      background-color: $color-bg-light;
+    }
+    
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  &__results {
+    padding: $spacing-lg;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+}

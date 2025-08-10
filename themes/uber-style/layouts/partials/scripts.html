@@ -1,0 +1,38 @@
+{{ $js := resources.Get "js/main.js" }}
+{{ if $js }}
+{{ $js := $js | resources.Minify }}
+<script src="{{ $js.RelPermalink }}"></script>
+{{ end }}
+
+<script>
+// Simple search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchToggle = document.querySelector('.search__toggle');
+    const searchOverlay = document.querySelector('.search__overlay');
+    const searchClose = document.querySelector('.search__close');
+    const searchInput = document.querySelector('.search__input');
+    
+    if (searchToggle && searchOverlay) {
+        searchToggle.addEventListener('click', function() {
+            searchOverlay.classList.add('search__overlay--open');
+            searchInput.focus();
+        });
+        
+        searchClose.addEventListener('click', function() {
+            searchOverlay.classList.remove('search__overlay--open');
+        });
+        
+        searchOverlay.addEventListener('click', function(e) {
+            if (e.target === searchOverlay) {
+                searchOverlay.classList.remove('search__overlay--open');
+            }
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                searchOverlay.classList.remove('search__overlay--open');
+            }
+        });
+    }
+});
+</script>

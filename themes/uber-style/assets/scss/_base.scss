@@ -1,0 +1,156 @@
+// Reset and base styles
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-text;
+  background-color: $color-bg;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 $spacing-lg 0;
+  font-family: $font-family-base;
+  color: $color-text;
+}
+
+h1 { @include heading-1; }
+h2 { @include heading-2; }
+h3 { @include heading-3; }
+h4 { @include heading-4; }
+
+h5 {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+}
+
+h6 {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+}
+
+p {
+  margin: 0 0 $spacing-lg 0;
+  @include body-normal;
+}
+
+a {
+  color: $color-accent;
+  text-decoration: none;
+  transition: color $transition-fast;
+  
+  &:hover {
+    color: darken($color-accent, 10%);
+    text-decoration: underline;
+  }
+}
+
+// Lists
+ul, ol {
+  margin: 0 0 $spacing-lg 0;
+  padding-left: $spacing-lg;
+}
+
+li {
+  margin-bottom: $spacing-sm;
+}
+
+// Code
+code {
+  font-family: $font-family-mono;
+  font-size: 0.875em;
+  background-color: $color-bg-light;
+  padding: 2px 4px;
+  border-radius: $border-radius-sm;
+  color: $color-text;
+}
+
+pre {
+  font-family: $font-family-mono;
+  font-size: $font-size-sm;
+  background-color: $color-bg-dark;
+  padding: $spacing-lg;
+  border-radius: $border-radius-lg;
+  overflow-x: auto;
+  margin: 0 0 $spacing-lg 0;
+  border: 1px solid $color-border-light;
+  
+  code {
+    background: none;
+    padding: 0;
+    color: inherit;
+  }
+}
+
+// Blockquotes
+blockquote {
+  margin: 0 0 $spacing-lg 0;
+  padding: $spacing-md $spacing-lg;
+  border-left: 4px solid $color-accent;
+  background-color: $color-bg-light;
+  font-style: italic;
+  color: $color-text-light;
+}
+
+// Images
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+// Tables
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 $spacing-lg 0;
+}
+
+th, td {
+  text-align: left;
+  padding: $spacing-sm $spacing-md;
+  border-bottom: 1px solid $color-border-light;
+}
+
+th {
+  font-weight: $font-weight-semibold;
+  background-color: $color-bg-light;
+}
+
+// Utility classes
+.container {
+  @include container;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: $color-text-muted;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

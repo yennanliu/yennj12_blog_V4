@@ -1,0 +1,84 @@
+{{ define "main" }}
+<div class="author-profile">
+    <div class="container">
+        <div class="author-profile__header">
+            {{ with .Params.avatar }}
+            <img src="{{ . }}" alt="{{ $.Title }}" class="author-profile__avatar">
+            {{ end }}
+            
+            <div class="author-profile__info">
+                <h1 class="author-profile__name">{{ .Title }}</h1>
+                {{ with .Params.role }}
+                <p class="author-profile__role">{{ . }}</p>
+                {{ end }}
+                
+                {{ if .Params.social }}
+                <div class="author-profile__social">
+                    {{ range $platform, $url := .Params.social }}
+                    <a href="{{ $url }}" class="social-link social-link--{{ $platform }}" target="_blank" rel="noopener">
+                        {{ $platform | title }}
+                    </a>
+                    {{ end }}
+                </div>
+                {{ end }}
+            </div>
+        </div>
+        
+        {{ if .Params.bio }}
+        <div class="author-profile__bio">
+            <p>{{ .Params.bio }}</p>
+        </div>
+        {{ end }}
+        
+        {{ if .Content }}
+        <div class="author-profile__content">
+            {{ .Content }}
+        </div>
+        {{ end }}
+    </div>
+</div>
+
+{{ $authorPosts := where site.RegularPages ".Params.authors" "intersect" (slice .File.BaseFileName) }}
+{{ if $authorPosts }}
+<section class="author-posts">
+    <div class="container">
+        <h2 class="author-posts__title">Articles by {{ .Title }}</h2>
+        
+        <div class="posts__grid">
+            {{ range $authorPosts }}
+            <article class="post-card">
+                <a href="{{ .RelPermalink }}" class="post-card__link">
+                    <div class="post-card__meta">
+                        <time class="post-card__date" datetime="{{ .Date.Format "2006-01-02" }}">
+                            {{ .Date.Format "Jan 2, 2006" }}
+                        </time>
+                        {{ if .Params.readTime }}
+                        <span class="post-card__read-time">{{ .Params.readTime }}</span>
+                        {{ end }}
+                    </div>
+                    
+                    <h3 class="post-card__title">{{ .Title }}</h3>
+                    
+                    <p class="post-card__excerpt">
+                        {{ if .Params.summary }}
+                            {{ .Params.summary }}
+                        {{ else }}
+                            {{ .Summary }}
+                        {{ end }}
+                    </p>
+                    
+                    {{ if .Params.tags }}
+                    <div class="post-card__tags">
+                        {{ range first 3 .Params.tags }}
+                        <span class="post-card__tag">{{ . }}</span>
+                        {{ end }}
+                    </div>
+                    {{ end }}
+                </a>
+            </article>
+            {{ end }}
+        </div>
+    </div>
+</section>
+{{ end }}
+{{ end }}

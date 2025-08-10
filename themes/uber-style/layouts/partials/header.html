@@ -1,0 +1,45 @@
+<header class="header">
+    <div class="container">
+        <div class="header__content">
+            <div class="header__brand">
+                <a href="{{ .Site.BaseURL }}" class="header__logo">
+                    <span class="header__title">{{ .Site.Title }}</span>
+                </a>
+                <p class="header__tagline">{{ .Site.Params.description }}</p>
+            </div>
+            
+            <nav class="header__nav" role="navigation">
+                <div class="nav__menu">
+                    {{ range .Site.Menus.main }}
+                    <a href="{{ .URL }}" class="nav__link{{ if $.IsMenuCurrent "main" . }} nav__link--active{{ end }}">
+                        {{ .Name }}
+                    </a>
+                    {{ end }}
+                </div>
+                
+                <div class="nav__search">
+                    <button class="search__toggle" type="button" aria-label="Search">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<div class="search__overlay" id="searchOverlay">
+    <div class="search__modal">
+        <div class="search__header">
+            <input type="text" class="search__input" placeholder="Search articles..." id="searchInput">
+            <button class="search__close" type="button" aria-label="Close search">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        <div class="search__results" id="searchResults">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+{{ define "main" }}
+<article class="article">
+    <header class="article__header">
+        <h1 class="article__title">{{ .Title }}</h1>
+        
+        <div class="article__meta">
+            <time datetime="{{ .Date.Format "2006-01-02" }}">
+                {{ .Date.Format "January 2, 2006" }}
+            </time>
+            
+            {{ if .Params.readTime }}
+            <span>•</span>
+            <span>{{ .Params.readTime }} read</span>
+            {{ end }}
+            
+            {{ if .Params.authors }}
+            <span>•</span>
+            <span>
+                {{ range $index, $author := .Params.authors }}
+                    {{ if gt $index 0 }}, {{ end }}
+                    <a href="/authors/{{ $author }}">{{ humanize $author }}</a>
+                {{ end }}
+            </span>
+            {{ end }}
+        </div>
+        
+        {{ if .Params.tags }}
+        <div class="article__tags">
+            {{ range .Params.tags }}
+            <a href="/tags/{{ . | urlize }}" class="post-card__tag">{{ . }}</a>
+            {{ end }}
+        </div>
+        {{ end }}
+    </header>
+    
+    <div class="article__content">
+        {{ .Content }}
+    </div>
+    
+    {{ if .Params.authors }}
+    {{ range .Params.authors }}
+    {{ $authorPage := site.GetPage (printf "/authors/%s" .) }}
+    {{ if $authorPage }}
+    <div class="author__bio">
+        {{ with $authorPage.Params.avatar }}
+        <img src="{{ . }}" alt="{{ $authorPage.Title }}" class="author__avatar">
+        {{ end }}
+        <div class="author__info">
+            <h4 class="author__name">{{ $authorPage.Title }}</h4>
+            {{ with $authorPage.Params.title }}
+            <p class="author__title">{{ . }}</p>
+            {{ end }}
+        </div>
+    </div>
+    {{ end }}
+    {{ end }}
+    {{ end }}
+</article>
+
+{{ $related := .Site.RegularPages.Related . | first 3 }}
+{{ if $related }}
+<section class="related-posts">
+    <div class="container">
+        <h2>Related Articles</h2>
+        <div class="posts__grid">
+            {{ range $related }}
+            <article class="post-card">
+                <a href="{{ .RelPermalink }}" class="post-card__link">
+                    <div class="post-card__meta">
+                        <time class="post-card__date" datetime="{{ .Date.Format "2006-01-02" }}">
+                            {{ .Date.Format "Jan 2, 2006" }}
+                        </time>
+                        {{ if .Params.readTime }}
+                        <span class="post-card__read-time">{{ .Params.readTime }}</span>
+                        {{ end }}
+                    </div>
+                    
+                    <h3 class="post-card__title">{{ .Title }}</h3>
+                    
+                    <p class="post-card__excerpt">
+                        {{ if .Params.summary }}
+                            {{ .Params.summary }}
+                        {{ else }}
+                            {{ .Summary }}
+                        {{ end }}
+                    </p>
+                    
+                    {{ if .Params.tags }}
+                    <div class="post-card__tags">
+                        {{ range first 3 .Params.tags }}
+                        <span class="post-card__tag">{{ . }}</span>
+                        {{ end }}
+                    </div>
+                    {{ end }}
+                </a>
+            </article>
+            {{ end }}
+        </div>
+    </div>
+</section>
+{{ end }}
+{{ end }}

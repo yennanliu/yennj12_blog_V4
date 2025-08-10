@@ -1,0 +1,40 @@
+{{ define "main" }}
+<div class="page-header">
+    <div class="container">
+        <h1>Our Authors</h1>
+        <p class="page-header__description">Meet the engineering team behind our technical insights</p>
+    </div>
+</div>
+
+<section class="authors-grid">
+    <div class="container">
+        <div class="authors__grid">
+            {{ range .Pages }}
+            <div class="author-card">
+                <a href="{{ .RelPermalink }}" class="author-card__link">
+                    {{ with .Params.avatar }}
+                    <img src="{{ . }}" alt="{{ $.Title }}" class="author-card__avatar">
+                    {{ end }}
+                    
+                    <div class="author-card__info">
+                        <h3 class="author-card__name">{{ .Title }}</h3>
+                        {{ with .Params.role }}
+                        <p class="author-card__role">{{ . }}</p>
+                        {{ end }}
+                        
+                        {{ if .Params.bio }}
+                        <p class="author-card__bio">{{ .Params.bio }}</p>
+                        {{ end }}
+                        
+                        {{ $authorPosts := where site.RegularPages ".Params.authors" "intersect" (slice .File.BaseFileName) }}
+                        {{ if $authorPosts }}
+                        <p class="author-card__posts">{{ len $authorPosts }} articles</p>
+                        {{ end }}
+                    </div>
+                </a>
+            </div>
+            {{ end }}
+        </div>
+    </div>
+</section>
+{{ end }}

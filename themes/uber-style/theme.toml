@@ -1,0 +1,12 @@
+name = "Uber Style"
+license = "MIT"
+licenselink = "https://github.com/yennj12/uber-style/blob/main/LICENSE"
+description = "A clean, minimal Hugo theme inspired by Uber's engineering blog design"
+homepage = "https://github.com/yennj12/uber-style"
+tags = ["blog", "minimal", "clean", "responsive", "engineering"]
+features = ["responsive", "syntax highlighting", "search", "categories", "tags"]
+min_version = "0.118.0"
+
+[author]
+  name = "YennJ12"
+  homepage = "https://github.com/yennj12"

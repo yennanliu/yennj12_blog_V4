@@ -1,0 +1,68 @@
+baseURL = 'https://yennj12.github.io'
+languageCode = 'en-us'
+title = 'YennJ12 Engineering Blog'
+theme = 'uber-style'
+
+[params]
+  description = 'Engineering insights, architecture deep dives, and technical solutions'
+  author = 'YennJ12 Engineering Team'
+  
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    style = 'github'
+    lineNos = true
+    codeFences = true
+
+[taxonomies]
+  category = 'categories'
+  tag = 'tags'
+  author = 'authors'
+
+[menu]
+  [[menu.main]]
+    name = 'Home'
+    url = '/'
+    weight = 10
+  [[menu.main]]
+    name = 'Engineering'
+    url = '/categories/engineering/'
+    weight = 20
+  [[menu.main]]
+    name = 'Architecture'
+    url = '/categories/architecture/'
+    weight = 30
+  [[menu.main]]
+    name = 'Data'
+    url = '/categories/data/'
+    weight = 40
+  [[menu.main]]
+    name = 'About'
+    url = '/about/'
+    weight = 50
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+  page = ["HTML"]
+  section = ["HTML", "RSS"]
+
+[outputFormats]
+  [outputFormats.RSS]
+    mediatype = "application/rss"
+    baseName = "feed"
+
+[related]
+  includeNewer = false
+  threshold = 80
+  toLower = false
+  [[related.indices]]
+    name = "keywords"
+    weight = 100
+  [[related.indices]]
+    name = "tags"
+    weight = 80
+  [[related.indices]]
+    name = "date"
+    weight = 10

@@ -1,0 +1,163 @@
+// Container mixin
+@mixin container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $container-padding;
+}
+
+// Responsive breakpoints
+@mixin bp($size) {
+  @if $size == 'sm' {
+    @media (min-width: $breakpoint-sm) { @content; }
+  } @else if $size == 'md' {
+    @media (min-width: $breakpoint-md) { @content; }
+  } @else if $size == 'lg' {
+    @media (min-width: $breakpoint-lg) { @content; }
+  } @else if $size == 'xl' {
+    @media (min-width: $breakpoint-xl) { @content; }
+  } @else if $size == '2xl' {
+    @media (min-width: $breakpoint-2xl) { @content; }
+  }
+}
+
+// Typography mixins
+@mixin heading-1 {
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  
+  @include bp('md') {
+    font-size: $font-size-5xl;
+  }
+}
+
+@mixin heading-2 {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  
+  @include bp('md') {
+    font-size: $font-size-4xl;
+  }
+}
+
+@mixin heading-3 {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  
+  @include bp('md') {
+    font-size: $font-size-3xl;
+  }
+}
+
+@mixin heading-4 {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  
+  @include bp('md') {
+    font-size: $font-size-2xl;
+  }
+}
+
+@mixin body-large {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+}
+
+@mixin body-normal {
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+}
+
+@mixin body-small {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+}
+
+// Button mixins
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm $spacing-md;
+  border: none;
+  border-radius: $border-radius-md;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all $transition-fast;
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($color-accent, 0.1);
+  }
+}
+
+@mixin button-primary {
+  @include button-base;
+  background-color: $color-primary;
+  color: white;
+  
+  &:hover {
+    background-color: lighten($color-primary, 10%);
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  background-color: transparent;
+  color: $color-text;
+  border: 1px solid $color-border;
+  
+  &:hover {
+    border-color: $color-text;
+  }
+}
+
+// Card mixins
+@mixin card {
+  background: $color-bg;
+  border: 1px solid $color-border-light;
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  transition: all $transition-normal;
+  
+  &:hover {
+    border-color: $color-border;
+    box-shadow: $shadow-md;
+  }
+}
+
+// Flex utilities
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// Truncate text
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin truncate-lines($lines) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
