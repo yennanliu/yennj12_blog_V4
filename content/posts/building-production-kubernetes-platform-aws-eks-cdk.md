@@ -1,6 +1,6 @@
 ---
 title: "Building a Production-Ready Kubernetes Platform: EKS Architecture with Full Observability Stack"
-date: 2025-08-30T16:30:00+08:00
+date: 2024-08-30T16:30:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["engineering", "architecture"]
