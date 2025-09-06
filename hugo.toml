@@ -12,9 +12,11 @@ theme = 'uber-style'
     [markup.goldmark.renderer]
       unsafe = true
   [markup.highlight]
-    style = 'github'
+    style = 'monokai'
     lineNos = true
     codeFences = true
+    lineNumbersInTable = false
+    noClasses = false
 
 [taxonomies]
   category = 'categories'

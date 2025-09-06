@@ -35,6 +35,9 @@
 {{ $css := $scss | resources.ToCSS | resources.Minify }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}">
 
+<!-- Dark Theme Code Block CSS -->
+<link rel="stylesheet" href="/css/code-dark-theme.css">
+
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
