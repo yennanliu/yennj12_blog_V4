@@ -32,7 +32,7 @@
 
 <!-- Styles -->
 {{ $scss := resources.Get "scss/main.scss" }}
-{{ $css := $scss | resources.ToCSS | resources.Minify }}
+{{ $css := $scss | css.Sass | resources.Minify }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}">
 
 <!-- Dark Theme Code Block CSS -->
