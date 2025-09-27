@@ -1,0 +1,399 @@
+{{ define "main" }}
+<section class="posts-list">
+    <div class="container">
+        <div class="posts-list__header">
+            <h1 class="posts-list__title">All Posts</h1>
+            <p class="posts-list__description">Browse and search through all blog posts</p>
+        </div>
+
+        <div class="posts-list__controls">
+            <div class="search-filter">
+                <input type="text" id="postsSearch" placeholder="Search posts..." class="search-input">
+            </div>
+            <div class="date-filter">
+                <select id="yearFilter" class="filter-select">
+                    <option value="">All Years</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="posts-table-wrapper">
+            <table class="posts-table" id="postsTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-column="title">
+                            Title
+                            <span class="sort-icon">↕</span>
+                        </th>
+                        <th class="sortable" data-column="date">
+                            Date
+                            <span class="sort-icon">↕</span>
+                        </th>
+                        <th class="sortable" data-column="categories">
+                            Categories
+                            <span class="sort-icon">↕</span>
+                        </th>
+                        <th class="sortable" data-column="tags">
+                            Tags
+                            <span class="sort-icon">↕</span>
+                        </th>
+                        <th class="sortable" data-column="author">
+                            Author
+                            <span class="sort-icon">↕</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ range .Site.RegularPages.ByDate.Reverse }}
+                    {{ if eq .Type "posts" }}
+                    <tr class="post-row" data-title="{{ .Title | lower }}" data-date="{{ .Date.Format "2006-01-02" }}" data-year="{{ .Date.Format "2006" }}">
+                        <td class="post-title">
+                            <a href="{{ .RelPermalink }}" class="post-link">{{ .Title }}</a>
+                        </td>
+                        <td class="post-date" data-sort="{{ .Date.Format "20060102" }}">
+                            {{ .Date.Format "January 2, 2006" }}
+                        </td>
+                        <td class="post-categories">
+                            {{ range .Params.categories }}
+                            <span class="category-tag">{{ . }}</span>
+                            {{ end }}
+                        </td>
+                        <td class="post-tags">
+                            {{ range first 3 .Params.tags }}
+                            <span class="tag-item">{{ . }}</span>
+                            {{ end }}
+                            {{ if gt (len .Params.tags) 3 }}
+                            <span class="tag-more">+{{ sub (len .Params.tags) 3 }}</span>
+                            {{ end }}
+                        </td>
+                        <td class="post-author">
+                            {{ with .Params.author }}{{ . }}{{ else }}{{ .Site.Params.author }}{{ end }}
+                        </td>
+                    </tr>
+                    {{ end }}
+                    {{ end }}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="posts-count">
+            <span id="postsCount">{{ len (where .Site.RegularPages "Type" "posts") }}</span> posts total
+        </div>
+    </div>
+</section>
+
+<style>
+.posts-list {
+    padding: 2rem 0;
+}
+
+.posts-list__header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.posts-list__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-text-primary);
+}
+
+.posts-list__description {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+}
+
+.posts-list__controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.search-input, .filter-select {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    transition: border-color 0.2s ease;
+}
+
+.search-input:focus, .filter-select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.search-input {
+    min-width: 300px;
+}
+
+.filter-select {
+    min-width: 150px;
+}
+
+.posts-table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-border);
+}
+
+.posts-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-bg-secondary);
+}
+
+.posts-table th {
+    background: var(--color-bg-tertiary);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.posts-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.posts-table th.sortable:hover {
+    background: var(--color-bg-primary);
+}
+
+.sort-icon {
+    margin-left: 0.5rem;
+    opacity: 0.5;
+    font-size: 0.8rem;
+}
+
+.posts-table th.sort-asc .sort-icon::after {
+    content: "↑";
+}
+
+.posts-table th.sort-desc .sort-icon::after {
+    content: "↓";
+}
+
+.posts-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+}
+
+.post-row:hover {
+    background: var(--color-bg-primary);
+}
+
+.post-link {
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.post-link:hover {
+    color: var(--color-accent);
+}
+
+.post-date {
+    white-space: nowrap;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+}
+
+.category-tag, .tag-item {
+    display: inline-block;
+    background: var(--color-accent);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    margin: 0.125rem;
+    text-decoration: none;
+}
+
+.tag-item {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+}
+
+.tag-more {
+    display: inline-block;
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    margin: 0.125rem;
+}
+
+.post-author {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+}
+
+.posts-count {
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .posts-list__controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-input, .filter-select {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .posts-table th, .posts-table td {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .posts-list__title {
+        font-size: 2rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const table = document.getElementById('postsTable');
+    const searchInput = document.getElementById('postsSearch');
+    const yearFilter = document.getElementById('yearFilter');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const postsCount = document.getElementById('postsCount');
+
+    // Populate year filter
+    const years = [...new Set(rows.map(row => row.dataset.year))].sort().reverse();
+    years.forEach(year => {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearFilter.appendChild(option);
+    });
+
+    // Sorting functionality
+    let sortOrder = {};
+
+    document.querySelectorAll('.sortable').forEach(header => {
+        header.addEventListener('click', function() {
+            const column = this.dataset.column;
+            const currentOrder = sortOrder[column] || 'none';
+
+            // Reset all headers
+            document.querySelectorAll('.sortable').forEach(h => {
+                h.classList.remove('sort-asc', 'sort-desc');
+            });
+
+            let newOrder;
+            if (currentOrder === 'none' || currentOrder === 'desc') {
+                newOrder = 'asc';
+                this.classList.add('sort-asc');
+            } else {
+                newOrder = 'desc';
+                this.classList.add('sort-desc');
+            }
+
+            sortOrder = { [column]: newOrder };
+            sortTable(column, newOrder);
+        });
+    });
+
+    function sortTable(column, order) {
+        const sortedRows = [...rows].sort((a, b) => {
+            let aVal, bVal;
+
+            switch(column) {
+                case 'title':
+                    aVal = a.querySelector('.post-title a').textContent.toLowerCase();
+                    bVal = b.querySelector('.post-title a').textContent.toLowerCase();
+                    break;
+                case 'date':
+                    aVal = a.querySelector('.post-date').dataset.sort;
+                    bVal = b.querySelector('.post-date').dataset.sort;
+                    break;
+                case 'categories':
+                    aVal = Array.from(a.querySelectorAll('.category-tag')).map(el => el.textContent).join(' ').toLowerCase();
+                    bVal = Array.from(b.querySelectorAll('.category-tag')).map(el => el.textContent).join(' ').toLowerCase();
+                    break;
+                case 'tags':
+                    aVal = Array.from(a.querySelectorAll('.tag-item')).map(el => el.textContent).join(' ').toLowerCase();
+                    bVal = Array.from(b.querySelectorAll('.tag-item')).map(el => el.textContent).join(' ').toLowerCase();
+                    break;
+                case 'author':
+                    aVal = a.querySelector('.post-author').textContent.toLowerCase();
+                    bVal = b.querySelector('.post-author').textContent.toLowerCase();
+                    break;
+            }
+
+            if (order === 'asc') {
+                return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+            } else {
+                return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+            }
+        });
+
+        tbody.innerHTML = '';
+        sortedRows.forEach(row => tbody.appendChild(row));
+        updateCount();
+    }
+
+    // Search and filter functionality
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedYear = yearFilter.value;
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const title = row.dataset.title;
+            const year = row.dataset.year;
+            const categories = Array.from(row.querySelectorAll('.category-tag')).map(el => el.textContent.toLowerCase()).join(' ');
+            const tags = Array.from(row.querySelectorAll('.tag-item')).map(el => el.textContent.toLowerCase()).join(' ');
+            const author = row.querySelector('.post-author').textContent.toLowerCase();
+
+            const matchesSearch = title.includes(searchTerm) ||
+                                categories.includes(searchTerm) ||
+                                tags.includes(searchTerm) ||
+                                author.includes(searchTerm);
+            const matchesYear = !selectedYear || year === selectedYear;
+
+            if (matchesSearch && matchesYear) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        postsCount.textContent = visibleCount;
+    }
+
+    function updateCount() {
+        const visibleRows = tbody.querySelectorAll('tr[style=""], tr:not([style])');
+        postsCount.textContent = visibleRows.length;
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    yearFilter.addEventListener('change', filterTable);
+
+    // Initialize count
+    updateCount();
+});
+</script>
+{{ end }}

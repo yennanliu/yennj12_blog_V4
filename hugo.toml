@@ -41,6 +41,10 @@ theme = 'uber-style'
     url = '/categories/data/'
     weight = 40
   [[menu.main]]
+    name = 'All Posts'
+    url = '/posts-list/'
+    weight = 45
+  [[menu.main]]
     name = 'About'
     url = '/about/'
     weight = 50
