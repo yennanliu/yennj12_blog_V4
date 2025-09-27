@@ -2,6 +2,7 @@ baseURL = 'https://yennj12.js.org/yennj12_blog_V4'
 languageCode = 'en-us'
 title = 'YennJ12 Engineering Blog'
 theme = 'uber-style'
+buildFuture = true
 
 [params]
   description = 'Engineering insights, architecture deep dives, and technical solutions'
