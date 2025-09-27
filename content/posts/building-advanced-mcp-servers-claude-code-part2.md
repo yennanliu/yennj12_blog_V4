@@ -1,9 +1,9 @@
 ---
-title: "🚀 Building Advanced MCP Servers for Claude Code - Part 2: Database Integration, API Connectors & Production Deployment"
+title: "Advanced MCP Server Development with Database Integration - Part 2"
 date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
-categories: ["AI", "development-tools", "automation"]
+categories: ["all", "AI", "development-tools", "automation"]
 tags: ["AI", "mcp", "claude-code", "database", "api-integration", "production", "docker", "postgresql", "monitoring"]
 summary: "Advanced MCP server development covering database integration, REST API connectors, real-time data processing, and production deployment strategies for Claude Code development workflows."
 readTime: "24 min"

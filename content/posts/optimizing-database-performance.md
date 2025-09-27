@@ -3,8 +3,8 @@ title: "Database Performance Optimization: From Slow Queries to Sub-millisecond 
 date: 2025-08-10T15:28:17+08:00
 draft: false
 authors: ["yen"]
-categories: ["engineering", "data"]
-tags: ["database", "performance", "optimization", "postgresql", "redis"]
+categories: ["all", "engineering"]
+tags: ["AI", "database", "performance", "optimization", "postgresql", "redis"]
 summary: "A comprehensive guide to database performance optimization techniques that helped us reduce query response times from seconds to milliseconds."
 readTime: "15 min"
 ---

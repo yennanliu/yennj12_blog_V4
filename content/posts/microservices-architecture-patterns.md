@@ -3,8 +3,8 @@ title: "Microservices Architecture Patterns: Lessons from Scale"
 date: 2025-08-10T15:28:17+08:00
 draft: false
 authors: ["yen"]
-categories: ["engineering", "architecture"]
-tags: ["microservices", "distributed-systems", "scalability", "patterns"]
+categories: ["all", "engineering", "architecture"]
+tags: ["AI", "microservices", "distributed-systems", "scalability", "patterns"]
 summary: "Deep dive into proven microservices architecture patterns that help organizations scale their systems effectively while maintaining reliability and developer productivity."
 readTime: "12 min"
 ---

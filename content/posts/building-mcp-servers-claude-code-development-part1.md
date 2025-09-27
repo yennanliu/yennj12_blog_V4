@@ -1,9 +1,9 @@
 ---
-title: "🤖 Building MCP Servers for Claude Code Development - Part 1: From Basic Setup to Custom Tools"
+title: "Building MCP Servers for Claude Code Development - Part 1"
 date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
-categories: ["AI", "development-tools", "automation"]
+categories: ["all", "AI", "development-tools", "automation"]
 tags: ["AI", "mcp", "claude-code", "development-tools", "automation", "python", "typescript", "tooling"]
 summary: "Complete guide to setting up Model Control Protocol (MCP) servers for Claude Code, from basic configuration to building custom tools that enhance your AI-powered development workflow."
 readTime: "18 min"

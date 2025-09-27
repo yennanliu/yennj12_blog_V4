@@ -3,8 +3,8 @@ title: "🛍️ Building a Modern E-commerce Shopping Cart with Spring Boot & St
 date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
-categories: ["full-stack", "spring-boot", "ecommerce"]
-tags: ["stripe", "payment-gateway", "jwt-authentication", "rest-api", "vue.js", "mysql"]
+categories: ["all", "full-stack", "spring-boot", "ecommerce"]
+tags: ["AI", "stripe", "payment-gateway", "jwt-authentication", "rest-api", "vue.js", "mysql"]
 summary: "A complete e-commerce shopping cart system built with Spring Boot backend and Vue.js frontend, featuring Stripe payment integration, JWT authentication, and full CRUD operations for products, categories, and cart management."
 readTime: "18 min"
 ---

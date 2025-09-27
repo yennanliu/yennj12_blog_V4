@@ -1,10 +1,10 @@
 ---
-title: "Building a Scalable WordPress Platform on AWS ECS Fargate: Architecture Decisions and Implementation"
+title: "Building Scalable WordPress on AWS ECS Fargate"
 date: 2025-08-10T16:08:16+08:00
 draft: false
 authors: ["yen"]
-categories: ["engineering", "architecture"]
-tags: ["aws", "ecs", "fargate", "wordpress", "containers", "rds", "efs", "cdk"]
+categories: ["all", "engineering", "architecture"]
+tags: ["AI", "aws", "ecs", "fargate", "wordpress", "containers", "rds", "efs", "cdk"]
 summary: "Comprehensive guide to deploying production-ready WordPress on AWS ECS Fargate, exploring containerization strategies, infrastructure decisions, and scalability patterns for high-traffic content management systems."
 readTime: "16 min"
 ---

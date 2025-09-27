@@ -1,10 +1,10 @@
 ---
-title: "☕ Comprehensive Java Learning Journey: From Fundamentals to Advanced Concepts & Design Patterns"
+title: "Java Learning Journey: Fundamentals to Advanced"
 date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
-categories: ["java", "programming", "software-engineering"]
-tags: ["java-fundamentals", "oop", "design-patterns", "concurrency", "testing", "frameworks", "reactive-programming", "microservices"]
+categories: ["java", "programming", "software-engineering", "all"]
+tags: ["AI", "java-fundamentals", "oop", "design-patterns", "concurrency", "testing", "frameworks", "reactive-programming", "microservices"]
 summary: "Complete exploration of Java programming concepts through practical examples, covering core language features, object-oriented principles, design patterns, modern frameworks, and advanced topics like reactive programming and microservices."
 readTime: "25 min"
 ---

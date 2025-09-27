@@ -1,10 +1,10 @@
 ---
-title: "Building a Serverless URL Shortener: Architecture Decisions and AWS CDK Implementation"
+title: "Building Serverless URL Shortener with AWS CDK"
 date: 2025-08-10T15:55:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["engineering", "architecture"]
-tags: ["serverless", "aws", "cdk", "dynamodb", "lambda", "api-gateway"]
+categories: ["all", "engineering", "architecture"]
+tags: ["AI", "serverless", "aws", "cdk", "dynamodb", "lambda", "api-gateway"]
 summary: "Deep dive into designing and building a production-ready URL shortener using AWS serverless services, exploring architectural tradeoffs, and implementing with AWS CDK."
 readTime: "18 min"
 ---

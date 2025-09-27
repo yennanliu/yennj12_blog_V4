@@ -1,9 +1,9 @@
 ---
-title: "🚀 SpringDataPlatform：企業級 Apache Flink 任務管理平台"
+title: "SpringDataPlatform: Apache Flink Management System"
 date: 2025-09-06T14:46:19+08:00
 draft: false
-tags: ["Spring Boot", "Vue.js", "Apache Flink", "大數據", "實時計算", "全端開發"]
-categories: ["Full Stack Development", "Big Data"]
+tags: ["AI", "Spring Boot", "Vue.js", "Apache Flink", "big-data", "real-time", "full-stack"]
+categories: ["all", "Full Stack Development", "Big Data"]
 author: "Yen"
 description: "深度介紹 SpringDataPlatform 專案：一個基於 Spring Boot + Vue.js 的企業級 Apache Flink 任務管理平台，支援多種任務提交方式、即時監控和互動式數據處理。"
 ---

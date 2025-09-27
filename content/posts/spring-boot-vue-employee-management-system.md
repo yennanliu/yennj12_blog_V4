@@ -1,10 +1,10 @@
 ---
-title: "🏢 Building a Scalable Employee Management System: Full-Stack Architecture with Spring Boot & Vue.js"
+title: "Building Employee Management System with Spring Boot and Vue.js"
 date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
-categories: ["full-stack", "spring-boot", "enterprise"]
-tags: ["employee-management", "vue.js", "rest-api", "microservices", "docker", "swagger", "hr-system"]
+categories: ["all", "full-stack", "spring-boot", "enterprise"]
+tags: ["AI", "employee-management", "vue.js", "rest-api", "microservices", "docker", "swagger", "hr-system"]
 summary: "Comprehensive guide to building a modern employee management system using Spring Boot microservices architecture and Vue.js frontend, designed for enterprise scalability and extensibility."
 readTime: "20 min"
 ---
