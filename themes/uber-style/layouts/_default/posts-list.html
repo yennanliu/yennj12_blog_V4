@@ -2,256 +2,878 @@
 <section class="posts-list">
     <div class="container">
         <div class="posts-list__header">
-            <h1 class="posts-list__title">All Posts</h1>
-            <p class="posts-list__description">Browse and search through all blog posts</p>
+            <div class="header-decoration">
+                <div class="decoration-circle"></div>
+                <div class="decoration-line"></div>
+            </div>
+            <h1 class="posts-list__title">
+                <span class="title-gradient">All Posts</span>
+                <div class="title-underline"></div>
+            </h1>
+            <p class="posts-list__description">
+                Discover and explore all <span class="highlight-text">{{ len (where .Site.RegularPages "Type" "posts") }}</span> blog posts
+            </p>
         </div>
 
         <div class="posts-list__controls">
-            <div class="search-filter">
-                <input type="text" id="postsSearch" placeholder="Search posts..." class="search-input">
-            </div>
-            <div class="date-filter">
-                <select id="yearFilter" class="filter-select">
-                    <option value="">All Years</option>
-                </select>
+            <div class="controls-wrapper">
+                <div class="search-filter">
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <input type="text" id="postsSearch" placeholder="Search posts, tags, categories..." class="search-input">
+                    </div>
+                </div>
+                <div class="date-filter">
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <select id="yearFilter" class="filter-select">
+                            <option value="">All Years</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="table" title="Table View">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <button class="view-btn" data-view="grid" title="Grid View">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 3v8h8V3H3zm6 6H5V5h4v4zm-6 4v8h8v-8H3zm6 6H5v-4h4v4zm4-16v8h8V3h-8zm6 6h-4V5h4v4zm-6 4v8h8v-8h-8zm6 6h-4v-4h4v4z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="posts-table-wrapper">
-            <table class="posts-table" id="postsTable">
-                <thead>
-                    <tr>
-                        <th class="sortable" data-column="title">
-                            Title
-                            <span class="sort-icon">↕</span>
-                        </th>
-                        <th class="sortable" data-column="date">
-                            Date
-                            <span class="sort-icon">↕</span>
-                        </th>
-                        <th class="sortable" data-column="categories">
-                            Categories
-                            <span class="sort-icon">↕</span>
-                        </th>
-                        <th class="sortable" data-column="tags">
-                            Tags
-                            <span class="sort-icon">↕</span>
-                        </th>
-                        <th class="sortable" data-column="author">
-                            Author
-                            <span class="sort-icon">↕</span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
+        <div class="posts-view-wrapper">
+            <!-- Table View -->
+            <div class="posts-table-wrapper" id="tableView">
+                <div class="table-container">
+                    <table class="posts-table" id="postsTable">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-column="title">
+                                    <div class="th-content">
+                                        <span class="th-text">Title</span>
+                                        <span class="sort-icon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path d="M7 14l5-5 5 5z" fill="currentColor"/>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="sortable" data-column="date">
+                                    <div class="th-content">
+                                        <span class="th-text">Date</span>
+                                        <span class="sort-icon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path d="M7 14l5-5 5 5z" fill="currentColor"/>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="sortable" data-column="categories">
+                                    <div class="th-content">
+                                        <span class="th-text">Categories</span>
+                                        <span class="sort-icon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path d="M7 14l5-5 5 5z" fill="currentColor"/>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="sortable" data-column="tags">
+                                    <div class="th-content">
+                                        <span class="th-text">Tags</span>
+                                        <span class="sort-icon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path d="M7 14l5-5 5 5z" fill="currentColor"/>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="sortable" data-column="author">
+                                    <div class="th-content">
+                                        <span class="th-text">Author</span>
+                                        <span class="sort-icon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path d="M7 14l5-5 5 5z" fill="currentColor"/>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{ range .Site.RegularPages.ByDate.Reverse }}
+                            {{ if eq .Type "posts" }}
+                            <tr class="post-row" data-title="{{ .Title | lower }}" data-date="{{ .Date.Format "2006-01-02" }}" data-year="{{ .Date.Format "2006" }}">
+                                <td class="post-title">
+                                    <div class="post-title-content">
+                                        <a href="{{ .RelPermalink }}" class="post-link">{{ .Title }}</a>
+                                        {{ if .Params.description }}
+                                        <p class="post-excerpt">{{ .Params.description | truncate 100 }}</p>
+                                        {{ end }}
+                                    </div>
+                                </td>
+                                <td class="post-date" data-sort="{{ .Date.Format "20060102" }}">
+                                    <div class="date-wrapper">
+                                        <span class="date-primary">{{ .Date.Format "Jan 2, 2006" }}</span>
+                                        <span class="date-secondary">{{ .Date.Format "Monday" }}</span>
+                                    </div>
+                                </td>
+                                <td class="post-categories">
+                                    <div class="tags-container">
+                                        {{ range .Params.categories }}
+                                        <span class="category-tag">{{ . }}</span>
+                                        {{ end }}
+                                    </div>
+                                </td>
+                                <td class="post-tags">
+                                    <div class="tags-container">
+                                        {{ range first 3 .Params.tags }}
+                                        <span class="tag-item">{{ . }}</span>
+                                        {{ end }}
+                                        {{ if gt (len .Params.tags) 3 }}
+                                        <span class="tag-more" title="{{ delimit (after 3 .Params.tags) ", " }}">+{{ sub (len .Params.tags) 3 }}</span>
+                                        {{ end }}
+                                    </div>
+                                </td>
+                                <td class="post-author">
+                                    <div class="author-info">
+                                        <span class="author-name">{{ with .Params.author }}{{ . }}{{ else }}{{ .Site.Params.author }}{{ end }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{ end }}
+                            {{ end }}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Grid View -->
+            <div class="posts-grid-wrapper" id="gridView" style="display: none;">
+                <div class="posts-grid">
                     {{ range .Site.RegularPages.ByDate.Reverse }}
                     {{ if eq .Type "posts" }}
-                    <tr class="post-row" data-title="{{ .Title | lower }}" data-date="{{ .Date.Format "2006-01-02" }}" data-year="{{ .Date.Format "2006" }}">
-                        <td class="post-title">
-                            <a href="{{ .RelPermalink }}" class="post-link">{{ .Title }}</a>
-                        </td>
-                        <td class="post-date" data-sort="{{ .Date.Format "20060102" }}">
-                            {{ .Date.Format "January 2, 2006" }}
-                        </td>
-                        <td class="post-categories">
-                            {{ range .Params.categories }}
-                            <span class="category-tag">{{ . }}</span>
+                    <div class="post-card" data-title="{{ .Title | lower }}" data-date="{{ .Date.Format "2006-01-02" }}" data-year="{{ .Date.Format "2006" }}">
+                        <div class="post-card-header">
+                            <div class="post-meta">
+                                <span class="post-date-badge">{{ .Date.Format "Jan 2, 2006" }}</span>
+                                <div class="post-categories-grid">
+                                    {{ range first 2 .Params.categories }}
+                                    <span class="category-tag-grid">{{ . }}</span>
+                                    {{ end }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-card-content">
+                            <h3 class="post-card-title">
+                                <a href="{{ .RelPermalink }}" class="post-card-link">{{ .Title }}</a>
+                            </h3>
+                            {{ if .Params.description }}
+                            <p class="post-card-excerpt">{{ .Params.description | truncate 120 }}</p>
                             {{ end }}
-                        </td>
-                        <td class="post-tags">
-                            {{ range first 3 .Params.tags }}
-                            <span class="tag-item">{{ . }}</span>
-                            {{ end }}
-                            {{ if gt (len .Params.tags) 3 }}
-                            <span class="tag-more">+{{ sub (len .Params.tags) 3 }}</span>
-                            {{ end }}
-                        </td>
-                        <td class="post-author">
-                            {{ with .Params.author }}{{ . }}{{ else }}{{ .Site.Params.author }}{{ end }}
-                        </td>
-                    </tr>
+                        </div>
+                        <div class="post-card-footer">
+                            <div class="post-tags-grid">
+                                {{ range first 3 .Params.tags }}
+                                <span class="tag-item-grid">{{ . }}</span>
+                                {{ end }}
+                                {{ if gt (len .Params.tags) 3 }}
+                                <span class="tag-more-grid">+{{ sub (len .Params.tags) 3 }}</span>
+                                {{ end }}
+                            </div>
+                            <span class="post-author-grid">{{ with .Params.author }}{{ . }}{{ else }}{{ .Site.Params.author }}{{ end }}</span>
+                        </div>
+                    </div>
                     {{ end }}
                     {{ end }}
-                </tbody>
-            </table>
+                </div>
+            </div>
         </div>
 
-        <div class="posts-count">
-            <span id="postsCount">{{ len (where .Site.RegularPages "Type" "posts") }}</span> posts total
+        <div class="posts-stats">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-number" id="postsCount">{{ len (where .Site.RegularPages "Type" "posts") }}</span>
+                    <span class="stat-label">Total Posts</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="visibleCount">{{ len (where .Site.RegularPages "Type" "posts") }}</span>
+                    <span class="stat-label">Visible</span>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
 <style>
+/* CSS Variables for consistent theming */
+:root {
+    --color-black: #000000;
+    --color-white: #ffffff;
+    --color-gray-50: #fafafa;
+    --color-gray-100: #f5f5f5;
+    --color-gray-200: #e5e5e5;
+    --color-gray-300: #d4d4d4;
+    --color-gray-400: #a3a3a3;
+    --color-gray-500: #737373;
+    --color-gray-600: #525252;
+    --color-gray-700: #404040;
+    --color-gray-800: #262626;
+    --color-gray-900: #171717;
+
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+    --border-radius-lg: 1rem;
+    --border-radius-md: 0.75rem;
+    --border-radius-sm: 0.5rem;
+    --transition-all: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-size-xs: 0.875rem;
+    --font-size-sm: 1rem;
+    --font-size-md: 1.125rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.5rem;
+    --font-size-2xl: 2rem;
+    --font-size-3xl: 3rem;
+}
+
+/* Main Container */
 .posts-list {
+    padding: 3rem 0 4rem;
+    min-height: 100vh;
+    background: var(--color-white);
+}
+
+/* Header Section */
+.posts-list__header {
+    text-align: center;
+    margin-bottom: 4rem;
+    position: relative;
     padding: 2rem 0;
 }
 
-.posts-list__header {
-    text-align: center;
-    margin-bottom: 3rem;
+.header-decoration {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.decoration-circle {
+    position: absolute;
+    top: -2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 200px;
+    background: var(--color-gray-200);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: float 6s ease-in-out infinite;
+}
+
+.decoration-line {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: var(--color-gray-700);
+    border-radius: 2px;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateX(-50%) translateY(0px); }
+    50% { transform: translateX(-50%) translateY(-20px); }
 }
 
 .posts-list__title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--color-text-primary);
+    position: relative;
+    z-index: 2;
+    margin-bottom: 1.5rem;
+}
+
+.title-gradient {
+    font-size: var(--font-size-3xl);
+    font-weight: 800;
+    color: var(--color-black);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.title-underline {
+    width: 80px;
+    height: 4px;
+    background: var(--color-gray-800);
+    margin: 1rem auto;
+    border-radius: 2px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scaleX(1); opacity: 1; }
+    50% { transform: scaleX(1.2); opacity: 0.8; }
 }
 
 .posts-list__description {
-    font-size: 1.1rem;
-    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    color: var(--color-gray-600);
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
+.highlight-text {
+    color: var(--color-black);
+    font-weight: 700;
+}
+
+/* Controls Section */
 .posts-list__controls {
+    margin-bottom: 3rem;
+}
+
+.controls-wrapper {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
     flex-wrap: wrap;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
     align-items: center;
 }
 
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    z-index: 2;
+    color: var(--color-gray-500);
+    pointer-events: none;
+}
+
 .search-input, .filter-select {
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    background: var(--color-bg-secondary);
-    color: var(--color-text-primary);
-    transition: border-color 0.2s ease;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 2px solid var(--color-gray-300);
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-size-md);
+    background: var(--color-white);
+    color: var(--color-black);
+    transition: var(--transition-all);
+    box-shadow: var(--shadow-soft);
+    font-weight: 500;
+}
+
+.search-input {
+    min-width: 350px;
+}
+
+.filter-select {
+    min-width: 180px;
 }
 
 .search-input:focus, .filter-select:focus {
     outline: none;
-    border-color: var(--color-accent);
+    border-color: var(--color-black);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
 }
 
-.search-input {
-    min-width: 300px;
+.search-input::placeholder {
+    color: var(--color-gray-500);
+    font-weight: 400;
 }
 
-.filter-select {
-    min-width: 150px;
+/* View Toggle */
+.view-toggle {
+    display: flex;
+    background: var(--color-gray-100);
+    border-radius: var(--border-radius-md);
+    padding: 0.25rem;
+    box-shadow: var(--shadow-soft);
+    border: 2px solid var(--color-gray-300);
 }
 
+.view-btn {
+    padding: 0.75rem 1rem;
+    border: none;
+    background: transparent;
+    color: var(--color-gray-600);
+    cursor: pointer;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition-all);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.view-btn.active {
+    background: var(--color-black);
+    color: var(--color-white);
+    transform: translateY(-1px);
+}
+
+.view-btn:hover:not(.active) {
+    background: var(--color-gray-200);
+    transform: translateY(-1px);
+}
+
+/* Table Styles */
 .posts-table-wrapper {
+    margin-bottom: 3rem;
+}
+
+.table-container {
     overflow-x: auto;
-    margin-bottom: 2rem;
-    border-radius: 0.75rem;
-    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--color-gray-300);
+    background: var(--color-white);
 }
 
 .posts-table {
     width: 100%;
     border-collapse: collapse;
-    background: var(--color-bg-secondary);
+    background: transparent;
 }
 
 .posts-table th {
-    background: var(--color-bg-tertiary);
-    padding: 1rem;
+    background: var(--color-gray-800);
+    padding: 1.5rem 1.25rem;
     text-align: left;
-    font-weight: 600;
-    color: var(--color-text-primary);
-    border-bottom: 1px solid var(--color-border);
+    font-weight: 700;
+    color: var(--color-white);
+    border-bottom: 2px solid var(--color-gray-600);
     position: sticky;
     top: 0;
     z-index: 10;
+    font-size: var(--font-size-md);
+}
+
+.th-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.th-text {
+    font-weight: 700;
 }
 
 .posts-table th.sortable {
     cursor: pointer;
     user-select: none;
-    transition: background-color 0.2s ease;
+    transition: var(--transition-all);
+    position: relative;
 }
 
 .posts-table th.sortable:hover {
-    background: var(--color-bg-primary);
+    background: var(--color-gray-700);
+    transform: translateY(-1px);
 }
 
 .sort-icon {
-    margin-left: 0.5rem;
     opacity: 0.5;
-    font-size: 0.8rem;
+    transition: var(--transition-all);
+    color: var(--color-gray-400);
 }
 
-.posts-table th.sort-asc .sort-icon::after {
-    content: "↑";
+.posts-table th.sortable:hover .sort-icon {
+    opacity: 1;
 }
 
-.posts-table th.sort-desc .sort-icon::after {
-    content: "↓";
+.posts-table th.sort-asc .sort-icon,
+.posts-table th.sort-desc .sort-icon {
+    opacity: 1;
+    color: var(--color-white);
+}
+
+.posts-table th.sort-desc .sort-icon {
+    transform: rotate(180deg);
 }
 
 .posts-table td {
-    padding: 1rem;
-    border-bottom: 1px solid var(--color-border);
+    padding: 1.5rem 1.25rem;
+    border-bottom: 1px solid var(--color-gray-200);
     vertical-align: top;
+    font-size: var(--font-size-md);
+}
+
+/* Staggered row colors */
+.post-row {
+    transition: var(--transition-all);
+    background: var(--color-white);
+}
+
+.post-row:nth-child(even) {
+    background: var(--color-gray-50);
 }
 
 .post-row:hover {
-    background: var(--color-bg-primary);
+    background: var(--color-gray-200) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.post-title-content {
+    max-width: 400px;
 }
 
 .post-link {
-    color: var(--color-text-primary);
+    color: var(--color-black);
     text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s ease;
+    font-weight: 600;
+    font-size: var(--font-size-lg);
+    transition: var(--transition-all);
+    display: block;
+    line-height: 1.4;
 }
 
 .post-link:hover {
-    color: var(--color-accent);
+    color: var(--color-gray-700);
+    text-decoration: underline;
 }
 
-.post-date {
-    white-space: nowrap;
-    color: var(--color-text-secondary);
-    font-size: 0.9rem;
+.post-excerpt {
+    margin-top: 0.5rem;
+    color: var(--color-gray-600);
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.date-wrapper {
+    text-align: left;
+}
+
+.date-primary {
+    display: block;
+    color: var(--color-black);
+    font-weight: 600;
+    font-size: var(--font-size-md);
+}
+
+.date-secondary {
+    display: block;
+    color: var(--color-gray-500);
+    font-size: var(--font-size-xs);
+    margin-top: 0.25rem;
+    font-weight: 400;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
 }
 
 .category-tag, .tag-item {
     display: inline-block;
-    background: var(--color-accent);
-    color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
-    margin: 0.125rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
     text-decoration: none;
+    transition: var(--transition-all);
+    white-space: nowrap;
+}
+
+.category-tag {
+    background: var(--color-black);
+    color: var(--color-white);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.category-tag:hover {
+    transform: translateY(-2px);
+    background: var(--color-gray-800);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .tag-item {
-    background: var(--color-bg-tertiary);
-    color: var(--color-text-secondary);
+    background: var(--color-gray-200);
+    color: var(--color-gray-700);
+    border: 1px solid var(--color-gray-300);
+}
+
+.tag-item:hover {
+    background: var(--color-gray-300);
+    transform: translateY(-1px);
 }
 
 .tag-more {
     display: inline-block;
-    background: var(--color-bg-tertiary);
-    color: var(--color-text-secondary);
+    background: var(--color-gray-600);
+    color: var(--color-white);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    cursor: help;
+    transition: var(--transition-all);
+}
+
+.tag-more:hover {
+    transform: translateY(-1px);
+    background: var(--color-gray-700);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.author-info {
+    text-align: left;
+}
+
+.author-name {
+    color: var(--color-gray-600);
+    font-size: var(--font-size-md);
+    font-weight: 500;
+}
+
+/* Grid View Styles */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.post-card {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition-all);
+    border: 1px solid var(--color-gray-300);
+    position: relative;
+    overflow: hidden;
+}
+
+.post-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--color-gray-400);
+}
+
+.post-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--color-black);
+}
+
+.post-card-header {
+    margin-bottom: 1rem;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.post-date-badge {
+    background: var(--color-gray-700);
+    color: var(--color-white);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+}
+
+.post-categories-grid {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.category-tag-grid {
+    background: var(--color-black);
+    color: var(--color-white);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+}
+
+.post-card-content {
+    margin-bottom: 1.5rem;
+}
+
+.post-card-title {
+    margin: 0 0 1rem 0;
+}
+
+.post-card-link {
+    color: var(--color-black);
+    text-decoration: none;
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    line-height: 1.3;
+    transition: var(--transition-all);
+}
+
+.post-card-link:hover {
+    color: var(--color-gray-700);
+    text-decoration: underline;
+}
+
+.post-card-excerpt {
+    color: var(--color-gray-600);
+    font-size: var(--font-size-md);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.post-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-gray-200);
+}
+
+.post-tags-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.tag-item-grid {
+    background: var(--color-gray-200);
+    color: var(--color-gray-700);
     padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
-    margin: 0.125rem;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    border: 1px solid var(--color-gray-300);
 }
 
-.post-author {
-    color: var(--color-text-secondary);
-    font-size: 0.9rem;
+.tag-more-grid {
+    background: var(--color-gray-600);
+    color: var(--color-white);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
 }
 
-.posts-count {
+.post-author-grid {
+    color: var(--color-gray-600);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    margin-left: 1rem;
+}
+
+/* Stats Section */
+.posts-stats {
+    margin-top: 3rem;
+    padding: 2rem 0;
+    border-top: 2px solid var(--color-gray-200);
+}
+
+.stats-container {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+}
+
+.stat-item {
     text-align: center;
-    color: var(--color-text-secondary);
-    font-size: 0.9rem;
+    padding: 1.5rem 2rem;
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-soft);
+    min-width: 120px;
+    transition: var(--transition-all);
+    border: 2px solid var(--color-gray-300);
+}
+
+.stat-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--color-gray-400);
+}
+
+.stat-number {
+    display: block;
+    font-size: var(--font-size-2xl);
+    font-weight: 800;
+    color: var(--color-black);
+    line-height: 1;
+}
+
+.stat-label {
+    display: block;
+    color: var(--color-gray-600);
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .posts-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .controls-wrapper {
+        gap: 1rem;
+    }
+
+    .search-input {
+        min-width: 280px;
+    }
 }
 
 @media (max-width: 768px) {
-    .posts-list__controls {
+    .posts-list {
+        padding: 2rem 0 3rem;
+    }
+
+    .title-gradient {
+        font-size: var(--font-size-2xl);
+    }
+
+    .posts-list__description {
+        font-size: var(--font-size-md);
+    }
+
+    .controls-wrapper {
         flex-direction: column;
         align-items: stretch;
+        gap: 1rem;
     }
 
     .search-input, .filter-select {
@@ -259,14 +881,90 @@
         width: 100%;
     }
 
-    .posts-table th, .posts-table td {
-        padding: 0.5rem;
-        font-size: 0.9rem;
+    .input-group {
+        width: 100%;
     }
 
-    .posts-list__title {
-        font-size: 2rem;
+    .view-toggle {
+        align-self: center;
+        width: auto;
     }
+
+    .posts-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .table-container {
+        border-radius: var(--border-radius-md);
+    }
+
+    .posts-table th, .posts-table td {
+        padding: 1rem 0.75rem;
+        font-size: var(--font-size-sm);
+    }
+
+    .post-link {
+        font-size: var(--font-size-md);
+    }
+
+    .post-title-content {
+        max-width: 200px;
+    }
+
+    .stats-container {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .stat-item {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .decoration-circle {
+        width: 150px;
+        height: 150px;
+    }
+
+    .title-gradient {
+        font-size: var(--font-size-xl);
+    }
+
+    .posts-table th, .posts-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: var(--font-size-xs);
+    }
+
+    .post-card {
+        padding: 1rem;
+    }
+
+    .post-card-link {
+        font-size: var(--font-size-lg);
+    }
+
+    .post-card-excerpt {
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* Loading Animation */
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.loading {
+    background: linear-gradient(90deg,
+        var(--color-bg-secondary) 25%,
+        var(--color-bg-tertiary) 50%,
+        var(--color-bg-secondary) 75%);
+    background-size: 1000px 100px;
+    animation: shimmer 2s infinite linear;
 }
 </style>
 
@@ -275,45 +973,134 @@ document.addEventListener('DOMContentLoaded', function() {
     const table = document.getElementById('postsTable');
     const searchInput = document.getElementById('postsSearch');
     const yearFilter = document.getElementById('yearFilter');
+    const tableView = document.getElementById('tableView');
+    const gridView = document.getElementById('gridView');
+    const viewBtns = document.querySelectorAll('.view-btn');
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.querySelectorAll('tr'));
+    const cards = Array.from(document.querySelectorAll('.post-card'));
     const postsCount = document.getElementById('postsCount');
+    const visibleCount = document.getElementById('visibleCount');
 
-    // Populate year filter
-    const years = [...new Set(rows.map(row => row.dataset.year))].sort().reverse();
-    years.forEach(year => {
-        const option = document.createElement('option');
-        option.value = year;
-        option.textContent = year;
-        yearFilter.appendChild(option);
-    });
-
-    // Sorting functionality
+    let currentView = 'table';
     let sortOrder = {};
 
-    document.querySelectorAll('.sortable').forEach(header => {
-        header.addEventListener('click', function() {
-            const column = this.dataset.column;
-            const currentOrder = sortOrder[column] || 'none';
+    // Initialize
+    init();
 
-            // Reset all headers
-            document.querySelectorAll('.sortable').forEach(h => {
-                h.classList.remove('sort-asc', 'sort-desc');
-            });
+    function init() {
+        populateYearFilter();
+        setupEventListeners();
+        updateCounts();
 
-            let newOrder;
-            if (currentOrder === 'none' || currentOrder === 'desc') {
-                newOrder = 'asc';
-                this.classList.add('sort-asc');
-            } else {
-                newOrder = 'desc';
-                this.classList.add('sort-desc');
-            }
+        // Add loading animation
+        document.body.classList.add('loaded');
 
-            sortOrder = { [column]: newOrder };
-            sortTable(column, newOrder);
+        // Animate elements on load
+        animateOnLoad();
+    }
+
+    function populateYearFilter() {
+        const years = [...new Set(rows.map(row => row.dataset.year))].sort().reverse();
+        years.forEach(year => {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            yearFilter.appendChild(option);
         });
-    });
+    }
+
+    function setupEventListeners() {
+        // View toggle functionality
+        viewBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const view = this.dataset.view;
+                switchView(view);
+            });
+        });
+
+        // Sorting functionality
+        document.querySelectorAll('.sortable').forEach(header => {
+            header.addEventListener('click', function() {
+                const column = this.dataset.column;
+                handleSort(column, this);
+            });
+        });
+
+        // Search and filter
+        searchInput.addEventListener('input', debounce(filterContent, 300));
+        yearFilter.addEventListener('change', filterContent);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', handleKeyboardShortcuts);
+
+        // Search input animations
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+
+        searchInput.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    }
+
+    function switchView(view) {
+        if (currentView === view) return;
+
+        // Update active button
+        viewBtns.forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[data-view="${view}"]`).classList.add('active');
+
+        // Switch views with animation
+        if (view === 'table') {
+            gridView.style.display = 'none';
+            tableView.style.display = 'block';
+            animateTableIn();
+        } else {
+            tableView.style.display = 'none';
+            gridView.style.display = 'block';
+            animateGridIn();
+        }
+
+        currentView = view;
+        localStorage.setItem('postsListView', view);
+    }
+
+    function handleSort(column, headerElement) {
+        const currentOrder = sortOrder[column] || 'none';
+
+        // Reset all headers
+        document.querySelectorAll('.sortable').forEach(h => {
+            h.classList.remove('sort-asc', 'sort-desc');
+        });
+
+        let newOrder;
+        if (currentOrder === 'none' || currentOrder === 'desc') {
+            newOrder = 'asc';
+            headerElement.classList.add('sort-asc');
+        } else {
+            newOrder = 'desc';
+            headerElement.classList.add('sort-desc');
+        }
+
+        sortOrder = { [column]: newOrder };
+
+        // Add loading state
+        headerElement.classList.add('loading');
+
+        setTimeout(() => {
+            sortContent(column, newOrder);
+            headerElement.classList.remove('loading');
+        }, 150);
+    }
+
+    function sortContent(column, order) {
+        if (currentView === 'table') {
+            sortTable(column, order);
+        } else {
+            sortGrid(column, order);
+        }
+    }
 
     function sortTable(column, order) {
         const sortedRows = [...rows].sort((a, b) => {
@@ -321,8 +1108,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             switch(column) {
                 case 'title':
-                    aVal = a.querySelector('.post-title a').textContent.toLowerCase();
-                    bVal = b.querySelector('.post-title a').textContent.toLowerCase();
+                    aVal = a.querySelector('.post-link').textContent.toLowerCase();
+                    bVal = b.querySelector('.post-link').textContent.toLowerCase();
                     break;
                 case 'date':
                     aVal = a.querySelector('.post-date').dataset.sort;
@@ -337,8 +1124,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     bVal = Array.from(b.querySelectorAll('.tag-item')).map(el => el.textContent).join(' ').toLowerCase();
                     break;
                 case 'author':
-                    aVal = a.querySelector('.post-author').textContent.toLowerCase();
-                    bVal = b.querySelector('.post-author').textContent.toLowerCase();
+                    aVal = a.querySelector('.author-name').textContent.toLowerCase();
+                    bVal = b.querySelector('.author-name').textContent.toLowerCase();
                     break;
             }
 
@@ -350,50 +1137,324 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         tbody.innerHTML = '';
-        sortedRows.forEach(row => tbody.appendChild(row));
-        updateCount();
+        sortedRows.forEach((row, index) => {
+            setTimeout(() => {
+                tbody.appendChild(row);
+            }, index * 10);
+        });
+
+        updateCounts();
     }
 
-    // Search and filter functionality
-    function filterTable() {
+    function sortGrid(column, order) {
+        const grid = document.querySelector('.posts-grid');
+        const sortedCards = [...cards].sort((a, b) => {
+            let aVal, bVal;
+
+            switch(column) {
+                case 'title':
+                    aVal = a.querySelector('.post-card-link').textContent.toLowerCase();
+                    bVal = b.querySelector('.post-card-link').textContent.toLowerCase();
+                    break;
+                case 'date':
+                    aVal = a.dataset.date;
+                    bVal = b.dataset.date;
+                    break;
+                case 'categories':
+                    aVal = Array.from(a.querySelectorAll('.category-tag-grid')).map(el => el.textContent).join(' ').toLowerCase();
+                    bVal = Array.from(b.querySelectorAll('.category-tag-grid')).map(el => el.textContent).join(' ').toLowerCase();
+                    break;
+                case 'tags':
+                    aVal = Array.from(a.querySelectorAll('.tag-item-grid')).map(el => el.textContent).join(' ').toLowerCase();
+                    bVal = Array.from(b.querySelectorAll('.tag-item-grid')).map(el => el.textContent).join(' ').toLowerCase();
+                    break;
+                case 'author':
+                    aVal = a.querySelector('.post-author-grid').textContent.toLowerCase();
+                    bVal = b.querySelector('.post-author-grid').textContent.toLowerCase();
+                    break;
+            }
+
+            if (order === 'asc') {
+                return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+            } else {
+                return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+            }
+        });
+
+        grid.innerHTML = '';
+        sortedCards.forEach((card, index) => {
+            setTimeout(() => {
+                grid.appendChild(card);
+                card.style.animationDelay = `${index * 50}ms`;
+                card.classList.add('animate-in');
+            }, index * 20);
+        });
+
+        updateCounts();
+    }
+
+    function filterContent() {
         const searchTerm = searchInput.value.toLowerCase();
         const selectedYear = yearFilter.value;
-        let visibleCount = 0;
+        let visibleCountNum = 0;
 
-        rows.forEach(row => {
+        if (currentView === 'table') {
+            visibleCountNum = filterTable(searchTerm, selectedYear);
+        } else {
+            visibleCountNum = filterGrid(searchTerm, selectedYear);
+        }
+
+        // Update counts with animation
+        animateNumber(visibleCount, visibleCountNum);
+    }
+
+    function filterTable(searchTerm, selectedYear) {
+        let visibleCountNum = 0;
+
+        rows.forEach((row, index) => {
             const title = row.dataset.title;
             const year = row.dataset.year;
             const categories = Array.from(row.querySelectorAll('.category-tag')).map(el => el.textContent.toLowerCase()).join(' ');
             const tags = Array.from(row.querySelectorAll('.tag-item')).map(el => el.textContent.toLowerCase()).join(' ');
-            const author = row.querySelector('.post-author').textContent.toLowerCase();
+            const author = row.querySelector('.author-name').textContent.toLowerCase();
+            const excerpt = row.querySelector('.post-excerpt')?.textContent.toLowerCase() || '';
 
             const matchesSearch = title.includes(searchTerm) ||
                                 categories.includes(searchTerm) ||
                                 tags.includes(searchTerm) ||
-                                author.includes(searchTerm);
+                                author.includes(searchTerm) ||
+                                excerpt.includes(searchTerm);
             const matchesYear = !selectedYear || year === selectedYear;
 
             if (matchesSearch && matchesYear) {
-                row.style.display = '';
-                visibleCount++;
+                setTimeout(() => {
+                    row.style.display = '';
+                    row.classList.add('fade-in');
+                }, index * 20);
+                visibleCountNum++;
             } else {
                 row.style.display = 'none';
+                row.classList.remove('fade-in');
             }
         });
 
-        postsCount.textContent = visibleCount;
+        return visibleCountNum;
     }
 
-    function updateCount() {
-        const visibleRows = tbody.querySelectorAll('tr[style=""], tr:not([style])');
-        postsCount.textContent = visibleRows.length;
+    function filterGrid(searchTerm, selectedYear) {
+        let visibleCountNum = 0;
+
+        cards.forEach((card, index) => {
+            const title = card.dataset.title;
+            const year = card.dataset.year;
+            const categories = Array.from(card.querySelectorAll('.category-tag-grid')).map(el => el.textContent.toLowerCase()).join(' ');
+            const tags = Array.from(card.querySelectorAll('.tag-item-grid')).map(el => el.textContent.toLowerCase()).join(' ');
+            const author = card.querySelector('.post-author-grid').textContent.toLowerCase();
+            const excerpt = card.querySelector('.post-card-excerpt')?.textContent.toLowerCase() || '';
+
+            const matchesSearch = title.includes(searchTerm) ||
+                                categories.includes(searchTerm) ||
+                                tags.includes(searchTerm) ||
+                                author.includes(searchTerm) ||
+                                excerpt.includes(searchTerm);
+            const matchesYear = !selectedYear || year === selectedYear;
+
+            if (matchesSearch && matchesYear) {
+                setTimeout(() => {
+                    card.style.display = '';
+                    card.classList.add('fade-in');
+                }, index * 30);
+                visibleCountNum++;
+            } else {
+                card.style.display = 'none';
+                card.classList.remove('fade-in');
+            }
+        });
+
+        return visibleCountNum;
     }
 
-    searchInput.addEventListener('input', filterTable);
-    yearFilter.addEventListener('change', filterTable);
+    function updateCounts() {
+        const totalPosts = currentView === 'table'
+            ? rows.filter(row => row.style.display !== 'none').length
+            : cards.filter(card => card.style.display !== 'none').length;
 
-    // Initialize count
-    updateCount();
+        animateNumber(visibleCount, totalPosts);
+    }
+
+    function animateNumber(element, targetNumber) {
+        const currentNumber = parseInt(element.textContent) || 0;
+        const increment = (targetNumber - currentNumber) / 20;
+
+        let current = currentNumber;
+        const timer = setInterval(() => {
+            current += increment;
+            if ((increment > 0 && current >= targetNumber) || (increment < 0 && current <= targetNumber)) {
+                element.textContent = targetNumber;
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.round(current);
+            }
+        }, 20);
+    }
+
+    function animateOnLoad() {
+        const elements = document.querySelectorAll('.posts-list__header, .posts-list__controls, .posts-view-wrapper, .posts-stats');
+        elements.forEach((el, index) => {
+            setTimeout(() => {
+                el.classList.add('animate-in');
+            }, index * 200);
+        });
+    }
+
+    function animateTableIn() {
+        const tableRows = tbody.querySelectorAll('tr');
+        tableRows.forEach((row, index) => {
+            setTimeout(() => {
+                row.classList.add('slide-in-left');
+            }, index * 50);
+        });
+    }
+
+    function animateGridIn() {
+        const gridCards = document.querySelectorAll('.post-card');
+        gridCards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('slide-in-up');
+            }, index * 100);
+        });
+    }
+
+    function handleKeyboardShortcuts(e) {
+        // Ctrl/Cmd + K to focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+
+        // Escape to clear search
+        if (e.key === 'Escape' && document.activeElement === searchInput) {
+            searchInput.value = '';
+            searchInput.blur();
+            filterContent();
+        }
+
+        // Tab to switch views
+        if (e.key === 'Tab' && e.altKey) {
+            e.preventDefault();
+            const nextView = currentView === 'table' ? 'grid' : 'table';
+            switchView(nextView);
+        }
+    }
+
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Load saved view preference
+    const savedView = localStorage.getItem('postsListView');
+    if (savedView && savedView !== currentView) {
+        switchView(savedView);
+    }
+
+    // Performance monitoring
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    // Observe all post elements
+    [...rows, ...cards].forEach(element => {
+        observer.observe(element);
+    });
 });
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    .animate-in {
+        animation: slideInUp 0.6s ease-out forwards;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    .slide-in-left {
+        animation: slideInLeft 0.4s ease-out forwards;
+    }
+
+    .slide-in-up {
+        animation: slideInUp 0.5s ease-out forwards;
+    }
+
+    .in-view {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .focused {
+        transform: scale(1.02);
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .post-row, .post-card {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: var(--transition-all);
+    }
+
+    .post-row.in-view, .post-card.in-view {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .loading .sort-icon {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+`;
+document.head.appendChild(style);
 </script>
 {{ end }}
