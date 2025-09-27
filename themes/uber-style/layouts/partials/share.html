@@ -1,0 +1,396 @@
+<div class="share-component">
+    <div class="share-title">Share</div>
+
+    <div class="share-buttons">
+        <!-- Facebook Share -->
+        <button class="share-button share-facebook"
+                data-platform="facebook"
+                data-url="{{ .Permalink }}"
+                data-title="{{ .Title }}"
+                title="Share on Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+        </button>
+
+        <!-- Twitter/X Share -->
+        <button class="share-button share-twitter"
+                data-platform="twitter"
+                data-url="{{ .Permalink }}"
+                data-title="{{ .Title }}"
+                title="Share on X (Twitter)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+        </button>
+
+        <!-- LinkedIn Share -->
+        <button class="share-button share-linkedin"
+                data-platform="linkedin"
+                data-url="{{ .Permalink }}"
+                data-title="{{ .Title }}"
+                title="Share on LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+        </button>
+
+        <!-- Email Share -->
+        <button class="share-button share-email"
+                data-platform="email"
+                data-url="{{ .Permalink }}"
+                data-title="{{ .Title }}"
+                title="Share via Email">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+        </button>
+
+        <!-- Copy Link -->
+        <button class="share-button share-copy"
+                data-platform="copy"
+                data-url="{{ .Permalink }}"
+                data-title="{{ .Title }}"
+                title="Copy Link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Success message for copy link -->
+    <div class="copy-success" id="copySuccess" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+        </svg>
+        Link copied!
+    </div>
+</div>
+
+<style>
+.share-component {
+    position: fixed;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    background: var(--color-white, #ffffff);
+    border: 1px solid var(--color-gray-200, #e5e5e5);
+    border-radius: 0.75rem;
+    padding: 1rem 0.75rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 60px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.share-component:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-50%) translateX(2px);
+}
+
+.share-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-gray-600, #525252);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+    text-align: center;
+}
+
+.share-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.share-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-gray-300, #d4d4d4);
+    background: var(--color-white, #ffffff);
+    color: var(--color-gray-600, #525252);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.share-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: var(--color-gray-400, #a3a3a3);
+}
+
+.share-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Platform-specific hover colors */
+.share-facebook:hover {
+    background: var(--color-gray-100, #f5f5f5);
+    color: var(--color-black, #000000);
+    border-color: var(--color-black, #000000);
+}
+
+.share-twitter:hover {
+    background: var(--color-gray-100, #f5f5f5);
+    color: var(--color-black, #000000);
+    border-color: var(--color-black, #000000);
+}
+
+.share-linkedin:hover {
+    background: var(--color-gray-100, #f5f5f5);
+    color: var(--color-black, #000000);
+    border-color: var(--color-black, #000000);
+}
+
+.share-email:hover {
+    background: var(--color-gray-100, #f5f5f5);
+    color: var(--color-black, #000000);
+    border-color: var(--color-black, #000000);
+}
+
+.share-copy:hover {
+    background: var(--color-black, #000000);
+    color: var(--color-white, #ffffff);
+    border-color: var(--color-black, #000000);
+}
+
+.copy-success {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--color-black, #000000);
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-gray-100, #f5f5f5);
+    border-radius: 0.375rem;
+    border: 1px solid var(--color-gray-300, #d4d4d4);
+    position: absolute;
+    bottom: -3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Mobile responsive */
+@media (max-width: 1024px) {
+    .share-component {
+        position: relative;
+        left: auto;
+        top: auto;
+        transform: none;
+        flex-direction: row;
+        width: 100%;
+        max-width: none;
+        justify-content: center;
+        margin: 2rem 0;
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+
+    .share-title {
+        margin-bottom: 0;
+        margin-right: 1rem;
+        align-self: center;
+    }
+
+    .share-buttons {
+        flex-direction: row;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .copy-success {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+    }
+}
+
+@media (max-width: 640px) {
+    .share-component {
+        padding: 0.75rem;
+        margin: 1.5rem 0;
+    }
+
+    .share-title {
+        font-size: 0.75rem;
+        margin-right: 0.75rem;
+    }
+
+    .share-button {
+        width: 40px;
+        height: 40px;
+    }
+
+    .share-buttons {
+        gap: 0.5rem;
+    }
+}
+
+/* Hide on print */
+@media print {
+    .share-component {
+        display: none;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const shareButtons = document.querySelectorAll('.share-button');
+    const copySuccess = document.getElementById('copySuccess');
+
+    shareButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const platform = this.dataset.platform;
+            const url = encodeURIComponent(this.dataset.url);
+            const title = encodeURIComponent(this.dataset.title);
+
+            let shareUrl = '';
+
+            switch(platform) {
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                    break;
+
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                    break;
+
+                case 'linkedin':
+                    shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                    break;
+
+                case 'email':
+                    shareUrl = `mailto:?subject=${title}&body=Check out this article: ${url}`;
+                    break;
+
+                case 'copy':
+                    // Copy to clipboard
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(decodeURIComponent(url)).then(() => {
+                            showCopySuccess();
+                        }).catch(err => {
+                            console.error('Failed to copy: ', err);
+                            fallbackCopyTextToClipboard(decodeURIComponent(url));
+                        });
+                    } else {
+                        fallbackCopyTextToClipboard(decodeURIComponent(url));
+                    }
+                    return;
+            }
+
+            if (shareUrl) {
+                // Open share dialog
+                const popup = window.open(
+                    shareUrl,
+                    'share',
+                    'width=600,height=600,scrollbars=yes,resizable=yes'
+                );
+
+                // Focus the popup if it was opened
+                if (popup) {
+                    popup.focus();
+                }
+            }
+        });
+    });
+
+    function fallbackCopyTextToClipboard(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+
+        // Avoid scrolling to bottom
+        textArea.style.top = "0";
+        textArea.style.left = "0";
+        textArea.style.position = "fixed";
+
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                showCopySuccess();
+            }
+        } catch (err) {
+            console.error('Fallback: Oops, unable to copy', err);
+        }
+
+        document.body.removeChild(textArea);
+    }
+
+    function showCopySuccess() {
+        if (copySuccess) {
+            copySuccess.style.display = 'flex';
+            setTimeout(() => {
+                copySuccess.style.display = 'none';
+            }, 2000);
+        }
+    }
+
+    // Show/hide share component based on scroll position
+    let ticking = false;
+
+    function updateShareVisibility() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const shareComponent = document.querySelector('.share-component');
+
+        if (shareComponent && window.innerWidth > 1024) {
+            if (scrollTop > 300) {
+                shareComponent.style.opacity = '1';
+                shareComponent.style.pointerEvents = 'auto';
+            } else {
+                shareComponent.style.opacity = '0.7';
+                shareComponent.style.pointerEvents = 'auto';
+            }
+        }
+
+        ticking = false;
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(updateShareVisibility);
+            ticking = true;
+        }
+    }
+
+    window.addEventListener('scroll', requestTick, { passive: true });
+
+    // Initial visibility check
+    updateShareVisibility();
+});
+</script>
