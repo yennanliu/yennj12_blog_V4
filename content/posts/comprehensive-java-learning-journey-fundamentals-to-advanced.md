@@ -1,6 +1,6 @@
 ---
 title: "☕ Comprehensive Java Learning Journey: From Fundamentals to Advanced Concepts & Design Patterns"
-date: 2024-12-30T10:00:00Z
+date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["java", "programming", "software-engineering"]

@@ -1,6 +1,6 @@
 ---
 title: "Microservices Architecture Patterns: Lessons from Scale"
-date: 2024-08-10T10:00:00Z
+date: 2025-08-10T15:28:17+08:00
 draft: false
 authors: ["yen"]
 categories: ["engineering", "architecture"]

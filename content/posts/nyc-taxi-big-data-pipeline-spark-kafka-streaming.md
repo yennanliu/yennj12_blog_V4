@@ -1,6 +1,6 @@
 ---
 title: "🚕 Building a Large-Scale NYC Taxi Data Pipeline: Batch & Stream Processing with Spark, Kafka, and AWS"
-date: 2024-12-29T10:00:00Z
+date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["data-engineering", "big-data", "streaming"]

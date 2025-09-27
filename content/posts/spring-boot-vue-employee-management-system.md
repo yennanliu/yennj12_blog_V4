@@ -1,6 +1,6 @@
 ---
 title: "🏢 Building a Scalable Employee Management System: Full-Stack Architecture with Spring Boot & Vue.js"
-date: 2024-12-23T10:00:00Z
+date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["full-stack", "spring-boot", "enterprise"]

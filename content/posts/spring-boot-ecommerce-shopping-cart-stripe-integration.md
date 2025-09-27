@@ -1,6 +1,6 @@
 ---
 title: "🛍️ Building a Modern E-commerce Shopping Cart with Spring Boot & Stripe Payment Integration"
-date: 2024-12-22T10:00:00Z
+date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["full-stack", "spring-boot", "ecommerce"]

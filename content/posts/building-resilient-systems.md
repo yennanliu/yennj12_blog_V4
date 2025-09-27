@@ -1,6 +1,6 @@
 ---
 title: "Building Resilient Systems: Handling Failure at Scale"
-date: 2024-08-05T09:15:00Z
+date: 2025-08-10T15:28:17+08:00
 draft: false
 authors: ["yen"]
 categories: ["engineering", "architecture"]

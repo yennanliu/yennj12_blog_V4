@@ -1,6 +1,6 @@
 ---
 title: "Database Performance Optimization: From Slow Queries to Sub-millisecond Response Times"
-date: 2024-08-08T14:30:00Z
+date: 2025-08-10T15:28:17+08:00
 draft: false
 authors: ["yen"]
 categories: ["engineering", "data"]

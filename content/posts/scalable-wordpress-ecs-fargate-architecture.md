@@ -1,6 +1,6 @@
 ---
 title: "Building a Scalable WordPress Platform on AWS ECS Fargate: Architecture Decisions and Implementation"
-date: 2025-08-10T16:01:59+08:00
+date: 2025-08-10T16:08:16+08:00
 draft: false
 authors: ["yen"]
 categories: ["engineering", "architecture"]

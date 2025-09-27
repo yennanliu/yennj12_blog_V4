@@ -1,6 +1,6 @@
 ---
 title: "💬 Building a Real-Time Chat Room Application with Spring Boot WebSocket & STOMP Protocol"
-date: 2024-12-28T10:00:00Z
+date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["real-time", "spring-boot", "websocket"]

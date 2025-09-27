@@ -1,6 +1,6 @@
 ---
 title: "🎵 Spring Boot + Vue.js 打造個人化 Spotify 播放清單推薦系統"
-date: 2024-12-20T10:00:00Z
+date: 2025-09-06T14:13:59+08:00
 draft: false
 authors: ["yen"]
 categories: ["full-stack", "spring-boot", "vue"]
