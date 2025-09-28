@@ -652,3 +652,139 @@ mark {
     scroll-behavior: auto !important;
   }
 }
+
+// Mermaid diagram styles
+.mermaid {
+  // Make diagrams bigger and more visible
+  width: 100% !important;
+  max-width: 1400px !important;
+  min-height: 450px !important;
+  margin: $spacing-xl auto !important;
+  padding: $spacing-xl !important;
+  background: #2d3748 !important;
+  border-radius: $border-radius-lg !important;
+  border: 2px solid #4a5568 !important;
+  overflow: visible !important;
+  position: relative !important;
+
+  // Ensure diagrams are centered
+  display: block !important;
+  text-align: center !important;
+
+  // SVG styling for better visibility and larger fonts
+  svg {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    min-height: 400px !important;
+    transition: transform 0.3s ease !important;
+
+    // Ensure connecting lines are visible
+    .flowchart-link {
+      stroke: #ffffff !important;
+      stroke-width: 3px !important;
+      fill: none !important;
+    }
+
+    // Node styling with original colors
+    .node rect,
+    .node circle,
+    .node polygon {
+      stroke: #ffffff !important;
+      stroke-width: 2px !important;
+      fill: #ff6b6b !important;
+    }
+
+    // Specific color overrides for styled nodes
+    .node[style*="fill:#4ecdc4"] rect,
+    .node[style*="fill:#4ecdc4"] circle,
+    .node[style*="fill:#4ecdc4"] polygon {
+      fill: #4ecdc4 !important;
+    }
+
+    .node[style*="fill:#45b7d1"] rect,
+    .node[style*="fill:#45b7d1"] circle,
+    .node[style*="fill:#45b7d1"] polygon {
+      fill: #45b7d1 !important;
+    }
+
+    .node[style*="fill:#feca57"] rect,
+    .node[style*="fill:#feca57"] circle,
+    .node[style*="fill:#feca57"] polygon {
+      fill: #feca57 !important;
+    }
+
+    // Text styling in nodes - much larger
+    .nodeLabel {
+      color: #ffffff !important;
+      fill: #ffffff !important;
+      font-size: 18px !important;
+      font-weight: 600 !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+
+    // Arrow heads
+    .arrowheadPath {
+      fill: #ffffff !important;
+      stroke: #ffffff !important;
+    }
+
+    // Edge labels - larger text
+    .edgeLabel {
+      background-color: #2d3748 !important;
+      color: #ffffff !important;
+      fill: #ffffff !important;
+      font-size: 16px !important;
+      font-weight: 500 !important;
+    }
+  }
+}
+
+// Zoom controls styling
+.mermaid-zoom-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+
+  .zoom-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    &:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Responsive adjustments for Mermaid diagrams
+@media (max-width: #{$breakpoint-md - 1px}) {
+  .mermaid {
+    min-height: 300px !important;
+    padding: $spacing-md !important;
+
+    svg {
+      min-height: 250px !important;
+    }
+  }
+}

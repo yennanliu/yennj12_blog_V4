@@ -152,7 +152,6 @@ public class SpotifyController {
     }
 }
 ```
-```
 
 ### 🎵 音樂推薦核心演算法
 
@@ -291,7 +290,6 @@ public class MusicRecommendationService {
     }
 }
 ```
-```
 
 ### 🔌 Spotify API 整合服務
 
@@ -372,7 +370,6 @@ public class SpotifyApiService {
         }
     }
 }
-```
 ```
 
 ## 💻 前端實作重點
@@ -796,7 +793,6 @@ recommendation.cache-duration=30m
 # 安全配置
 app.jwt.secret=${JWT_SECRET:your-jwt-secret}
 app.jwt.expiration=86400000
-```
 ```
 
 ## 💎 系統特色與創新點

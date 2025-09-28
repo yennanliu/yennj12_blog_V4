@@ -900,6 +900,7 @@ graph TD
     A[JVM Memory Areas] --> B[Heap Memory]
     A --> C[Non-Heap Memory]
     A --> D[Direct Memory]
+    A --> L[Garbage Collection]
 
     B --> E[Young Generation]
     B --> F[Old Generation]
@@ -911,9 +912,15 @@ graph TD
     C --> J[Code Cache]
     C --> K[Compressed Class Space]
 
-    L[Garbage Collection] --> M[Generational GC]
+    L --> M[Generational GC]
     L --> N[Concurrent GC]
     L --> O[Low-Latency GC]
+
+    %% Connect GC types to memory areas they manage
+    M --> E
+    M --> F
+    N --> B
+    O --> B
 
     style A fill:#ff6b6b
     style B fill:#4ecdc4

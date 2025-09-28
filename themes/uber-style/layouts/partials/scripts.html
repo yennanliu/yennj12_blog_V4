@@ -12,24 +12,35 @@ document.addEventListener('DOMContentLoaded', function() {
         startOnLoad: false,
         theme: 'dark',
         themeVariables: {
-            primaryColor: '#4285f4',
+            // Use original color scheme
+            primaryColor: '#ff6b6b',
             primaryTextColor: '#ffffff',
-            primaryBorderColor: '#6cb52d',
+            primaryBorderColor: '#ffffff',
             lineColor: '#ffffff',
             sectionBkgColor: '#2d3748',
             altSectionBkgColor: '#4a5568',
             gridColor: '#718096',
-            secondaryColor: '#ff6b35',
-            tertiaryColor: '#42b883'
+            secondaryColor: '#4ecdc4',
+            tertiaryColor: '#45b7d1',
+            // Edge/arrow styling
+            edgeLabelBackground: '#2d3748',
+            clusterBkg: '#4a5568',
+            clusterBorder: '#ffffff'
         },
         flowchart: {
-            nodeSpacing: 50,
-            rankSpacing: 50,
-            curve: 'basis'
+            nodeSpacing: 100,
+            rankSpacing: 120,
+            curve: 'basis',
+            padding: 30
         },
         gitgraph: {
             theme: 'dark'
-        }
+        },
+        // Larger text and better scaling
+        maxTextSize: 90000,
+        maxWidth: 1400,
+        fontSize: 20,
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
     });
 
     // Process Mermaid code blocks with a small delay to ensure DOM is ready
@@ -58,8 +69,71 @@ document.addEventListener('DOMContentLoaded', function() {
         // Initialize and render mermaid diagrams
         if (mermaidElements.length > 0) {
             mermaid.run();
+
+            // Add zoom functionality after rendering
+            setTimeout(() => {
+                addZoomToMermaidDiagrams();
+            }, 500);
         }
     }, 100);
+
+    // Add zoom functionality to Mermaid diagrams
+    function addZoomToMermaidDiagrams() {
+        const mermaidDivs = document.querySelectorAll('.mermaid');
+
+        mermaidDivs.forEach((div, index) => {
+            // Create zoom controls container
+            const zoomContainer = document.createElement('div');
+            zoomContainer.className = 'mermaid-zoom-controls';
+            zoomContainer.innerHTML = `
+                <button class="zoom-btn zoom-in" title="Zoom In">+</button>
+                <button class="zoom-btn zoom-out" title="Zoom Out">−</button>
+                <button class="zoom-btn zoom-reset" title="Reset Zoom">⌂</button>
+            `;
+
+            // Insert zoom controls before the diagram
+            div.parentNode.insertBefore(zoomContainer, div);
+
+            // Add zoom functionality
+            let currentZoom = 1;
+            const svg = div.querySelector('svg');
+
+            if (svg) {
+                const zoomIn = zoomContainer.querySelector('.zoom-in');
+                const zoomOut = zoomContainer.querySelector('.zoom-out');
+                const zoomReset = zoomContainer.querySelector('.zoom-reset');
+
+                zoomIn.addEventListener('click', () => {
+                    currentZoom = Math.min(currentZoom * 1.2, 3);
+                    svg.style.transform = `scale(${currentZoom})`;
+                    svg.style.transformOrigin = 'center center';
+                });
+
+                zoomOut.addEventListener('click', () => {
+                    currentZoom = Math.max(currentZoom / 1.2, 0.5);
+                    svg.style.transform = `scale(${currentZoom})`;
+                    svg.style.transformOrigin = 'center center';
+                });
+
+                zoomReset.addEventListener('click', () => {
+                    currentZoom = 1;
+                    svg.style.transform = 'scale(1)';
+                });
+
+                // Add wheel zoom support
+                div.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    if (e.deltaY < 0) {
+                        currentZoom = Math.min(currentZoom * 1.1, 3);
+                    } else {
+                        currentZoom = Math.max(currentZoom / 1.1, 0.5);
+                    }
+                    svg.style.transform = `scale(${currentZoom})`;
+                    svg.style.transformOrigin = 'center center';
+                });
+            }
+        });
+    }
 });
 </script>
 
