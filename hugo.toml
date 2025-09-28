@@ -19,6 +19,18 @@ buildFuture = true
     lineNumbersInTable = false
     noClasses = false
 
+[markup.goldmark.parser]
+    attribute = true
+
+[markup.goldmark.extensions]
+    definitionList = true
+    footnote = true
+    linkify = true
+    strikethrough = true
+    table = true
+    taskList = true
+    typographer = true
+
 [taxonomies]
   category = 'categories'
   tag = 'tags'

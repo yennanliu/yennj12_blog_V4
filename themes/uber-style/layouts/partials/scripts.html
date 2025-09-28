@@ -4,6 +4,65 @@
 <script src="{{ $js.RelPermalink }}"></script>
 {{ end }}
 
+<!-- Mermaid diagrams -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    mermaid.initialize({
+        startOnLoad: false,
+        theme: 'dark',
+        themeVariables: {
+            primaryColor: '#4285f4',
+            primaryTextColor: '#ffffff',
+            primaryBorderColor: '#6cb52d',
+            lineColor: '#ffffff',
+            sectionBkgColor: '#2d3748',
+            altSectionBkgColor: '#4a5568',
+            gridColor: '#718096',
+            secondaryColor: '#ff6b35',
+            tertiaryColor: '#42b883'
+        },
+        flowchart: {
+            nodeSpacing: 50,
+            rankSpacing: 50,
+            curve: 'basis'
+        },
+        gitgraph: {
+            theme: 'dark'
+        }
+    });
+
+    // Process Mermaid code blocks with a small delay to ensure DOM is ready
+    setTimeout(function() {
+        const mermaidElements = document.querySelectorAll('pre code.language-mermaid');
+        console.log('Found', mermaidElements.length, 'mermaid elements');
+
+        mermaidElements.forEach((element, index) => {
+            // Get the raw text content
+            let mermaidCode = element.textContent.trim();
+            console.log('Processing mermaid code:', mermaidCode.substring(0, 50));
+
+            // Create new mermaid div
+            const mermaidDiv = document.createElement('div');
+            mermaidDiv.className = 'mermaid';
+            mermaidDiv.id = 'mermaid-' + index;
+
+            // Set the mermaid code as text content
+            mermaidDiv.textContent = mermaidCode;
+
+            // Replace the pre element with the mermaid div
+            const preElement = element.closest('pre');
+            preElement.parentNode.replaceChild(mermaidDiv, preElement);
+        });
+
+        // Initialize and render mermaid diagrams
+        if (mermaidElements.length > 0) {
+            mermaid.run();
+        }
+    }, 100);
+});
+</script>
+
 <script>
 // Simple search functionality
 document.addEventListener('DOMContentLoaded', function() {
