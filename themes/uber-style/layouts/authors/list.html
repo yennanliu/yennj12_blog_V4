@@ -26,9 +26,10 @@
                         <p class="author-card__bio">{{ .Params.bio }}</p>
                         {{ end }}
                         
-                        {{ $authorPosts := where site.RegularPages ".Params.authors" "intersect" (slice .File.BaseFileName) }}
+                        {{ with .File }}{{ $authorPosts := where site.RegularPages ".Params.authors" "intersect" (slice .BaseFileName) }}
                         {{ if $authorPosts }}
                         <p class="author-card__posts">{{ len $authorPosts }} articles</p>
+                        {{ end }}
                         {{ end }}
                     </div>
                 </a>
