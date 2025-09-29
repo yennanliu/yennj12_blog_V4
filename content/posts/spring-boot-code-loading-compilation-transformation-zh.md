@@ -1,6 +1,6 @@
 ---
 title: "Spring Boot 程式碼載入深度解析：從編譯到物件實例化完整流程"
-date: 2025-09-29T08:35:54+08:00
+date: 2025-09-29T09:50:40+08:00
 draft: false
 tags: ["Spring Boot", "Java", "程式碼載入", "類別載入器", "編譯", "物件實例化", "依賴注入"]
 categories: ["Spring Boot", "Java", "應用程式啟動"]
