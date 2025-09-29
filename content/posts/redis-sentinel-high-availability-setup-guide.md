@@ -1,6 +1,6 @@
 ---
 title: "Redis Sentinel: Complete High Availability Setup Guide with Java Integration and Monitoring"
-date: 2025-01-29T06:00:00+08:00
+date: 2025-09-29T07:54:22+08:00
 draft: false
 description: "Master Redis Sentinel for high availability with comprehensive setup guides, mode comparisons, failover mechanisms, and production-ready Java integration. Learn monitoring, troubleshooting, and best practices for enterprise deployments."
 categories: ["Engineering", "Architecture", "Database", "all"]

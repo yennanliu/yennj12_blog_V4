@@ -1,6 +1,6 @@
 ---
 title: "Webhooks: Complete Guide with Java Implementation - Event-Driven Architecture, Real-Time Integrations, and Best Practices"
-date: 2025-01-29T07:00:00+08:00
+date: 2025-09-29T08:06:11+08:00
 draft: false
 description: "Master webhooks with comprehensive comparisons to HTTP calls and polling, real-world Java implementations, and practical examples using Stripe, Shopify, and GitHub APIs. Learn when to use webhooks, security best practices, and production-ready patterns."
 categories: ["Engineering", "Architecture", "Integration", "all"]

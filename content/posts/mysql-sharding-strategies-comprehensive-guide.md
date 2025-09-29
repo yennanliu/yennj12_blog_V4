@@ -1,6 +1,6 @@
 ---
 title: "MySQL Sharding Strategies: A Comprehensive Guide to Horizontal Scaling, Partitioning Methods, and Implementation Patterns"
-date: 2025-01-29T05:00:00+08:00
+date: 2025-09-29T07:54:22+08:00
 draft: false
 description: "Master MySQL sharding strategies with detailed comparisons of horizontal partitioning, range-based sharding, hash-based sharding, and directory-based approaches. Learn implementation patterns, pros/cons, and real-world use cases for scaling databases."
 categories: ["Engineering", "Architecture", "Database", "all"]
