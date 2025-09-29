@@ -1,6 +1,6 @@
 ---
 title: "AWS API Gateway: Complete Guide with Load Balancer Comparison, Microservices Architecture, and Java Implementation"
-date: 2025-01-29T09:00:00+08:00
+date: 2025-09-29T08:19:47+08:00
 draft: false
 description: "Master AWS API Gateway with comprehensive comparisons to load balancers, microservices integration patterns, and production-ready Java implementations. Learn when to use API Gateway vs Load Balancer, security best practices, and scaling strategies."
 categories: ["Engineering", "Architecture", "AWS", "all"]
