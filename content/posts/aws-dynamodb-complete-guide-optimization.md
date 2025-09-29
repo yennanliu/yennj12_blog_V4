@@ -1,6 +1,6 @@
 ---
 title: "AWS DynamoDB Complete Guide: Architecture, Indexing & Performance Optimization"
-date: 2025-09-29T09:50:40+08:00
+date: 2025-09-29T10:02:35+08:00
 draft: false
 tags: ["AWS", "DynamoDB", "NoSQL", "Database", "Performance", "Optimization", "Java", "Architecture"]
 categories: ["Database", "Cloud Computing", "AWS"]
