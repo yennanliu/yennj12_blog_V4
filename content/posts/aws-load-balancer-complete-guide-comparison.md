@@ -1,6 +1,6 @@
 ---
 title: "AWS Load Balancers: Complete Guide - Application, Network, Gateway, and Classic Load Balancers Comparison with Implementation"
-date: 2025-01-29T10:00:00+08:00
+date: 2025-09-29T08:28:29+08:00
 draft: false
 description: "Master AWS Load Balancers with comprehensive comparisons of ALB, NLB, GWLB, and CLB. Learn when to use each type, advanced features, health checks, auto-scaling integration, and production-ready configurations with real-world examples."
 categories: ["Engineering", "Architecture", "AWS", "all"]
