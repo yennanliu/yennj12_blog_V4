@@ -1,17 +1,26 @@
 ---
-title: "Kubernetes Horizontal Pod Autoscaling: A Comprehensive Guide to Scaling Strategies"
+title: "Kubernetes Autoscaling Complete Guide (Part 1): Horizontal Pod Autoscaler"
 date: 2025-11-09T10:00:00+08:00
 draft: false
 authors: ["yennj12 team"]
 categories: ["all", "engineering", "devops", "kubernetes"]
 tags: ["Kubernetes", "K8S", "HPA", "Autoscaling", "VPA", "KEDA", "Performance", "Cloud Native", "Scalability"]
-summary: "Deep dive into Kubernetes Horizontal Pod Autoscaler (HPA) approaches, comparing metrics-based, custom metrics, and event-driven autoscaling strategies with real-world use cases and best practices."
+summary: "Part 1 of the Kubernetes Autoscaling series: Deep dive into Horizontal Pod Autoscaler (HPA) approaches, comparing resource-based, custom metrics, external metrics, and event-driven autoscaling with KEDA. Learn when to use each approach with real-world examples and production best practices."
 readTime: "28 min"
+---
+
+## Series Overview
+
+This is **Part 1** of the Kubernetes Autoscaling Complete Guide series:
+
+- **Part 1 (This Post)**: Horizontal Pod Autoscaler - Application-level autoscaling with HPA, custom metrics, and KEDA
+- **[Part 2: Cluster Autoscaling & Cloud Providers](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Infrastructure-level autoscaling with Cluster Autoscaler, Karpenter, and cloud-specific solutions (EKS, GKE, AKS)
+
 ---
 
 Modern cloud-native applications face dynamic workload patterns that traditional static scaling cannot handle efficiently. Kubernetes Horizontal Pod Autoscaler (HPA) provides intelligent, automated scaling capabilities, but choosing the right approach requires understanding multiple scaling strategies, their tradeoffs, and appropriate use cases.
 
-This comprehensive guide explores the full spectrum of Kubernetes autoscaling approaches, from basic resource-based HPA to advanced event-driven scaling with KEDA, helping you architect scalable applications that maintain performance while optimizing costs.
+This comprehensive guide explores the full spectrum of Kubernetes pod-level autoscaling approaches, from basic resource-based HPA to advanced event-driven scaling with KEDA, helping you architect scalable applications that maintain performance while optimizing costs.
 
 ## The Scaling Challenge in Cloud-Native Architectures
 
