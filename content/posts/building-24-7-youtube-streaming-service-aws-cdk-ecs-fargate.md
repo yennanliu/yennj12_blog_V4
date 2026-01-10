@@ -1,6 +1,6 @@
 ---
 title: "Building a 24/7 YouTube Streaming Service with AWS CDK and ECS Fargate"
-date: 2025-01-10T10:00:00+08:00
+date: 2026-01-10T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
