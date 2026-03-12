@@ -1,11 +1,11 @@
 ---
-title: "Context 壓縮與摘要實戰指南：打造可無限對話的 AI 系統"
+title: "多 Agent Token 優化系列 pt.3：Context 壓縮與摘要 — 打造可無限對話的 AI 系統"
 date: 2026-03-12T16:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "AI", "agent-orchestration", "development-tools"]
 tags: ["AI", "claude-code", "context-compression", "summarization", "token-optimization", "long-conversation", "memory-management"]
-summary: "深入探索 Context 壓縮與摘要技術：從滑動視窗、階層式摘要、語意壓縮到智能記憶管理，提供完整的實作範例與架構設計，幫助你打造可以無限對話且成本可控的 AI 應用。"
+summary: "多 Agent Token 優化系列 pt.3：深入探索 Context 壓縮與摘要技術，從滑動視窗、階層式摘要到語意壓縮，提供完整實作範例，幫助你打造可無限對話且成本可控的 AI 應用。"
 readTime: "35 min"
 ---
 

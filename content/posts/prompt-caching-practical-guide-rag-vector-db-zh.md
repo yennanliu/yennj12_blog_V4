@@ -1,11 +1,11 @@
 ---
-title: "Prompt Caching 實戰指南：從記憶體快取到 RAG 系統的完整實作"
+title: "多 Agent Token 優化系列 pt.2：Prompt Caching 實戰 — 從記憶體快取到 RAG 系統"
 date: 2026-03-12T14:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "AI", "agent-orchestration", "development-tools"]
 tags: ["AI", "claude-code", "prompt-caching", "RAG", "vector-database", "cost-optimization", "API", "LLM-optimization"]
-summary: "深入探索 Prompt Caching 的實際應用場景：從 Claude API 原生快取機制、應用層記憶體快取、到 RAG 系統與向量資料庫的整合策略，提供完整的程式碼範例與架構設計，幫助你打造高效且低成本的 AI 應用。"
+summary: "多 Agent Token 優化系列 pt.2：深入探索 Prompt Caching 的實際應用，從 Claude API 原生快取、應用層記憶體快取、到 RAG 系統整合，提供完整程式碼範例，幫助你打造高效低成本的 AI 應用。"
 readTime: "30 min"
 ---
 

@@ -1,11 +1,11 @@
 ---
-title: "模型分層實戰指南：智能路由打造高效低成本的 AI 系統"
+title: "多 Agent Token 優化系列 pt.4：模型分層實戰 — 智能路由打造高效低成本系統"
 date: 2026-03-12T18:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "AI", "agent-orchestration", "development-tools"]
 tags: ["AI", "claude-code", "model-tiering", "cost-optimization", "model-routing", "LLM-optimization", "API"]
-summary: "深入探索模型分層（Model Tiering）策略：從任務分類、智能路由、動態選擇到成本監控，提供完整的實作範例與架構設計，幫助你在保持輸出品質的同時大幅降低 AI 應用成本。"
+summary: "多 Agent Token 優化系列 pt.4：深入探索模型分層策略，從任務分類、智能路由到動態選擇，提供完整實作範例，幫助你在保持品質的同時大幅降低 AI 應用成本。"
 readTime: "30 min"
 ---
 

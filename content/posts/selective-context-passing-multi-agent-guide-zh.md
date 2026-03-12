@@ -1,11 +1,11 @@
 ---
-title: "選擇性 Context 傳遞實戰指南：打造高效多 Agent 協作系統"
+title: "多 Agent Token 優化系列 pt.5：選擇性 Context 傳遞 — 打造高效協作系統"
 date: 2026-03-12T20:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "AI", "agent-orchestration", "development-tools"]
 tags: ["AI", "claude-code", "multi-agent", "context-passing", "token-optimization", "agent-orchestration", "API"]
-summary: "深入探索多 Agent 系統中的選擇性 Context 傳遞策略：從依賴關係映射、結構化輸出、相關性過濾到智能摘要提取，提供完整的實作範例與架構設計，幫助你大幅降低 Agent 間通訊的 Token 消耗。"
+summary: "多 Agent Token 優化系列 pt.5：深入探索選擇性 Context 傳遞策略，從依賴關係映射、結構化輸出到相關性過濾，提供完整實作範例，幫助你大幅降低 Agent 間通訊的 Token 消耗。"
 readTime: "35 min"
 ---
 
