@@ -88,7 +88,8 @@ class NvidiaBlgoFetcher:
                 # Remove scripts and styles
                 for script in article_content(['script', 'style']):
                     script.decompose()
-                return article_content.get_text(separator='\n', strip=True)[:3000]
+                # 增加到 5000 字以獲取更多內容
+                return article_content.get_text(separator='\n', strip=True)[:5000]
 
             return ""
         except Exception as e:
@@ -150,9 +151,9 @@ class BlogPostGenerator:
                 messages=[
                     {
                         "role": "system",
-                        "content": """你是一個技術博客作者，專門用繁體中文撰寫高質量的技術文章。
+                        "content": """你是一個資深技術博客作者，專門用繁體中文撰寫高質量、深度的技術文章。
 
-你的任務是根據提供的英文技術文章內容，創建一篇結構清晰、內容豐富的繁體中文技術博客文章。
+你的任務是根據提供的英文技術文章內容，創建一篇結構完整、內容深度、篇幅充足的繁體中文技術博客文章。
 
 輸出格式必須是 YAML frontmatter + Markdown 內容，結構如下：
 ---
@@ -162,19 +163,35 @@ draft: false
 authors: ["nvidia-auto"]
 categories: ["all", "NVIDIA", "技術"]
 tags: [相關標籤]
-summary: "簡短摘要"
-readTime: "XX min"
+summary: "詳細摘要（150-200 字）"
+readTime: "25-30 min"
 ---
+
+## 導論
+
+## 核心概念
+
+## 技術架構
+
+## 實現細節
+
+## 性能優化
+
+## 最佳實踐
+
+## 常見問題
+
+## 結論
 
 文章內容（使用 Markdown 格式）
 
 要求：
-1. 標題吸引人且準確反映內容
-2. 包含簡介、核心概念、實際應用、性能指標等章節
-3. 使用代碼塊、表格、圖表等增強可讀性
-4. 包含原文來源鏈接
-5. 篇幅 1500-2500 字
-6. 適當添加中文技術術語解釋"""
+1. 篇幅充足（3000-5000 字）
+2. 結構完整和層次分明
+3. 包含代碼示例、表格、配置示例
+4. 深度講解技術細節
+5. 提供實際應用案例
+6. 討論優缺點和性能指標"""
                     },
                     {
                         "role": "user",
@@ -182,7 +199,7 @@ readTime: "XX min"
                     }
                 ],
                 temperature=0.7,
-                max_tokens=3000,
+                max_tokens=6000,  # 增加到 6000 以支持更長的文章
             )
 
             return response.choices[0].message.content
@@ -193,7 +210,7 @@ readTime: "XX min"
 
     def _create_prompt(self, article: Dict) -> str:
         """Create prompt for OpenAI"""
-        return f"""請根據以下 NVIDIA 技術博客文章內容，生成繁體中文技術博客文章。
+        return f"""請根據以下 NVIDIA 技術博客文章內容，生成一篇詳細、深度的繁體中文技術博客文章。
 
 原文標題: {article['title']}
 原文 URL: {article['url']}
@@ -207,8 +224,41 @@ readTime: "XX min"
 文章內容（摘錄）:
 {article['content'][:2000]}
 
-請生成完整的繁體中文博客文章，包含 YAML frontmatter。
-確保內容準確、易讀、適合技術讀者。"""
+請生成一篇 3000-5000 字的深度技術博客文章，包含 YAML frontmatter。
+
+要求：
+1. 篇幅長度：3000-5000 字（深度長文章）
+2. 結構完整：
+   - 導論和背景
+   - 核心概念詳解（多個小節）
+   - 技術架構分析
+   - 實現細節和代碼示例
+   - 性能指標和優化方法
+   - 常見問題和解決方案
+   - 最佳實踐
+   - 結論和未來方向
+
+3. 內容質量：
+   - 包含具體的代碼示例（如適用）
+   - 使用表格、圖表描述（用 Markdown 表格）
+   - 解釋每個技術概念
+   - 提供實際應用案例
+   - 討論優缺點和折衷方案
+
+4. 格式要求：
+   - YAML frontmatter 中 readTime 設置為 "25-30 min"（深度長文）
+   - 使用多層級標題組織內容
+   - 代碼塊使用語言標識符（```python, ```bash, ```yaml 等）
+   - 重要內容用**粗體**強調
+   - 使用列表和表格提高可讀性
+
+5. 質量標準：
+   - 內容準確、技術深度
+   - 易於理解但不失專業性
+   - 包含現實世界的應用場景
+   - 提供可操作的建議和最佳實踐
+
+輸出格式必須是 YAML frontmatter + Markdown 內容。"""
 
 class FilenameGenerator:
     """Generate blog post filenames"""
