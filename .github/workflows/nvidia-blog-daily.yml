@@ -1,0 +1,84 @@
+name: Daily NVIDIA Blog Post Generator
+
+on:
+  schedule:
+    # Run daily at 9 AM UTC (5 PM Taiwan time)
+    - cron: '0 9 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate-nvidia-blog:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 feedparser openai pyyaml
+
+      - name: Generate blog post from NVIDIA
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python scripts/generate_nvidia_blog.py
+
+      - name: Check if new post was created
+        id: check_post
+        run: |
+          if [ -f "last_commit_message.txt" ]; then
+            echo "post_created=true" >> $GITHUB_OUTPUT
+            cat last_commit_message.txt >> $GITHUB_OUTPUT
+          else
+            echo "post_created=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure Git
+        if: steps.check_post.outputs.post_created == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Commit and push
+        if: steps.check_post.outputs.post_created == 'true'
+        run: |
+          git add content/posts/*.md
+          git commit -F last_commit_message.txt
+          git push origin main
+
+      - name: Create Pull Request
+        if: steps.check_post.outputs.post_created == 'true' && github.event_name == 'schedule'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: ${{ steps.check_post.outputs.post_created_message }}
+          title: "[Auto] Daily NVIDIA Blog Post"
+          body: |
+            This PR contains an automatically generated blog post from NVIDIA's developer blog.
+
+            Please review the content and merge if it looks good.
+          branch: nvidia-blog-${{ github.run_number }}
+          delete-branch: true
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Failed to generate blog post from NVIDIA"
+          exit 1
+
+      - name: Notify on success
+        if: success() && steps.check_post.outputs.post_created == 'true'
+        run: |
+          echo "✅ Successfully created and pushed new NVIDIA blog post"
