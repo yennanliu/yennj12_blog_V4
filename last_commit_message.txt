@@ -1,0 +1,7 @@
+Add NVIDIA blog post: Running Large-Scale GPU Workloads on Kubernetes with Slurm
+
+Automatically generated from NVIDIA Developer Blog
+Original URL: https://developer.nvidia.com/blog/running-large-scale-gpu-workloads-on-kubernetes-with-slurm/
+Generated: 2026-04-11T09:50:00.441358
+
+Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>

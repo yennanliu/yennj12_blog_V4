@@ -1,0 +1,9 @@
+{
+  "posted_articles": [
+    {
+      "url": "https://developer.nvidia.com/blog/running-large-scale-gpu-workloads-on-kubernetes-with-slurm/",
+      "title": "Running Large-Scale GPU Workloads on Kubernetes with Slurm",
+      "posted_date": "2026-04-11T09:50:00.441172"
+    }
+  ]
+}
