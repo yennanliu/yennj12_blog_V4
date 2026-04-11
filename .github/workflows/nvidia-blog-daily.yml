@@ -41,7 +41,8 @@ jobs:
         run: |
           if [ -f "last_commit_message.txt" ]; then
             echo "post_created=true" >> $GITHUB_OUTPUT
-            cat last_commit_message.txt >> $GITHUB_OUTPUT
+            COMMIT_MSG=$(cat last_commit_message.txt | head -1)
+            echo "commit_msg=$COMMIT_MSG" >> $GITHUB_OUTPUT
           else
             echo "post_created=false" >> $GITHUB_OUTPUT
           fi
@@ -63,7 +64,7 @@ jobs:
         if: steps.check_post.outputs.post_created == 'true' && github.event_name == 'schedule'
         uses: peter-evans/create-pull-request@v5
         with:
-          commit-message: ${{ steps.check_post.outputs.post_created_message }}
+          commit-message: ${{ steps.check_post.outputs.commit_msg }}
           title: "[Auto] Daily NVIDIA Blog Post"
           body: |
             This PR contains an automatically generated blog post from NVIDIA's developer blog.
