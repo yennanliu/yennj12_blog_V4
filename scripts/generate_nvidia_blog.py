@@ -315,7 +315,23 @@ def main():
         generator = BlogPostGenerator(api_key)
         blog_content = generator.generate_from_nvidia_article(article)
 
-        # Step 4: Save to file
+        # Step 4: Post-process frontmatter to enforce CI run date and draft=false
+        import re
+        run_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S+08:00")
+        blog_content = re.sub(
+            r'^date:.*$',
+            f'date: {run_date}',
+            blog_content,
+            flags=re.MULTILINE
+        )
+        blog_content = re.sub(
+            r'^draft:.*$',
+            'draft: false',
+            blog_content,
+            flags=re.MULTILINE
+        )
+
+        # Step 5: Save to file
         filename = FilenameGenerator.generate_filename(article)
         filepath = CONTENT_DIR / filename
 
@@ -326,10 +342,10 @@ def main():
 
         logger.info(f"Blog post saved: {filepath}")
 
-        # Step 5: Record posted article
+        # Step 6: Record posted article
         DuplicateChecker.record_posted(article)
 
-        # Step 6: Create commit message file for GitHub Actions
+        # Step 7: Create commit message file for GitHub Actions
         commit_message = f"""Add NVIDIA blog post: {article['title']}
 
 Automatically generated from NVIDIA Developer Blog
