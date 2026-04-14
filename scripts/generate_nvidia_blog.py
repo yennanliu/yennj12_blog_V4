@@ -283,7 +283,7 @@ class FilenameGenerator:
 
         # Add nvidia prefix and current date
         date_str = datetime.now().strftime("%Y%m%d")
-        filename = f"nvidia-{slug}-zh.md"
+        filename = f"nvidia-{date_str}-{slug}-zh.md"
 
         return filename
 
