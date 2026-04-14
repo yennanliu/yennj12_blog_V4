@@ -1,0 +1,7 @@
+Add NVIDIA blog post: MiniMax M2.7 Advances Scalable Agentic Workflows on NVIDIA Platforms for Complex AI Applications
+
+Automatically generated from NVIDIA Developer Blog
+Original URL: https://developer.nvidia.com/blog/minimax-m2-7-advances-scalable-agentic-workflows-on-nvidia-platforms-for-complex-ai-applications/
+Generated: 2026-04-14T10:17:41.817599
+
+Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
