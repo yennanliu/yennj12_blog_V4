@@ -1,0 +1,7 @@
+Add NVIDIA blog post: Building Custom Atomistic Simulation Workflows for Chemistry and Materials Science with NVIDIA ALCHEMI Toolkit
+
+Automatically generated from NVIDIA Developer Blog
+Original URL: https://developer.nvidia.com/blog/building-custom-atomistic-simulation-workflows-for-chemistry-and-materials-science-with-nvidia-alchemi-toolkit/
+Generated: 2026-04-16T10:14:49.929648
+
+Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
