@@ -1,5 +1,5 @@
 ---
-title: "購物車系統的高並發改造：Virtual Threads、HikariCP 與 Redis 快取三管齊下"
+title: "購物車系統的高並發改造（一）：Virtual Threads、HikariCP 與 Redis 快取三管齊下"
 date: 2026-05-24T09:00:00+08:00
 draft: false
 description: "深入剖析一個真實 Spring Boot 購物車系統如何從「默認設定」升級到能承受 C10K 的生產級高並發架構：JDK 21 Virtual Threads、HikariCP 連線池調校、Redis 分層快取設計，以及升級到 Spring Boot 3.2 過程中的關鍵踩坑。"
@@ -613,3 +613,10 @@ Tomcat 執行緒層：Virtual Threads 讓 I/O 等待不再阻塞平台執行緒
 最難的部分不是程式碼，而是**知道什麼該快取、什麼不該快取**，以及理解系統在高流量下的真實崩潰路徑。
 
 完整程式碼見：[PR #227 - ShoppingCart-dev-008-high-concurrency](https://github.com/yennanliu/SpringPlayground/pull/227)
+
+---
+
+**系列導覽**
+
+- **第一篇（本篇）**：Virtual Threads、HikariCP、Redis 快取
+- [第二篇](/posts/shopping-cart-high-concurrency-part2-zh/)：Redisson 分散式鎖、讀寫分離路由、水平擴展與 Docker HA
