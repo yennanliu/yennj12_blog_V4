@@ -2,373 +2,366 @@
 title: "FDE 面試準備指南（十四）：RKK 實戰——AI Agent Memory 架構設計"
 date: 2026-06-03T13:00:00+08:00
 draft: false
-description: "以 Google AI 工程師兼面試官的視角，深度拆解 AI Agent 的 Memory 架構：四種記憶類型（Working、Episodic、Semantic、Procedural）、跨 session 記憶設計、向量記憶庫，以及企業級 Agent 的 memory 選型決策"
+description: "以系統設計視角拆解 AI Agent 的 Memory 架構：為什麼需要四種記憶、每種記憶解決什麼問題、怎麼組合、以及記憶帶來的工程挑戰——含完整架構圖與選型決策框架"
 categories: ["engineering", "ai", "all"]
-tags: ["AI", "FDE", "Agent", "Memory", "Architecture", "Vector Database", "LangGraph", "RAG", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Memory", "Architecture", "Vector Database", "LangGraph", "RAG", "System Design", "RKK", "Interview", "Google"]
 authors: ["yen"]
 readTime: "15 min"
 ---
 
-> Memory 是 Agent 從「一次性工具」變成「持續學習的助手」的關鍵。  
-> 面試官想知道的不只是你知道向量資料庫，  
-> 而是你知道什麼情況下該用什麼記憶，以及記憶會帶來什麼風險。
+> LLM 是無狀態的，但用戶是有狀態的。  
+> Memory 系統要解決的問題只有一個：  
+> **讓無狀態的 LLM 表現得像是「記得你」。**  
+> 怎麼設計這個橋樑，以及這個橋樑的代價——是這篇的核心。
 
 ---
 
-## 一、為什麼 Memory 架構是 RKK 必考題
+## 一、核心問題：為什麼需要不同類型的 Memory
 
-沒有 memory 的 Agent，每次對話都從零開始。對企業客戶來說，這意味著：
-
-- 客服 Agent 每次都要重新問用戶基本資訊
-- 銷售 Agent 不記得上次和客戶聊了什麼
-- 程式碼助手不知道專案的技術棧和偏好
-
-面試官問法：
-
-> *「你有一個企業客戶，他們想讓 Agent 記得每個員工的偏好和過去的互動。你怎麼設計 memory 系統？」*
-
----
-
-## 二、四種記憶類型
-
-參考認知科學的記憶分類，Agent 的 memory 也可以分成四種：
+沒有 Memory 的 Agent 每次對話從零開始：
 
 ```
-Agent Memory 四類型
-├── Working Memory（工作記憶）    ← 當前 context（當次對話）
-├── Episodic Memory（情節記憶）   ← 過去的互動歷史
-├── Semantic Memory（語意記憶）   ← 結構化知識（用戶偏好、實體關係）
-└── Procedural Memory（程序記憶） ← 如何完成特定任務的知識
+Session 1：
+  User: "我主要用 Python，偏好簡短的回答"
+  Agent: "好的！" （記不住）
+
+Session 2（三天後）：
+  User: "幫我寫一個排序函數"
+  Agent: "您好！請問您用哪種程式語言？"
+         ↑
+    明明說過了，還在問
 ```
 
-### 類比 vs 系統實作
+但「把所有對話都記住」也不可行：
 
-| 記憶類型 | 類比 | 系統實作 | 存活時間 |
-|---------|------|---------|---------|
-| Working Memory | 你現在腦子裡在想的 | LLM context window | 當次對話 |
-| Episodic Memory | 你記得三個月前和朋友的對話 | 對話歷史資料庫、向量索引 | 跨 session |
-| Semantic Memory | 你知道「台北」是城市 | 結構化 profile、知識圖譜 | 持久化 |
-| Procedural Memory | 你騎腳踏車不需要思考 | Few-shot examples、Fine-tuning | 模型層 |
+```
+問題 1：儲存量
+  10K 用戶 × 每天 10 輪 × 365 天 = 3,650 萬條對話記錄
+
+問題 2：Context 限制
+  把所有歷史塞進 LLM context → 超過 context window
+
+問題 3：相關性
+  3 年前討論的內容，現在可能完全不相關
+```
+
+**結論：需要多種記憶類型，各自解決不同的問題。**
 
 ---
 
-## 三、Working Memory：Context Window 的管理
+## 二、四種記憶類型：各解決什麼問題
 
-（詳見第十篇 Context Management，這裡只做概要）
-
-Working Memory 就是 LLM 的 context window。每次對話的臨時狀態：
-
-```python
-# Working Memory = 當前 session 的所有資訊
-working_memory = {
-    "system_prompt": "你是一個客服 Agent...",
-    "user_profile": {...},          # 從 Semantic Memory 載入
-    "conversation_history": [...],  # 當次對話
-    "retrieved_context": [...],     # 從 Episodic/Semantic Memory 檢索
-    "tool_results": [...],          # 工具執行結果
-    "current_task_state": {...}     # 任務進行狀態
-}
 ```
+問題                          解決方案
+─────────────────────────────────────────────────────
+當前對話的臨時狀態？    →    Working Memory（工作記憶）
+                             LLM context window
+                             生命週期：當次對話
 
----
+記得過去發生過什麼？    →    Episodic Memory（情節記憶）
+                             向量化的對話歷史
+                             生命週期：跨 session，可衰減
 
-## 四、Episodic Memory：對話歷史的持久化
+記得這個人是什麼樣的人？→    Semantic Memory（語意記憶）
+                             結構化的 user profile
+                             生命週期：持久化，主動更新
 
-### 設計問題
-
-面試官問：
-
-> *「用戶和你的 Agent 對話了 6 個月，你怎麼讓 Agent 還記得 6 個月前的重要對話？」*
-
-**方案：向量化的對話記憶庫**
-
-```python
-from dataclasses import dataclass
-from datetime import datetime
-
-@dataclass
-class EpisodicMemory:
-    memory_id: str
-    user_id: str
-    session_id: str
-    timestamp: datetime
-    content: str          # 對話摘要或重要片段
-    embedding: list       # 向量表示，用於相似度搜尋
-    importance_score: float  # 0-1，重要程度
-    metadata: dict        # 額外資訊：tags、entities、emotion 等
-
-class EpisodicMemoryStore:
-    def __init__(self, vector_store, llm, embedder):
-        self.vector_store = vector_store
-        self.llm = llm
-        self.embedder = embedder
-    
-    def save_conversation(self, user_id: str, conversation: list[dict]) -> EpisodicMemory:
-        # 1. 用 LLM 提取重要資訊
-        summary_prompt = f"""
-        請分析以下對話，提取最重要的資訊：
-        1. 用戶達成了什麼目標（或沒達成）
-        2. 用戶表達的偏好或需求
-        3. 任何重要的決定或承諾
-        
-        對話：{self._format_conversation(conversation)}
-        
-        請以 JSON 格式回覆：
-        {{
-            "summary": "一句話摘要",
-            "user_preferences": [...],
-            "unresolved_issues": [...],
-            "importance": 0.0 to 1.0
-        }}
-        """
-        extracted = self.llm.generate_json(summary_prompt)
-        
-        # 2. 生成 embedding
-        content = extracted["summary"]
-        embedding = self.embedder.embed(content)
-        
-        # 3. 存入向量資料庫
-        memory = EpisodicMemory(
-            memory_id=generate_id(),
-            user_id=user_id,
-            session_id=generate_id(),
-            timestamp=datetime.now(),
-            content=content,
-            embedding=embedding,
-            importance_score=extracted["importance"],
-            metadata={
-                "user_preferences": extracted["user_preferences"],
-                "unresolved_issues": extracted["unresolved_issues"]
-            }
-        )
-        
-        self.vector_store.upsert(memory)
-        return memory
-    
-    def recall(self, user_id: str, current_context: str, top_k: int = 3) -> list[EpisodicMemory]:
-        """根據當前 context 召回相關的過去記憶"""
-        query_embedding = self.embedder.embed(current_context)
-        
-        # 只搜尋這個用戶的記憶
-        results = self.vector_store.query(
-            vector=query_embedding,
-            filter={"user_id": user_id},
-            top_k=top_k
-        )
-        
-        # 按重要程度和時間加權排序
-        def score(memory):
-            recency_score = self._recency_decay(memory.timestamp)
-            return memory.importance_score * 0.6 + recency_score * 0.4
-        
-        return sorted(results, key=score, reverse=True)
-    
-    def _recency_decay(self, timestamp: datetime) -> float:
-        """越近期的記憶分數越高"""
-        days_ago = (datetime.now() - timestamp).days
-        return max(0, 1 - days_ago / 180)  # 6 個月後衰減到 0
+知道怎麼做某件事？      →    Procedural Memory（程序記憶）
+                             Few-shot examples / Fine-tuning
+                             生命週期：模型層，最持久
 ```
 
 ---
 
-## 五、Semantic Memory：結構化用戶知識
+## 三、完整 Memory 架構圖
 
-Episodic Memory 是「記得發生過什麼」，Semantic Memory 是「記得這個人是什麼樣的人」：
+```
+用戶請求
+    │
+    ▼
+┌──────────────────────────────────────────────┐
+│            Memory Retrieval Layer            │
+│                                              │
+│  ┌──────────────────────┐                    │
+│  │  Semantic Memory     │ ← 用戶偏好、profile │
+│  │  (Structured DB)     │   每次對話都載入    │
+│  └──────────────────────┘                    │
+│              +                               │
+│  ┌──────────────────────┐                    │
+│  │  Episodic Memory     │ ← 相關歷史片段      │
+│  │  (Vector DB)         │   按語意相似度召回  │
+│  └──────────────────────┘                    │
+└──────────────────┬───────────────────────────┘
+                   │ 組合成 Working Memory
+                   ▼
+┌──────────────────────────────────────────────┐
+│             Working Memory                   │
+│             (LLM Context Window)             │
+│                                              │
+│  [System Prompt]                             │
+│  [User Profile from Semantic Memory]         │
+│  [Relevant History from Episodic Memory]     │
+│  [Current Conversation]                      │
+│  [Current Query]                             │
+└──────────────────┬───────────────────────────┘
+                   │
+                   ▼
+                  LLM
+                   │
+                   ▼
+                回應
+                   │
+         （對話結束後，非同步）
+                   ▼
+┌──────────────────────────────────────────────┐
+│            Memory Update Layer               │
+│                                              │
+│  ┌────────────────────────────┐              │
+│  │ 提取重要資訊               │              │
+│  │ → 更新 Semantic Memory     │ ← 偏好、事實 │
+│  └────────────────────────────┘              │
+│  ┌────────────────────────────┐              │
+│  │ 壓縮對話摘要               │              │
+│  │ → 存入 Episodic Memory     │ ← 做了什麼  │
+│  └────────────────────────────┘              │
+└──────────────────────────────────────────────┘
+```
 
-```python
-@dataclass
-class UserProfile:
-    user_id: str
-    
-    # 基本資訊
-    name: str
-    role: str           # 職位
-    department: str
-    
-    # 偏好（從對話中學習）
-    language_preference: str     # "繁體中文" / "English"
-    communication_style: str     # "簡潔" / "詳細"
-    technical_level: str         # "beginner" / "intermediate" / "expert"
-    
-    # 常用工具和系統
-    tools: list[str]             # ["Python", "BigQuery", "Looker"]
-    active_projects: list[str]
-    
-    # 未解決的問題
-    open_issues: list[dict]
-    
-    # 最後更新時間
-    last_updated: datetime
+**關鍵設計決策：Memory Update 是非同步的**  
+不在請求路徑上——避免增加用戶感知延遲。
 
-class SemanticMemoryStore:
-    def __init__(self, db):
-        self.db = db
-    
-    def get_profile(self, user_id: str) -> UserProfile:
-        return self.db.get(f"profile:{user_id}")
-    
-    def update_profile(self, user_id: str, updates: dict):
-        """根據對話更新 profile"""
-        profile = self.get_profile(user_id) or UserProfile(user_id=user_id)
-        
-        # 用 LLM 判斷是否需要更新哪些欄位
-        # 例如：用戶說「我主要用 Python」→ 更新 tools
-        for key, value in updates.items():
-            if hasattr(profile, key):
-                setattr(profile, key, value)
-        
-        profile.last_updated = datetime.now()
-        self.db.set(f"profile:{user_id}", profile)
-    
-    def extract_profile_updates(self, conversation: list[dict], llm) -> dict:
-        """從對話中自動提取 profile 更新"""
-        extract_prompt = f"""
-        分析以下對話，判斷是否有用戶偏好或資訊可以更新：
-        
-        對話：{conversation}
-        
-        JSON 格式，只包含需要更新的欄位：
-        """
-        return llm.generate_json(extract_prompt)
+---
+
+## 四、各類型記憶的設計細節
+
+### Working Memory：Context 組裝策略
+
+```
+Context 組裝優先順序（有限空間的分配）：
+
+總預算：128K tokens（以 GPT-4o 為例）
+
+┌──────────────────────┬───────────────┐
+│ 區塊                 │ Token 預算    │
+├──────────────────────┼───────────────┤
+│ System Prompt        │ ~500 (固定)   │
+│ User Profile         │ ~300 (固定)   │
+│ Procedural Examples  │ ~1,000 (固定) │
+│ Episodic Recall      │ ~2,000 (彈性) │
+│ Current Conversation │ ~剩餘        │
+│ Output Reserve       │ ~4,000 (保留) │
+└──────────────────────┴───────────────┘
+
+當 Conversation 過長時 → 壓縮或截斷，但優先保留固定區塊
 ```
 
 ---
 
-## 六、Memory 的四個工程挑戰
+### Episodic Memory：向量化存取
 
-面試官不只想聽架構，也想聽你知道挑戰在哪：
+```
+對話發生
+    │
+    ▼
+[對話摘要提取]          ← LLM 非同步提取關鍵資訊
+    │
+    ▼
+[Embedding 生成]        ← 轉換為向量表示
+    │
+    ▼
+┌────────────────────────────────┐
+│  Vector Database               │
+│                                │
+│  memory_id: m_001              │
+│  user_id:   u_123              │
+│  vector:    [0.12, -0.34, ...] │
+│  content:   "用戶詢問 Q4 銷售  │
+│              數字，發現資料庫   │
+│              有延遲問題"        │
+│  importance: 0.72              │
+│  timestamp:  2026-03-15        │
+└────────────────────────────────┘
+          │
+          │ 下次對話時
+          ▼
+[Query Embedding]  ← 當前問題轉向量
+          │
+          ▼
+[Similarity Search] → 召回最相關的 top-k 記憶
+```
+
+**重要設計：Importance Score**
+
+不是所有記憶都值得保留，用 LLM 判斷重要性：
+
+```
+高重要性（0.8+）：
+  ├── 用戶明確表達的偏好（"我不喜歡..."）
+  ├── 未解決的問題（"下次要繼續處理..."）
+  └── 重要的決定（"確認採用方案 B"）
+
+低重要性（< 0.3）：
+  ├── 閒聊（"謝謝"、"好的"）
+  ├── 可以從公開資訊取得的問題（不需要記住回答了什麼）
+  └── 重複性的例行查詢
+```
+
+---
+
+### Semantic Memory：結構化 Profile
+
+```
+User Profile 結構：
+
+┌─────────────────────────────────────────────────────┐
+│  user_id: u_123                                     │
+│                                                     │
+│  Identity                                           │
+│  ├── name: "Alice"                                  │
+│  ├── role: "Data Engineer"                          │
+│  └── department: "Analytics"                        │
+│                                                     │
+│  Preferences（從對話中學習）                          │
+│  ├── language: "繁體中文"                            │
+│  ├── response_style: "簡潔，要有範例"               │
+│  └── technical_level: "intermediate"               │
+│                                                     │
+│  Context                                            │
+│  ├── tools: ["Python", "dbt", "BigQuery"]           │
+│  ├── active_projects: ["data-pipeline-v2"]          │
+│  └── open_issues: [                                 │
+│        {issue: "dbt 模型跑太慢", since: "2026-05"} │
+│      ]                                              │
+│                                                     │
+│  Meta                                               │
+│  └── last_updated: "2026-06-01"                    │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## 五、四大工程挑戰與對應設計
 
 ### 挑戰一：記憶衝突
 
 ```
-用戶在 1 月說：「我偏好簡短的回答」
-用戶在 6 月說：「請給我詳細的說明」
+問題情境：
+  2026-01：User profile 記載 "技術等級：初學者"
+  2026-06：用戶已經成長為中級工程師
 
-→ 哪個記憶是真的？
-→ 解法：記憶有 timestamp，衝突時以較新的為準；或詢問用戶確認
+如果不更新 → Agent 一直給太基礎的解釋 → 用戶沮喪
+
+解決策略：
+  ├── 新記憶優先（衝突時以最新記錄為準）
+  ├── Confidence score（多次確認才更新 profile）
+  └── 主動重確認（6 個月未更新的欄位，主動詢問）
 ```
 
-### 挑戰二：記憶過時
-
-```python
-class MemoryFreshness:
-    DECAY_RULES = {
-        "user_preferences": 180,  # 6 個月後可能過時
-        "active_projects": 30,    # 1 個月後重新確認
-        "contact_info": 365,      # 1 年後可能過時
-        "technical_level": 90,    # 3 個月後可能有進步
-    }
-    
-    def is_stale(self, memory_key: str, last_updated: datetime) -> bool:
-        days_threshold = self.DECAY_RULES.get(memory_key, 90)
-        days_since_update = (datetime.now() - last_updated).days
-        return days_since_update > days_threshold
-    
-    def should_reconfirm(self, profile: UserProfile) -> list[str]:
-        """判斷哪些欄位應該主動向用戶確認"""
-        stale_fields = []
-        for field, _ in profile.__dataclass_fields__.items():
-            if self.is_stale(field, profile.last_updated):
-                stale_fields.append(field)
-        return stale_fields
-```
-
-### 挑戰三：隱私與資料權
-
-```python
-# 用戶有權刪除自己的 memory
-class MemoryPrivacyManager:
-    def delete_user_memory(self, user_id: str, memory_type: str = "all"):
-        if memory_type == "all":
-            self.episodic_store.delete_user(user_id)
-            self.semantic_store.delete_user(user_id)
-        elif memory_type == "episodic":
-            self.episodic_store.delete_user(user_id)
-        elif memory_type == "semantic":
-            self.semantic_store.delete_user(user_id)
-    
-    def export_user_memory(self, user_id: str) -> dict:
-        """用戶資料可攜性：讓用戶看到系統記了什麼"""
-        return {
-            "profile": self.semantic_store.get_profile(user_id),
-            "conversation_summaries": self.episodic_store.get_all(user_id),
-        }
-```
-
-### 挑戰四：記憶的精確度 vs 規模
+### 挑戰二：記憶過時（Staleness）
 
 ```
-精確記憶（存每個字）：
-+ 不丟失細節
-- 儲存量大，搜尋慢，context 很快填滿
+不同記憶欄位的「半衰期」不同：
 
-摘要記憶（用 LLM 壓縮）：
-+ 小、快、可搜尋
-- 可能丟失重要細節，摘要品質依賴 LLM
+欄位               建議更新週期    觸發條件
+─────────────────────────────────────────────
+技術偏好           90 天          對話中有新工具提及
+活躍專案           30 天          專案名稱長時間不出現
+聯絡資訊           365 天         用戶主動更新
+open_issues        自動關閉       問題被標記為解決
 
-→ 實務選擇：重要欄位存結構化（Semantic），
-  對話存摘要（Episodic），原始對話存 archive（冷儲存）
+設計：為每個欄位設 decay rule，過期後主動重確認
+      而不是等到用戶抱怨
 ```
 
----
-
-## 七、完整的 Memory 架構圖
+### 挑戰三：隱私權
 
 ```
-用戶請求進來
-     │
-     ▼
-[Memory Retrieval Layer]
-├── 載入 Semantic Memory（用戶 profile）
-├── 召回相關 Episodic Memory（過去對話）
-└── 組合成 Working Memory context
-     │
-     ▼
-[Agent 執行]（使用 Working Memory）
-     │
-     ▼
-[Memory Update Layer]（對話結束後非同步執行）
-├── 提取重要資訊 → 更新 Semantic Memory
-└── 壓縮對話摘要 → 存入 Episodic Memory
-     │
-     ▼
-（下次對話時召回）
+用戶的記憶控制權：
+
+┌─────────────────────────────────────────────┐
+│  Memory Privacy API                         │
+│                                             │
+│  GET  /memory/{user_id}                     │
+│       → 讓用戶看到 Agent 記了什麼           │
+│                                             │
+│  DELETE /memory/{user_id}                   │
+│       → 全部刪除（GDPR right to erasure）   │
+│                                             │
+│  DELETE /memory/{user_id}/episodic          │
+│       → 只刪對話歷史，保留 profile          │
+│                                             │
+│  PUT /memory/{user_id}/profile              │
+│       → 用戶直接修改自己的 profile          │
+└─────────────────────────────────────────────┘
+```
+
+### 挑戰四：記憶召回的精確性 vs 完整性
+
+```
+Precision vs Recall 的 trade-off：
+
+相似度 threshold = 0.95（高精確）：
+  + 召回的記憶高度相關
+  - 可能漏掉有用但相似度稍低的記憶
+  → 適合：用戶不想看到不相關的「舊事」
+
+相似度 threshold = 0.80（高召回）：
+  + 相關的記憶幾乎都能找到
+  - 召回太多不相關記憶，污染 context
+  → 適合：確保重要記憶不會被遺漏
+
+實務建議：
+  重要記憶（importance > 0.8）→ threshold 0.80，寧可多召回
+  一般記憶（importance < 0.5）→ threshold 0.92，只召回高相關
 ```
 
 ---
 
-## 八、面試答題技巧
+## 六、選型決策：什麼場景用什麼記憶
 
-被問到 Memory 架構時，主動提出「你的選型邏輯」：
-
-> *「我會先問：這個 Agent 需要幾種記憶？*
->
-> *如果只需要在一次對話裡記住狀態，Working Memory 就夠了。*
->
-> *如果需要跨 session 記住用戶說過的具體事情，加 Episodic Memory，用向量資料庫讓它可以搜尋。*
->
-> *如果需要記住用戶的偏好和屬性，加 Semantic Memory，用結構化的 profile 儲存。*
->
-> *我會特別說明挑戰：記憶衝突要以新為準、記憶會過時要定期重確認、用戶有刪除記憶的權利——這些都要在設計時考慮到。」*
+```
+你的 Agent 需要什麼？
+        │
+        ├── 記住當前對話的狀態？
+        │       → Working Memory only（默認已有）
+        │
+        ├── 記住用戶是誰、偏好什麼？
+        │       → + Semantic Memory
+        │         用 PostgreSQL / Firestore 存 profile
+        │
+        ├── 記住「幾個月前說過什麼」？
+        │       → + Episodic Memory
+        │         用 Pinecone / Weaviate / pgvector 存向量
+        │
+        ├── 需要跨用戶共享的知識（最佳實踐、FAQ）？
+        │       → + Procedural Memory（Few-shot in prompt）
+        │         或 Fine-tuning（更持久）
+        │
+        └── 全部都要？
+                → 混合架構
+                  注意：複雜度線性上升，從最小可行的開始
+```
 
 ---
 
-## 九、快速複習卡
+## 七、快速複習卡
 
 ```
 四種記憶類型：
-├── Working Memory   → context window，當次對話
-├── Episodic Memory  → 向量化的歷史對話摘要
-├── Semantic Memory  → 結構化 user profile
-└── Procedural Memory → few-shot / fine-tuning
+  Working Memory   → Context window，當次對話，無需額外設計
+  Episodic Memory  → 向量 DB，跨 session 歷史，按相似度召回
+  Semantic Memory  → 結構化 DB，user profile，每次對話載入
+  Procedural Memory → Few-shot / Fine-tuning，模型層，最持久
 
-四個工程挑戰：
-1. 記憶衝突   → 新記憶優先
-2. 記憶過時   → decay rules + 主動重確認
-3. 隱私權     → 刪除 API + 資料可攜
-4. 精確 vs 規模 → 重要用結構化，對話用摘要
+四大工程挑戰：
+  衝突 → 新記憶優先 + confidence score
+  過時 → decay rule + 主動重確認
+  隱私 → Memory API（查看、刪除、修改）
+  精確性 → 依 importance 調整 recall threshold
 
-架構流程：Retrieval → Working Memory → Agent → Update（非同步）
+架構流程：
+  請求 → 載入 Semantic + 召回 Episodic → Working Memory → LLM
+       → 對話結束後非同步更新 Semantic + Episodic
 ```
 
 ---
