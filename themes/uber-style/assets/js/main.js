@@ -96,7 +96,9 @@ function initSearch() {
 // Load search index
 async function loadSearchIndex() {
     try {
-        const response = await fetch('/index.json');
+        const url = window.SEARCH_INDEX_URL || '/index.json';
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
         const data = await response.json();
         return data;
     } catch (error) {
@@ -113,7 +115,8 @@ function performSearch(query, searchIndex, resultsContainer) {
     }
     
     const results = searchIndex.filter(item => {
-        const searchText = (item.title + ' ' + item.content + ' ' + item.tags.join(' ')).toLowerCase();
+        const tags = Array.isArray(item.tags) ? item.tags.join(' ') : '';
+        const searchText = (item.title + ' ' + item.content + ' ' + tags).toLowerCase();
         return searchText.includes(query.toLowerCase());
     }).slice(0, 10); // Limit to 10 results
     

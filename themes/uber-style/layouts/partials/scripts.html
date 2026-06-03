@@ -1,3 +1,5 @@
+{{/* Inject the correct search index URL before main.js loads */}}
+<script>window.SEARCH_INDEX_URL = '{{ "index.json" | absURL }}';</script>
 {{ $js := resources.Get "js/main.js" }}
 {{ if $js }}
 {{ $js := $js | resources.Minify }}
