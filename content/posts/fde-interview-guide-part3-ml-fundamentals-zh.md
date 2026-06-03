@@ -13,6 +13,8 @@ readTime: "13 min"
 > 這個判斷在面試中會死得很難看。  
 > 基礎不紮實，一旦系統出問題，你沒有能力診斷。
 
+> **閱讀建議：** 這篇涵蓋面試必備的 ML 基礎概要。想要更完整的版本，請參考深度篇：[第八篇（ML 完整版）](/posts/fde-interview-guide-part8-ml-fundamentals-zh/) 和 [第九篇（LLM 核心）](/posts/fde-interview-guide-part9-llm-core-zh/)。
+
 ---
 
 ## 這篇要解決什麼問題

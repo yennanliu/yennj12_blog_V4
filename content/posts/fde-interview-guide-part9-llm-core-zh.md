@@ -387,7 +387,9 @@ Agent 基礎（Part 2）
     ↓
 Agent 深度設計（Part 7）：ReAct vs Planner / Tool Routing / Multi-Agent / Memory
 
-ML 基礎（Part 8）：傳統 ML → Deep Learning → Transformer
+ML 基礎入門（Part 3）：Transformer / Embedding / Fine-tuning / 評估指標
+    ↓
+ML 基礎完整版（Part 8）：傳統 ML → Deep Learning → Transformer（更深）
 
 LLM 核心（Part 9）：Token / Prompt Engineering / Embedding
 

@@ -243,6 +243,13 @@ analysis_task = Task(
     context=[research_task]  # 依賴 research_task 的輸出
 )
 
+write_task = Task(
+    description="根據分析洞察撰寫執行摘要報告",
+    agent=writer,
+    expected_output="清晰易懂的執行摘要，不超過一頁",
+    context=[research_task, analysis_task]
+)
+
 crew = Crew(
     agents=[researcher, analyst, writer],
     tasks=[research_task, analysis_task, write_task]

@@ -9,7 +9,6 @@ authors: ["yen"]
 readTime: "16 min"
 ---
 
-> 這是系列的最後一篇。  
 > System Design 是 FDE 面試最能展現工程深度的地方。  
 > 答得好，你就是那個「懂技術也懂業務」的人。
 
@@ -576,7 +575,21 @@ async def safe_nl2sql(question: str, max_retries: int = 3) -> str:
 
 ## 系列文章索引
 
+### 基礎篇
+
 - **第一篇**：[RAG 完全解析](/posts/fde-interview-guide-part1-rag-zh/) — Embedding、Chunk 策略、幻覺改善
 - **第二篇**：[Agent System Design](/posts/fde-interview-guide-part2-agent-zh/) — ReAct、Multi-Agent、MCP、失控防範
 - **第三篇**：[ML 基礎知識](/posts/fde-interview-guide-part3-ml-fundamentals-zh/) — Transformer、Embedding、Fine-tuning、評估指標
 - **第四篇**：[System Design 實戰](/posts/fde-interview-guide-part4-system-design-zh/) — 知識庫 Chatbot、Internal Copilot
+
+### 深度篇
+
+- **第五篇**：[RAG 深度技術](/posts/fde-interview-guide-part5-rag-deep-dive-zh/) — Chunking 策略、Embedding 選型、向量 DB 設計、Hybrid Search、Reranking
+- **第六篇**：[RAG 進階](/posts/fde-interview-guide-part6-rag-eval-zh/) — 檢索失敗診斷、Grounding 策略、評估指標、成本控制
+- **第七篇**：[Agent 深度設計](/posts/fde-interview-guide-part7-agent-design-zh/) — ReAct vs Planner、Tool Routing、Multi-Agent、Memory
+- **第八篇**：[ML 基礎必備](/posts/fde-interview-guide-part8-ml-fundamentals-zh/) — 傳統 ML → Deep Learning → Transformer
+- **第九篇**：[LLM 核心知識](/posts/fde-interview-guide-part9-llm-core-zh/) — Token、Prompt Engineering、Embedding
+
+---
+
+下一篇：[**RAG 深度技術**](/posts/fde-interview-guide-part5-rag-deep-dive-zh/) — Chunking、Embedding 選型、向量 DB、Hybrid Search。
