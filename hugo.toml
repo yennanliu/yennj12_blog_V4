@@ -58,9 +58,17 @@ buildFuture = true
     url = '/posts-list/'
     weight = 45
   [[menu.main]]
+    name = 'FDE Series'
+    url = '/tags/fde/'
+    weight = 48
+  [[menu.main]]
     name = 'About'
     url = '/about/'
     weight = 50
+  [[menu.main]]
+    name = 'Search'
+    url = '/search/'
+    weight = 55
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]

@@ -41,38 +41,39 @@ function initSearch() {
     const searchClose = document.querySelector('.search__close');
     const searchInput = document.querySelector('.search__input');
     const searchResults = document.querySelector('.search__results');
-    
+    const searchFooter = document.querySelector('.search__footer');
+    const searchViewAll = document.querySelector('.search__view-all');
+
     if (!searchToggle || !searchOverlay) return;
-    
+
     let searchIndex = null;
-    
+
     // Load search index
     loadSearchIndex().then(index => {
         searchIndex = index;
     });
-    
+
     searchToggle.addEventListener('click', function() {
         searchOverlay.classList.add('search__overlay--open');
         searchInput.focus();
     });
-    
+
     if (searchClose) {
         searchClose.addEventListener('click', function() {
             searchOverlay.classList.remove('search__overlay--open');
         });
     }
-    
+
     searchOverlay.addEventListener('click', function(e) {
         if (e.target === searchOverlay) {
             searchOverlay.classList.remove('search__overlay--open');
         }
     });
-    
+
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             searchOverlay.classList.remove('search__overlay--open');
         }
-        
         // Keyboard shortcut to open search (Cmd/Ctrl + K)
         if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
             e.preventDefault();
@@ -80,14 +81,38 @@ function initSearch() {
             searchInput.focus();
         }
     });
-    
-    // Search input handling
+
+    // Navigate to search page on Enter
+    if (searchInput) {
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                const searchPageUrl = window.SEARCH_INDEX_URL
+                    ? window.SEARCH_INDEX_URL.replace('index.json', 'search/') + '?q=' + encodeURIComponent(this.value.trim())
+                    : '/search/?q=' + encodeURIComponent(this.value.trim());
+                window.location.href = searchPageUrl;
+            }
+        });
+    }
+
+    // Search input handling — live preview in modal
     if (searchInput && searchResults) {
         let searchTimeout;
         searchInput.addEventListener('input', function() {
             clearTimeout(searchTimeout);
+            const q = this.value.trim();
             searchTimeout = setTimeout(() => {
-                performSearch(this.value.trim(), searchIndex, searchResults);
+                performSearch(q, searchIndex, searchResults);
+                // Update "View all results" link and show footer
+                if (searchFooter && searchViewAll) {
+                    if (q) {
+                        const base = searchViewAll.dataset.base || searchViewAll.href.split('?')[0];
+                        searchViewAll.dataset.base = base;
+                        searchViewAll.href = base + '?q=' + encodeURIComponent(q);
+                        searchFooter.style.display = 'block';
+                    } else {
+                        searchFooter.style.display = 'none';
+                    }
+                }
             }, 150);
         });
     }

@@ -594,6 +594,149 @@
   color: $color-text-muted;
 }
 
+.search__footer {
+  border-top: 1px solid $color-border;
+  padding: $spacing-sm $spacing-lg;
+  display: none;
+}
+
+.search__view-all {
+  font-size: 0.85rem;
+  color: $color-accent;
+  text-decoration: none;
+  font-weight: 600;
+  &:hover { text-decoration: underline; }
+}
+
+// ─── Search Page ──────────────────────────────────────────────────────────────
+.search-page {
+  padding: $spacing-xl 0 $spacing-2xl;
+
+  &__header {
+    margin-bottom: $spacing-xl;
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__subtitle {
+    color: $color-text-muted;
+    font-size: 0.95rem;
+  }
+
+  &__bar {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: 12px;
+    padding: $spacing-md $spacing-lg;
+    margin-bottom: $spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  &__input-wrap {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  &__icon {
+    color: $color-text-muted;
+    flex-shrink: 0;
+  }
+
+  &__input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1.05rem;
+    color: $color-text;
+    font-family: inherit;
+
+    &::placeholder { color: $color-text-muted; }
+  }
+
+  &__clear {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    transition: color 0.15s;
+    &:hover { color: $color-text; }
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+  }
+
+  &__pill {
+    background: $color-bg;
+    border: 1px solid $color-border;
+    color: $color-text-muted;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+
+    &:hover {
+      border-color: $color-accent;
+      color: $color-accent;
+    }
+
+    &--active {
+      background: $color-accent;
+      border-color: $color-accent;
+      color: #fff;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+    font-size: 0.85rem;
+    color: $color-text-muted;
+  }
+
+  &__share {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: $color-accent;
+    text-decoration: none;
+    font-size: 0.82rem;
+    &:hover { text-decoration: underline; }
+  }
+
+  &__copied {
+    color: $color-accent;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  &__empty {
+    text-align: center;
+    padding: $spacing-2xl 0;
+    color: $color-text-muted;
+
+    a { color: $color-accent; }
+  }
+}
+
 // Highlight search terms
 mark {
   background: rgba($color-accent, 0.2);

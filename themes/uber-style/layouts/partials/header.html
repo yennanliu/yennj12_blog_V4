@@ -41,14 +41,16 @@
 <div class="search__overlay" id="searchOverlay">
     <div class="search__modal">
         <div class="search__header">
-            <input type="text" class="search__input" placeholder="Search articles..." id="searchInput">
+            <input type="text" class="search__input" placeholder="Search articles… (Enter to see full results)" id="searchInput">
             <button class="search__close" type="button" aria-label="Close search">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
         </div>
-        <div class="search__results" id="searchResults">
+        <div class="search__results" id="searchResults"></div>
+        <div class="search__footer" id="searchFooter" style="display:none">
+            <a id="searchViewAll" class="search__view-all" href="{{ "search/" | absURL }}">View all results →</a>
         </div>
     </div>
 </div>

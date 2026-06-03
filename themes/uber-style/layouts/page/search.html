@@ -1,0 +1,253 @@
+{{ define "main" }}
+<div class="search-page">
+  <div class="container">
+
+    <div class="search-page__header">
+      <h1 class="search-page__title">Search Articles</h1>
+      <p class="search-page__subtitle">Filter by keyword, tag, or category. The URL updates as you search — bookmark or share it.</p>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="search-page__bar">
+      <div class="search-page__input-wrap">
+        <svg class="search-page__icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <input id="sp-input" type="text" class="search-page__input" placeholder="Search by title, content, or tag…" autocomplete="off" />
+        <button id="sp-clear" class="search-page__clear" aria-label="Clear search" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Quick tag filter pills -->
+      <div class="search-page__tags" id="sp-tag-pills">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- Result count + share link -->
+    <div class="search-page__meta" id="sp-meta" style="display:none">
+      <span id="sp-count"></span>
+      <a id="sp-share" class="search-page__share" href="#" title="Copy shareable link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Copy link
+      </a>
+      <span id="sp-copied" class="search-page__copied" style="display:none">Copied!</span>
+    </div>
+
+    <!-- Results grid -->
+    <div class="posts__grid" id="sp-results"></div>
+
+    <!-- Empty state -->
+    <div id="sp-empty" class="search-page__empty" style="display:none">
+      <p>No articles found. Try a different keyword or <a href="#" id="sp-reset">clear the filter</a>.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  const INDEX_URL = '{{ "index.json" | absURL }}';
+  const BASE_URL  = '{{ "/" | absURL }}';
+
+  /* ── Quick-access tag pills (most common tags) ── */
+  const PINNED_TAGS = ['FDE', 'AI', 'RAG', 'Agent', 'LLM', 'System Design', 'Interview', 'Google'];
+
+  let allPosts = [];
+
+  /* ── DOM refs ── */
+  const input    = document.getElementById('sp-input');
+  const clearBtn = document.getElementById('sp-clear');
+  const results  = document.getElementById('sp-results');
+  const empty    = document.getElementById('sp-empty');
+  const meta     = document.getElementById('sp-meta');
+  const countEl  = document.getElementById('sp-count');
+  const shareBtn = document.getElementById('sp-share');
+  const copiedEl = document.getElementById('sp-copied');
+  const pillsEl  = document.getElementById('sp-tag-pills');
+  const resetLink= document.getElementById('sp-reset');
+
+  /* ── Load index ── */
+  fetch(INDEX_URL)
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(data => {
+      allPosts = data;
+      buildTagPills();
+      applyURLParams();
+    })
+    .catch(err => console.error('Search index load failed:', err));
+
+  /* ── Build quick-filter tag pills ── */
+  function buildTagPills() {
+    PINNED_TAGS.forEach(tag => {
+      const btn = document.createElement('button');
+      btn.className = 'search-page__pill';
+      btn.textContent = tag;
+      btn.dataset.tag = tag;
+      btn.addEventListener('click', () => {
+        const active = btn.classList.toggle('search-page__pill--active');
+        const others = pillsEl.querySelectorAll('.search-page__pill--active');
+        // only one active tag pill at a time
+        others.forEach(o => { if (o !== btn) o.classList.remove('search-page__pill--active'); });
+        if (active) {
+          input.value = '';
+          updateURL('', tag);
+          render('', tag);
+        } else {
+          updateURL('', '');
+          render('', '');
+        }
+      });
+      pillsEl.appendChild(btn);
+    });
+  }
+
+  /* ── Read URL params on load ── */
+  function applyURLParams() {
+    const params = new URLSearchParams(window.location.search);
+    const q   = params.get('q')   || '';
+    const tag = params.get('tag') || '';
+    if (q)   { input.value = q; clearBtn.style.display = 'block'; }
+    if (tag) {
+      pillsEl.querySelectorAll('.search-page__pill').forEach(b => {
+        if (b.dataset.tag.toLowerCase() === tag.toLowerCase())
+          b.classList.add('search-page__pill--active');
+      });
+    }
+    render(q, tag);
+  }
+
+  /* ── Input handling ── */
+  let debounceTimer;
+  input.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    // deactivate tag pills when typing
+    pillsEl.querySelectorAll('.search-page__pill--active')
+      .forEach(b => b.classList.remove('search-page__pill--active'));
+    clearBtn.style.display = input.value ? 'block' : 'none';
+    debounceTimer = setTimeout(() => {
+      updateURL(input.value.trim(), '');
+      render(input.value.trim(), '');
+    }, 200);
+  });
+
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    clearBtn.style.display = 'none';
+    input.focus();
+    updateURL('', '');
+    render('', '');
+  });
+
+  resetLink && resetLink.addEventListener('click', e => {
+    e.preventDefault();
+    input.value = '';
+    clearBtn.style.display = 'none';
+    pillsEl.querySelectorAll('.search-page__pill--active')
+      .forEach(b => b.classList.remove('search-page__pill--active'));
+    updateURL('', '');
+    render('', '');
+  });
+
+  /* ── Update browser URL without reload ── */
+  function updateURL(q, tag) {
+    const params = new URLSearchParams();
+    if (q)   params.set('q', q);
+    if (tag) params.set('tag', tag);
+    const qs = params.toString();
+    const url = window.location.pathname + (qs ? '?' + qs : '');
+    history.replaceState(null, '', url);
+    shareBtn.href = window.location.href;
+  }
+
+  /* ── Copy share link ── */
+  shareBtn && shareBtn.addEventListener('click', e => {
+    e.preventDefault();
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      copiedEl.style.display = 'inline';
+      setTimeout(() => { copiedEl.style.display = 'none'; }, 1800);
+    });
+  });
+
+  /* ── Core filter + render ── */
+  function render(q, tag) {
+    const ql = q.toLowerCase();
+    const tl = tag.toLowerCase();
+
+    const filtered = allPosts.filter(post => {
+      const tags = Array.isArray(post.tags) ? post.tags : [];
+      const cats = Array.isArray(post.categories) ? post.categories : [];
+
+      if (tl) {
+        const inTags = tags.some(t => t.toLowerCase() === tl);
+        const inCats = cats.some(c => c.toLowerCase() === tl);
+        if (!inTags && !inCats) return false;
+      }
+
+      if (ql) {
+        const haystack = [
+          post.title || '',
+          post.content || '',
+          post.summary || '',
+          tags.join(' '),
+          cats.join(' ')
+        ].join(' ').toLowerCase();
+        if (!haystack.includes(ql)) return false;
+      }
+
+      return true;
+    });
+
+    // Sort: newest first
+    filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    meta.style.display = filtered.length > 0 || q || tag ? 'flex' : 'none';
+    const label = q ? `"${q}"` : tag ? `#${tag}` : 'all articles';
+    countEl.textContent = `${filtered.length} article${filtered.length !== 1 ? 's' : ''} — ${label}`;
+    shareBtn.href = window.location.href;
+
+    if (filtered.length === 0) {
+      results.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    results.innerHTML = filtered.map(post => {
+      const tags  = Array.isArray(post.tags) ? post.tags : [];
+      const date  = post.date ? new Date(post.date).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '';
+      const excerpt = (post.summary || '').replace(/<[^>]*>/g, '').substring(0, 140);
+      const tagHTML = tags.slice(0, 3).map(t => `<span class="post-card__tag">${esc(t)}</span>`).join('');
+      const titleHL  = highlight(esc(post.title  || ''), q);
+      const excerptHL= highlight(esc(excerpt), q);
+      return `
+        <article class="post-card">
+          <a href="${esc(post.permalink)}" class="post-card__link">
+            <div class="post-card__meta">
+              <time class="post-card__date">${date}</time>
+              ${post.readTime ? `<span class="post-card__read-time">${esc(post.readTime)}</span>` : ''}
+            </div>
+            <h2 class="post-card__title">${titleHL}</h2>
+            ${excerpt ? `<p class="post-card__excerpt">${excerptHL}${excerpt.length >= 140 ? '…' : ''}</p>` : ''}
+            ${tagHTML ? `<div class="post-card__tags">${tagHTML}</div>` : ''}
+          </a>
+        </article>`;
+    }).join('');
+  }
+
+  function highlight(text, q) {
+    if (!q) return text;
+    return text.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>');
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+})();
+</script>
+{{ end }}
