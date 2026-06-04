@@ -2,7 +2,7 @@
 title: "FDE 面試準備指南（三）：你不能忽略的 ML 基礎"
 date: 2026-05-30T11:00:00+08:00
 draft: false
-description: "以 Google AI 工程師兼面試官的視角，整理 FDE 面試中仍然高頻的傳統 ML / AI 基礎知識，包含 Transformer、Embedding、評估指標與 Fine-tuning"
+description: "以 Google AI 工程師兼面試官的視角，整理 FDE 面試中仍然高頻的傳統 ML / AI 基礎知識，包含 Transformer、Embedding、評估指標與 Fine-tuning 的工程視角"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Machine Learning", "Transformer", "Embedding", "Evaluation", "Fine-tuning", "Interview", "Google"]
 authors: ["yen"]
@@ -13,405 +13,372 @@ readTime: "13 min"
 > 這個判斷在面試中會死得很難看。  
 > 基礎不紮實，一旦系統出問題，你沒有能力診斷。
 
-> **閱讀建議：** 這篇涵蓋面試必備的 ML 基礎概要。想要更完整的版本，請參考深度篇：[第八篇（ML 完整版）](/posts/fde-interview-guide-part8-ml-fundamentals-zh/) 和 [第九篇（LLM 核心）](/posts/fde-interview-guide-part9-llm-core-zh/)。
+> **閱讀建議：** 這篇是 ML 基礎概要。想要更完整的深度版本，參考 [第八篇（ML 完整版）](/posts/fde-interview-guide-part8-ml-fundamentals-zh/) 和 [第九篇（LLM 核心）](/posts/fde-interview-guide-part9-llm-core-zh/)。
 
 ---
 
-## 這篇要解決什麼問題
+## 面試情境
 
-很多準備 FDE 面試的人花大量時間看 LangChain、LangGraph，卻忘了面試官通常會先問一些「基礎確認題」。
+> **面試官：**「解釋一下 Transformer 的 Self-Attention 機制。然後告訴我：Fine-tuning 和 RAG 在你的客戶場景下你怎麼選？如果 Fine-tuning 出現 Overfitting，你怎麼偵測？」
 
-這些題目不難，但如果你含糊其辭，面試官對你的印象就會打折扣。
-
-這篇整理的是：**必知、不能答錯、而且在實際工作中真的用得到**的 ML 基礎。
+ML 基礎題通常是「過濾用的」——答不出來直接扣分，答得好不會讓你脫穎而出。但這些概念在實際工作中真的有用。
 
 ---
 
-## Transformer 架構：你要能解釋的程度
+## 一、Transformer 架構：面試要說清楚的程度
 
-不需要默背整個論文，但你要能解釋清楚幾個核心概念。
+### Self-Attention 的核心機制
 
-### Self-Attention：為什麼重要
+傳統 RNN 的問題：句子越長，開頭的資訊到句尾就已經被稀釋了，**遠距離依賴很難學**。
 
-傳統 RNN 的問題：**遠距離依賴很難學**。
-
-句子越長，開頭的資訊到句尾就已經被稀釋掉了。
-
-Self-Attention 的解法：**每個 token 直接和所有其他 token 計算相關性**，不管距離。
+Self-Attention 的解法：**每個 token 直接和所有其他 token 計算相關性，不管距離**。
 
 ```
 句子：「這家公司的 CEO 昨天宣布了一項重大決策」
 
-Self-Attention 讓「決策」這個詞能直接「看到」「CEO」，
+Self-Attention 讓「決策」直接「看到」「CEO」，
 不需要一步步從前面傳遞資訊。
+
+數學直觀（面試可能問到 Q/K/V 的意思）：
+
+  Q（Query）：這個 token 在「問」什麼資訊？
+  K（Key）：  其他 token「能提供」什麼資訊？
+  V（Value）：實際要「傳遞」的內容是什麼？
+
+  計算流程：
+  Q × Kᵀ（相關性分數）→ Softmax（變成機率分布）→ × V（加權求和）
+
+  不需要手推公式，但要知道：
+  └── √d_k 是縮放因子，避免點積值過大導致梯度消失
 ```
 
-數學形式（面試可能會問）：
+### Positional Encoding：為什麼要加位置資訊
+
+Self-Attention 本身**沒有位置概念**。
 
 ```
-Attention(Q, K, V) = softmax(QK^T / √d_k) × V
+「我愛你」和「你愛我」裡的「愛」，
+在純 Self-Attention 裡計算出來的 embedding 是相同的。
 
-Q = Query（當前 token 在問什麼）
-K = Key（其他 token 能提供什麼）
-V = Value（實際要傳遞的資訊）
-d_k = Key 的維度（做縮放，避免數值太大）
-```
+Positional Encoding 用週期函數（sin/cos）給每個位置一個唯一的「指紋」，
+讓模型知道「這個 token 在句子的第幾個位置」。
 
-不需要手推，但要知道 Q/K/V 各自的意思。
-
-### Positional Encoding：為什麼需要
-
-Self-Attention 本身**沒有位置概念**。`「我愛你」`和`「你愛我」`裡的「愛」，在純 Attention 裡是一樣的。
-
-所以要加上位置編碼，告訴模型每個 token 在句子的哪個位置。
-
-```python
-import numpy as np
-
-def positional_encoding(seq_len, d_model):
-    positions = np.arange(seq_len)[:, np.newaxis]
-    dims = np.arange(d_model)[np.newaxis, :]
-    
-    angles = positions / np.power(10000, (2 * (dims // 2)) / d_model)
-    
-    # 偶數維度用 sin，奇數維度用 cos
-    pe = np.where(dims % 2 == 0, np.sin(angles), np.cos(angles))
-    return pe
+面試要說的：
+  └── PE 讓 Transformer 能處理位置資訊，
+      沒有 PE，模型看到的是「一袋單詞」，不是「有順序的句子」
 ```
 
 ### 三種 Transformer 變體
 
-| 架構 | 代表模型 | 適合任務 |
-|------|----------|----------|
-| Encoder only | BERT | 文本分類、NER、相似度 |
-| Decoder only | GPT, Claude, Gemini | 文本生成、對話 |
-| Encoder-Decoder | T5, BART | 翻譯、摘要、問答 |
+| 架構 | 代表模型 | 適合任務 | FDE 場景 |
+|------|----------|----------|---------|
+| Encoder only | BERT | 文本分類、NER、相似度 | Embedding 模型選型 |
+| Decoder only | GPT、Claude、Gemini | 文本生成、對話 | 你每天呼叫的 API |
+| Encoder-Decoder | T5、BART | 翻譯、摘要 | 少見於 FDE 場景 |
 
-**FDE 最常用的是 Decoder only**（因為你在用的 API 幾乎都是這類）。
-
----
-
-## Embedding：你要能解釋到這個層次
-
-### 什麼是 Embedding
-
-把高維稀疏的資料（文字、圖片、使用者 ID）映射到**低維稠密向量**，讓機器能計算「相似度」。
-
-```
-「貓」 → [0.23, -0.45, 0.87, ...]  # 768 維
-「狗」 → [0.25, -0.43, 0.85, ...]  # 和「貓」很接近
-「汽車」 → [-0.67, 0.12, -0.34, ...]  # 和「貓」很遠
-```
-
-### 常用 Embedding 模型
-
-| 模型 | 維度 | 特點 |
-|------|------|------|
-| text-embedding-004（Google） | 768 | 多語言、生產推薦 |
-| text-embedding-3-small（OpenAI） | 1536 | 成本低 |
-| all-MiniLM-L6-v2（開源） | 384 | 輕量、適合本地部署 |
-| multilingual-e5-large（開源） | 1024 | 多語言效果好 |
-
-### 相似度計算
-
-```python
-import numpy as np
-
-def cosine_similarity(vec_a, vec_b):
-    return np.dot(vec_a, vec_b) / (np.linalg.norm(vec_a) * np.linalg.norm(vec_b))
-
-# 範圍：-1 到 1
-# 1  = 完全相同
-# 0  = 完全無關
-# -1 = 完全相反
-
-sim = cosine_similarity(embedding_cat, embedding_dog)
-# → 0.87（很相似）
-```
+**FDE 最常遇到的是 Decoder only**——你呼叫的所有對話 API 幾乎都是這類架構。
 
 ---
 
-## 評估指標：必須能流利解釋
+## 二、Embedding：解釋到工程視角
 
-這是基礎中的基礎，面試官可能隨時插進來問。
+### 什麼是 Embedding（一句話）
 
-### Precision vs Recall
-
-用搜尋引擎來理解：
+> **把文字映射成向量，讓機器能計算語意距離。**
 
 ```
-查詢後，搜尋引擎返回 10 篇文章
-  - 其中 7 篇是真正相關的（Precision = 7/10 = 70%）
+語意相似 → 向量距離近：
 
-資料庫裡有 20 篇相關文章
-  - 搜尋引擎找到了其中 7 篇（Recall = 7/20 = 35%）
+  「貓」  →  [0.23, -0.45, 0.87, ...]  （768 維）
+  「狗」  →  [0.25, -0.43, 0.85, ...]  ← 和貓很接近（同為動物）
+  「汽車」→  [-0.67, 0.12, -0.34, ...]  ← 和貓很遠（不同語意域）
+
+相似度計算用 Cosine Similarity：
+  公式：cos(θ) = (A · B) / (|A| × |B|)
+  範圍：−1 到 1（1 = 完全相同方向，0 = 無關，−1 = 相反）
 ```
 
-**Precision**：你找到的東西，有多少是對的？
+### 常用 Embedding 模型選型
 
-**Recall**：所有對的東西，你找到了幾個？
+| 模型 | 維度 | 特點 | FDE 推薦場景 |
+|------|------|------|-------------|
+| text-embedding-004（Google） | 768 | 多語言、支援 task_type | GCP 生態系首選 |
+| text-embedding-3-small（OpenAI） | 1536 | 成本低 | 混合雲場景 |
+| BGE-M3（開源） | 1024 | 多語言、中文強 | 中文為主的知識庫 |
+| bge-large-zh（開源） | 1024 | 中文專用，效能極佳 | 純中文場景 |
 
-### F1 Score
-
-Precision 和 Recall 的調和平均：
+**選型關鍵問題：**
 
 ```
-F1 = 2 × (Precision × Recall) / (Precision + Recall)
-```
-
-當你不確定哪個更重要時，看 F1。
-
-### RAG 場景下的特殊指標
-
-在 RAG 系統裡，你需要另外關注：
-
-```python
-# RAGAS 框架的四個核心指標
-
-# 1. Faithfulness（忠實度）
-# 回答是否完全基於查到的文件，沒有幻覺？
-# 高 = 好
-
-# 2. Answer Relevancy（回答相關性）
-# 回答是否直接回應了問題？
-# 高 = 好
-
-# 3. Context Precision（上下文精確度）
-# 查到的文件，有多少是真正有用的？
-# 高 = 好
-
-# 4. Context Recall（上下文召回率）
-# 回答問題需要的資訊，有多少被查出來了？
-# 高 = 好
+1. 語言：中文為主 → BGE 系列；多語言 → text-embedding-004
+2. 部署：必須在 GCP → Vertex AI text-embedding；可用第三方 → 看 benchmark
+3. 成本：高流量 → 用小維度（384-768）+ MRL 截短
+4. 評估：不要靠直覺選，用自己的資料跑 retrieval recall@k，數字說話
 ```
 
 ---
 
-## Overfitting vs Underfitting
+## 三、評估指標：必須能流利解釋
 
-基本概念，但面試官喜歡問「在 LLM / RAG 場景下，這兩個問題怎麼表現？」
+### Precision vs Recall（用搜尋引擎理解最清楚）
 
-### 傳統 ML 的版本
+```
+場景：搜尋引擎返回 10 篇文章，資料庫裡有 20 篇相關文章
+
+  搜尋結果 10 篇中，7 篇是真正相關的
+  → Precision = 7/10 = 70%（你找到的東西，有多少是對的）
+
+  資料庫 20 篇相關文章中，找到了 7 篇
+  → Recall = 7/20 = 35%（所有對的東西，你找到了幾個）
+
+Trade-off：
+  High Precision + Low Recall：很精準但漏了很多
+  Low Precision + High Recall：找到很多但很多是無關的
+
+  F1 = 2 × (P × R) / (P + R)  ← 兩者的調和平均，不確定哪個更重要時看這個
+```
+
+### RAG 場景的特殊指標
+
+```
+傳統 Precision/Recall 不夠用，RAG 用 RAGAS 框架：
+
+  Context Recall
+  「回答問題所需的資訊，有多少比例被 Retrieve 到了？」
+  → 衡量 Retrieval 品質，低 = Retrieval 有問題
+
+  Faithfulness（忠實度）
+  「LLM 的回答，有多少比例忠於 Retrieved Context？」
+  → 衡量幻覺程度，低 = LLM 在自己捏造
+
+  Answer Relevancy
+  「回答是否直接回應了問題？」
+  → 衡量整體回答相關性
+
+診斷流程：
+  Context Recall 低 → Retrieval 問題（Chunking、Embedding、Hybrid Search）
+  Context Recall 高但 Faithfulness 低 → Generation 問題（Prompt、Grounding）
+```
+
+---
+
+## 四、Overfitting vs Underfitting：FDE 視角
+
+### 傳統 ML 的理解
 
 ```
 Underfitting（欠擬合）：模型太簡單
-→ 訓練集準確率低，測試集也低
+  訓練集表現差 → 測試集也差 → 模型沒有學到規律
 
-Overfitting（過擬合）：模型記住訓練資料了
-→ 訓練集準確率高，測試集卻低
+Overfitting（過擬合）：模型太複雜，記住了訓練資料
+  訓練集表現好 → 測試集表現差 → 泛化能力差
 ```
 
-### LLM / Fine-tuning 的版本
-
-**Underfitting**：Fine-tuning 資料太少，模型沒學到特定格式或知識。
-
-**Overfitting**：Fine-tuning 太多 epoch，模型把訓練資料背起來了，但泛化能力變差。
-
-```python
-# Fine-tuning 時監控 Validation Loss
-# 如果 train_loss 持續下降但 val_loss 開始上升，就是 overfitting
-
-for epoch in range(max_epochs):
-    train_loss = train_one_epoch(model, train_data)
-    val_loss = evaluate(model, val_data)
-    
-    print(f"Epoch {epoch}: train={train_loss:.3f}, val={val_loss:.3f}")
-    
-    if val_loss > best_val_loss * 1.05:  # val loss 上升 5%
-        print("Early stopping!")
-        break
-    
-    best_val_loss = min(val_loss, best_val_loss)
-```
-
-**Early Stopping** 是解決 Fine-tuning overfitting 的標準做法。
-
----
-
-## Fine-tuning 核心知識
-
-FDE 需要知道什麼時候建議客戶 Fine-tune，而不是用 RAG。
-
-### Fine-tuning 適合的場景
-
-1. **固定的輸出格式**：希望模型永遠以特定 JSON 格式回答
-2. **特定語氣和風格**：公司品牌語調
-3. **高度專業的領域知識**：法律條文解析、醫療編碼
-4. **任務不需要知識更新**：文字分類、情感分析
-
-### LoRA：現在最主流的 Fine-tuning 方法
-
-全量 Fine-tuning 要改動所有參數，成本極高。
-
-LoRA（Low-Rank Adaptation）的做法：**不動原始參數，只訓練一組很小的矩陣**。
-
-```python
-from peft import LoraConfig, get_peft_model
-from transformers import AutoModelForCausalLM
-
-base_model = AutoModelForCausalLM.from_pretrained("google/gemma-2-9b")
-
-lora_config = LoraConfig(
-    r=16,              # Rank：越小越省記憶體，但表達能力越弱
-    lora_alpha=32,     # 縮放係數，通常設為 r 的 2 倍
-    target_modules=["q_proj", "v_proj"],  # 只訓練 attention 的 Q 和 V
-    lora_dropout=0.1,
-    task_type="CAUSAL_LM"
-)
-
-model = get_peft_model(base_model, lora_config)
-model.print_trainable_parameters()
-# trainable params: 8,388,608 / 9,241,835,520 → 只有 0.09%！
-```
-
-### 面試常問的 trade-off
-
-| | LoRA Fine-tuning | Full Fine-tuning | RAG |
-|--|--|--|--|
-| 記憶體需求 | 低 | 極高 | 低 |
-| 訓練成本 | 中 | 高 | 無 |
-| 知識可更新 | 否 | 否 | 是 |
-| 推理速度 | 快 | 快 | 稍慢（查資料庫） |
-| 引用來源 | 否 | 否 | 是 |
-
----
-
-## Tokenization：知道這些就夠
-
-### 為什麼 LLM 用 token 而不是字元
-
-字元集太大（漢字就幾萬個），直接建詞表太浪費。
-
-主流做法是 **BPE（Byte Pair Encoding）**：把常見的字元組合合併成一個 token。
+### LLM Fine-tuning 的版本
 
 ```
-中文例子：
-「台灣」可能是一個 token
-「北部」可能被切成「北」和「部」兩個 token
+Fine-tuning Overfitting 的樣子：
 
-英文例子：
-"running" → ["run", "ning"]
-"tokenization" → ["token", "ization"]
-```
+  Epoch 1-5：train loss ↓，val loss ↓  ← 正常學習
+  Epoch 6：  train loss ↓，val loss →  ← 開始停滯
+  Epoch 7-10：train loss ↓，val loss ↑  ← Overfitting，要 Early Stop
 
-### 重要的 token 知識
+偵測方法：
+  訓練時同時監控 Train Loss 和 Validation Loss（用 held-out 資料集）
+  Val Loss 開始上升超過 5% → 觸發 Early Stopping，用這個 checkpoint
 
-```python
-import tiktoken  # OpenAI 的 tokenizer
-
-enc = tiktoken.get_encoding("cl100k_base")
-
-# 計算 token 數
-text = "Hello, how are you?"
-tokens = enc.encode(text)
-print(len(tokens))  # → 5
-
-# 中文通常 1 個字 ≈ 1.5-2 個 token
-chinese_text = "今天天氣如何？"
-print(len(enc.encode(chinese_text)))  # → 約 8-10
-```
-
-**為什麼要知道 token 數？**
-
-1. API 計費按 token 計算
-2. Context window 有上限（例如 Claude 200k tokens）
-3. Chunk size 的設計要考慮 token，不是字元數
-
----
-
-## Temperature 和 Sampling
-
-面試官有時候會問：「什麼情況下你會調整 Temperature？」
-
-### Temperature 的作用
-
-```
-Temperature = 0   → 完全確定性（總選機率最高的 token）
-Temperature = 1   → 原始分佈（預設）
-Temperature > 1   → 更隨機、更創意
-```
-
-```python
-import anthropic
-
-client = anthropic.Anthropic()
-
-# 客服問答：需要精準，不要亂發揮
-response = client.messages.create(
-    model="claude-sonnet-4-6",
-    max_tokens=500,
-    temperature=0.1,  # 低 temperature
-    messages=[{"role": "user", "content": "我的訂單狀態是什麼？"}]
-)
-
-# 行銷文案：需要創意
-response = client.messages.create(
-    model="claude-sonnet-4-6",
-    max_tokens=500,
-    temperature=0.9,  # 高 temperature
-    messages=[{"role": "user", "content": "幫我寫一個有創意的產品標語"}]
-)
+FDE 的客戶場景：
+  客戶 Fine-tuning 後說「模型在測試集很好，但實際客服效果變差」
+  → 幾乎是 Overfitting，訓練資料太窄，沒有覆蓋真實用戶的多樣性
+  → 建議：增加訓練資料多樣性，或者降低 epoch 數，或者換 RAG
 ```
 
 ---
 
-## Hallucination：成因和緩解
-
-面試一定會問，因為這是 LLM 最核心的問題之一。
-
-### 為什麼 LLM 會幻覺
-
-LLM 是在預測「下一個最可能的 token」，它並不真的「知道」事實，只是學到了語言模式。
-
-當訓練資料裡沒有某個問題的答案，模型不會說「我不知道」，而是**生成一個聽起來合理但錯誤的答案**。
-
-### 緩解方向
+## 五、Fine-tuning 核心知識：什麼時候建議客戶用
 
 ```
-1. System Prompt 明確指示
-   "如果不確定，請說『我不知道』，不要猜測"
+選擇框架：
 
-2. RAG（最有效）
-   給模型可以引用的上下文，限制它的發揮空間
+  你的知識是動態的？    → RAG（文件改，知識就更新）
+  你需要追溯來源？      → RAG（查到哪份文件）
+  你要改變輸出格式？    → Fine-tuning
+  你要固定語氣風格？    → Fine-tuning
+  你有大量標注資料？    → Fine-tuning 更划算
+```
 
-3. Temperature 降低
-   減少隨機性，讓模型更保守
+| | RAG | Fine-tuning |
+|--|-----|-------------|
+| 知識更新 | 即時（改 DB） | 需要重新訓練 |
+| 引用來源 | 可以 | 幾乎不行 |
+| 成本 | Inference + DB | GPU 訓練 |
+| 幻覺風險 | 較低 | 較高 |
+| 輸出格式控制 | 靠 Prompt | 直接訓練進去 |
 
-4. Self-consistency
-   同一個問題問多次，取最一致的答案
+### LoRA：為什麼幾乎取代了 Full Fine-tuning
 
-5. Citation / Grounding
-   要求模型引用來源，間接迫使它更謹慎
+```
+Full Fine-tuning 的問題：
+  修改所有模型參數 → 需要和原模型一樣大的 GPU 記憶體
+  Gemini 2B → 需要數十 GB GPU RAM
+  Gemma 9B → 需要數百 GB GPU RAM → 一般企業負擔不起
+
+LoRA 的做法：
+  凍結原始模型所有參數
+  在每個 Attention 層旁邊插入兩個小矩陣（A 和 B）
+  只訓練這兩個小矩陣
+
+  原始 weight matrix W（768×768 = 589,824 個參數）
+  LoRA 矩陣 A（768×16）+ B（16×768）= 24,576 個參數
+                                         ↑ 只有 4.2%
+
+  推理時：W' = W + BA（合併進原始矩陣，不增加推理延遲）
+
+LoRA 的關鍵參數：
+  rank (r)：越小越省記憶體，但表達能力越弱
+            通常 r=8 到 r=64，大多數場景 r=16 夠用
+  target_modules：選哪些層訓練
+                  通常訓練 Attention 的 Q 和 V（不是全部層）
 ```
 
 ---
 
-## 面試快速自測
+## 六、Token 與 Context Window
 
-在去面試之前，確認你能用自己的話解釋這些：
+### Token 的工程意涵
 
-- [ ] Self-Attention 的 Q、K、V 各是什麼意思？
-- [ ] Encoder-only vs Decoder-only 有什麼差？適合什麼任務？
-- [ ] Precision 和 Recall 的 trade-off 是什麼？
-- [ ] 為什麼 Fine-tuning 會 overfit？怎麼偵測？
-- [ ] LoRA 為什麼比 Full Fine-tuning 省記憶體？
-- [ ] Temperature 什麼情況調高？什麼情況調低？
-- [ ] RAG 怎麼減少幻覺？
+```
+LLM 以 Token 為單位處理文字，不是字元或詞語：
 
-如果有任何一題你需要想很久，那就是要補的地方。
+  英文：1 token ≈ 0.75 個單詞（"tokenization" → ["token", "ization"]）
+  中文：1 token ≈ 1 個中文字（「台灣」可能是 1 個 token 或 2 個）
+
+  粗估：
+  1,000 英文 tokens ≈ 750 個英文字
+  1,000 中文 tokens ≈ 1,000 個中文字
+
+Context Window 的設計影響：
+  系統 Prompt：約 500 tokens（固定）
+  RAG Context：約 1,500 tokens（每次查詢）
+  對話歷史：隨輪次線性增長（最容易爆的部分）
+  輸出 Reserve：約 2,000 tokens
+
+  → Chunk Size 設計要用 tokens 計算，不是字元數
+  → 超過 Context Window → 報錯，Agent 中斷
+```
+
+### Temperature 的選擇邏輯
+
+```
+Temperature 控制 LLM 輸出的隨機程度：
+
+場景                建議 Temperature    理由
+───────────────────────────────────────────────────────
+客服問答、事實查詢   0.0 – 0.2          需要精準，不要亂發揮
+程式碼生成          0.0 – 0.3          要正確，不要創意
+文件摘要            0.3 – 0.5          保留重要資訊，允許改寫
+行銷文案            0.7 – 0.9          需要創意和多樣性
+頭腦風暴            0.9 – 1.0          越多樣越好
+
+規則：
+  精準性要求高 → Temperature 低
+  創意和多樣性要求高 → Temperature 高
+```
 
 ---
 
-## 小結
+## 七、Hallucination：成因與緩解
 
-FDE 面試的 ML 基礎題，通常是用來**過濾**的，不是用來拉分的。
+面試幾乎必問，因為這是 LLM 最核心的工程問題。
 
-答不出來就直接扣分，答得好也不會讓你脫穎而出。
+```
+為什麼 LLM 會幻覺？
 
-但這些概念在實際工作中是真的有用的：
+LLM 的訓練目標是「預測下一個最可能的 token」，
+它不是在「查找事實」，而是在「生成聽起來合理的文字」。
+當訓練資料裡沒有某個問題的答案，
+模型不會說「我不知道」——它會生成一個聽起來合理但可能錯的答案。
 
-- 你需要知道 Embedding 才能設計好 RAG
-- 你需要知道 Fine-tuning trade-off 才能給客戶正確的建議
-- 你需要知道評估指標才能量化系統的改善
+緩解方向：
 
-下一篇：**System Design** — 設計企業知識庫 Chatbot 和 Internal Copilot，這是 FDE 最貼近實際工作的考題。
+方向                 效果      代價
+──────────────────────────────────────────────────────
+RAG（提供 Context）  最有效    需要建立 Retrieval Pipeline
+Grounding Prompt    中等       需要設計 Prompt
+Temperature 降低    有限       犧牲多樣性
+Self-Consistency    有效       多次呼叫，成本高
+引用來源要求         間接有效   LLM 更謹慎，但不能完全防止
+```
+
+---
+
+## 八、面試官地雷題
+
+**地雷 1：「Encoder-only 和 Decoder-only 模型的 Embedding 有什麼差別？」**
+
+```
+答：Encoder-only（如 BERT）的 Embedding 是雙向的——
+    每個 token 能看到句子中所有其他 token，
+    適合做語意相似度和分類任務（也是大多數 Embedding 模型的基礎架構）。
+    Decoder-only（如 GPT/Gemini）的 Embedding 是單向的——
+    每個 token 只能看到它之前的 token，
+    設計目標是生成，不是 Embedding。
+    所以 RAG 用的 Embedding 模型通常是 Encoder-based 的。
+```
+
+**地雷 2：「LoRA 的 rank 設多少？你怎麼決定？」**
+
+```
+答：rank 是 LoRA 的核心超參數，控制適應能力和參數量的 trade-off。
+    一般起點是 r=16，然後在 validation set 上驗證效果。
+    如果效果不夠好，加大到 r=32 或 r=64。
+    如果記憶體緊張，縮小到 r=8。
+    沒有通用最優值——要根據你的任務複雜度和資料量決定。
+    原則：任務越複雜、資料越多，rank 可以設大一點。
+```
+
+**地雷 3：「Fine-tuning 後模型在 eval set 表現好，但生產環境效果差，為什麼？」**
+
+```
+答：最常見的三個原因：
+    1. Train/Eval 分佈和生產分佈不一致——你的 eval set 不代表真實用戶的多樣性
+    2. Overfitting——特別是訓練資料量小但 epoch 跑太多的情況
+    3. 生產輸入有預處理差異——Tokenization、Prompt 格式等和訓練時不一致
+    解法：用「真實生產流量的樣本」做 eval，不用合成資料或早期測試資料。
+```
+
+---
+
+## 九、面試回答完整示範
+
+```
+面試官期待的回答（ML 基礎確認題）：
+
+Self-Attention：
+「Self-Attention 讓每個 token 能直接和句子中所有其他 token
+ 計算相關性，解決了 RNN 遠距離依賴難學的問題。
+ 核心是 Q、K、V 三個矩陣——
+ Q 問「我需要什麼資訊」，K 說「我有什麼資訊」，
+ 兩者相乘得到相關性分數，再乘 V 得到加權的資訊。」
+
+Fine-tuning vs RAG：
+「我會先問客戶：你的知識需要頻繁更新嗎？需要引用文件來源嗎？
+ 如果是，選 RAG——改 DB 就更新知識，不需要重新訓練。
+ 如果客戶需要固定的輸出格式或特定語氣，
+ 或者有大量標注資料，才考慮 Fine-tuning。
+ 兩者的根本差異是：RAG 是知識外部化，Fine-tuning 是知識內化。」
+
+Overfitting 偵測：
+「Fine-tuning 時同時監控 Train Loss 和 Validation Loss。
+ 如果 Train Loss 持續下降但 Val Loss 開始上升，
+ 就是 Overfitting 的信號。
+ 標準做法是 Early Stopping——
+ Val Loss 上升超過 5% 時停止，使用最低 Val Loss 的 checkpoint。」
+```
+
+---
+
+ML 基礎在 FDE 面試中是「過濾題」。  
+答不出來直接被扣分，答得好不是加分，是**建立你有工程判斷力的基礎印象**。
+
+下一篇：[**System Design 實戰**](/posts/fde-interview-guide-part4-system-design-zh/) — 設計企業知識庫 Chatbot 和 Internal Copilot。

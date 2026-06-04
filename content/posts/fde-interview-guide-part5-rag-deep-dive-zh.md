@@ -15,7 +15,15 @@ readTime: "15 min"
 
 ---
 
-## Chunking 策略：不是切越小越好
+## 面試情境
+
+> **面試官：**「你的 RAG 系統 Chunking 怎麼設計的？為什麼？你的 Embedding 模型怎麼選的？如果純向量搜尋找不到正確答案，你怎麼改善？Context Window 滿了怎麼辦？」
+
+這四個問題是 RAG 系統設計的完整追問鏈。每一層都要能說清楚選擇背後的 trade-off。
+
+---
+
+## 一、Chunking 策略：不是切越小越好
 
 Chunking 是 RAG 最常被輕描淡寫的環節，但它直接決定你的檢索品質。
 
@@ -121,15 +129,15 @@ chunk_overlap = 50
 中文為主 → 考慮 `bge-large-zh`。
 
 **2. Task Type**  
-Google `text-embedding-004` 支援 `task_type` 參數：
-```python
-# 語意搜尋的 query 端
-embeddings.embed_query(text, task_type="RETRIEVAL_QUERY")
+Google `text-embedding-004` 支援 `task_type` 參數，Query 和 Document 分開指定，效果通常更好：
 
-# 文件端
-embeddings.embed_documents(texts, task_type="RETRIEVAL_DOCUMENT")
-```
-Query 和 Document 用不同 task type，效果通常更好。
+| task_type | 使用場景 |
+|-----------|---------|
+| `RETRIEVAL_QUERY` | 用戶輸入的查詢問題 |
+| `RETRIEVAL_DOCUMENT` | 被索引的文件 Chunk |
+| `SEMANTIC_SIMILARITY` | 計算兩段文字的語意相似度 |
+
+這個設計讓 Query 和 Document 的 embedding 空間對齊，搜尋準確率通常高於兩者使用相同 task_type。
 
 **3. 維度 vs 成本**  
 維度越高，表達能力越強，但儲存和計算成本也越高。  
@@ -316,32 +324,77 @@ LangChain 的 `ContextualCompressionRetriever` 就是這個概念。
 
 ---
 
-## 面試回答框架整理
+## 五、面試官地雷題
 
-這篇覆蓋的技術，面試中通常以這個順序被問到：
+**地雷 1：「Hybrid Search 的 BM25 和向量搜尋用加權平均融合行嗎？」**
 
 ```
-系統設計題：「設計一個 RAG 系統」
-    ↓
-「你的 Chunking 怎麼做？」
-    ↓
-「為什麼選這個 Embedding 模型？」
-    ↓
-「向量 DB 怎麼選？Schema 怎麼設計？」
-    ↓
-「純 vector search 夠嗎？你有沒有考慮 hybrid？」
-    ↓
-「Reranker 你有沒有用？為什麼？」
-    ↓
-「Context window 滿了怎麼辦？」
+答：不行。BM25 的分數是 TF-IDF 分數，向量搜尋的分數是餘弦相似度（0 到 1），
+    兩者量綱完全不同，直接加權平均沒有意義。
+    正確做法是 RRF（Reciprocal Rank Fusion）——
+    把兩個排名都轉換成 1/(k+rank) 的分數，再加總。
+    這樣不需要比較原始分數的大小，只比較排名，量綱問題自然消失。
 ```
 
-每一層都要能說清楚：**選了什麼、為什麼、trade-off 是什麼**。
+**地雷 2：「HNSW 和 IVF 選哪個？你怎麼決定？」**
 
-這才是 FDE 面試的答題深度。
+```
+答：主要看資料規模和 recall 要求。
+    HNSW：建立時間長、記憶體高，但查詢速度快且 recall 高，
+          適合中小規模（百萬以內）、對回答品質要求高的場景。
+    IVF：把向量分成多個 cluster，查詢時只搜索最近的幾個 cluster，
+         速度快但 recall 略低（不一定搜到最佳 cluster），
+         適合超大規模（千萬以上）、允許一定 recall 損失的場景。
+    一般 FDE 場景先選 HNSW，資料量超過一定規模再考慮 IVF。
+```
+
+**地雷 3：「Parent-Child Chunking 在向量 DB 怎麼設計？Child 和 Parent 的關係怎麼存？」**
+
+```
+答：Child chunk 做 embedding 和搜尋，
+    每個 Child chunk 的 metadata 裡存 parent_chunk_id。
+    搜尋時：用 Child 的 embedding 做 ANN 搜尋，
+    命中後根據 parent_chunk_id 到另一個 collection（或同一個 collection 的別欄位）
+    取回對應的 Parent chunk 送進 LLM context。
+    這樣搜尋精準（小塊），context 完整（大塊）。
+```
 
 ---
 
-## 下一篇
+## 六、面試回答完整示範
 
-[FDE 面試準備指南（六）：RAG 進階——檢索失敗、Grounding、評估指標與成本控制](/posts/fde-interview-guide-part6-rag-eval-zh/)
+```
+面試官追問鏈的完整回答：
+
+Chunking：
+「我會先看文件的結構。如果是有標題的 Markdown 或技術文件，
+ 我按標題切；如果是純文字的長文，用語意切分。
+ Overlap 設 50 tokens，確保語意不會在邊界截斷。
+ 我不會拍腦袋決定 Chunk Size——
+ 我會用幾個不同的 size 跑 retrieval recall@5，
+ 選表現最好的那個。」
+
+Embedding 模型：
+「GCP 環境我選 text-embedding-004，因為原生整合 Vertex AI，
+ 而且支援 task_type——Query 和 Document 分開指定。
+ 如果是中文為主的知識庫，我會認真評估 BGE 系列，
+ 它的中文表現明顯優於通用多語言模型。
+ 最終選擇我不靠直覺，用客戶的實際資料跑 recall benchmark。」
+
+Hybrid Search：
+「純向量搜尋對關鍵字不匹配的 query 有盲點。
+ 我加 BM25 做 Hybrid Search，用 RRF 融合排名——
+ 不是加權平均（量綱不同），而是把兩邊排名都轉成 1/(k+rank) 再加總。
+ 如果還需要提升精準度，在 Top-50 上加 Cross-Encoder Reranker，
+ 取最高分的 5 筆送進 context。」
+
+Context Window Overflow：
+「如果頻繁 overflow，我先看是不是 Chunk Size 設太大。
+ 如果是跨文件的複雜問題，我用 Map-Reduce——
+ 每個 chunk 先摘要，再合併摘要送 LLM 做最終回答。
+ 代價是多幾次 LLM 呼叫，但比截斷來得準確。」
+```
+
+---
+
+下一篇：[FDE 面試準備指南（六）：RAG 進階——檢索失敗、Grounding、評估指標與成本控制](/posts/fde-interview-guide-part6-rag-eval-zh/)

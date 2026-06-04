@@ -16,6 +16,14 @@ readTime: "15 min"
 
 ---
 
+## 面試情境
+
+> **面試官：**「你的 RAG 系統的 context budget 怎麼設計的？如果你要讓 LLM 做複雜推理，你用什麼 Prompting 技法？為什麼選 text-embedding-004 而不是 OpenAI 的 embedding？」
+
+這三個問題把 Token、Prompt Engineering、Embedding 串在一起問，測的是你有沒有把這些工具整合進系統設計的意識。
+
+---
+
 ## 一、Token：不是字，是 LLM 的計量單位
 
 面試官問：
@@ -301,36 +309,25 @@ Output: [0.23, -0.15, 0.87, ..., 0.42]（例如 768 維）
 
 ### 常用 Embedding 模型（FDE 視角）
 
-**Google 生態系：**
-```python
-from vertexai.language_models import TextEmbeddingModel
+**選型速查：**
 
-model = TextEmbeddingModel.from_pretrained("text-embedding-004")
-embeddings = model.get_embeddings(
-    texts=["這是第一個句子", "這是第二個句子"],
-    task_type="RETRIEVAL_DOCUMENT"  # 重要！指定 task type
-)
-```
+| 模型 | 提供商 | 維度 | 特點 | 推薦場景 |
+|------|--------|------|------|---------|
+| `text-embedding-004` | Google | 768 | 支援 task_type，GCP 原生 | GCP 生態系 |
+| `text-embedding-3-small` | OpenAI | 1536 | 成本低，混合雲 | 非 GCP 場景 |
+| `BGE-M3` | BAAI | 1024 | 開源，多語言，中文強 | 中文為主 |
+| `multilingual-e5-large` | MS | 1024 | 開源，多語言均衡 | 多語言均等場景 |
 
-`text-embedding-004` 的 `task_type` 參數：
-| Task Type | 用途 |
-|-----------|------|
-| `RETRIEVAL_QUERY` | Query 端 |
-| `RETRIEVAL_DOCUMENT` | 文件端 |
-| `SEMANTIC_SIMILARITY` | 計算語意相似度 |
-| `CLASSIFICATION` | 文字分類 |
+**`text-embedding-004` 的 task_type 設計：**
 
-**開源選擇：**
-```python
-from sentence_transformers import SentenceTransformer
+| Task Type | 使用場景 |
+|-----------|---------|
+| `RETRIEVAL_QUERY` | 用戶查詢問題（Query 端） |
+| `RETRIEVAL_DOCUMENT` | 被索引的文件 Chunk（Document 端） |
+| `SEMANTIC_SIMILARITY` | 計算兩段文字的語意相似度 |
+| `CLASSIFICATION` | 文字分類任務 |
 
-# 中文強，多語言支援
-model = SentenceTransformer('BAAI/bge-m3')
-embeddings = model.encode(["句子1", "句子2"])
-
-# 或用 HuggingFace
-model = SentenceTransformer('intfloat/multilingual-e5-large')
-```
+Query 和 Document 分開指定 task_type，讓兩者的 embedding 空間對齊，retrieval 效果通常優於兩者用相同 task_type。
 
 ---
 
@@ -369,6 +366,81 @@ model = SentenceTransformer('intfloat/multilingual-e5-large')
 
 Embedding 的品質直接決定 retrieval 的品質。  
 這就是為什麼選對 Embedding 模型、使用正確的 task_type、評估 retrieval recall，是 RAG 工程師的核心功課。
+
+---
+
+## 面試官地雷題
+
+**地雷 1：「CoT 和 ReAct 的差別是什麼？你什麼時候選哪個？」**
+
+```
+答：CoT（Chain-of-Thought）讓 LLM 在一次生成中展示推理步驟，
+    但它不能執行外部工具，只能靠 LLM 自己的知識推理。
+    ReAct 在 CoT 的基礎上加入 Tool Calling Loop——
+    LLM 不只是想，還能執行動作、觀察結果、再繼續思考。
+    
+    選擇：
+    純推理、不需要外部資料 → CoT（便宜，只需一次呼叫）
+    需要查詢外部工具或即時資料 → ReAct
+    兩者可以結合：ReAct 的 Thought 部分可以用 CoT 風格讓推理更清晰。
+```
+
+**地雷 2：「Self-Consistency 的代價是什麼？適合什麼場景？」**
+
+```
+答：Self-Consistency 對同一個問題跑 N 次（N 通常是 5-10 次），
+    取最常出現的答案作為最終結果。
+    代價：N 倍的 LLM 呼叫 = N 倍成本和延遲。
+    適合：
+    高風險的推理問題（數學、邏輯），答案正確性比成本更重要
+    Batch 評估場景（離線跑，不在乎延遲）
+    不適合：
+    客服問答（Latency 敏感，成本敏感）
+    需要創意的任務（取眾數反而消除多樣性）
+```
+
+**地雷 3：「Context Window 大了，就不需要 RAG 了嗎？（Gemini 1M token 的場景）」**
+
+```
+答：不能完全替代。原因有三：
+    1. Lost-in-the-Middle：LLM 對 context 中間位置的資訊注意力顯著弱化，
+       1M token 的 context 中間的資訊可能被「忽略」
+    2. 成本：1M token 的 input 成本比 RAG 的 Top-5 chunks 高很多
+    3. 延遲：處理 1M token 的 attention 計算遠慢於 retrieval
+    適合「全文傳入」的場景：合約審查（整份合約都要看）、一次性文件分析。
+    不適合「頻繁查詢同一知識庫」的場景：那還是 RAG 更划算。
+```
+
+---
+
+## 面試回答完整示範
+
+```
+面試官問：「這三塊——Token、Prompt Engineering、Embedding——
+         你在系統設計裡怎麼用？」
+
+Token + Context Budget：
+「設計 RAG 系統時，我會明確規劃 context budget：
+ System Prompt 約 500 tokens，User Query 約 100 tokens，
+ 剩下的空間分給 Retrieved Chunks 和對話 History。
+ Chunk Size 設多大、Top-K 取幾個，都是由 context budget 決定的，
+ 不是隨意設的。」
+
+Prompt Engineering：
+「對於需要多步推理的問題，我用 CoT——
+ 在 Prompt 加上『請一步步思考』讓 LLM 展示推理過程，
+ 這能顯著提升複雜問題的準確率。
+ 如果需要查外部資料，改用 ReAct——
+ 讓 LLM 的推理和 Tool Calling 交替進行。
+ 對準確率要求極高的場景，考慮 Self-Consistency——
+ 跑 5 次取眾數，但代價是 5 倍成本，要跟客戶確認 budget。」
+
+Embedding 選型：
+「GCP 環境我選 text-embedding-004，因為原生整合、支援 task_type。
+ 中文為主的知識庫，我會認真評估 BGE 系列的實際 recall@k，
+ 因為它在中文 benchmark 上明顯優於通用多語言模型。
+ 最終選型我不靠直覺——用客戶的真實資料跑 retrieval recall@5 比較。」
+```
 
 ---
 
