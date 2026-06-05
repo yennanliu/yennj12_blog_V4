@@ -2,49 +2,47 @@
 title: "FDE 面試準備指南（三十六）：RKK 實戰——生產級 AI Evaluation Pipeline：從黃金資料集到 CI/CD 品質閘門"
 date: 2026-06-05T14:00:00+08:00
 draft: false
-description: "以 Google FDE 視角完整設計生產級 AI 評估管線：黃金資料集的建立與維護、離線評估架構（RAGAS + Vertex AI Evaluation Service）、CI/CD 品質閘門設計、線上評估的抽樣策略、Safety 評估的獨立維度，以及如何在客戶端建立一個能自動偵測品質退化的系統"
+description: "以系統設計視角拆解生產級 AI 評估管線：黃金資料集的建立原則、離線評估架構（RAGAS vs Vertex AI Evaluation Service）、CI/CD 品質閘門設計、Safety 作為獨立評估維度，以及線上評估的抽樣策略與 Trade-off"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Evaluation", "RAGAS", "Vertex AI", "CI/CD", "Safety", "Pipeline", "RKK", "Interview", "Google"]
 authors: ["yen"]
-readTime: "22 min"
+readTime: "20 min"
 ---
 
-> 面試官說：「你的 AI 系統上線了。你怎麼知道它今天的回答品質，  
-> 比上週沒有退化？」  
-> 這個問題，不是問你「你用了哪個 Eval 指標」，  
-> 是問你「你建立了什麼系統，讓品質退化在影響用戶之前就被你發現」。  
-> 這是 Production Eval Pipeline 的核心問題。
+> Eval Pipeline 和 Eval 的差別：  
+> Eval 是你跑一次、拿到一個分數。  
+> Eval Pipeline 是每次系統改變，自動跑、自動比較、自動擋住退化。  
+> 法律合約系統漏掉一個風險條款的損失可能是千萬。  
+> 靠人記得去跑評估，不夠。
 
 ---
 
 ## 面試情境
 
-> **面試官：**「客戶是一家法律事務所，他們剛上線了一個合約審查 AI 系統。上線當天品質很好，但他們擔心：以後每次我們更新 Prompt 或換模型版本，品質會不會退化？他們的法務長說，如果 AI 漏掉一個合約風險條款，損失可能是千萬。請設計一個讓客戶可以信任的 Eval Pipeline。」
+> **面試官：**「客戶是一家法律事務所，剛上線了一個合約審查 AI 系統。他們問：每次你們更新 Prompt 或換模型版本，我怎麼知道品質沒有退化？法務長說，如果 AI 漏掉一個風險條款，損失可能是千萬。請設計一個讓客戶可以信任的 Eval Pipeline。」
 
 ---
 
-## 一、為什麼需要 Eval Pipeline，而不只是 Eval
+## 一、核心問題：為什麼需要 Pipeline
 
 ```
-Eval（評估）和 Eval Pipeline（評估管線）的差別：
+Eval（一次性）的問題：
 
-  Eval：
-    你跑一次評估，拿到一個分數。
-    知道「現在的品質是 X」。
+  現在的品質：Faithfulness = 0.87   ← 你知道
+  下週改了 Prompt 之後：?           ← 你不知道
+  三個月後換了模型版本之後：?        ← 你更不知道
 
-  Eval Pipeline：
-    每次系統變更（Prompt 更新、模型升級、資料更新）後，
-    自動跑評估，自動比較和上一版的差距，
-    自動決定「這個變更可以部署」還是「這個變更讓品質退化了，擋住」。
+  沒有 Pipeline：
+    需要有人記得每次改動後去跑評估
+    → 沒人記得 → 品質退化不被發現 → 客戶先發現
 
-Pipeline 的價值：
-  不是靠人記得「要去跑評估」，而是系統自動把關。
-  這是從 POC（偶爾手動評估）到 Production（持續自動評估）的核心差距。
+  有 Pipeline：
+    每次 Prompt / 模型 / 資料 變更 → 自動觸發評估
+    → 分數低於閾值 → 自動擋住部署
+    → 品質退化在影響用戶之前被系統發現
 
-  法律場景的代價：
-    漏掉一個風險條款 = 可能的千萬損失
-    → 你不能靠人工 review 每一個 AI 回答
-    → 你需要一個自動化的品質安全網
+Eval Pipeline 是把「品質管控」從人工流程變成自動化系統。
+這是 POC 到生產的核心差距之一。
 ```
 
 ---
@@ -52,404 +50,279 @@ Pipeline 的價值：
 ## 二、Eval Pipeline 的四層架構
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  Layer 1：黃金資料集（Ground Truth）                               │
-│  建立和維護「正確答案的標準」                                        │
-└────────────────────────────┬────────────────────────────────────┘
-                             ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  Layer 2：離線評估（Offline Eval）                                 │
-│  每次部署前，自動跑評估，產出指標報告                                 │
-└────────────────────────────┬────────────────────────────────────┘
-                             ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  Layer 3：CI/CD 品質閘門（Quality Gate）                           │
-│  評估分數低於閾值 → 自動擋住部署                                     │
-└────────────────────────────┬────────────────────────────────────┘
-                             ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  Layer 4：線上評估（Online Eval）                                  │
-│  生產流量的持續品質監控，偵測 data drift 和 performance drift        │
-└─────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────┐
+│  Layer 1：黃金資料集（Ground Truth）                                 │
+│  「正確答案是什麼」的標準，由領域專家建立                              │
+└──────────────────────────────┬────────────────────────────────────┘
+                               │ 每次評估都用同一份資料集
+                               ▼
+┌───────────────────────────────────────────────────────────────────┐
+│  Layer 2：離線評估（Offline Eval）                                   │
+│  每次部署前，對黃金資料集跑 RAGAS + Safety，產出指標報告             │
+└──────────────────────────────┬────────────────────────────────────┘
+                               │ 評估結果 vs 上一版 baseline
+                               ▼
+┌───────────────────────────────────────────────────────────────────┐
+│  Layer 3：CI/CD 品質閘門（Quality Gate）                             │
+│  分數低於閾值 → 自動阻止部署；通過 → 繼續 Canary 部署              │
+└──────────────────────────────┬────────────────────────────────────┘
+                               │ 部署到生產後持續監控
+                               ▼
+┌───────────────────────────────────────────────────────────────────┐
+│  Layer 4：線上評估（Online Eval）                                    │
+│  生產流量的持續品質監控，偵測 Data Drift 和 Performance Drift        │
+└───────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 三、Layer 1：黃金資料集
-
-這是整個 Pipeline 的基礎，也是最常被忽略的部分。
+## 三、Layer 1：黃金資料集的設計原則
 
 ```
-黃金資料集的結構：
+黃金資料集的每一筆記錄：
 
-  每一筆記錄：
   {
-    "id": "Q001",
-    "query": "這份合約的違約金條款是否符合台灣民法第 250 條的規定？",
-    "context": [附上相關合約段落],
-    "reference_answer": "根據民法第 250 條...[正確的法律分析]",
+    "id": "Q042",
+    "query": "這份合約的違約金條款是否符合台灣民法第 250 條？",
+    "context": ["第 3 頁段落...", "第 12 頁段落..."],
+    "reference_answer": "第 3 頁說明...[正確的法律分析]",
     "metadata": {
       "category": "penalty_clause",
       "difficulty": "hard",
       "created_by": "senior_lawyer_A",
-      "created_date": "2026-01-15",
       "last_verified": "2026-05-01"
     }
   }
 
-建立黃金資料集的四個步驟：
+四種題型，缺一不可：
 
-  Step 1：選題（覆蓋重要的 query 類型）
-    不能只選「AI 答得好的題目」——這會讓評估沒有鑑別力。
-    要選：
-    ├── 典型題（系統大部分時間要面對的問題）
-    ├── 困難題（法規解釋有模糊地帶）
-    ├── 邊界題（超出範圍、應該拒絕回答的問題）
-    └── 歷史錯誤題（曾經出過問題的 query）
+  題型              比例    用途
+  ─────────────────────────────────────────────────────────────
+  典型題            50%     確保日常場景不退化
+  困難題            20%     法規解釋有模糊地帶，測試推理深度
+  邊界題（應拒絕）  20%     測試 Safety：超出範圍應該說不知道
+  歷史錯誤題        10%     曾經出錯的 query，確保不回頭
 
-  Step 2：建立參考答案（必須由領域專家做，不能讓 AI 自己生）
-    法律場景：由資深律師審核每一個參考答案
-    → 這是最貴、最慢的步驟，但也是最重要的
-    → 參考答案的品質決定了整個 Eval 系統的上限
+陷阱：不能只選「AI 答得好的題目」——
+      這樣的資料集沒有鑑別力，退化時也不會發現。
 
-  Step 3：版本控制（用 Git 管理黃金資料集）
-    → 和代碼一樣，用 git blame 知道誰改了什麼答案
-    → 每次更新要有 review 流程
+資料集規模 vs 成本：
+  最低起點：50 題（能發現系統性問題，但統計意義弱）
+  實用規模：200 題（P < 0.05 的統計顯著性）
+  成熟系統：1,000 題（分 category 分析，找弱點）
 
-  Step 4：定期更新（法規改變時，參考答案要跟著更新）
-    → 建立「法規更新 → 觸發黃金資料集 review」的流程
-    → 否則你的 Eval 是在評估「對舊法規的準確率」
+  原則：100 題高品質（律師審核）> 1,000 題低品質（LLM 生成）
+  資料集品質決定整個 Eval 系統的上限。
 
-資料集規模建議：
-  最低起點：50-100 題（能區分系統性問題）
-  實用規模：200-500 題（有足夠的統計意義）
-  成熟系統：1,000+ 題（分 category 分析）
-  
-  不要為了有大資料集而降低參考答案品質。
-  100 題高品質遠勝 1,000 題低品質。
+版本控制：
+  黃金資料集用 Git 管理，和代碼在同一個 Repo。
+  法規更新 → 觸發 Data Review PR → 律師 Review → Merge。
 ```
 
 ---
 
-## 四、Layer 2：離線評估
-
-### 準確率和相關性評估（RAGAS）
-
-```python
-from ragas import evaluate
-from ragas.metrics import (
-    faithfulness,         # 答案有沒有幻覺（只說文件裡有的）
-    answer_relevancy,     # 答案有沒有回應問題
-    context_recall,       # 相關文件有沒有被找到
-    context_precision,    # 找到的文件有沒有噪音
-)
-from ragas.llms import LangchainLLMWrapper
-from langchain_google_vertexai import ChatVertexAI
-
-# 使用 Gemini 作為評估的 Judge LLM
-judge_llm = LangchainLLMWrapper(
-    ChatVertexAI(model_name="gemini-2.0-flash")
-)
-
-# 跑評估
-results = evaluate(
-    dataset=golden_dataset,
-    metrics=[faithfulness, answer_relevancy,
-             context_recall, context_precision],
-    llm=judge_llm,
-)
-
-print(results)
-# faithfulness: 0.87, answer_relevancy: 0.91,
-# context_recall: 0.83, context_precision: 0.79
-```
-
-### 安全評估（Safety）——獨立維度
+## 四、Layer 2：離線評估——RAGAS vs Vertex AI Evaluation Service
 
 ```
-Safety 評估和準確率評估是完全獨立的維度。
-一個答案可以準確但不安全，也可以安全但不準確。
+選型比較：
+
+  維度              RAGAS                    Vertex AI Eval Service
+  ──────────────────────────────────────────────────────────────────
+  自訂程度          高（可換 Judge LLM）      中（預設用 Gemini）
+  與 GCP 整合        需要自己寫               原生整合 Vertex AI Experiments
+  支援的指標         Faithfulness/Recall/     Groundedness/Coherence/
+                    Precision/Relevancy      Question Answering Quality
+  Safety 評估        需要自己加               需要自己加（兩者都需要）
+  跨版本比較         需要自己存結果            Vertex AI Experiments 原生支援
+  適合場景          完全客製化的評估需求       想快速上線 + GCP 生態
+
+建議：
+  Google FDE 場景 → 優先用 Vertex AI Evaluation Service
+  好處：評估結果自動存入 Vertex AI Experiments，
+        可以一鍵對比任意兩個版本的指標，
+        不需要自己維護「上一版分數是多少」的狀態。
+
+評估指標的意義（法律場景）：
+
+  Faithfulness（忠實度）：
+    「AI 說的，在合約裡有依據嗎？」
+    → 低 → AI 在捏造法律事實 → 最危險的問題
+    → 法律場景目標：>= 0.92
+
+  Context Recall（召回率）：
+    「相關的合約條款，有沒有被找到？」
+    → 低 → RAG 的 Retrieval 有問題 → 漏掉關鍵資訊
+    → 法律場景目標：>= 0.85
+
+  Answer Relevancy（相關性）：
+    「回答有沒有切中問題？」
+    → 低 → 答非所問
+
+  Context Precision（精準度）：
+    「找到的段落，有多少是真的相關的？」
+    → 低 → 塞了太多噪音進 context → 浪費 token + 影響品質
+```
+
+---
+
+## 五、Safety 評估：獨立的評估維度
+
+```
+為什麼 Safety 不能併入 Accuracy 評估：
+  一個回答可以 Faithfulness=0.95（準確）但 Safety 越界，
+  例如：「根據合約，你應該起訴對方（超出 AI 授權範圍）」
 
 法律場景的 Safety 評估維度：
 
-  維度 1：越界（Out-of-Scope）
-    AI 有沒有回答超出它授權範圍的問題？
-    例：「你建議我起訴對方嗎？」
-    → 正確：「我只能分析合約條款，不能提供訴訟建議，請諮詢律師。」
-    → 違規：「根據情況，你應該考慮起訴...」
+  維度                  定義                         評估方式
+  ──────────────────────────────────────────────────────────────
+  越界（Out-of-Scope）  回答了 AI 不應該回答的問題    LLM Judge + 規則式
+                        「你建議我起訴嗎？」
+  ──────────────────────────────────────────────────────────────
+  確定性偽裝            對不確定的法律問題給確定答案   規則式（偵測確定性語言）
+                        「這個條款無效。」（無依據）
+  ──────────────────────────────────────────────────────────────
+  敏感資料洩漏          回答中出現其他客戶的資料       規則式（PII 偵測）
+  ──────────────────────────────────────────────────────────────
 
-  維度 2：確定性偽裝（Fabricated Certainty）
-    AI 有沒有對不確定的法律問題給出確定的答案？
-    例：「這個條款有效嗎？」（需要法院判決才能確定）
-    → 正確：「根據現行法規，這個條款存在被挑戰的風險，建議諮詢律師。」
-    → 違規：「這個條款無效。」（沒有依據的確定性）
+Safety 評估的閾值比 Accuracy 更嚴格：
+  Faithfulness < 0.88 → Warn（降分，但不一定擋）
+  Safety 越界 > 0%    → Block（任何比例的越界都不可接受）
 
-  維度 3：敏感資訊洩漏
-    AI 有沒有在回答中引用了不應該出現的其他客戶資料？
+Safety 評估實作（不完全依賴 LLM Judge）：
 
-Safety 的評估方式：
-  不能只用 LLM-as-judge（Safety 的判斷標準需要明確規則）
-  建議：
-  ├── 規則式：用 regex / classifier 偵測「確定性語言」（應該 / 一定 / 保證）
-  ├── LLM Judge：用另一個 LLM 評估是否越界（附上明確的評估 rubric）
-  └── 人工抽查：對 Safety 相關的 query，每週人工 review 樣本
+  規則式（確定性語言偵測）：
+  CERTAINTY_WORDS = ["一定", "保證", "絕對", "無效", "有效",
+                     "應該起訴", "必定勝訴"]
+  safety_fail = any(word in response for word in CERTAINTY_WORDS
+                    and query_type == "legal_advice")
 
-Safety 評估的閾值通常比準確率更嚴格：
-  準確率 Faithfulness < 0.80 → warn
-  Safety 越界 > 0% → block（任何比例的越界都是問題）
-```
-
-### Vertex AI Evaluation Service
-
-```python
-# 使用 Vertex AI 內建評估服務（不需要自己管 Judge LLM）
-
-from vertexai.preview.evaluation import EvalTask, MetricPromptTemplateExamples
-
-eval_task = EvalTask(
-    dataset=eval_dataset,          # 你的黃金資料集
-    metrics=[
-        "fluency",
-        "coherence",
-        "groundedness",            # 等同 Faithfulness
-        "question_answering_quality",
-    ],
-    experiment="legal-contract-review",
-    experiment_run_name=f"v{version}-{date}",
-)
-
-eval_result = eval_task.evaluate(
-    model="gemini-2.0-flash",
-    prompt_template=your_prompt_template,
-)
-
-# 結果自動存入 Vertex AI Experiments，可以跨版本比較
+  LLM Judge（越界偵測）：
+  用 Gemini Pro 判斷回答是否超出「分析合約條款」的授權範圍，
+  但附上明確的 rubric（不讓 Judge 自由發揮）。
 ```
 
 ---
 
-## 五、Layer 3：CI/CD 品質閘門
+## 六、Layer 3：CI/CD 品質閘門
 
 ```
-這是讓評估真正有力量的部分：
-不只是「看分數」，而是「分數不夠就不能上線」。
+觸發條件（用 Path Filter 控制）：
 
-CI/CD 整合流程（以 GitHub Actions 為例）：
+  PR 改動了以下路徑 → 觸發 Eval CI：
+  ├── prompts/           Prompt 版本變更
+  ├── agents/            Agent 邏輯變更
+  ├── config/models.yaml 模型版本變更
+  └── data/golden/       黃金資料集更新
 
-  name: AI Quality Gate
+  PR 只改 UI / 文件 → 不觸發 Eval（避免不必要的費用）
 
-  on:
-    pull_request:
-      paths:
-        - 'prompts/**'      # Prompt 變更觸發評估
-        - 'agents/**'       # Agent 代碼變更觸發評估
-        - 'config/**'       # 配置變更觸發評估
+品質閘門的閾值（法律場景）：
 
-  jobs:
-    eval:
-      steps:
-        - name: Run Offline Eval
-          run: python scripts/run_eval.py --version $PR_VERSION
+  指標                    閾值               行動
+  ──────────────────────────────────────────────────────────────
+  Faithfulness            >= 0.90            低於 → Block
+  Context Recall          >= 0.85            低於 → Block
+  Safety Out-of-Scope     == 0%              > 0 → Block
+  vs Baseline Regression  delta <= -0.03     超過 → Block
+  P95 Latency             <= 5,000ms         超過 → Warn
 
-        - name: Compare with baseline
-          run: python scripts/compare_eval.py
-               --current $PR_VERSION
-               --baseline main
+  為什麼法律場景用 0.90 而不是 0.80？
+  錯誤代價不對稱：AI 漏掉一個風險條款 → 可能千萬損失。
+  閾值的設定是把「業務風險容忍度」轉換成「數字」，
+  這個對話應該由 FDE 帶著客戶的法務長一起決定。
 
-        - name: Quality Gate Check
-          run: python scripts/quality_gate.py
+CI 報告格式（讓工程師看到的不只是 PASS/FAIL）：
 
-品質閘門的閾值設計：
+  ✅ Quality Gate PASSED
 
-  指標                      閾值               行動
-  ─────────────────────────────────────────────────────────
-  Faithfulness              >= 0.85            低於 → Block
-  Answer Relevancy          >= 0.88            低於 → Block
-  Context Recall            >= 0.80            低於 → Warn
-  Safety Out-of-Scope Rate  == 0.00            > 0 → Block
-  Avg Latency (P95)         <= 5000ms          超過 → Warn
-  Regression vs baseline    delta <= -0.05     超過 → Block
-
-  # quality_gate.py 的核心邏輯
-  def check_quality_gate(current_metrics, baseline_metrics, thresholds):
-      failures = []
-
-      # 絕對閾值檢查
-      if current_metrics["faithfulness"] < thresholds["faithfulness_min"]:
-          failures.append(f"Faithfulness {current_metrics['faithfulness']:.2f}"
-                          f" < {thresholds['faithfulness_min']}")
-
-      # 退化檢查（相對 baseline）
-      regression = (baseline_metrics["faithfulness"]
-                    - current_metrics["faithfulness"])
-      if regression > thresholds["max_regression"]:
-          failures.append(f"Faithfulness regression: -{regression:.2f}")
-
-      if failures:
-          print("❌ Quality Gate FAILED:")
-          for f in failures:
-              print(f"  - {f}")
-          sys.exit(1)  # 讓 CI 失敗，擋住部署
-      else:
-          print("✅ Quality Gate PASSED")
-
-重要設計原則：
-  閾值要由業務決策而不是工程決策：
-  「Faithfulness 0.85 夠不夠？」
-  法律場景：不夠，要 0.95。
-  客服 FAQ：可能夠，取決於風險承受度。
-  FDE 的工作是幫客戶把「業務風險容忍度」轉換成「數字閾值」。
+  指標對比（本次 PR vs main baseline）：
+  ┌──────────────────┬──────────┬──────────┬──────────┐
+  │ 指標             │ Baseline │ 本次     │ 變化      │
+  ├──────────────────┼──────────┼──────────┼──────────┤
+  │ Faithfulness     │ 0.87     │ 0.91 ✅  │ +0.04    │
+  │ Context Recall   │ 0.83     │ 0.86 ✅  │ +0.03    │
+  │ Safety 越界率    │ 0%       │ 0%   ✅  │ 無變化    │
+  │ P95 Latency      │ 3,200ms  │ 3,450ms  │ +250ms ⚠ │
+  └──────────────────┴──────────┴──────────┴──────────┘
 ```
 
 ---
 
-## 六、Layer 4：線上評估（Online Eval）
+## 七、Layer 4：線上評估策略
 
 ```
 線上評估解決的問題：
-  「黃金資料集是靜態的，但生產流量是動態的。
-   如果用戶開始問以前沒見過的問題類型，你怎麼知道系統還表現得好？」
+  黃金資料集是靜態的，生產流量是動態的。
+  如果用戶開始問以前沒見過的類型，你不會知道。
 
-線上評估的三種策略：
+三種線上評估策略的 Trade-off：
 
-策略 1：影子評分（Shadow Scoring）
-  每個生產回答，在背景異步跑一個輕量評估：
-  ├── Faithfulness：回答有沒有幻覺（用 LLM Judge）
-  ├── Relevance：回答有沒有回應問題（用 embedding similarity）
-  └── Off-topic：回答有沒有越界（用 classifier）
-  
-  成本控制：不是每個請求都評，用 1-5% 抽樣
+  策略              成本      覆蓋範圍      限制
+  ──────────────────────────────────────────────────────────────
+  影子評分           中        3-5% 抽樣     只有自動化指標，
+  （Shadow Scoring） （LLM Judge 費用）      無法偵測人判斷的問題
+  ──────────────────────────────────────────────────────────────
+  用戶信號           低        100%（被動）  只反映用戶的顯式反饋，
+  （Thumbs / 追問）  （UI 工程）             用戶不一定按 thumbs down
+  ──────────────────────────────────────────────────────────────
+  人工抽查           高        每週 50-100 筆唯一能偵測「流暢但法律上錯」
+  （Human Review）   （律師時間）             的方法
+  ──────────────────────────────────────────────────────────────
 
-策略 2：用戶信號（Implicit Feedback）
-  ├── Thumbs up / down（明確反饋）
-  ├── 用戶在 AI 回答後有沒有繼續追問（隱式「不滿意」信號）
-  ├── 用戶有沒有要求「重新回答」（隱式「不夠好」信號）
-  └── 用戶有沒有轉到人工客服（隱式「AI 無法解決」信號）
-  
-  這些信號不需要額外工程成本，但需要在 UI 層收集
+建議：三種策略並行使用，互為補充。
+  短期資料：Shadow Scoring 的 7 日移動平均
+  長期資料：人工抽查的結果加入黃金資料集（持續擴充）
 
-策略 3：定期人工抽查（Human-in-the-loop Labeling）
-  每週從生產流量中隨機抽 50-100 筆，
-  由領域專家評分，結果加入黃金資料集（持續擴充）
-  → 這是唯一能偵測「系統輸出看起來流暢但法律上是錯的」的方法
+線上 Alert 設計：
 
-線上評估的 Alert 設計：
-  指標                      Alert 條件
-  ───────────────────────────────────────────────
-  Shadow Faithfulness 7日MA  < 0.82 → Slack Alert
-  Thumbs Down Rate 日均      > 10% → Slack Alert
-  Human-to-AI Escalation Rate > 20% → PagerDuty
-  Off-topic Rate（classifier） > 2% → PagerDuty
+  Signal                         Alert 條件          行動
+  ─────────────────────────────────────────────────────────────
+  Shadow Faithfulness（7日MA）   < 0.85             Slack Alert
+  Safety 越界率（每日）           > 0.5%             PagerDuty
+  人工轉接率（每日）              > 20%              Slack Alert
+  Thumbs Down 率（7日MA）        > 8%               Slack Alert
 ```
 
 ---
 
-## 七、面試官地雷題
-
-**地雷 1：「你說用 LLM 來評估 LLM 的回答（LLM-as-Judge），
-這不會有偏見嗎？」**
+## 八、系統效應：加入 Eval Pipeline 對系統的影響
 
 ```
-答：這是很合理的顧慮，有三個緩解策略：
-    
-    1. 用比被評估模型更強的 Judge（例如：被評估模型是 Gemini Flash，
-       Judge 用 Gemini Pro）
-    
-    2. 用明確的評估 rubric，而不是讓 Judge 自由發揮：
-       不說「評估這個答案是否準確」，
-       說「根據以下文件，找出答案中任何一個不在文件中出現的事實聲明，
-           有則輸出 NOT FAITHFUL，否則輸出 FAITHFUL」
-    
-    3. Safety 類的評估不依賴 LLM Judge，改用規則式或分類模型：
-       「有沒有越界」不應該由 LLM 決定，
-       LLM 可能因為 prompt 措辭而給出不一致的判斷。
-    
-    完全避免 LLM-as-Judge 是不現實的，
-    但不能把所有評估都交給它，
-    要根據評估維度選擇最合適的評估方法。
-```
+維度          有 Eval Pipeline             沒有 Eval Pipeline
+──────────────────────────────────────────────────────────────────
+品質退化偵測   自動，部署前攔截              客戶先發現（最壞情況）
+──────────────────────────────────────────────────────────────────
+部署速度       每次 PR 多 5-15 分鐘          快，但不安全
+（每次 Eval 的 CI 時間）
+──────────────────────────────────────────────────────────────────
+工程師信心     可以大膽改 Prompt/模型         改了不敢確認有沒有退化
+──────────────────────────────────────────────────────────────────
+成本           Eval CI 的 LLM 費用           省 Eval 費用，
+               （200 題 × $0.002 ≈ $0.4/次）  但付出更多事後修復成本
+──────────────────────────────────────────────────────────────────
+客戶信任       「這個系統每次更新都有自動      「我怎麼知道它有沒有退化？」
+               品質驗證，閾值由你們律師定」
+──────────────────────────────────────────────────────────────────
 
-**地雷 2：「CI/CD 品質閘門如果太嚴，會不會讓每次 Prompt 更新
-都很難通過，讓工程師不敢改東西？」**
-
-```
-答：是的，這是實際會發生的問題，有幾個設計原則：
-
-    1. 分層閾值：
-       Hard Block（Faithfulness 大幅退化 > 5%）→ 一定擋
-       Soft Warn（輕微退化 1-3%）→ 提醒但不擋，需要人工確認
-       這樣避免每個小更新都觸發 Block
-
-    2. 閾值要根據變更範圍調整：
-       改了 System Prompt → 跑完整 Eval
-       只改了 UI 文字 → 不觸發 Eval（用 path filter 控制）
-
-    3. 讓工程師看到「改善了什麼」，不只看「有沒有通過」：
-       CI 報告要顯示：「這次 PR 讓 Faithfulness 從 0.83 → 0.87，
-       Answer Relevancy 從 0.90 → 0.88（輕微退化）。」
-       看到具體的變化，比看到「PASS / FAIL」更有指導意義。
-
-    4. Eval Dataset 要夠有代表性：
-       如果黃金資料集只有 20 題，一個不相關的隨機波動就能讓 Eval 失敗。
-       資料集夠大，評估結果才有統計意義。
-```
-
-**地雷 3：「客戶問：我的 AI 系統的準確率是多少？你給他一個數字。」**
-
-```
-答：這個問題的正確回答不是一個數字，是一個框架：
-
-    「準確率取決於你問的是什麼類型的問題，以及你的評估標準是什麼。
-     我們目前的評估結果是：
-     對於標準合約條款分析（佔 70% 的用量），Faithfulness 是 0.91。
-     對於涉及多個法規交叉的複雜問題（佔 30%），Faithfulness 是 0.79。
-     Safety 指標：越界率為 0%（系統正確拒絕了所有超範圍問題）。」
-
-    給一個「整體準確率 X%」是危險的——
-    它掩蓋了不同類型問題之間的差距，
-    而且讓客戶對一個數字產生不切實際的期待。
-
-    FDE 的工作是讓客戶理解 AI 的能力邊界，
-    而不是讓他們覺得系統「應該 100% 正確」。
+結論：Eval Pipeline 的成本（$0.4/次 CI）遠低於它防止的風險（千萬損失）。
+      這是必要成本，不是可選的優化。
 ```
 
 ---
 
-## 八、面試回答完整示範
+## 九、面試答題要點
 
-```
-面試官問：「設計一個讓法律客戶可以信任的 Eval Pipeline。」
-
-框架先行（30 秒）：
-「我的設計有四層：
- 黃金資料集建立品質標準，
- 離線評估在每次部署前自動把關，
- CI/CD 品質閘門把低品質的變更擋住，
- 線上評估監控生產流量的持續品質。
- 對法律場景，我特別把 Safety 評估作為獨立維度，
- 因為法律建議的越界風險不亞於準確率問題。」
-
-黃金資料集（1 分鐘）：
-「由資深律師建立 200 題的黃金資料集，
- 覆蓋四個類型：典型題、困難題、邊界題、歷史錯誤題。
- 用 Git 管理，法規更新時觸發 review 流程。」
-
-離線評估和品質閘門（1 分鐘）：
-「每次 Prompt 或模型版本更新觸發 CI 評估，
- 用 RAGAS 跑 Faithfulness、Answer Relevancy、Context Recall，
- 同時用規則式分類器評估 Safety 越界率。
- Faithfulness < 0.90 或任何 Safety 越界 → Block 部署。
- 我把 0.90 而不是 0.85 作為法律場景的閾值，
- 因為這個客戶的錯誤代價是千萬級的。」
-
-線上評估（30 秒）：
-「生產環境每天對 3% 的流量做影子評分，
- 每週人工抽查 50 筆，結果加入黃金資料集。
- Shadow Faithfulness 7 日移動平均低於 0.85 → Slack Alert。
- 人工轉接率超過 20% → PagerDuty。」
-```
+> *「這道題的核心是：不靠人記得去評估，而是讓品質退化在影響用戶之前被系統自動擋住。*
+>
+> *四層架構：黃金資料集（律師建立 200 題，四種題型，Git 版本控制）；離線評估（Vertex AI Evaluation Service + 獨立的 Safety 評估）；CI/CD 品質閘門（Faithfulness >= 0.90、Safety 越界 == 0%，否則 Block 部署）；線上評估（影子評分 3% 抽樣 + 人工抽查每週 50 筆）。*
+>
+> *法律場景的特殊設計：Safety 評估是獨立維度，越界率 > 0% 直接 Block，不和 Accuracy 指標一起加權。Faithfulness 閾值用 0.90 不用 0.80，因為漏掉一個風險條款的代價是千萬，不是用戶體驗略差。這個閾值是和客戶的法務長一起決定的，不是工程師自己設定的。*
+>
+> *成本分析：200 題的 Eval CI 每次大約 $0.40 的 LLM 費用。每週改 5 次 Prompt → 每週 $2。這個成本和它防止的業務風險相比是微不足道的。」*
 
 ---
 
-**Eval Pipeline 不是「有就好」，而是「Pipeline 的設計決定了你能相信什麼」。**  
-**閾值、資料集品質、自動化的層次——每個決策都在回答：你願意為什麼類型的錯誤負責。**
+**系列導覽：**  
+← [（三十五）Granular Tracing 與可觀測性設計](../fde-interview-guide-part35-granular-tracing-zh/)  
+→ [（三十七）企業 AI 的連接組織：Legacy 系統整合](../fde-interview-guide-part37-legacy-integration-zh/)
