@@ -62,6 +62,10 @@ buildFuture = true
     url = '/tags/fde/'
     weight = 48
   [[menu.main]]
+    name = 'FDE Core Topics'
+    url = '/tags/fde-core-topic/'
+    weight = 49
+  [[menu.main]]
     name = 'About'
     url = '/about/'
     weight = 50
