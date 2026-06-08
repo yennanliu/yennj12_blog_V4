@@ -1,5 +1,5 @@
 ---
-title: "Speculative Tool Execution：大扇出控制與投機雙發防禦"
+title: "FDE core topic - Speculative Tool Execution：大扇出控制與投機雙發防禦"
 date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入剖析 Agent 並行 15 個工具呼叫時如何以投機雙發（Hedged Request）壓制 P99 尾部延遲、用硬截止時間搭配優雅降級回傳部分結果，將整體等待從 30 秒壓到 1.5 秒（20 倍改善）。"

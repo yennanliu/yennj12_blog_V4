@@ -1,5 +1,5 @@
 ---
-title: "RAG Triad Metrics：上下文相關度、忠實度與答案相關度的可觀測性追蹤"
+title: "FDE core topic - RAG Triad Metrics：上下文相關度、忠實度與答案相關度的可觀測性追蹤"
 date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析 RAG 系統三大評估指標——Context Relevance、Groundedness、Answer Relevance——以及如何透過 OpenTelemetry 與 Grafana 建立生產級可觀測性追蹤管道。"

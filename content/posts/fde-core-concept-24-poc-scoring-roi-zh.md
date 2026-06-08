@@ -1,5 +1,5 @@
 ---
-title: "POC Scoring & ROI：概念驗證評分矩陣與投資回報框架設計"
+title: "FDE core topic - POC Scoring & ROI：概念驗證評分矩陣與投資回報框架設計"
 date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析如何在 AI 專案 POC 階段設計假設驅動的成功指標矩陣、ROI 計算框架，以及 Go/No-Go 決策閘，讓概念驗證成為客觀商業決策而非主觀技術辯論。"

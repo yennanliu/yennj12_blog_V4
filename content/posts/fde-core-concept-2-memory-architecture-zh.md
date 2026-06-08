@@ -1,5 +1,5 @@
 ---
-title: "Memory Architecture：Agent 階層式記憶體設計"
+title: "FDE core topic - Memory Architecture：Agent 階層式記憶體設計"
 date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析 Agent 三層記憶體架構（Episodic / Semantic / Procedural），涵蓋寫入模式、ANN 檢索、遺忘機制與企業級 RBAC 設計。"

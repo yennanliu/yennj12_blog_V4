@@ -1,5 +1,5 @@
 ---
-title: "Discovery to Technical Constraints：顧問工程師的高階探索問法"
+title: "FDE core topic - Discovery to Technical Constraints：顧問工程師的高階探索問法"
 date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "掌握將模糊客戶需求轉化為精確技術規格的 SCALE 探索框架，透過 5 個關鍵問題節省 5 週無效開發，以約束矩陣驅動架構決策，是 FDE 面試中判斷顧問成熟度的核心指標。"

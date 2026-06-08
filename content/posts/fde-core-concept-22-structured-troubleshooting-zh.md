@@ -1,5 +1,5 @@
 ---
-title: "Structured Troubleshooting：自上而下分層排錯與 AI 系統觀測方法論"
+title: "FDE core topic - Structured Troubleshooting：自上而下分層排錯與 AI 系統觀測方法論"
 date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "系統化分層排錯方法論：從用戶症狀出發，逐層消除 AI Agent 系統故障根因，涵蓋 API Gateway、Orchestration、Tool APIs、Model Quota 四層診斷策略與 OpenTelemetry 實作。"

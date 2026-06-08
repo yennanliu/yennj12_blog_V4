@@ -1,5 +1,5 @@
 ---
-title: "Async Event-Driven Pipeline：解耦同步 HTTP 與保護後端連線池"
+title: "FDE core topic - Async Event-Driven Pipeline：解耦同步 HTTP 與保護後端連線池"
 date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入剖析如何以非同步訊息傳遞取代同步 HTTP 請求，防止 LLM 推論延遲（2–30 秒）耗盡 Web Server 連線池，支撐 50,000+ 並發用戶，改善幅度達 250 倍。"

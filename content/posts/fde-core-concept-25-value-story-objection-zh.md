@@ -1,5 +1,5 @@
 ---
-title: "Value Story & Objection Handling：價值敘事架構與常見異議破解"
+title: "FDE core topic - Value Story & Objection Handling：價值敘事架構與常見異議破解"
 date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "將技術能力轉譯為業務成果的完整框架：SCRI 敘事結構、五大企業 AI 異議破解策略，以及如何用客戶數據做出讓決策者無法拒絕的 Value Story Demo。"

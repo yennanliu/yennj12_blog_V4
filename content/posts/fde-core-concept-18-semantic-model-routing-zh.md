@@ -1,5 +1,5 @@
 ---
-title: "Semantic Model Routing：置信度熵值驅動的智能模型分流"
+title: "FDE core topic - Semantic Model Routing：置信度熵值驅動的智能模型分流"
 date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析如何以 Shannon 熵值即時偵測模型不確定性，動態將查詢路由至最便宜的可行模型，實現隱私保護與 74% 成本節省的生產架構。"
