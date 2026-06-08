@@ -4,7 +4,7 @@ date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析 LLM 推理服務的兩大核心指標——首字時間（TTFT）與每秒 Token 吞吐量——以及 Quantization、Continuous Batching、PagedAttention、Speculative Decoding、Flash Attention 五大硬體級優化技術的原理與取捨。"
 categories: ["engineering", "all"]
-tags: ["RKK", "Interview", "fde-core-topics", "Cloud", "MLOps", "Inference", "Performance"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "MLOps", "Inference", "Performance"]
 authors: ["yen"]
 readTime: "18 min"
 ---

@@ -4,7 +4,7 @@ date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析 Agent 三層記憶體架構（Episodic / Semantic / Procedural），涵蓋寫入模式、ANN 檢索、遺忘機制與企業級 RBAC 設計。"
 categories: ["engineering", "all"]
-tags: ["RKK", "Interview", "fde-core-topics", "Cloud", "Agent", "Memory", "VectorDB"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Agent", "Memory", "VectorDB"]
 authors: ["yen"]
 readTime: "18 min"
 ---

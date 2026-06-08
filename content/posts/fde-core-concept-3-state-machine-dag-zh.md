@@ -4,7 +4,7 @@ date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "解析為何 ReAct 自由迴圈在生產環境中危險，以及如何以有向無環圖（DAG）建構可稽核、可測試的 Agent 行為確定性邊界。涵蓋 LangGraph、ADK 2.0、反思迴圈收斂條件與並行分支狀態隔離。"
 categories: ["engineering", "all"]
-tags: ["RKK", "Interview", "fde-core-topics", "Cloud", "LangGraph", "ADK", "StateMachine"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "LangGraph", "ADK", "StateMachine"]
 authors: ["yen"]
 readTime: "18 min"
 ---

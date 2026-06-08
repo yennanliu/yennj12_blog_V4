@@ -4,7 +4,7 @@ date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析如何用大型語言模型作為自動化品質裁判，並透過隨機排序、CoT 推理、分層抽樣等技術系統性消除裁判偏見，以 1% 的成本達到 80% 人工評估品質。"
 categories: ["engineering", "all"]
-tags: ["RKK", "Interview", "fde-core-topics", "Cloud", "Evaluation", "LLMJudge", "MLOps"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Evaluation", "LLMJudge", "MLOps"]
 authors: ["yen"]
 readTime: "18 min"
 ---

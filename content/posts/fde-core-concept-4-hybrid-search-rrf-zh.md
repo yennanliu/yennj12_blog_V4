@@ -4,7 +4,7 @@ date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析混合檢索（Dense + Sparse）與 Reciprocal Rank Fusion 的核心原理、實作層次及面試答題策略，涵蓋 BM25、HNSW、SPLADE、Vertex AI Search 等關鍵技術與具體效能數字。"
 categories: ["engineering", "all"]
-tags: ["RKK", "Interview", "fde-core-topics", "Cloud", "RAG", "VectorSearch", "BM25"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "VectorSearch", "BM25"]
 authors: ["yen"]
 readTime: "18 min"
 ---

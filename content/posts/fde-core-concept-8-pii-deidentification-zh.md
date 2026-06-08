@@ -4,7 +4,7 @@ date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析 PII 去識別化光譜、格式保留加密（FPE）原理、Cloud Sensitive Data Protection 整合，以及 AI 管線中隱私護欄的三個實作層次。"
 categories: ["engineering", "all"]
-tags: ["RKK", "Interview", "fde-core-topics", "Cloud", "Security", "PII", "DLP", "Compliance"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Security", "PII", "DLP", "Compliance"]
 authors: ["yen"]
 readTime: "18 min"
 ---

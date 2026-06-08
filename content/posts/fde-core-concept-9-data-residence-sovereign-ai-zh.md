@@ -4,7 +4,7 @@ date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析資料主權架構的技術控制堆疊，涵蓋 VPC Service Controls、Organization Policy、Vertex AI 區域端點及審計證據，幫助工程師在面試中精準回答金融與醫療合規場景。"
 categories: ["engineering", "all"]
-tags: ["RKK", "Interview", "fde-core-topics", "Cloud", "Compliance", "SovereignAI", "DataResidency"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Compliance", "SovereignAI", "DataResidency"]
 authors: ["yen"]
 readTime: "18 min"
 ---

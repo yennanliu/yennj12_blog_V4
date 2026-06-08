@@ -4,7 +4,7 @@ date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析企業 AI 專案中的利害關係人分類、影響力圖譜建構與針對性溝通策略，避免技術上完美的提案在最後一刻被隱形阻擋者否決。"
 categories: ["engineering", "all"]
-tags: ["RKK", "Interview", "fde-core-topics", "Cloud", "Consulting", "Stakeholder", "EnterpriseAI"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Consulting", "Stakeholder", "EnterpriseAI"]
 authors: ["yen"]
 readTime: "18 min"
 ---

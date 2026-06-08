@@ -4,7 +4,7 @@ date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析信封加密的 DEK/KEK 機制、Cloud KMS 與外部密鑰管理器（EKM）的取捨、Confidential Computing 封存與 Vertex AI CMEK 整合，掌握企業級零信任加密的三個實作層次。"
 categories: ["engineering", "all"]
-tags: ["RKK", "Interview", "fde-core-topics", "Cloud", "Security", "CMEK", "Encryption", "HSM"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Security", "CMEK", "Encryption", "HSM"]
 authors: ["yen"]
 readTime: "18 min"
 ---

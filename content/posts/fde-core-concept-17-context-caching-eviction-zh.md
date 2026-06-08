@@ -4,7 +4,7 @@ date: 2026-06-08T10:00:00+08:00
 draft: false
 description: "深入解析 Vertex AI Context Caching 的 KV 快取原理、三層驅逐架構設計，以及如何避免每小時 $4.50 的隱性計費陷阱。"
 categories: ["engineering", "all"]
-tags: ["RKK", "Interview", "fde-core-topics", "Cloud", "VertexAI", "Caching", "CostOptimization"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "VertexAI", "Caching", "CostOptimization"]
 authors: ["yen"]
 readTime: "18 min"
 ---
