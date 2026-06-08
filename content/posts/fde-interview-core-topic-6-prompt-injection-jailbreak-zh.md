@@ -137,7 +137,7 @@ Input Classifier 的 false negative（漏報）約 6%，這正是為什麼需要
 
 **新增元件**：
 - **Input Classifier**：使用 fine-tuned BERT-base 或呼叫 Gemini Guard API 對每條輸入評分，閾值 0.85 拒絕
-- **Output DLP Scanner**：部署 Google Cloud DLP API 或自建 regex + ML 雙重掃描層，在 LLM 回應返回用戶前執行
+- **Output DLP Scanner**：部署 Cloud DLP API 或自建 regex + ML 雙重掃描層，在 LLM 回應返回用戶前執行
 - **Cloud Armor WAF 規則**：在網路邊緣攔截已知注入模式（`ignore all previous`、`pretend you are`、base64 payload 特徵）
 
 ```
