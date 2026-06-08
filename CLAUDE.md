@@ -66,3 +66,75 @@ Pushing to `main` triggers `.github/workflows/hugo-latest.yml`, which builds wit
 ### Content naming convention
 
 Chinese-language posts use the suffix `-zh.md`. Posts that are part of a series use a numbered suffix (e.g., `-part1-`, `-part2-`).
+
+---
+
+## fde-interview-guide post generation standards
+
+When generating new `fde-interview-guide-part{N}-xxx-zh.md` posts, apply the following enhanced style. These rules override the generic post guidelines above.
+
+### 1. Architecture diagrams
+
+Include **2–4 ASCII block diagrams** per post. Each major concept gets its own diagram; flow diagrams show data moving through the system. Use box-drawing characters consistently:
+
+```
+┌─────────────────┐       ┌─────────────────┐
+│  Component A    │──────▶│  Component B    │
+└────────┬────────┘       └────────┬────────┘
+         │                         │
+         ▼                         ▼
+┌─────────────────────────────────────────────┐
+│  Shared Layer                               │
+└─────────────────────────────────────────────┘
+```
+
+### 2. Phase-based architecture discussion
+
+Every post must have a **「三個演進階段」section** that presents the central architecture in three evolutionary phases using `╔══╗` headers:
+
+- **Phase 1（POC / < 10K 用戶）**: minimal viable, acceptable shortcuts, fast to build
+- **Phase 2（MVP / 10K–200K）**: production-safe, team can operate without constant firefighting
+- **Phase 3（Scale / 200K–1M+）**: enterprise-grade, auto-scaling, cost-optimised
+
+For each phase show: ASCII architecture diagram, new components added vs previous phase, cost/complexity delta, what problems are solved and what problems remain.
+
+### 3. Why X not Y
+
+For every non-obvious design decision, include an explicit **「為什麼選 X 不選 Y」comparison table**. Cover at least 4–6 decisions per post. Standard format:
+
+```
+選擇        選 X 的理由                   不選 Y 的理由
+──────────────────────────────────────────────────────
+Redis       < 1ms 延遲，原生 TTL 支援      DB：連接開銷大，無原生 TTL
+vs DB       Cluster 模式高可用             Memcached：無持久化，資料結構少
+```
+
+Always include the "flip condition": when does Y become the right choice instead?
+
+### 4. Content depth and completeness
+
+- **Concrete numbers throughout**: latency in ms, cost in $, error rates in %, scale in QPS/MAU/users
+- **Annotate every tradeoff**: state explicitly when a design decision changes (e.g., "below 100 QPS, X is fine; above that, Y is necessary")
+- **Code snippets**: only for non-obvious implementations; never boilerplate
+- **Symptom-to-diagnosis chains**: show what signal you'd see in Traces/Metrics/Logs, not just theory
+- **Minimum 600 lines per post; target 700–900**
+- Section numbering: use 一, 二, 三 … 十, 十一 (Chinese numerals); do not exceed 12 sections
+
+### 5. Standard section order
+
+1. 一、核心問題/為什麼（establish the tension)
+2. 二、三個演進階段（phase-based architecture with diagrams)
+3. 三–七、Deep dives on each major design area
+4. 八 or 九、為什麼選 X 不選 Y（consolidated decision table)
+5. 十、系統效應（before/after comparison table with numbers)
+6. 十一、面試答題要點（model RKK answer in blockquote)
+7. Series navigation links
+
+### 6. Style rules
+
+- **No mention of "Google"** anywhere in the generated content or tags
+- Tags: use `"Cloud"` instead of `"Google"`; always include `"RKK"` and `"Interview"`
+- readTime: set based on line count — 500 lines ≈ 18 min, 700 lines ≈ 23 min, 900 lines ≈ 28 min
+- Opening quote: 4-line contrast (what most people do vs what the right answer is)
+- 面試情境: a single interviewer question that is specific, scenario-based, and requires architecture judgment
+- 面試答題要點: a model answer in `> *「...」*` blockquote format, 4–6 sentences, hits the phase structure + key Why-X-not-Y decisions + a concrete number
