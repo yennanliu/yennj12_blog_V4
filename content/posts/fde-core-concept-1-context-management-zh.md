@@ -2,6 +2,7 @@
 title: "FDE core topic - Context Management：Token 預算管理與上下文修剪策略"
 date: 2026-06-08T10:00:00+08:00
 draft: false
+weight: 1
 description: "深入解析 LLM 有限上下文視窗的管理策略，涵蓋 Token 預算分配、滑動視窗截斷、階層式摘要壓縮與工具輸出修剪，幫助你在面試中展現生產級 AI 系統設計能力。"
 categories: ["engineering", "all"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "LLM", "RAG", "TokenBudget"]

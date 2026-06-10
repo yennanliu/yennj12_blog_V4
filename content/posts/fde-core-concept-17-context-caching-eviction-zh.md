@@ -2,6 +2,7 @@
 title: "FDE core topic - Context Cache Eviction：硬體級上下文快取驅逐策略與計費陷阱"
 date: 2026-06-08T10:00:00+08:00
 draft: false
+weight: 17
 description: "深入解析 Vertex AI Context Caching 的 KV 快取原理、三層驅逐架構設計，以及如何避免每小時 $4.50 的隱性計費陷阱。"
 categories: ["engineering", "all"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "VertexAI", "Caching", "CostOptimization"]

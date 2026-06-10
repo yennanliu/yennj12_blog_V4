@@ -2,6 +2,7 @@
 title: "FDE core topic - CMEK / BYOK 信封加密：自主密鑰管理與零信任加密架構"
 date: 2026-06-08T10:00:00+08:00
 draft: false
+weight: 10
 description: "深入解析信封加密的 DEK/KEK 機制、Cloud KMS 與外部密鑰管理器（EKM）的取捨、Confidential Computing 封存與 Vertex AI CMEK 整合，掌握企業級零信任加密的三個實作層次。"
 categories: ["engineering", "all"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Security", "CMEK", "Encryption", "HSM"]

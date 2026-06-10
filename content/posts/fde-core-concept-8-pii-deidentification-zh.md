@@ -2,6 +2,7 @@
 title: "FDE core topic - PII 去識別化與格式保留加密：資料進入 AI 管線前的隱私護欄"
 date: 2026-06-08T10:00:00+08:00
 draft: false
+weight: 8
 description: "深入解析 PII 去識別化光譜、格式保留加密（FPE）原理、Cloud Sensitive Data Protection 整合，以及 AI 管線中隱私護欄的三個實作層次。"
 categories: ["engineering", "all"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Security", "PII", "DLP", "Compliance"]

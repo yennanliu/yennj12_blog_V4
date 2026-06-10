@@ -2,6 +2,7 @@
 title: "FDE core topic - Backpressure & Fair-Share：多租戶流量削峰與公平資源排程"
 date: 2026-06-08T10:00:00+08:00
 draft: false
+weight: 12
 description: "深入解析 Token Bucket 反壓機制與加權公平排隊，說明多租戶 AI 平台如何在突發流量下保障每個租戶的最低吞吐量，並以 Redis Lua 腳本實現亞毫秒級限速。"
 categories: ["engineering", "all"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Scalability", "RateLimiting", "MultiTenant"]

@@ -2,6 +2,7 @@
 title: "FDE core topic - Indirect Prompt Injection：Agent 工具鏈的隱形攻擊與沙盒隔離"
 date: 2026-06-08T10:00:00+08:00
 draft: false
+weight: 7
 description: "深入剖析 Indirect Prompt Injection 攻擊原理，從雙模型特權隔離架構到 Unicode 正規化防禦，逐層建構企業級 Agent 安全沙盒。"
 categories: ["engineering", "all"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Security", "AgentSecurity", "Sandboxing"]

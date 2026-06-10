@@ -2,6 +2,7 @@
 title: "FDE core topic - Prompt Injection & Jailbreak Defense：生產環境零信任 AI 防禦體系"
 date: 2026-06-08T10:00:00+08:00
 draft: false
+weight: 6
 description: "深入剖析生產環境中 LLM 系統面臨的 Prompt Injection 與 Jailbreak 攻擊，從輸入分類器、XML 隔離、DLP 掃描到工具白名單，建構四層縱深防禦體系。"
 categories: ["engineering", "all"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Security", "Guardrails", "AI-Safety"]
