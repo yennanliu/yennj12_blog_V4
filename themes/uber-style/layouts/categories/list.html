@@ -12,7 +12,7 @@
         {{ if .Pages }}
         <div class="tag-posts">
             {{ range $paginator.Pages }}
-            {{ $cats := where .Params.categories "ne" "all" }}
+            {{ $cats := where (.Params.categories | default slice) "ne" "all" }}
             <a href="{{ .RelPermalink }}" class="tag-posts__row">
                 <div class="tag-posts__part">
                     {{ if .Weight }}
