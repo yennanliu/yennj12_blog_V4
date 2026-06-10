@@ -2,6 +2,7 @@
 title: "用 AI Bot 打造顧問團隊（三）：評估、維運與優化計畫"
 date: 2026-04-30T11:00:00+08:00
 draft: false
+weight: 3
 description: "AI 顧問 Agent 團隊上線後怎麼辦？本文從 DevOps/SRE 角度，涵蓋系統效能評估、品質驗證、監控告警、部署策略、以及持續改善的 Roadmap。"
 categories: ["AI", "Agent", "DevOps", "SRE", "all"]
 tags: ["AI Agent", "DevOps", "SRE", "LangSmith", "監控", "部署", "評估", "繁體中文"]

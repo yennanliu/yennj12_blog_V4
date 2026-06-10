@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（三十八）：RKK 實戰——從 POC 到 Production：AI 系統的五個生產化差距與 Rollback 設計"
 date: 2026-06-05T16:00:00+08:00
 draft: false
+weight: 38
 description: "以系統設計視角拆解 AI 系統從 POC 到生產最容易失敗的五個差距：Token Budget 失控、延遲 SLA 差距、Session State 消失、錯誤處理不完整、Rollback 機制缺席；包含生產化 Go-Live 清單、Prompt 版本控制、模型版本釘選、Canary 部署設計，以及每個差距對系統效能和穩定性的量化影響"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Production", "POC", "Deployment", "Rollback", "SLA", "Token Budget", "RKK", "Interview", "Google"]

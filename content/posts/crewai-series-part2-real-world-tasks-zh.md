@@ -2,6 +2,7 @@
 title: "CrewAI 完全指南（二）：三個真實場景實戰——競情分析、程式碼審查、客服自動化"
 date: 2026-05-22T09:00:00+08:00
 draft: false
+weight: 2
 description: "CrewAI 不只是玩具：用三個完整的生產級範例說明如何建立競爭對手情報分析系統、自動化程式碼審查流程、以及智慧客服分類與回覆系統，包含工具整合與 Hierarchical Process 實作。"
 categories: ["AI", "Agent", "Engineering", "all"]
 tags: ["CrewAI", "Multi-Agent", "AI Automation", "Code Review", "Customer Service", "Python", "繁體中文"]

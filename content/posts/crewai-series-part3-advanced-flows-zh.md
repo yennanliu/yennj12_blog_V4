@@ -2,6 +2,7 @@
 title: "CrewAI 完全指南（三）：進階技巧——Flows 事件驅動、Memory 記憶體、與生產部署"
 date: 2026-05-23T09:00:00+08:00
 draft: false
+weight: 3
 description: "CrewAI 進階篇：用 @start/@listen/@router 建立事件驅動的複雜工作流程、三種記憶體機制的實際應用、錯誤處理與成本控制，以及如何把 CrewAI Crew 包成 API 服務部署到生產環境。"
 categories: ["AI", "Agent", "Engineering", "all"]
 tags: ["CrewAI", "Flows", "Memory", "Multi-Agent", "Production", "FastAPI", "Python", "繁體中文"]

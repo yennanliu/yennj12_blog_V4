@@ -2,6 +2,7 @@
 title: "如何衡量 AI 的準確度（三）：RAG 系統的可靠性評估框架"
 date: 2026-05-18T11:00:00+08:00
 draft: false
+weight: 3
 description: "RAG 系統的評估遠不只是看回答品質，還要驗證檢索忠誠度與事實接地性。本文介紹 Faithfulness、Relevance、Context Precision 等 RAG 專屬指標，以及如何使用 RAGAS 框架自動化評估流程。"
 categories: ["AI", "Engineering", "all"]
 tags: ["AI", "RAG", "LLM", "RAGAS", "Faithfulness", "Hallucination", "Evaluation", "繁體中文"]

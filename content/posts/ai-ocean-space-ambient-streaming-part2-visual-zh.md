@@ -2,6 +2,7 @@
 title: "AI 深海/太空環境音串流實戰（二）：8K 視覺製作與動態場景生成"
 date: 2026-01-18T17:30:00+08:00
 draft: false
+weight: 2
 authors: ["yen"]
 categories: ["all", "business", "streaming", "ai", "visual-design"]
 tags: ["Midjourney", "Runway", "視覺設計", "8K", "深海", "太空", "AI生成", "動態視覺"]

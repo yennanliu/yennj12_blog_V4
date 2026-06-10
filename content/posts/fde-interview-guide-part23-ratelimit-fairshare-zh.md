@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（二十三）：RKK 實戰——多租戶 Agent 的限流、Fair-Share 與 Token 預算控制"
 date: 2026-06-04T16:00:00+08:00
 draft: false
+weight: 23
 description: "以系統設計視角拆解多租戶 AI Agent 系統的資源隔離問題：為什麼傳統 RPM 限流不夠、Token-Aware Rate Limiting 的設計原理、分散式令牌桶架構，以及如何防止 Noisy Neighbor Effect 影響其他租戶"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Agent", "Rate Limiting", "Multi-tenant", "Token Budget", "Fair-Share", "Redis", "System Design", "RKK", "Interview", "Google"]

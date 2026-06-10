@@ -2,6 +2,7 @@
 title: "AI Forward Deployed Engineer 必備技能指南（五）：客戶協作與問題解決實務"
 date: 2026-05-26T17:09:24+09:00
 draft: false
+weight: 5
 description: "深入探討 AI FDE 客戶協作的核心技能，包含需求分析、技術溝通、專案管理與問題解決的最佳實務"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Customer Success", "Project Management", "Communication", "Problem Solving", "Requirements Analysis", "cheatsheet"]

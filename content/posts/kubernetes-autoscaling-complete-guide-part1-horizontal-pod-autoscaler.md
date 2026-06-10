@@ -2,6 +2,7 @@
 title: "Kubernetes Autoscaling Complete Guide (Part 1): Horizontal Pod Autoscaler"
 date: 2025-11-09T10:00:00+08:00
 draft: false
+weight: 1
 authors: ["yennj12 team"]
 categories: ["all", "engineering", "devops", "kubernetes"]
 tags: ["Kubernetes", "K8S", "HPA", "Autoscaling", "VPA", "KEDA", "Performance", "Cloud Native", "Scalability"]

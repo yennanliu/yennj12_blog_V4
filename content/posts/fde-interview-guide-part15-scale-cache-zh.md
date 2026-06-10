@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（十五）：RKK 實戰——AI Agent 規模化與 Cache 策略"
 date: 2026-06-03T14:00:00+08:00
 draft: false
+weight: 15
 description: "以系統設計視角拆解 AI Agent 的規模化挑戰：為什麼 LLM 系統的擴展和傳統 Web 不同、三層 Cache 各解決什麼問題、Stateful Agent 怎麼做水平擴展——含完整架構圖與成本估算框架"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Agent", "Scale", "Cache", "KV Cache", "Semantic Cache", "System Design", "RKK", "Interview", "Google"]

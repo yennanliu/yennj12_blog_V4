@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（九）：LLM 核心知識——Token、Prompt Engineering 與 Embedding"
 date: 2026-05-31T11:00:00+08:00
 draft: false
+weight: 9
 description: "以 Google AI 工程師兼面試官的視角，整理 FDE 面試中最關鍵的 LLM 實用知識：Token 與 Context Window 的工程意涵、Prompt Engineering 五大技法，以及 Embedding 在語意搜尋中的原理與選型"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "LLM", "Prompt Engineering", "Embedding", "Token", "RAG", "CoT", "ReAct", "Interview", "Google"]

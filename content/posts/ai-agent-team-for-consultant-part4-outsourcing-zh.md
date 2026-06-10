@@ -2,6 +2,7 @@
 title: "用 AI Bot 打造顧問團隊（四）：小型外包公司實戰案例"
 date: 2026-04-30T12:00:00+08:00
 draft: false
+weight: 4
 description: "實戰案例：一家 10 人軟體外包公司如何用 AI Agent 團隊自動化需求評估、報價、專案追蹤與客戶溝通，包含完整 Prompt、Skill 設計與執行步驟。"
 categories: ["AI", "Agent", "Business", "Case Study", "all"]
 tags: ["AI Agent", "外包公司", "Claude Code", "LangGraph", "Multi-Agent", "繁體中文", "實戰案例"]

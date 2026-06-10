@@ -2,6 +2,7 @@
 title: "購物車系統的高並發改造（二）：Redisson 分散式鎖、讀寫分離路由與 Docker HA 水平擴展"
 date: 2026-05-25T09:00:00+08:00
 draft: false
+weight: 2
 description: "高並發購物車系列第二篇：深入剖析 Redisson 分散式鎖如何防止超賣與重複下單、AbstractRoutingDataSource + LazyConnectionDataSourceProxy 的讀寫分離路由設計細節（含 @Transactional 的坑），以及 Nginx + MySQL 主從複製的 Docker HA 生產架構。"
 categories: ["Engineering", "Architecture", "all"]
 tags: ["Spring Boot", "Java", "Redisson", "Distributed Lock", "Read Replica", "Docker", "Nginx", "High Concurrency", "Backend", "繁體中文"]

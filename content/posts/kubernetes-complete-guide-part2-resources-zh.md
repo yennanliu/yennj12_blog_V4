@@ -2,6 +2,7 @@
 title: "Kubernetes 完整指南（二）：核心資源與 kubectl 實戰操作"
 date: 2025-10-11T12:30:00+08:00
 draft: false
+weight: 2
 description: "深入探討 Kubernetes 核心資源對象，包含 Pod、Deployment、Service、Ingress、Volume 等完整操作指南，搭配大量 kubectl 指令範例與 YAML 配置，從基礎到實戰全面掌握。"
 categories: ["Engineering", "DevOps", "Kubernetes", "all"]
 tags: ["Kubernetes", "K8S", "kubectl", "Pod", "Deployment", "Service", "Ingress", "Volume", "實務操作", "YAML"]

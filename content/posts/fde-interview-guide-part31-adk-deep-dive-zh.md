@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（三十一）：RKK 實戰——Google ADK 深度設計：Agent 類型、Tool 宣告與 Multi-Agent 協調"
 date: 2026-06-05T09:00:00+08:00
 draft: false
+weight: 31
 description: "以系統設計視角深度拆解 Google Agent Development Kit（ADK）：四種 Agent 類型的選擇邏輯、Tool 宣告系統的設計原理、Multi-Agent 的狀態共享機制，以及 ADK 在 Vertex AI 上的部署模式與 LangGraph 的根本差異"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "ADK", "Agent", "Google", "Vertex AI", "Multi-Agent", "Tool", "System Design", "RKK", "Interview"]

@@ -2,6 +2,7 @@
 title: "如何衡量 AI 的準確度（二）：大型語言模型（LLM）的評估方法"
 date: 2026-05-18T10:00:00+08:00
 draft: false
+weight: 2
 description: "LLM 的輸出沒有唯一標準答案，該怎麼客觀評估？本文介紹 BLEU、ROUGE、Perplexity、BERTScore 及 LLM-as-a-Judge 等方法，幫助你從多個維度評估語言模型的真實能力。"
 categories: ["AI", "Engineering", "all"]
 tags: ["AI", "LLM", "NLP", "BLEU", "ROUGE", "BERTScore", "LLM-as-a-Judge", "Evaluation", "繁體中文"]

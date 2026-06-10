@@ -2,6 +2,7 @@
 title: "如何衡量 AI 的準確度（一）：分類與回歸任務的基礎評估指標"
 date: 2026-05-18T09:00:00+08:00
 draft: false
+weight: 1
 description: "AI 準確度不是一個數字就能說清楚的。本文從分類與回歸任務出發，介紹 Precision、Recall、F1-Score、RMSE 等核心指標，幫助你建立客觀評估 AI 模型的基礎框架。"
 categories: ["AI", "Engineering", "all"]
 tags: ["AI", "Machine Learning", "Evaluation", "Precision", "Recall", "F1-Score", "RMSE", "繁體中文"]

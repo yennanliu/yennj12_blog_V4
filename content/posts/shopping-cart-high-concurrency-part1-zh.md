@@ -2,6 +2,7 @@
 title: "購物車系統的高並發改造（一）：Virtual Threads、HikariCP 與 Redis 快取三管齊下"
 date: 2026-05-24T09:00:00+08:00
 draft: false
+weight: 1
 description: "深入剖析一個真實 Spring Boot 購物車系統如何從「默認設定」升級到能承受 C10K 的生產級高並發架構：JDK 21 Virtual Threads、HikariCP 連線池調校、Redis 分層快取設計，以及升級到 Spring Boot 3.2 過程中的關鍵踩坑。"
 categories: ["Engineering", "Architecture", "all"]
 tags: ["Spring Boot", "Java", "High Concurrency", "Redis", "HikariCP", "Virtual Threads", "Backend", "繁體中文"]

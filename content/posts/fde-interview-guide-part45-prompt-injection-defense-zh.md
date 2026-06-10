@@ -2,6 +2,7 @@
 title: "FDE 面試指南 Part 45：Agent 工具鏈的間接提示詞注入防禦設計"
 date: 2026-06-08T09:00:00+08:00
 draft: false
+weight: 45
 description: "深度解析間接提示詞注入（Indirect Prompt Injection）在 Agent 工具鏈的防禦架構，涵蓋雙模型特權分離、Cloud Run VPC 沙盒隔離、Pydantic Schema 強型別校驗，適合 Staff FDE 面試備考。"
 categories: ["engineering", "all"]
 tags: ["RKK", "Interview", "Cloud", "AI", "Security", "LLM", "Agent", "Prompt Injection", "Vertex AI", "Cloud Run"]

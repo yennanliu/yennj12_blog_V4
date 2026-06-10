@@ -2,6 +2,7 @@
 title: "Synthwave 讀書會串流實戰（二）：AI 音樂生成、合成器音色設計與專業音樂策展"
 date: 2026-01-18T19:30:00+08:00
 draft: false
+weight: 2
 authors: ["yen"]
 categories: ["all", "business", "streaming", "music-production"]
 tags: ["Synthwave", "AI音樂", "Suno", "合成器", "音樂製作", "BPM", "音色設計"]

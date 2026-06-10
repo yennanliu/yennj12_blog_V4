@@ -2,6 +2,7 @@
 title: "Building MCP Servers for Claude Code Development - Part 1"
 date: 2025-09-27T10:00:00Z
 draft: false
+weight: 1
 authors: ["yen"]
 categories: ["all", "AI", "development-tools", "automation"]
 tags: ["AI", "mcp", "claude-code", "development-tools", "automation", "python", "typescript", "tooling"]

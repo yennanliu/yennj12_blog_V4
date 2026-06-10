@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（二十六）：顧問實戰——「我們現在用 OpenAI，為什麼要換 Vertex AI？」"
 date: 2026-06-04T19:00:00+08:00
 draft: false
+weight: 26
 description: "以 Google FDE 顧問視角拆解競品定位對話：如何回應客戶的 OpenAI / AWS 比較、用場景驅動而非規格比較的說服框架、Vertex AI 的差異化優勢在哪裡，以及如何避免常見的定位陷阱"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Consultant", "Vertex AI", "GCP", "Competitive", "Interview", "Google", "RKK"]

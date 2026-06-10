@@ -2,6 +2,7 @@
 title: "Kubernetes Autoscaling Complete Guide (Part 2): Cluster Autoscaling & Cloud Providers"
 date: 2025-11-09T14:00:00+08:00
 draft: false
+weight: 2
 authors: ["yennj12 team"]
 categories: ["all", "engineering", "devops", "kubernetes", "cloud"]
 tags: ["Kubernetes", "K8S", "Autoscaling", "Cluster Autoscaler", "Karpenter", "EKS", "GKE", "AKS", "Cloud Native", "Infrastructure", "Cost Optimization"]

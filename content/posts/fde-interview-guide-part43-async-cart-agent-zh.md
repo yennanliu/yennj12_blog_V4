@@ -2,6 +2,7 @@
 title: "FDE 面試指南 Part 43：跨國電商百萬級購物車 Agent 的分散式動態權限與狀態回復"
 date: 2026-06-08T09:00:00+08:00
 draft: false
+weight: 43
 description: "深度剖析黑五大促銷期間 200 萬在線用戶購物車 Agent 的異步架構設計：GKE Autopilot + KEDA + Cloud Pub/Sub 彈性伸縮、Cloud Spanner 強一致性 Checkpointer、LangGraph StateGraph 精確一次冪等恢復，以及多租戶隔離與流量整形策略。"
 categories: ["engineering", "all"]
 tags: ["RKK", "Interview", "Cloud", "AI", "LangGraph", "GKE", "Pub/Sub", "Spanner", "Agent", "Distributed Systems", "Async Architecture"]

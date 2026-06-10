@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（七）：Agent 深度設計——ReAct vs Planner、Tool Routing、Multi-Agent"
 date: 2026-05-31T10:00:00+08:00
 draft: false
+weight: 7
 description: "以 Google AI 工程師兼面試官的視角，深度拆解 Agent 系統設計的五大主題：ReAct vs Planner-Executor 架構選擇、Tool Routing 四層漏斗、Multi-Agent 邊界、Loop 終止策略，以及 Memory 系統設計"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Agent", "ReAct", "Planner", "Multi-Agent", "Tool Routing", "Memory", "LangGraph", "Interview", "Google"]

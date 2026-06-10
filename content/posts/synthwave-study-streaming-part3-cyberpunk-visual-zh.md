@@ -2,6 +2,7 @@
 title: "Synthwave 讀書會串流實戰（三）：賽博龐克視覺製作、霓虹燈美學與 80 年代復古設計"
 date: 2026-01-18T20:00:00+08:00
 draft: false
+weight: 3
 authors: ["yen"]
 categories: ["all", "business", "streaming", "visual-design"]
 tags: ["賽博龐克", "霓虹燈", "視覺設計", "Midjourney", "80年代", "復古美學", "After Effects"]

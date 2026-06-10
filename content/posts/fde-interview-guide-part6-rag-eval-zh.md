@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（六）：RAG 進階——檢索失敗、Grounding、評估指標與成本控制"
 date: 2026-05-31T09:30:00+08:00
 draft: false
+weight: 6
 description: "以 Google AI 工程師兼面試官的視角，深度拆解 RAG 系統的四大進階主題：檢索失敗的原因與修復、Grounding 策略、RAG 評估指標設計，以及生產環境中的成本控制"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "RAG", "Grounding", "Evaluation", "RAGAS", "Cost Control", "Interview", "Google"]

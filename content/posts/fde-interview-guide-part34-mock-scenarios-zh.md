@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（三十四）：RKK 實戰演練——六個端對端 Mock 情境題與模範答案"
 date: 2026-06-05T12:00:00+08:00
 draft: false
+weight: 34
 description: "六個完整的 FDE RKK 面試 Mock 情境，每題包含客戶場景與限制條件、面試官的追問鏈、模範答案架構，以及最常見的失分點——涵蓋金融合規、保險多 Agent、醫療 VPC、零售推薦、政府法規、教育 SaaS 六個垂直場景"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "RKK", "Mock Interview", "System Design", "Google", "Playbook", "Interview"]

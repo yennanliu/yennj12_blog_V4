@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（二十五）：RKK 實戰——Self-Reflection 與幻覺校正迴圈設計"
 date: 2026-06-04T18:00:00+08:00
 draft: false
+weight: 25
 description: "以系統設計視角拆解 Generator-Evaluator 雙節點架構：為什麼 LLM 需要自我檢查機制、Reflexion Pattern 的設計原理、如何防止反思迴圈變成無限循環，以及收斂保證的工程實踐"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Agent", "Self-Reflection", "Hallucination", "LangGraph", "Reflexion", "Generator-Evaluator", "System Design", "RKK", "Interview", "Google"]

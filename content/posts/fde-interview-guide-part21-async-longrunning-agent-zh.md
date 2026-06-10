@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（二十一）：RKK 實戰——長任務 Agent 的異步分散式架構"
 date: 2026-06-04T14:00:00+08:00
 draft: false
+weight: 21
 description: "以系統設計視角拆解需要執行 30~60 分鐘的 Agent 任務：為什麼不能讓用戶等 HTTP Response、解耦架構的設計原理、Checkpoint 斷點續傳機制，以及 GCP 上的具體落地方案"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Agent", "Async", "Long-Running", "Checkpoint", "Cloud Pub/Sub", "GKE", "System Design", "RKK", "Interview", "Google"]

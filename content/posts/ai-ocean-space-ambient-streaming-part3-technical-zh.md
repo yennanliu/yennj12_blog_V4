@@ -2,6 +2,7 @@
 title: "AI 深海/太空環境音串流實戰（三）：OBS 設定、串流上線與自動化監控"
 date: 2026-01-18T18:00:00+08:00
 draft: false
+weight: 3
 authors: ["yen"]
 categories: ["all", "business", "streaming", "technical"]
 tags: ["OBS", "串流", "技術設定", "自動化", "監控", "YouTube直播", "24/7"]

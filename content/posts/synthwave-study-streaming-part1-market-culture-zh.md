@@ -2,6 +2,7 @@
 title: "Synthwave 讀書會串流實戰（一）：80 年代復古文化、市場分析與目標受眾定位"
 date: 2026-01-18T19:00:00+08:00
 draft: false
+weight: 1
 authors: ["yen"]
 categories: ["all", "business", "streaming", "music"]
 tags: ["Synthwave", "復古合成器", "80年代", "賽博龐克", "YouTube", "24/7直播", "遊戲音樂"]

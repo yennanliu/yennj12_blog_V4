@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（十）：RKK 實戰——AI Agent 的 Context Management"
 date: 2026-06-03T09:00:00+08:00
 draft: false
+weight: 10
 description: "以系統設計視角拆解 AI Agent 的 Context Management：核心問題是什麼、有哪些策略、為什麼選這個、trade-off 怎麼算——含完整架構圖與面試答題框架"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Agent", "Context Management", "LLM", "Context Window", "Memory", "System Design", "RKK", "Interview", "Google"]

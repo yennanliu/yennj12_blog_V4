@@ -2,6 +2,7 @@
 title: "Crypto Quantitative Trading Part 2: Advanced Strategies and Backtesting Framework"
 date: 2026-01-24T21:00:00+08:00
 draft: false
+weight: 2
 authors: ["yen"]
 categories: ["all", "engineering", "finance"]
 tags: ["Cryptocurrency", "Bitcoin", "Ethereum", "Backtesting", "Trading Strategies", "Risk Management", "Python", "Portfolio Optimization", "Mean Reversion", "Trend Following"]

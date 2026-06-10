@@ -2,6 +2,7 @@
 title: "Kubernetes Autoscaling Complete Guide (Part 6): Advanced Autoscaling Patterns"
 date: 2025-11-09T22:00:00+08:00
 draft: false
+weight: 6
 authors: ["yennj12 team"]
 categories: ["all", "engineering", "devops", "kubernetes", "architecture"]
 tags: ["Kubernetes", "K8S", "Autoscaling", "StatefulSet", "Multi-Cluster", "Cost Optimization", "Spot Instances", "FinOps", "Advanced Patterns", "Batch Jobs"]

@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（四）：System Design 實戰"
 date: 2026-05-30T11:30:00+08:00
 draft: false
+weight: 4
 description: "以 Google AI 工程師兼面試官的視角，完整拆解兩道 FDE 高頻系統設計題：企業知識庫 Chatbot 與 Internal AI Copilot，含 Auth、RBAC、Cache、NL2SQL 的設計決策與 trade-off"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "System Design", "RAG", "RBAC", "Cache", "NL2SQL", "BigQuery", "Interview", "Google"]

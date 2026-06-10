@@ -2,6 +2,7 @@
 title: "AI 深海/太空環境音串流實戰（四）：Shorts 導流、社群經營與多元變現策略"
 date: 2026-01-18T18:30:00+08:00
 draft: false
+weight: 4
 authors: ["yen"]
 categories: ["all", "business", "streaming", "marketing"]
 tags: ["YouTube Shorts", "社群經營", "變現", "內容策略", "SEO", "品牌建立", "被動收入"]

@@ -2,6 +2,7 @@
 title: "CrewAI 完全指南（一）：入門與核心概念——用多 Agent 協作解決複雜問題"
 date: 2026-05-21T09:00:00+08:00
 draft: false
+weight: 1
 description: "從零開始學 CrewAI：什麼是多 Agent 協作框架、為什麼需要它、核心四大元件（Agent、Task、Crew、Tool）的詳細說明，以及你的第一個 CrewAI 應用程式。"
 categories: ["AI", "Agent", "Engineering", "all"]
 tags: ["CrewAI", "Multi-Agent", "LLM", "AI Automation", "Python", "繁體中文"]

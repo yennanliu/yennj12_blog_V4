@@ -2,6 +2,7 @@
 title: "RAG 完全指南（四）：查詢轉換、Self-RAG 與 Context 壓縮"
 date: 2026-05-19T09:00:00+08:00
 draft: false
+weight: 4
 description: "當問題本身就是問題：深入三大 RAG 優化技術——Step-Back Prompting、Self-RAG 自我反思、以及 Context Compression。了解它們的核心原理、實作方式、優缺點與最佳使用場景。"
 categories: ["AI", "Engineering", "all"]
 tags: ["RAG", "Self-RAG", "Context Compression", "Query Transformation", "LangChain", "Python", "繁體中文"]

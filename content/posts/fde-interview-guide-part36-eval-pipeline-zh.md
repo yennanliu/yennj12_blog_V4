@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（三十六）：RKK 實戰——生產級 AI Evaluation Pipeline：從黃金資料集到 CI/CD 品質閘門"
 date: 2026-06-05T14:00:00+08:00
 draft: false
+weight: 36
 description: "以系統設計視角拆解生產級 AI 評估管線：黃金資料集的建立原則、離線評估架構（RAGAS vs Vertex AI Evaluation Service）、CI/CD 品質閘門設計、Safety 作為獨立評估維度，以及線上評估的抽樣策略與 Trade-off"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Evaluation", "RAGAS", "Vertex AI", "CI/CD", "Safety", "Pipeline", "RKK", "Interview", "Google"]

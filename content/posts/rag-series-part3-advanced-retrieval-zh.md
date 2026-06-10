@@ -2,6 +2,7 @@
 title: "RAG 完全指南（三）：進階檢索技術——混合搜尋、HyDE、Multi-Query、Reranker"
 date: 2026-05-18T09:00:00+08:00
 draft: false
+weight: 3
 description: "Naive RAG 的搜尋精準度不夠？本篇深入四大進階檢索技術：BM25 混合搜尋、假設性文件嵌入（HyDE）、多查詢檢索（Multi-Query）、以及 Cross-Encoder Reranker，每個都有核心原理、程式碼與最佳使用場景。"
 categories: ["AI", "Engineering", "all"]
 tags: ["RAG", "Hybrid Search", "HyDE", "Reranker", "BM25", "LangChain", "Python", "繁體中文"]

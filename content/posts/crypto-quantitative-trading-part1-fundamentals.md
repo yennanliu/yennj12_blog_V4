@@ -2,6 +2,7 @@
 title: "Crypto Quantitative Trading Part 1: Fundamentals and Essential Concepts"
 date: 2026-01-24T20:00:00+08:00
 draft: false
+weight: 1
 authors: ["yen"]
 categories: ["all", "engineering", "finance"]
 tags: ["Cryptocurrency", "Bitcoin", "Ethereum", "Quantitative Trading", "Python", "Data Analysis", "Trading Algorithms", "Technical Analysis", "Financial Engineering"]

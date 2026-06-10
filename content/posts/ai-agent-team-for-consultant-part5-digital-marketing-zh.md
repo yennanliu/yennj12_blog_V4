@@ -2,6 +2,7 @@
 title: "用 AI Bot 打造顧問團隊（五）：數位行銷公司實戰案例"
 date: 2026-04-30T13:00:00+08:00
 draft: false
+weight: 5
 description: "實戰案例：一家 8 人數位行銷公司如何用 AI Agent 團隊自動化內容策略、廣告文案、成效報告與客戶簡報，包含完整 Prompt、LangGraph 實作與執行步驟。"
 categories: ["AI", "Agent", "Business", "Case Study", "Marketing", "all"]
 tags: ["AI Agent", "數位行銷", "LangGraph", "Claude", "內容行銷", "廣告文案", "Multi-Agent", "繁體中文", "實戰案例"]

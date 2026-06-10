@@ -2,6 +2,7 @@
 title: "Crypto Quantitative Trading Part 3: Optimization, Validation, and Production Deployment"
 date: 2026-01-24T22:00:00+08:00
 draft: false
+weight: 3
 authors: ["yen"]
 categories: ["all", "engineering", "finance"]
 tags: ["Cryptocurrency", "Production", "Live Trading", "Machine Learning", "Optimization", "Walk-Forward Analysis", "DevOps", "Monitoring", "AWS", "Docker"]

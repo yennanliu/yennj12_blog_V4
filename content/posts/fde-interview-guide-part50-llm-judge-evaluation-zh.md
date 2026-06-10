@@ -2,6 +2,7 @@
 title: "FDE 面試指南 Part 50：生產環境 GenAI 自動化評估管線與 LLM-as-a-Judge 漂移監控"
 date: 2026-06-08T09:00:00+08:00
 draft: false
+weight: 50
 description: "深度解析如何在生產環境中建立多階抽樣的 LLM 自動化評估管線，涵蓋分層抽樣、RAG 三元組評估、位置偏見消除、Drift Alert 設計，以及 95% 成本控制策略。Staff FDE 級別實戰解答。"
 categories: ["engineering", "all"]
 tags: ["RKK", "Interview", "Cloud", "AI", "GenAI", "LLM", "Evaluation", "MLOps", "Vertex AI", "Observability"]

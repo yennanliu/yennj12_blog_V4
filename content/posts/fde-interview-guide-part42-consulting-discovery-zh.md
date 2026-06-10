@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（四十二）：RKK 實戰——顧問技能：從「要 AI」到 POC 範圍定義的 Discovery 框架"
 date: 2026-06-08T12:00:00+08:00
 draft: false
+weight: 42
 description: "以顧問視角拆解 FDE 的核心軟技能：三個顧問參與階段（Discovery → Technical Assessment → POC Proposal）、利害關係人影響力地圖、需求挖掘五個核心問題、POC 場景評分矩陣、Value Story 框架、常見客戶異議處理，以及 Why X not Y 的顧問方法論選型決策"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Consulting", "Discovery", "Stakeholder", "POC", "ValueStory", "Requirements", "RKK", "Interview"]

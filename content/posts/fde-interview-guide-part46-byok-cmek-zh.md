@@ -2,6 +2,7 @@
 title: "FDE 面試指南 Part 46：高規格金融業的數據無痕化與自主密鑰管理（BYOK / CMEK in GenAI）"
 date: 2026-06-08T09:00:00+08:00
 draft: false
+weight: 46
 description: "深度剖析金融業在 Vertex AI 場景下導入 BYOK/CMEK 的完整架構：Cloud KMS + Cloud EKM 信封加密、DEK/KEK 職責分離、Dedicated Interconnect 專線優化、HSM 合規到 Memory Enclave 記憶體保護，兼顧主權資安與 <50ms 極限性能。"
 categories: ["engineering", "all"]
 tags: ["RKK", "Interview", "Cloud", "AI", "Security", "BYOK", "CMEK", "Vertex AI", "HSM", "Encryption", "Compliance", "FinTech"]

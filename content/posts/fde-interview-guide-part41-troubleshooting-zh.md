@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（四十一）：RKK 實戰——分散式 AI 系統的故障排查：結構化診斷框架與五種常見失效模式"
 date: 2026-06-08T11:00:00+08:00
 draft: false
+weight: 41
 description: "以系統設計視角拆解分散式 AI 系統的故障排查：三個可觀測性成熟度階段、五步驟結構化診斷框架、症狀分類矩陣、完整決策樹圖、五種 AI 系統常見失效模式與特徵信號、SLO 與 Error Budget 設計，以及 Why X not Y 的關鍵可觀測性技術選型"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Troubleshooting", "Observability", "OpenTelemetry", "SLO", "Debugging", "Reliability", "RKK", "Interview", "Cloud"]

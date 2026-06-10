@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（二十八）：顧問實戰——生產事故診斷與客戶溝通語言"
 date: 2026-06-04T20:00:00+08:00
 draft: false
+weight: 28
 description: "以 Google FDE 顧問視角拆解 AI 系統生產事故的處理全流程：P95 延遲異常的診斷思路、不停機排查策略、如何在技術細節與客戶語言之間切換，以及事故後的信任重建框架"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Consultant", "Incident", "Debugging", "Observability", "GCP", "Vertex AI", "Interview", "Google", "RKK"]

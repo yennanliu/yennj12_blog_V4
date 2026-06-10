@@ -2,6 +2,7 @@
 title: "Kubernetes Autoscaling Complete Guide (Part 5): Vertical Pod Autoscaler & Resource Optimization"
 date: 2025-11-09T20:00:00+08:00
 draft: false
+weight: 5
 authors: ["yennj12 team"]
 categories: ["all", "engineering", "devops", "kubernetes", "optimization"]
 tags: ["Kubernetes", "K8S", "VPA", "Vertical Pod Autoscaler", "Resource Optimization", "Cost Optimization", "Right-sizing", "Performance", "FinOps"]

@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（十七）：RKK 實戰——MCP 伺服器、Tool-Calling 安全與 OAuth 授權"
 date: 2026-06-04T10:00:00+08:00
 draft: false
+weight: 17
 description: "以系統設計視角拆解 MCP（Model Context Protocol）的安全邊界：Agent 的工具授權架構、Human-in-the-loop OAuth 流程、Tool Input Validation 防禦層，以及如何防止 Tool Injection 攻擊"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Agent", "MCP", "OAuth", "Tool-Calling", "Security", "System Design", "RKK", "Interview", "Google"]

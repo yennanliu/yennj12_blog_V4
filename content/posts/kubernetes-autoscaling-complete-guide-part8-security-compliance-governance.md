@@ -2,6 +2,7 @@
 title: "Kubernetes Autoscaling Complete Guide (Part 8): Security, Compliance & Governance"
 date: 2025-11-10T02:00:00+08:00
 draft: false
+weight: 8
 authors: ["yennj12 team"]
 categories: ["all", "engineering", "devops", "kubernetes", "security"]
 tags: ["Kubernetes", "K8S", "Security", "RBAC", "Compliance", "Governance", "Policy", "Audit", "Multi-Tenancy", "OPA", "Gatekeeper", "PCI-DSS", "HIPAA", "SOC2"]

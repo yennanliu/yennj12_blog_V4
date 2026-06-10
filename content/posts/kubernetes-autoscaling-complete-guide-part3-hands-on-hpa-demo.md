@@ -2,6 +2,7 @@
 title: "Kubernetes Autoscaling Complete Guide (Part 3): Hands-On HPA Demo with Apache-PHP"
 date: 2025-11-09T16:00:00+08:00
 draft: false
+weight: 3
 authors: ["yennj12 team"]
 categories: ["all", "engineering", "devops", "kubernetes", "tutorial"]
 tags: ["Kubernetes", "K8S", "HPA", "Autoscaling", "AWS", "EKS", "CDK", "TypeScript", "Tutorial", "Demo", "Apache", "PHP", "Load Testing"]

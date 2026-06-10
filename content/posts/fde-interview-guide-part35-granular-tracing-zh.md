@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（三十五）：RKK 實戰——生產級可觀測性設計：Granular Tracing、Span 樹與 Cloud Trace 整合"
 date: 2026-06-05T13:00:00+08:00
 draft: false
+weight: 35
 description: "以系統設計視角拆解 Agentic AI 系統的可觀測性：為什麼 Log 不夠、Span 樹的結構設計、OpenTelemetry 與 Cloud Trace 的整合模式、Sampling 策略的 Trade-off，以及一條 Trace 應該回答哪五個診斷問題"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Observability", "Tracing", "OpenTelemetry", "Cloud Trace", "Vertex AI", "Agent", "RKK", "Interview", "Google"]

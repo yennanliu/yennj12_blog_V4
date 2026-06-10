@@ -2,6 +2,7 @@
 title: "Kubernetes Autoscaling Complete Guide (Part 7): Production Troubleshooting & War Stories"
 date: 2025-11-10T00:00:00+08:00
 draft: false
+weight: 7
 authors: ["yennj12 team"]
 categories: ["all", "engineering", "devops", "kubernetes", "troubleshooting"]
 tags: ["Kubernetes", "K8S", "Troubleshooting", "Debugging", "Production", "Incidents", "War Stories", "Performance", "Autoscaling", "SRE"]

@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（四十）：RKK 實戰——AI 系統的 PII 保護：假名化設計、最小存取原則與合規稽核"
 date: 2026-06-08T10:00:00+08:00
 draft: false
+weight: 40
 description: "以系統設計視角拆解 AI 系統的 PII 保護：三個安全強化階段（POC → MVP → Enterprise）、PII 敏感度分類矩陣、假名化架構、RBAC 最小存取、Why X not Y 技術選型決策（假名化 vs 匿名化、CMEK vs 預設加密、NER+Regex vs 純規則），以及 AI 系統 PII 保護的代價與回報量化"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Security", "Privacy", "PII", "RBAC", "Compliance", "Anonymization", "RKK", "Interview", "Cloud"]

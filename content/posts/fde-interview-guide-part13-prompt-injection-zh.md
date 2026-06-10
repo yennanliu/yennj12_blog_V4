@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（十三）：RKK 實戰——Prompt Injection 攻防與 Agent 安全"
 date: 2026-06-03T12:00:00+08:00
 draft: false
+weight: 13
 description: "以系統設計視角拆解 AI Agent 的安全架構：Prompt Injection 的兩類攻擊、為什麼 Agent 比純 LLM 危險 10 倍、五層防禦架構怎麼設計、OAuth 授權怎麼落地——含完整攻防架構圖"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Agent", "Security", "Prompt Injection", "LLM", "Defense", "OAuth", "System Design", "RKK", "Interview", "Google"]

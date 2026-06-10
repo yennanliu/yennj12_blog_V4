@@ -2,6 +2,7 @@
 title: "Advanced MCP Server Development with Database Integration - Part 2"
 date: 2025-09-27T10:00:00Z
 draft: false
+weight: 2
 authors: ["yen"]
 categories: ["all", "AI", "development-tools", "automation"]
 tags: ["AI", "mcp", "claude-code", "database", "api-integration", "production", "docker", "postgresql", "monitoring"]

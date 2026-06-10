@@ -2,6 +2,7 @@
 title: "AI 深海/太空環境音串流實戰（一）：市場分析、科學原理與 AI 工具選擇"
 date: 2026-01-18T17:00:00+08:00
 draft: false
+weight: 1
 authors: ["yen"]
 categories: ["all", "business", "streaming", "ai"]
 tags: ["AI音樂", "環境音", "深海", "太空", "YouTube", "24/7直播", "Midjourney", "Runway"]

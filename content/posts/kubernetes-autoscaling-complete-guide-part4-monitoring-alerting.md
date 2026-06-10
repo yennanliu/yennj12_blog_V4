@@ -2,6 +2,7 @@
 title: "Kubernetes Autoscaling Complete Guide (Part 4): Monitoring, Alerting & Threshold Tuning"
 date: 2025-11-09T18:00:00+08:00
 draft: false
+weight: 4
 authors: ["yennj12 team"]
 categories: ["all", "engineering", "devops", "kubernetes", "monitoring"]
 tags: ["Kubernetes", "K8S", "Monitoring", "Prometheus", "Grafana", "Alerting", "EKS", "Observability", "Metrics", "Dashboard", "AlertManager"]

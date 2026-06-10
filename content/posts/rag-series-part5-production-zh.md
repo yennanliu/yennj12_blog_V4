@@ -2,6 +2,7 @@
 title: "RAG 完全指南（五）：生產級評估、GraphRAG 與 Agentic RAG"
 date: 2026-05-20T09:00:00+08:00
 draft: false
+weight: 5
 description: "RAG 系列終章：如何用 RAGAS 框架量化評估 RAG 品質、GraphRAG 如何用知識圖譜突破向量搜尋的限制，以及 Agentic RAG 如何讓 AI Agent 主動決策何時搜尋、搜尋什麼。"
 categories: ["AI", "Engineering", "all"]
 tags: ["RAG", "RAGAS", "GraphRAG", "Agentic RAG", "LangGraph", "Evaluation", "Python", "繁體中文"]

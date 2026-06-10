@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（三）：你不能忽略的 ML 基礎"
 date: 2026-05-30T11:00:00+08:00
 draft: false
+weight: 3
 description: "以 Google AI 工程師兼面試官的視角，整理 FDE 面試中仍然高頻的傳統 ML / AI 基礎知識，包含 Transformer、Embedding、評估指標與 Fine-tuning 的工程視角"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Machine Learning", "Transformer", "Embedding", "Evaluation", "Fine-tuning", "Interview", "Google"]

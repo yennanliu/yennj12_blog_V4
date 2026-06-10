@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（三十九）：RKK 實戰——從 10,000 到百萬用戶：AI 系統的橫向擴展架構設計"
 date: 2026-06-08T09:00:00+08:00
 draft: false
+weight: 39
 description: "以系統設計視角拆解 AI 系統從內部試點到百萬外部用戶的擴展挑戰：三個演進階段的完整架構圖、無狀態服務設計、非同步佇列、語意快取、三層速率限制、Auto-scaling 策略，以及每個關鍵技術選型的 Why X not Y 決策邏輯"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Scalability", "Architecture", "Cache", "Queue", "RateLimit", "AutoScaling", "RKK", "Interview", "Cloud"]

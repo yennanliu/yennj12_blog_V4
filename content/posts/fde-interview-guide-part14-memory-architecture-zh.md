@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（十四）：RKK 實戰——AI Agent Memory 架構設計"
 date: 2026-06-03T13:00:00+08:00
 draft: false
+weight: 14
 description: "以系統設計視角拆解 AI Agent 的 Memory 架構：為什麼需要四種記憶、每種記憶解決什麼問題、怎麼組合、以及記憶帶來的工程挑戰——含完整架構圖與選型決策框架"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Agent", "Memory", "Architecture", "Vector Database", "LangGraph", "RAG", "System Design", "RKK", "Interview", "Google"]

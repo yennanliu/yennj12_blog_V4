@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（二十四）：RKK 實戰——混合模型路由與語意路由器設計"
 date: 2026-06-04T17:00:00+08:00
 draft: false
+weight: 24
 description: "以系統設計視角拆解 Hybrid Model Routing 架構：Semantic Router 的設計原理、小模型 vs 大模型的路由決策框架、如何用 Eval Pipeline 確保路由器不會犧牲整體品質，以及 Gemma 與 Gemini 的混合部署策略"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Agent", "Model Routing", "Semantic Router", "Gemma", "Gemini", "Cost Optimization", "System Design", "RKK", "Interview", "Google"]

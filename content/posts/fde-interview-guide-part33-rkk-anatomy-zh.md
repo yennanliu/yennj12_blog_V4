@@ -2,6 +2,7 @@
 title: "FDE 面試準備指南（三十三）：RKK 面試解剖——面試官怎麼看你、怎麼評分、什麼叫做強力雇用"
 date: 2026-06-05T11:00:00+08:00
 draft: false
+weight: 33
 description: "以 Google RKK 面試官的第一人稱視角，完整拆解 FDE RKK 面試的時間結構、五個評分維度、四個面試階段、「雇用」和「強力雇用」的實際差距，以及最常見的七個失敗模式"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "RKK", "Interview", "Google", "Playbook", "Scoring", "System Design"]

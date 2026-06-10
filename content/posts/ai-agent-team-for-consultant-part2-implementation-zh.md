@@ -2,6 +2,7 @@
 title: "用 AI Bot 打造顧問團隊（二）：三條路線的實作步驟與範例程式碼"
 date: 2026-04-30T10:00:00+08:00
 draft: false
+weight: 2
 description: "深入實作：分別用 Claude Code + AGENTS.md、Gemini CLI 與 LangGraph 建立 AI 顧問 Agent 團隊。包含完整設定步驟、System Prompt 設計、範例程式碼與關鍵注意事項。"
 categories: ["AI", "Agent", "Engineering", "all"]
 tags: ["AI Agent", "Claude Code", "Gemini CLI", "LangGraph", "Python", "Multi-Agent", "繁體中文"]

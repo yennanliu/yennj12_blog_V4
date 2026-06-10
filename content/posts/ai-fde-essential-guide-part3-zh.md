@@ -2,6 +2,7 @@
 title: "AI Forward Deployed Engineer 必備技能指南（三）：企業級 AI 整合與部署策略"
 date: 2026-05-26T17:01:52+09:00
 draft: false
+weight: 3
 description: "深入探討企業級 AI 系統整合策略，包含雲端平台部署、安全性管理、RAG 架構設計與企業數據管道建構"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "FDE", "Cloud Deployment", "GCP", "AWS", "Azure", "RAG", "Data Pipeline", "Security", "cheatsheet"]
