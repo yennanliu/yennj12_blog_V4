@@ -3,6 +3,7 @@ languageCode = 'en-us'
 title = 'YennJ12 Engineering Blog'
 theme = 'uber-style'
 buildFuture = true
+paginate = 25
 
 [params]
   description = 'Engineering insights, architecture deep dives, and technical solutions'

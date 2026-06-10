@@ -1,52 +1,53 @@
 {{ define "main" }}
+{{ $paginator := .Paginate (.Pages.ByWeight) }}
 <div class="page-header">
     <div class="container">
         <h1>{{ .Title }}</h1>
-        {{ if .Params.description }}
-        <p class="page-header__description">{{ .Params.description }}</p>
-        {{ else }}
-        <p class="page-header__description">Articles in {{ .Title | lower }}</p>
-        {{ end }}
+        <p class="page-header__description">{{ len .Pages }} posts in {{ .Title | lower }}</p>
     </div>
 </div>
 
 <div class="posts__section">
     <div class="posts__container">
         {{ if .Pages }}
-        <div class="posts__grid">
-            {{ range .Pages.ByDate.Reverse }}
-            <article class="post-card">
-                <a href="{{ .RelPermalink }}" class="post-card__link">
-                    <div class="post-card__meta">
-                        <time class="post-card__date" datetime="{{ .Date.Format "2006-01-02" }}">
-                            {{ .Date.Format "Jan 2, 2006" }}
-                        </time>
-                        {{ if .Params.readTime }}
-                        <span class="post-card__read-time">{{ .Params.readTime }}</span>
-                        {{ end }}
-                    </div>
-                    
-                    <h2 class="post-card__title">{{ .Title }}</h2>
-                    
-                    <p class="post-card__excerpt">
-                        {{ if .Params.summary }}
-                            {{ .Params.summary }}
-                        {{ else }}
-                            {{ .Summary }}
-                        {{ end }}
-                    </p>
-                    
-                    {{ if .Params.tags }}
-                    <div class="post-card__tags">
-                        {{ range first 3 .Params.tags }}
-                        <span class="post-card__tag">{{ . }}</span>
-                        {{ end }}
-                    </div>
+        <div class="tag-posts">
+            {{ range $paginator.Pages }}
+            {{ $cats := where .Params.categories "ne" "all" }}
+            <a href="{{ .RelPermalink }}" class="tag-posts__row">
+                <div class="tag-posts__part">
+                    {{ if .Weight }}
+                    <span class="tag-posts__badge">{{ .Weight }}</span>
                     {{ end }}
-                </a>
-            </article>
+                </div>
+                <div class="tag-posts__content">
+                    <h2 class="tag-posts__title">
+                        {{ if .Weight }}<span class="tag-posts__part-prefix">Part {{ .Weight }} — </span>{{ end }}{{ .Title }}
+                    </h2>
+                    <p class="tag-posts__desc">
+                        {{ if .Params.description }}{{ .Params.description }}{{ else }}{{ .Summary }}{{ end }}
+                    </p>
+                    <div class="tag-posts__meta">
+                        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+                        {{ if .Params.readTime }}<span class="tag-posts__dot">·</span><span>{{ .Params.readTime }}</span>{{ end }}
+                        {{ range $cats }}<span class="tag-posts__cat">{{ . }}</span>{{ end }}
+                    </div>
+                </div>
+            </a>
             {{ end }}
         </div>
+
+        {{ if gt $paginator.TotalPages 1 }}
+        <nav class="pagination" aria-label="Page navigation">
+            {{ if $paginator.HasPrev }}
+            <a href="{{ $paginator.Prev.URL }}" class="pagination__btn">← Prev</a>
+            {{ end }}
+            <span class="pagination__info">Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}</span>
+            {{ if $paginator.HasNext }}
+            <a href="{{ $paginator.Next.URL }}" class="pagination__btn">Next →</a>
+            {{ end }}
+        </nav>
+        {{ end }}
+
         {{ else }}
         <div class="posts__empty">
             <p>No posts found in this category yet.</p>

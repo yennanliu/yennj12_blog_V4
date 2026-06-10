@@ -840,6 +840,199 @@ mark {
   }
 }
 
+// Pagination
+.pagination {
+  max-width: 860px;
+  margin: $spacing-2xl auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-lg;
+
+  &__btn {
+    @include button-secondary;
+    padding: $spacing-sm $spacing-lg;
+    text-decoration: none;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+
+    &:hover {
+      color: $color-accent;
+      border-color: $color-accent;
+      text-decoration: none;
+    }
+  }
+
+  &__info {
+    @include body-small;
+    color: $color-text-muted;
+  }
+}
+
+// Tags index page
+.tags-index {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  padding: $spacing-xl 0;
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-md;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-xl;
+    text-decoration: none;
+    color: $color-text;
+    font-size: $font-size-sm;
+    transition: all $transition-fast;
+
+    &:hover {
+      border-color: $color-accent;
+      color: $color-accent;
+      text-decoration: none;
+    }
+  }
+
+  &__name {
+    font-weight: $font-weight-medium;
+  }
+
+  &__count {
+    background: $color-bg-light;
+    color: $color-text-muted;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    padding: 1px 6px;
+    border-radius: $border-radius-sm;
+    min-width: 20px;
+    text-align: center;
+  }
+}
+
+// Category pill on tag/category list rows
+.tag-posts__cat {
+  display: inline-block;
+  background: $color-bg-light;
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  padding: 1px $spacing-xs;
+  border-radius: $border-radius-sm;
+  margin-left: $spacing-xs;
+}
+
+// Series context banner (single post)
+.series-banner {
+  background: $color-bg-light;
+  border-bottom: 1px solid $color-border-light;
+  padding: $spacing-sm 0;
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-sm;
+    text-decoration: none;
+    color: $color-text-light;
+    font-size: $font-size-sm;
+
+    &:hover { color: $color-accent; text-decoration: none; }
+  }
+
+  &__label {
+    font-weight: $font-weight-bold;
+    text-transform: uppercase;
+    font-size: $font-size-xs;
+    letter-spacing: 0.06em;
+    color: $color-text-muted;
+  }
+
+  &__name {
+    color: $color-text;
+    font-weight: $font-weight-semibold;
+  }
+
+  &__part {
+    background: $color-accent;
+    color: white;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    padding: 1px $spacing-xs;
+    border-radius: $border-radius-sm;
+  }
+}
+
+// Prev / Next post navigation
+.post-nav {
+  border-top: 1px solid $color-border-light;
+  padding: $spacing-2xl 0;
+
+  &__inner {
+    @include container;
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-xl;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    text-decoration: none;
+    color: $color-text;
+    max-width: 45%;
+
+    &--next { text-align: right; margin-left: auto; }
+
+    &:hover .post-nav__title { color: $color-accent; }
+  }
+
+  &__label {
+    @include body-small;
+    color: $color-text-muted;
+    font-weight: $font-weight-semibold;
+  }
+
+  &__title {
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    line-height: $line-height-tight;
+    color: $color-text;
+    transition: color $transition-fast;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// Clickable tag chips in search results
+.sp-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  margin-left: $spacing-xs;
+}
+
+.sp-tag {
+  display: inline-block;
+  background: $color-bg-light;
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  padding: 1px $spacing-xs;
+  border-radius: $border-radius-sm;
+  text-decoration: none;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $color-accent;
+    color: white;
+    text-decoration: none;
+  }
+}
+
 // Mobile responsiveness improvements
 @media (max-width: #{$breakpoint-md - 1px}) {
   .header__content {

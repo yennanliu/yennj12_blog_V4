@@ -2,6 +2,34 @@
 <!-- Share Component -->
 {{ partial "share.html" . }}
 
+{{/* Series context banner — shown for weighted (series) posts */}}
+{{ if .Weight }}
+{{ $seriesTag := "" }}
+{{ $seriesTotal := 0 }}
+{{ range .Params.tags }}
+  {{ $tag := . }}
+  {{ $tagPage := site.GetPage (printf "/tags/%s" ($tag | urlize)) }}
+  {{ if $tagPage }}
+    {{ $count := len $tagPage.Pages }}
+    {{ if gt $count $seriesTotal }}
+      {{ $seriesTotal = $count }}
+      {{ $seriesTag = $tag }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ if and $seriesTag (gt $seriesTotal 1) }}
+<div class="series-banner">
+    <div class="container">
+        <a href="/tags/{{ $seriesTag | urlize }}/" class="series-banner__link">
+            <span class="series-banner__label">Series</span>
+            <span class="series-banner__name">{{ $seriesTag }}</span>
+            <span class="series-banner__part">Part {{ .Weight }} of {{ $seriesTotal }}</span>
+        </a>
+    </div>
+</div>
+{{ end }}
+{{ end }}
+
 <article class="article">
     <header class="article__header">
         <h1 class="article__title">{{ .Title }}</h1>
@@ -36,7 +64,9 @@
         {{ if .Params.categories }}
         <div class="article__categories">
             {{ range .Params.categories }}
+            {{ if ne . "all" }}
             <a href="/categories/{{ . | urlize }}" class="article__category">{{ . }}</a>
+            {{ end }}
             {{ end }}
         </div>
         {{ end }}
@@ -142,43 +172,50 @@
     {{ end }}
 </article>
 
+{{/* Prev / Next navigation (weight-based for series, date-based otherwise) */}}
+{{ if or .PrevInSection .NextInSection }}
+<nav class="post-nav">
+    <div class="container">
+        <div class="post-nav__inner">
+            {{ if .PrevInSection }}
+            <a href="{{ .PrevInSection.RelPermalink }}" class="post-nav__item post-nav__item--prev">
+                <span class="post-nav__label">← Previous</span>
+                <span class="post-nav__title">{{ .PrevInSection.Title }}</span>
+            </a>
+            {{ else }}
+            <span></span>
+            {{ end }}
+            {{ if .NextInSection }}
+            <a href="{{ .NextInSection.RelPermalink }}" class="post-nav__item post-nav__item--next">
+                <span class="post-nav__label">Next →</span>
+                <span class="post-nav__title">{{ .NextInSection.Title }}</span>
+            </a>
+            {{ end }}
+        </div>
+    </div>
+</nav>
+{{ end }}
+
 {{ $related := .Site.RegularPages.Related . | first 3 }}
 {{ if $related }}
 <section class="related-posts">
     <div class="container">
         <h2>Related Articles</h2>
-        <div class="posts__grid">
+        <div class="tag-posts">
             {{ range $related }}
-            <article class="post-card">
-                <a href="{{ .RelPermalink }}" class="post-card__link">
-                    <div class="post-card__meta">
-                        <time class="post-card__date" datetime="{{ .Date.Format "2006-01-02" }}">
-                            {{ .Date.Format "Jan 2, 2006" }}
-                        </time>
-                        {{ if .Params.readTime }}
-                        <span class="post-card__read-time">{{ .Params.readTime }}</span>
-                        {{ end }}
+            <a href="{{ .RelPermalink }}" class="tag-posts__row">
+                <div class="tag-posts__part">
+                    {{ if .Weight }}<span class="tag-posts__badge">{{ .Weight }}</span>{{ end }}
+                </div>
+                <div class="tag-posts__content">
+                    <h3 class="tag-posts__title">{{ .Title }}</h3>
+                    <p class="tag-posts__desc">{{ if .Params.description }}{{ .Params.description }}{{ else }}{{ .Summary }}{{ end }}</p>
+                    <div class="tag-posts__meta">
+                        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+                        {{ if .Params.readTime }}<span class="tag-posts__dot">·</span><span>{{ .Params.readTime }}</span>{{ end }}
                     </div>
-                    
-                    <h3 class="post-card__title">{{ .Title }}</h3>
-                    
-                    <p class="post-card__excerpt">
-                        {{ if .Params.summary }}
-                            {{ .Params.summary }}
-                        {{ else }}
-                            {{ .Summary }}
-                        {{ end }}
-                    </p>
-                    
-                    {{ if .Params.tags }}
-                    <div class="post-card__tags">
-                        {{ range first 3 .Params.tags }}
-                        <span class="post-card__tag">{{ . }}</span>
-                        {{ end }}
-                    </div>
-                    {{ end }}
-                </a>
-            </article>
+                </div>
+            </a>
             {{ end }}
         </div>
     </div>

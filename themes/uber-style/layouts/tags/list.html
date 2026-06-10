@@ -1,4 +1,5 @@
 {{ define "main" }}
+{{ $paginator := .Paginate (.Pages.ByWeight) }}
 <div class="page-header">
     <div class="container">
         <h1>#{{ .Title }}</h1>
@@ -10,7 +11,8 @@
     <div class="posts__container">
         {{ if .Pages }}
         <div class="tag-posts">
-            {{ range .Pages.ByWeight }}
+            {{ range $paginator.Pages }}
+            {{ $cats := where .Params.categories "ne" "all" }}
             <a href="{{ .RelPermalink }}" class="tag-posts__row">
                 <div class="tag-posts__part">
                     {{ if .Weight }}
@@ -27,11 +29,25 @@
                     <div class="tag-posts__meta">
                         <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
                         {{ if .Params.readTime }}<span class="tag-posts__dot">·</span><span>{{ .Params.readTime }}</span>{{ end }}
+                        {{ range $cats }}<span class="tag-posts__cat">{{ . }}</span>{{ end }}
                     </div>
                 </div>
             </a>
             {{ end }}
         </div>
+
+        {{ if gt $paginator.TotalPages 1 }}
+        <nav class="pagination" aria-label="Page navigation">
+            {{ if $paginator.HasPrev }}
+            <a href="{{ $paginator.Prev.URL }}" class="pagination__btn">← Prev</a>
+            {{ end }}
+            <span class="pagination__info">Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}</span>
+            {{ if $paginator.HasNext }}
+            <a href="{{ $paginator.Next.URL }}" class="pagination__btn">Next →</a>
+            {{ end }}
+        </nav>
+        {{ end }}
+
         {{ else }}
         <div class="posts__empty">
             <p>No posts found with this tag yet.</p>

@@ -39,8 +39,8 @@
       <span id="sp-copied" class="search-page__copied" style="display:none">Copied!</span>
     </div>
 
-    <!-- Results grid -->
-    <div class="posts__grid" id="sp-results"></div>
+    <!-- Results list -->
+    <div class="tag-posts" id="sp-results"></div>
 
     <!-- Empty state -->
     <div id="sp-empty" class="search-page__empty" style="display:none">
@@ -192,8 +192,7 @@
       if (ql) {
         const haystack = [
           post.title || '',
-          post.content || '',
-          post.summary || '',
+          post.description || '',
           tags.join(' '),
           cats.join(' ')
         ].join(' ').toLowerCase();
@@ -219,24 +218,32 @@
     empty.style.display = 'none';
 
     results.innerHTML = filtered.map(post => {
-      const tags  = Array.isArray(post.tags) ? post.tags : [];
-      const date  = post.date ? new Date(post.date).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '';
-      const excerpt = (post.summary || '').replace(/<[^>]*>/g, '').substring(0, 140);
-      const tagHTML = tags.slice(0, 3).map(t => `<span class="post-card__tag">${esc(t)}</span>`).join('');
-      const titleHL  = highlight(esc(post.title  || ''), q);
-      const excerptHL= highlight(esc(excerpt), q);
+      const tags   = Array.isArray(post.tags) ? post.tags : [];
+      const date   = post.date ? new Date(post.date).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : '';
+      const desc   = (post.description || '').substring(0, 160);
+      const titleHL = highlight(esc(post.title || ''), q);
+      const descHL  = highlight(esc(desc), q);
+      const partNum = post.weight || 0;
+      const tagLinks = tags.slice(0, 4).map(t =>
+        `<a href="${esc(BASE_URL)}tags/${encodeURIComponent(t.toLowerCase())}/" class="sp-tag">${esc(t)}</a>`
+      ).join('');
       return `
-        <article class="post-card">
-          <a href="${esc(post.permalink)}" class="post-card__link">
-            <div class="post-card__meta">
-              <time class="post-card__date">${date}</time>
-              ${post.readTime ? `<span class="post-card__read-time">${esc(post.readTime)}</span>` : ''}
+        <a href="${esc(post.permalink)}" class="tag-posts__row">
+          <div class="tag-posts__part">
+            ${partNum ? `<span class="tag-posts__badge">${partNum}</span>` : ''}
+          </div>
+          <div class="tag-posts__content">
+            <h2 class="tag-posts__title">
+              ${partNum ? `<span class="tag-posts__part-prefix">Part ${partNum} — </span>` : ''}${titleHL}
+            </h2>
+            ${desc ? `<p class="tag-posts__desc">${descHL}${desc.length >= 160 ? '…' : ''}</p>` : ''}
+            <div class="tag-posts__meta">
+              <time>${date}</time>
+              ${post.readTime ? `<span class="tag-posts__dot">·</span><span>${esc(post.readTime)}</span>` : ''}
+              ${tagLinks ? `<span class="sp-tags">${tagLinks}</span>` : ''}
             </div>
-            <h2 class="post-card__title">${titleHL}</h2>
-            ${excerpt ? `<p class="post-card__excerpt">${excerptHL}${excerpt.length >= 140 ? '…' : ''}</p>` : ''}
-            ${tagHTML ? `<div class="post-card__tags">${tagHTML}</div>` : ''}
-          </a>
-        </article>`;
+          </div>
+        </a>`;
     }).join('');
   }
 

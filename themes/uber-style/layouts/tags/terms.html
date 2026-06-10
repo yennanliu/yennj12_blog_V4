@@ -1,0 +1,21 @@
+{{ define "main" }}
+<div class="page-header">
+    <div class="container">
+        <h1>All Tags</h1>
+        <p class="page-header__description">{{ len .Data.Terms }} tags across {{ len .Site.RegularPages }} posts</p>
+    </div>
+</div>
+
+<div class="posts__section">
+    <div class="posts__container">
+        <div class="tags-index">
+            {{ range .Data.Terms.ByCount }}
+            <a href="{{ .Page.RelPermalink }}" class="tags-index__item">
+                <span class="tags-index__name">{{ .Page.Title }}</span>
+                <span class="tags-index__count">{{ .Count }}</span>
+            </a>
+            {{ end }}
+        </div>
+    </div>
+</div>
+{{ end }}
