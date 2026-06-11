@@ -5,7 +5,7 @@ draft: false
 weight: 52
 description: "深度剖析 LangGraph Agent 在高並發場景下的 Tool Fan-Out 架構設計：Speculative Execution、Circuit Breaker、Graceful Degradation 與 Partial Rendering 的工程實踐，含三個演進階段與完整 Staff 級解答。"
 categories: ["engineering", "all"]
-tags: ["RKK", "Interview", "Cloud", "AI", "Agent", "AsyncIO", "Tool-Calling", "Fan-Out", "Circuit-Breaker", "LangGraph"]
+tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "Agent", "AsyncIO", "Tool-Calling", "Fan-Out", "Circuit-Breaker", "LangGraph"]
 authors: ["yen"]
 readTime: "26 min"
 ---

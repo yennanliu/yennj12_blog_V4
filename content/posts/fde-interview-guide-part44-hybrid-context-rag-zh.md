@@ -5,7 +5,7 @@ draft: false
 weight: 44
 description: "深度拆解長文本 LLM（200 萬 Token 上下文）與傳統 RAG 的動態混合架構：為什麼超大 Context Window 仍需 RAG、如何設計智能上下文管理器（Dynamic Hybrid Router）、Vertex AI Context Caching Registry 快取策略、成本矩陣（$2.50 vs $0.001）、降級策略、RRF 融合機制，以及 Staff 級 FDE 面試的完整答題框架"
 categories: ["engineering", "ai", "all"]
-tags: ["RKK", "Interview", "Cloud", "AI", "RAG", "LLM", "VertexAI", "ContextCaching", "VectorSearch", "SystemDesign"]
+tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "LLM", "VertexAI", "ContextCaching", "VectorSearch", "SystemDesign"]
 authors: ["yen"]
 readTime: "26 min"
 ---
