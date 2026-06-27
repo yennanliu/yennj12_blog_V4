@@ -20,7 +20,7 @@
             <nav class="header__nav" role="navigation">
                 <div class="nav__menu">
                     {{ range .Site.Menus.main }}
-                    <a href="{{ .URL }}" class="nav__link{{ if $.IsMenuCurrent "main" . }} nav__link--active{{ end }}">
+                    <a href="{{ .URL | relLangURL }}" class="nav__link{{ if $.IsMenuCurrent "main" . }} nav__link--active{{ end }}">
                         {{ .Name }}
                     </a>
                     {{ end }}

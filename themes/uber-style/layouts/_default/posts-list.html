@@ -39,6 +39,24 @@
                         </select>
                     </div>
                 </div>
+                <div class="date-range-filter">
+                    <div class="date-range-group">
+                        <div class="input-group date-range-item">
+                            <span class="date-range-label">From</span>
+                            <input type="date" id="startDate" class="filter-date" aria-label="Filter posts from date">
+                        </div>
+                        <span class="date-range-sep">–</span>
+                        <div class="input-group date-range-item">
+                            <span class="date-range-label">To</span>
+                            <input type="date" id="endDate" class="filter-date" aria-label="Filter posts to date">
+                        </div>
+                        <button type="button" id="clearDateRange" class="date-range-clear" title="Clear date range" aria-label="Clear date range">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
                 <div class="view-toggle">
                     <button class="view-btn active" data-view="table" title="Table View">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -393,6 +411,81 @@
 
 .filter-select {
     min-width: 180px;
+}
+
+/* Date Range (Calendar) Filter */
+.date-range-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--color-gray-300);
+    border-radius: var(--border-radius-md);
+    background: var(--color-white);
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition-all);
+}
+
+.date-range-group:focus-within {
+    border-color: var(--color-black);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.date-range-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+}
+
+.date-range-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gray-500);
+}
+
+.filter-date {
+    border: none;
+    background: transparent;
+    color: var(--color-black);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    font-family: inherit;
+    padding: 0.15rem 0;
+    cursor: pointer;
+}
+
+.filter-date:focus {
+    outline: none;
+}
+
+.date-range-sep {
+    color: var(--color-gray-400);
+    font-weight: 700;
+    align-self: flex-end;
+    padding-bottom: 0.35rem;
+}
+
+.date-range-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    margin-left: 0.25rem;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    background: var(--color-gray-100);
+    color: var(--color-gray-600);
+    cursor: pointer;
+    transition: var(--transition-all);
+}
+
+.date-range-clear:hover {
+    background: var(--color-black);
+    color: var(--color-white);
 }
 
 .search-input:focus, .filter-select:focus {
@@ -885,6 +978,23 @@
         width: 100%;
     }
 
+    .date-range-filter {
+        width: 100%;
+    }
+
+    .date-range-group {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .date-range-item {
+        flex: 1;
+    }
+
+    .filter-date {
+        width: 100%;
+    }
+
     .view-toggle {
         align-self: center;
         width: auto;
@@ -973,6 +1083,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const table = document.getElementById('postsTable');
     const searchInput = document.getElementById('postsSearch');
     const yearFilter = document.getElementById('yearFilter');
+    const startDate = document.getElementById('startDate');
+    const endDate = document.getElementById('endDate');
+    const clearDateRange = document.getElementById('clearDateRange');
     const tableView = document.getElementById('tableView');
     const gridView = document.getElementById('gridView');
     const viewBtns = document.querySelectorAll('.view-btn');
@@ -1029,7 +1142,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Search and filter
         searchInput.addEventListener('input', debounce(filterContent, 300));
-        yearFilter.addEventListener('change', filterContent);
+        yearFilter.addEventListener('change', function() {
+            // Year shortcut overrides the manual date range to avoid conflicts.
+            startDate.value = '';
+            endDate.value = '';
+            filterContent();
+        });
+        startDate.addEventListener('change', function() {
+            yearFilter.value = '';
+            filterContent();
+        });
+        endDate.addEventListener('change', function() {
+            yearFilter.value = '';
+            filterContent();
+        });
+        clearDateRange.addEventListener('click', function() {
+            startDate.value = '';
+            endDate.value = '';
+            filterContent();
+        });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', handleKeyboardShortcuts);
@@ -1210,10 +1341,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function filterTable(searchTerm, selectedYear) {
         let visibleCountNum = 0;
+        const start = startDate.value;
+        const end = endDate.value;
 
         rows.forEach((row, index) => {
             const title = row.dataset.title;
             const year = row.dataset.year;
+            const date = row.dataset.date;
             const categories = Array.from(row.querySelectorAll('.category-tag')).map(el => el.textContent.toLowerCase()).join(' ');
             const tags = Array.from(row.querySelectorAll('.tag-item')).map(el => el.textContent.toLowerCase()).join(' ');
             const author = row.querySelector('.author-name').textContent.toLowerCase();
@@ -1225,8 +1359,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 author.includes(searchTerm) ||
                                 excerpt.includes(searchTerm);
             const matchesYear = !selectedYear || year === selectedYear;
+            const matchesDate = (!start || date >= start) && (!end || date <= end);
 
-            if (matchesSearch && matchesYear) {
+            if (matchesSearch && matchesYear && matchesDate) {
                 setTimeout(() => {
                     row.style.display = '';
                     row.classList.add('fade-in');
@@ -1243,10 +1378,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function filterGrid(searchTerm, selectedYear) {
         let visibleCountNum = 0;
+        const start = startDate.value;
+        const end = endDate.value;
 
         cards.forEach((card, index) => {
             const title = card.dataset.title;
             const year = card.dataset.year;
+            const date = card.dataset.date;
             const categories = Array.from(card.querySelectorAll('.category-tag-grid')).map(el => el.textContent.toLowerCase()).join(' ');
             const tags = Array.from(card.querySelectorAll('.tag-item-grid')).map(el => el.textContent.toLowerCase()).join(' ');
             const author = card.querySelector('.post-author-grid').textContent.toLowerCase();
@@ -1258,8 +1396,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 author.includes(searchTerm) ||
                                 excerpt.includes(searchTerm);
             const matchesYear = !selectedYear || year === selectedYear;
+            const matchesDate = (!start || date >= start) && (!end || date <= end);
 
-            if (matchesSearch && matchesYear) {
+            if (matchesSearch && matchesYear && matchesDate) {
                 setTimeout(() => {
                     card.style.display = '';
                     card.classList.add('fade-in');
