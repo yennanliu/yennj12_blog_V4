@@ -52,7 +52,7 @@ paginate = 25
     weight = 30
   [[menu.main]]
     name = 'Data'
-    url = '/categories/data/'
+    url = '/categories/data-engineering/'
     weight = 40
   [[menu.main]]
     name = 'All Posts'
