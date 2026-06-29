@@ -132,7 +132,7 @@ Always include the "flip condition": when does Y become the right choice instead
 
 ### 6. Style rules
 
-- **No mention of "Google"** anywhere in the generated content or tags
+- **No mention of "Google"** anywhere in the generated content or tags. **This rule applies ONLY to interview-related posts** (`fde-interview-guide-*` and other interview-prep series). Non-interview posts (general tech tutorials, stock analysis, etc.) may freely mention Google and its products.
 - Tags: use `"Cloud"` instead of `"Google"`; always include `"RKK"` and `"Interview"`
 - readTime: set based on line count — 500 lines ≈ 18 min, 700 lines ≈ 23 min, 900 lines ≈ 28 min
 - Opening quote: 4-line contrast (what most people do vs what the right answer is)
