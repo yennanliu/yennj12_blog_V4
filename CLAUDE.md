@@ -118,7 +118,8 @@ Always include the "flip condition": when does Y become the right choice instead
 - **Code snippets**: only for non-obvious implementations; never boilerplate
 - **Symptom-to-diagnosis chains**: show what signal you'd see in Traces/Metrics/Logs, not just theory
 - **Minimum 600 lines per post; target 700–900**
-- Section numbering: use 一, 二, 三 … 十, 十一 (Chinese numerals); do not exceed 12 sections
+- Section numbering: use 一, 二, 三 … 十 (Chinese numerals); do not exceed 10 sections
+- Do **not** include a 面試答題要點 (model interview answer) section — this was dropped from the standard format.
 
 ### 5. Standard section order
 
@@ -127,8 +128,7 @@ Always include the "flip condition": when does Y become the right choice instead
 3. 三–七、Deep dives on each major design area
 4. 八 or 九、為什麼選 X 不選 Y（consolidated decision table)
 5. 十、系統效應（before/after comparison table with numbers)
-6. 十一、面試答題要點（model RKK answer in blockquote)
-7. Series navigation links
+6. Series navigation links
 
 ### 6. Style rules
 
@@ -137,4 +137,3 @@ Always include the "flip condition": when does Y become the right choice instead
 - readTime: set based on line count — 500 lines ≈ 18 min, 700 lines ≈ 23 min, 900 lines ≈ 28 min
 - Opening quote: 4-line contrast (what most people do vs what the right answer is)
 - 面試情境: a single interviewer question that is specific, scenario-based, and requires architecture judgment
-- 面試答題要點: a model answer in `> *「...」*` blockquote format, 4–6 sentences, hits the phase structure + key Why-X-not-Y decisions + a concrete number
