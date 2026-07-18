@@ -36,3 +36,6 @@ yarn-error.log*
 
 # Hugo lock file
 .hugo_build.lock
+
+# Claude Code local settings (personal, machine-specific)
+.claude/settings.local.json
