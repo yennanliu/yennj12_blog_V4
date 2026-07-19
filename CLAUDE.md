@@ -137,3 +137,20 @@ Always include the "flip condition": when does Y become the right choice instead
 - readTime: set based on line count — 500 lines ≈ 18 min, 700 lines ≈ 23 min, 900 lines ≈ 28 min
 - Opening quote: 4-line contrast (what most people do vs what the right answer is)
 - 面試情境: a single interviewer question that is specific, scenario-based, and requires architecture judgment
+
+---
+
+## Stock 10-K deep-dive posts (`*-10k-deep-dive-zh.md`)
+
+Traditional-Chinese, institutional-grade digests of SEC 10-K filings, titled
+`<公司> (<TICKER>) <FY> 10-K 深度解析` (e.g. `content/posts/meta-2025-10k-deep-dive-zh.md`).
+Generated with the InvestSkill `10k-digest` skill (`.claude/skills/10k-digest/`) from local PDFs at
+`../finance_data/10-k/<TICKER>/<TICKER>_<FILINGYEAR>_10-K.pdf`.
+
+**Full reproducible process — read this before generating one:** [`docs/10K_DEEP_DIVE_WORKFLOW.md`](docs/10K_DEEP_DIVE_WORKFLOW.md).
+
+Quick reminders: the filename year is the *filing* year — read the real fiscal year off the cover.
+These are **finance posts, so the "no Google" rule above does NOT apply**. ~20 sections, 450–600
+lines, honest per-company signal (not uniformly bullish). Hugo exits 1 on the known `paginate`
+deprecation — verify via `public/` output, not the exit code. For many companies, fan out one
+subagent per company and make a single batch commit; skip GOOG as a duplicate of Alphabet's GOOGL 10-K.
