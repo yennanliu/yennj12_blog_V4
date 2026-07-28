@@ -382,3 +382,4 @@ Landing Page 拆 8 頁     4     行銷 + 工程各半
 - **Part 8（本篇）：實戰案例 — 單頁式產品 Landing Page**
 - [Part 9：實戰案例 — 線上課程平台](/posts/aio-geo-part9-case-course-platform-zh/)
 - [Part 10：實戰案例 — 私有 Repo 與內部知識庫](/posts/aio-geo-part10-case-internal-rag-zh/)
+- 商業篇：[Part 11 市場](/posts/aio-geo-part11-market-landscape-zh/) ｜ [Part 12 GEO vs SEO 判斷](/posts/aio-geo-part12-geo-vs-seo-decision-zh/) ｜ [Part 13 顧問方法論](/posts/aio-geo-part13-consulting-playbook-zh/) ｜ [Part 14 產業劇本](/posts/aio-geo-part14-industry-playbooks-zh/) ｜ [Part 15 工具與技術棧](/posts/aio-geo-part15-tools-stack-zh/) ｜ [Part 16 規模化](/posts/aio-geo-part16-scaling-the-business-zh/)
