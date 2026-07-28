@@ -51,7 +51,9 @@
           Sort
           <select id="sp-sort">
             <option value="relevance">Relevance</option>
-            <option value="date">Newest</option>
+            <option value="oldest">Oldest first</option>
+            <option value="newest">Newest first</option>
+            <option value="title">Title</option>
           </select>
         </label>
         <button id="sp-share" class="search-page__share" type="button" title="Copy shareable link">
@@ -90,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   var PAGE_SIZE = 20;
-  var BASE = (window.SEARCH_INDEX_URL || '/index.json').replace(/index\.json$/, '');
+  var SORTS = ['relevance', 'oldest', 'newest', 'title'];
 
   var allPosts = [];
   var shown = PAGE_SIZE;
@@ -162,14 +164,17 @@ document.addEventListener('DOMContentLoaded', function () {
     var p = new URLSearchParams(window.location.search);
     current.q = p.get('q') || '';
     current.tag = p.get('tag') || '';
-    current.sort = p.get('sort') === 'date' ? 'date' : 'relevance';
+    var s = p.get('sort');
+    // `date` was the old value for what is now `newest`; keep shared links working.
+    if (s === 'date') s = 'newest';
+    current.sort = SORTS.indexOf(s) !== -1 ? s : 'relevance';
   }
 
   function writeURL() {
     var p = new URLSearchParams();
     if (current.q) p.set('q', current.q);
     if (current.tag) p.set('tag', current.tag);
-    if (current.sort === 'date') p.set('sort', 'date');
+    if (current.sort !== 'relevance') p.set('sort', current.sort);
     var qs = p.toString();
     history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
   }
@@ -292,9 +297,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var titleHL = BlogSearch.highlight(esc(post.title || ''), terms);
     var snippet = BlogSearch.highlight(esc(BlogSearch.excerpt(post, terms, 190)), terms);
     var part = post.w || 0;
+    // Hugo's own taxonomy URL — a hand-rolled slug would 404 on tags like
+    // "Developer Tools & Techniques" or "CI/CD".
     var tagLinks = (post.tags || []).slice(0, 4).map(function (t) {
-      return '<a href="' + esc(BASE) + 'tags/' + encodeURIComponent(t.toLowerCase()) +
-             '/" class="sp-tag">' + esc(t) + '</a>';
+      return '<a href="' + esc(BlogSearch.tagUrl(t)) + '" class="sp-tag">' + esc(t) + '</a>';
     }).join('');
 
     return '' +

@@ -326,11 +326,109 @@ window.BlogSearch = (function () {
     return hits;
   }
 
+  /* ── Ordering ──────────────────────────────────────────────────
+   *
+   * Raw score order is wrong for a series. Every part of "AI 工程從零開始"
+   * matches the query equally well, but incidental word repetition in the
+   * body nudges the scores apart (193 vs 191), so a strict score sort
+   * interleaves Part 40, Part 30, Part 1 … which reads as random.
+   *
+   * Scores are therefore bucketed before sorting: anything within TIE_BAND of
+   * the top hit counts as equally relevant, and those ties resolve to
+   * publication order (oldest first), which for a series is Part 1, 2, 3 …
+   * Bucketing keeps the comparator transitive, unlike a tolerance test.
+   *
+   * Bands are measured *down from the top score*, not by rounding score/width.
+   * Rounding puts two adjacent scores in different buckets whenever they
+   * straddle a boundary, which is exactly the interleaving this avoids.
+   *
+   * A tie band alone is not enough for a long series: across 44 posts the
+   * scores drift far enough to split buckets, and widening the band until they
+   * merge starts demoting genuinely better hits on unrelated queries. So
+   * `cohereSeries` handles that case directly — see below.
+   * ────────────────────────────────────────────────────────────── */
+
+  var TIE_BAND = 0.04;
+
+  // A series whose matching parts all score within this of each other was
+  // matched *as a series*, not for one standout part. Compared like-for-like
+  // within one series, so it can be looser than TIE_BAND.
+  var SERIES_COHESION = 0.15;
+  var SERIES_MIN_PARTS = 3;
+
+  function bucketize(hits) {
+    var top = 0;
+    for (var i = 0; i < hits.length; i++) if (hits[i].score > top) top = hits[i].score;
+    var width = Math.max(top * TIE_BAND, 1);
+    for (var j = 0; j < hits.length; j++) {
+      hits[j].bucket = -Math.floor((top - hits[j].score) / width);
+    }
+  }
+
+  /**
+   * Searching a series name ("AI 工程從零開始") matches all 44 parts about
+   * equally well; the small score drift between them is body-text noise, not
+   * relevance, and sorting on it interleaves Part 40, Part 30, Part 1 …
+   *
+   * When a series' matching parts are tightly clustered, give them all the
+   * best member's bucket so they sort together and resolve to reading order.
+   * A series that matched only because one part is a standout — "rag 評估"
+   * hitting RAG 完全指南（五）— has a wide internal spread and is left alone,
+   * so that part keeps its earned rank.
+   */
+  function cohereSeries(hits) {
+    var groups = Object.create(null);
+    for (var i = 0; i < hits.length; i++) {
+      var name = (hits[i].doc.series || [])[0];
+      if (!name) continue;
+      (groups[name] || (groups[name] = [])).push(hits[i]);
+    }
+
+    Object.keys(groups).forEach(function (name) {
+      var g = groups[name];
+      if (g.length < SERIES_MIN_PARTS) return;
+
+      var hi = -Infinity, lo = Infinity, bucket = -Infinity;
+      g.forEach(function (h) {
+        if (h.score > hi) hi = h.score;
+        if (h.score < lo) lo = h.score;
+        if (h.bucket > bucket) bucket = h.bucket;
+      });
+
+      if (hi - lo <= hi * SERIES_COHESION) {
+        g.forEach(function (h) { h.bucket = bucket; });
+      }
+    });
+  }
+
+  var SORTERS = {
+    relevance: function (a, b) {
+      if (b.bucket !== a.bucket) return b.bucket - a.bucket;
+      return byReadingOrder(a.doc, b.doc);
+    },
+    oldest: function (a, b) { return byReadingOrder(a.doc, b.doc); },
+    newest: function (a, b) { return -byReadingOrder(a.doc, b.doc); },
+    title: function (a, b) {
+      return String(a.doc.title || '').localeCompare(String(b.doc.title || ''), undefined,
+        { numeric: true, sensitivity: 'base' });
+    }
+  };
+
+  // Oldest first, and within a single series by part number — the two agree
+  // for a well-dated series but `w` is authoritative when dates collide.
+  function byReadingOrder(a, b) {
+    var d = String(a.date || '').localeCompare(String(b.date || ''));
+    if (d) return d;
+    var aw = a.w || 0, bw = b.w || 0;
+    if (aw && bw) return aw - bw;
+    return String(a.title || '').localeCompare(String(b.title || ''));
+  }
+
   /**
    * @param opts.limit  cap the number of results
-   * @param opts.sort   'relevance' (default) | 'date'
-   * @returns array of {doc, score}; also carries `.terms` (for highlighting)
-   *          and `.relaxed` (true when the strict pass found nothing).
+   * @param opts.sort   'relevance' (default) | 'oldest' | 'newest' | 'title'
+   * @returns array of {doc, score}; also carries `.terms` (for highlighting),
+   *          `.total` (before limit) and `.relaxed`.
    */
   function search(raw, index, opts) {
     opts = opts || {};
@@ -339,8 +437,7 @@ window.BlogSearch = (function () {
 
     var hits, relaxed = false;
     if (isEmptyQuery(q)) {
-      hits = index.map(function (d) { return { doc: d, score: 0 }; });
-      hits.sort(function (a, b) { return byDate(a.doc, b.doc); });
+      hits = index.map(function (d) { return { doc: d, score: 0, bucket: 0 }; });
     } else {
       hits = runPass(index, q, false);
       if (!hits.length) {
@@ -349,19 +446,14 @@ window.BlogSearch = (function () {
         hits = runPass(index, q, true).filter(function (h) { return h.score >= LOOSE_FLOOR; });
         relaxed = hits.length > 0;
       }
-
-      if (opts.sort === 'date') {
-        hits.sort(function (a, b) { return byDate(a.doc, b.doc); });
-      } else {
-        hits.sort(function (a, b) {
-          if (b.score !== a.score) return b.score - a.score;
-          // Equal relevance within one series -> keep Part 1, 2, 3 … order.
-          var aw = a.doc.w || 0, bw = b.doc.w || 0;
-          if (aw && bw && sameSeries(a.doc, b.doc)) return aw - bw;
-          return byDate(a.doc, b.doc);
-        });
-      }
+      bucketize(hits);
+      cohereSeries(hits);
     }
+
+    // An unranked listing has nothing to rank by, so it defaults to newest.
+    var sorter = SORTERS[opts.sort] ||
+      (isEmptyQuery(q) ? SORTERS.newest : SORTERS.relevance);
+    hits.sort(sorter);
 
     var total = hits.length;
     if (opts.limit) hits = hits.slice(0, opts.limit);
@@ -371,15 +463,6 @@ window.BlogSearch = (function () {
       q.filters.filter(function (f) { return !f.neg; }).map(function (f) { return f.value; })
     );
     return hits;
-  }
-
-  function sameSeries(a, b) {
-    var as = (a.series || [])[0], bs = (b.series || [])[0];
-    return !!as && as === bs;
-  }
-
-  function byDate(a, b) {
-    return String(b.date || '').localeCompare(String(a.date || ''));
   }
 
   /* ────────────────────────────────────────────────────────────
@@ -454,6 +537,8 @@ window.BlogSearch = (function () {
    * ──────────────────────────────────────────────────────────── */
 
   var indexPromise = null;
+  var tagUrls = {};      // Hugo taxonomy term -> URL
+  var tagUrlsAlt = null; // lazily built case- and separator-insensitive view
 
   function load() {
     if (indexPromise) return indexPromise;
@@ -463,12 +548,55 @@ window.BlogSearch = (function () {
         if (!r.ok) throw new Error('HTTP ' + r.status + ' for ' + url);
         return r.json();
       })
+      .then(function (data) {
+        if (Array.isArray(data)) return data;       // legacy shape
+        tagUrls = data.tagUrls || {};
+        tagUrlsAlt = null;
+        return data.posts || [];
+      })
       .catch(function (err) {
         console.error('[search] index load failed:', err);
         indexPromise = null; // let the next interaction retry
         return [];
       });
     return indexPromise;
+  }
+
+  /**
+   * URL for a tag's taxonomy page.
+   *
+   * Always prefer the map Hugo emitted, because Hugo slugifies terms with
+   * `urlize`, which is not "lowercase and hyphenate": "Developer Tools &
+   * Techniques" becomes "developer-tools--techniques" and "CI/CD" keeps its
+   * slash as a path separator. Guessing the slug in JS 404s on both.
+   *
+   * The map is keyed by Hugo's term name, which is the tag lowercased with its
+   * original separator kept — so a post tagged "Machine Learning" and one
+   * tagged "machine-learning" share the term "machine-learning". Hence the two
+   * fallback tiers: case-insensitive, then separator-insensitive.
+   */
+  function tagUrl(name) {
+    name = String(name == null ? '' : name);
+    if (tagUrls[name]) return tagUrls[name];
+
+    if (!tagUrlsAlt) {
+      tagUrlsAlt = { lower: Object.create(null), loose: Object.create(null) };
+      Object.keys(tagUrls).forEach(function (k) {
+        tagUrlsAlt.lower[k.toLowerCase()] = tagUrls[k];
+        var loose = looseKey(k);
+        if (!tagUrlsAlt.loose[loose]) tagUrlsAlt.loose[loose] = tagUrls[k];
+      });
+    }
+
+    return tagUrlsAlt.lower[name.toLowerCase()] ||
+      tagUrlsAlt.loose[looseKey(name)] ||
+      // Only reachable if the index predates tagUrls entirely.
+      (window.SEARCH_INDEX_URL || '/index.json').replace(/index\.json$/, '') +
+        'tags/' + encodeURIComponent(name.toLowerCase().replace(/\s+/g, '-')) + '/';
+  }
+
+  function looseKey(s) {
+    return s.toLowerCase().replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
   }
 
   // Most frequent tags, for the quick-filter pills.
@@ -491,6 +619,7 @@ window.BlogSearch = (function () {
     highlight: highlight,
     excerpt: excerpt,
     topTags: topTags,
+    tagUrl: tagUrl,
     esc: esc
   };
 })();

@@ -8,6 +8,10 @@
      breaks search everywhere. Relative URLs are scheme-agnostic.
    - `body` is section headings + a prose excerpt with fenced code blocks removed.
      The posts contain large ASCII diagrams that add weight but no search signal.
+   - `tagUrls` maps a tag's display name to the URL Hugo actually generated for
+     it. Do NOT slugify tag names in JS: Hugo uses `urlize`, so "Developer Tools
+     & Techniques" becomes "developer-tools--techniques", which no hand-rolled
+     lowercase-and-hyphenate rule reproduces.
    - Field names are kept short; this file ships to every visitor who searches.
 */ -}}
 {{- $pages := where site.RegularPages "Params.searchExclude" "!=" true -}}
@@ -46,4 +50,13 @@
         "body" $body
       ) -}}
 {{- end -}}
-{{- $index | jsonify -}}
+
+{{- /* name -> real taxonomy URL, straight from Hugo's own term pages. */ -}}
+{{- $tagUrls := dict -}}
+{{- range $name, $term := site.Taxonomies.tags -}}
+  {{- with $term.Page -}}
+    {{- $tagUrls = merge $tagUrls (dict $name .RelPermalink) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- dict "posts" $index "tagUrls" $tagUrls | jsonify -}}
