@@ -35,7 +35,11 @@
   {{- $prose = replaceRE `\s+` " " $prose -}}
 
   {{- $body := printf "%s %s" (delimit $headings " ") $prose -}}
-  {{- $body = replaceRE `\s+` " " $body | strings.TrimSpace | truncate 900 "" -}}
+  {{- /* `trim`, not strings.TrimSpace: the latter only exists in Hugo 0.136+,
+         and CI builds with 0.124.1 (see .github/workflows/hugo-latest.yml).
+         Call it, don't pipe into it: a pipeline appends the value as the LAST
+         argument, so `| trim " "` would trim the cutset, not the body. */ -}}
+  {{- $body = trim (replaceRE `\s+` " " $body) " \t\n\r" | truncate 900 "" -}}
 
   {{- $index = $index | append (dict
         "title" .Title
