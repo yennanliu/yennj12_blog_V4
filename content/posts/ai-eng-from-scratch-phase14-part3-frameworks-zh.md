@@ -573,13 +573,7 @@ Python 型別安全        中等          中等        高（TypedDict） 完�
 
 ---
 
-## 十、面試答題要點
-
-> *「針對客服自動化系統，我會選 LangGraph 作為主要框架。理由是：客服系統的狀態（意圖、查詢結果、草稿回應、品質評分）需要結構化存儲和可查詢性，LangGraph 的 TypedDict state 原生支援；品質審核可能需要循環重試，conditional edge 讓邏輯顯式可控；對話持久化和斷點續傳是生產必備，LangGraph 的 PostgreSQL checkpointer 開箱即用。AutoGen 的 GroupChat speaker selection 每輪增加 800ms–2s 不確定延遲，不適合客服的 P99 SLA 要求。當日對話量從 5K 擴展到 50 萬後，我會把四個 Agent 拆成獨立微服務，用 Message Queue 解耦，協調層改為精簡自建（< 30 行核心邏輯），把框架 overhead 從 20–50ms/node 壓到 < 5ms，同時獲得 per-agent 獨立擴展的能力，估計在 100K QPS 級別可節省約 40% 運算成本。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← **Phase 14 Part 2**：[Agent 記憶體架構 — 短期、長期與情節記憶的工程設計](/posts/ai-eng-from-scratch-phase14-part2-memory-zh/)
 

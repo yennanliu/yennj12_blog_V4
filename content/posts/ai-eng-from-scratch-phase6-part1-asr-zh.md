@@ -542,13 +542,7 @@ VAD 是串流 ASR 的「守門員」：
 
 ---
 
-## 十、面試答題要點
-
-> *「設計一個支援 10,000 位同時在線學生、延遲 < 500ms、WER < 10% 的即時字幕系統：我會分三個階段演進。Phase 1 直接呼叫 Whisper API，整段音訊上傳，延遲 2–5 秒，快速驗證需求。Phase 2 自建 Conformer-CTC 模型（Whisper small 或 fine-tuned），引入 WebSocket 串流和 VAD 靜音過濾，端到端延遲降至 150–300ms；關鍵決策是選 CTC 而非 Attention Decoder，因為 CTC 不需要看未來幀，天生支援串流。Phase 3 引入多模型路由：中文教育內容走領域 fine-tuned 模型（WER 6.8%），通用場景走 Whisper large-v3（WER 4.2%）；GPU 用 A10G 自動擴縮，50K 並發比雲端 API 節省 96% 成本。整個系統在 RNNoise 降噪後，噪音環境 WER 可從 20% 降至 12% 以下，P99 延遲維持在 280ms，滿足 500ms SLA。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 5 Part 3：向量資料庫與 RAG 系統設計](/posts/ai-eng-from-scratch-phase5-part3-rag-zh/)
 

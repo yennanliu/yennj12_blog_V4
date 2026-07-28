@@ -523,13 +523,7 @@ CLIP          →  BLIP          →  Flamingo / LLaVA
 
 ---
 
-## 十、面試答題要點
-
-> *「針對 800 萬次日查詢的電商多模態搜尋，我會分三個階段設計：Phase 1 用預訓練 CLIP ViT-B/32 做 Late Fusion，無需標注即可上線，MRR@10 約 0.58，P99 45 ms；Phase 2 用 20 萬對電商圖文對 fine-tune CLIP，MRR@10 提升至 0.64，配合 HNSW 索引降低掃描延遲；Phase 3 在查詢量超過 3000 萬且細粒度屬性識別成瓶頸時，引入 Cross-Modal Attention，以 P99 95 ms（仍在 200 ms SLA 內）換取 MRR@10 從 0.64 → 0.74。選 CLIP 不選純監督的核心理由是：新品類每週上架時不需要重新標注，zero-shot Recall@20 從 12% → 71%，這是業務敏捷性的關鍵；選 Late Fusion 不選 Early Fusion 是因為兩個 Encoder 可平行推理，P99 節省 95 ms；只有在 MRR 差距 > 10 個點且延遲預算寬裕時才升級 Cross-Modal。向量索引方面，500 萬商品用單機 HNSW（10 GB 記憶體），2000 萬商品以上遷移 Milvus 分散式，這個決策點在索引記憶體超過單機 16 GB 時觸發。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 | | |
 |---|---|

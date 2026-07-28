@@ -634,15 +634,7 @@ Python 代碼庫：
 
 ---
 
-## 十、面試答題要點
-
-**面試官問**：「你的團隊正在從零預訓練一個 30B 多語言 LLM，目標包含英中日文和代碼。請說明你會如何設計 tokenizer，詞彙表要多大？選哪種演算法？分三個階段說明。」
-
-> *「我會以三個階段遞進。Phase 1 POC 階段，直接用 tiktoken cl100k_base，1 天內跑通訓練 pipeline，先驗證模型架構正確性，這時候 tokenizer 品質不是瓶頸。Phase 2 MVP 階段，用 SentencePiece 訓練客製化 BPE tokenizer：語料比例設為 40% 英文、30% 繁中、10% 日文、20% 代碼，vocab_size 選 128K — 因為四種語言的 fertility rate 差異大，128K 能讓中文從 2.9 tokens/字降到 1.3 tokens/字，同樣 context window 可容納的中文字數多 2.2 倍，預訓練費用節省約 $3.8M。Phase 3 Scale 階段，把 tokenizer 服務化，支援 50K QPS 的 gRPC 服務，同時建立版本管理機制，讓不同版本模型可以並存服務。關鍵決策是選 SentencePiece BPE 而非字符級，因為字節級 BPE 永不出現 OOV，任何 Unicode 輸入都能處理；選 128K 而非 32K，因為多語言場景下 token 效率收益超過 lm_head 增大的推理成本（整體推理仍快 22%）。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 9 系列 — AI 工程從零開始](/tags/ai/) | [Phase 10 Part 2：Embedding 層設計 →](/posts/ai-eng-from-scratch-phase10-part2-embedding-zh/)
 

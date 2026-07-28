@@ -540,13 +540,7 @@ RLVR 訓練循環（簡化）
 
 ---
 
-## 十、面試答題要點
-
-> *「我們的 Agent 安全架構採用五層縱深防禦：輸入閘道（提示注入偵測 + 越獄分類器，< 5ms）、Constitutional AI 約束（系統提示 + 訓練內化雙層）、行動沙箱（工具白名單 + 不可逆操作需雙重確認）、輸出審查（專用 50M 參數分類器），以及 OpenTelemetry 可觀測性與自動 circuit breaker。這個架構將越獄成功率從 23% 壓到 0.4%，有害輸出率從 1.8% 壓到 0.07%。Self-Refinement 在 Constitutional AI 的約束框架內執行，最多 2 輪（超過 2 輪的品質邊際收益不值得 +400ms 延遲成本）。RLVR 用於有客觀答案的任務，防禦 reward hacking 的關鍵是訓練集與評估集嚴格分離。整套技術棧讓 p99 延遲增加 320ms、每請求成本增加 7.2 倍，但企業客戶簽約率提升 44 個百分點，這是正 ROI 的投資。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← 上一篇：[Phase 15 Part 1：Agent 記憶體與長期規劃架構](/posts/ai-eng-from-scratch-phase15-part1-agent-memory-planning-zh/)
 

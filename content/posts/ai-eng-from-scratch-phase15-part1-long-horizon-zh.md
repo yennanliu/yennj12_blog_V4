@@ -645,13 +645,7 @@ vs 固定間隔        符合 AWS / GCP 等主流雲端服務的 SLA   固定間
 
 ---
 
-## 十、面試答題要點
-
-> *「面對 72 小時、3000 個 PR 的長時程分析任務，我會從三個演進階段思考系統設計。Phase 1 是 POC：使用本地 JSON 作為 Checkpoint 儲存，手動恢復，驗證 Agent 的核心分析能力；關鍵是先確認單個 PR 分析的品質，再考慮規模化。Phase 2 是生產化：引入 PostgreSQL 儲存每個 PR 分析結果的 Checkpoint，加上 Write-Ahead 模式確保崩潰後自動恢復——這直接把 50 步任務的完成率從 36% 提升到 94%，並將 LLM API 成本降低 60%（不重複分析已完成的 PR）。關鍵設計決策是為什麼選 PostgreSQL 而非 Redis：ACID 保障讓 Checkpoint 在任何崩潰時機都不會丟失，而純 Redis 的 AOF 未刷盤風險在 3000 任務規模下不可接受。Phase 3 加入 Embedding 相似度漂移偵測，每 50 個 PR 後比對當前分析行為與原始目標的 cosine 相似度，低於 0.75 觸發警告、低於 0.50 暫停任務——這解決了長時程任務中報告品質靜默下降的問題，確保第 3000 個 PR 的報告品質不低於第 1 個。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 14 Part 4：多模態 Agent 的工具選擇策略](/posts/ai-eng-from-scratch-phase14-part4-multimodal-tools-zh/) | [Phase 15 Part 2：長時程 Agent 的成本控制與 Token 預算管理](/posts/ai-eng-from-scratch-phase15-part2-token-budget-zh/) →
 

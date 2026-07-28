@@ -513,20 +513,7 @@ transform = Normalize(mean=dataset_mean, std=dataset_std)
 
 ---
 
-## 十、面試答題要點（RKK）
-
-**面試官問：** 「醫療 App 皮膚病灶分類，8,000 張標注影像，7 類別，行動端 < 200ms，請說明你的架構選擇與策略。」
-
-> *「我會選 EfficientNet-B0 作為 Backbone，它在 5.3M 參數下達到 77% ImageNet Top-1，在 iPhone 14 上推論只需約 45ms，遠低於 200ms 的要求。由於訓練資料只有 8,000 張，我採用 Gradual Unfreeze 遷移學習策略：前 5 個 Epoch 凍結 Backbone 只訓練分類頭（LR=1e-3），之後解凍後兩個 Block 並用 10 倍低的 LR（1e-5）繼續訓練，這樣能防止 ImageNet 預訓練特徵被破壞，最終 F1 可達 0.82 左右。針對類別不平衡，若不平衡比超過 1:10，我會切換 Cross-Entropy 為 Focal Loss（γ=2.0），並搭配 RandAugment 增強。部署時用 CoreML 轉換 + INT8 量化，模型縮小到 6MB，在同等推論速度下準確率只下降 0.3%。整個方案的總訓練成本約 3.5 小時 V100，是直接 Full Fine-tune 的 1/2 時間，但準確率反而更高。」*
-
-**RKK 核心三要素：**
-- **R（Reason）：** EfficientNet-B0 vs ResNet-50 的理由是行動端 FLOPs 差 10×，速度差 4×
-- **K（Knowledge）：** Gradual Unfreeze 的兩階段 LR 策略，以及什麼時候需要 Focal Loss
-- **K（Know-how）：** INT8 量化的準確率代價 0.3% vs 大小縮減 3.5× 的工程取捨
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 本文是「AI 工程從零開始」系列 Phase 4 的第一篇。
 

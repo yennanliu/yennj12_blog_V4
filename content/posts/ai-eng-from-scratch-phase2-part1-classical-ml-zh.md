@@ -3,7 +3,7 @@ title: "AI 工程從零開始｜Phase 2 Part 1：傳統機器學習 — 生產 A
 date: 2026-06-21T10:00:00+08:00
 draft: false
 weight: 3
-description: "深入解析線性回歸、邏輯回歸、決策樹、SVM、特徵工程等傳統 ML 技術為何在 80% 生產 AI 系統中仍是首選，附完整決策框架與面試要點"
+description: "深入解析線性回歸、邏輯回歸、決策樹、SVM、特徵工程等傳統 ML 技術為何在 80% 生產 AI 系統中仍是首選，附完整決策框架與量化比較"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "Machine Learning", "Linear Regression", "Decision Tree", "SVM", "Feature Engineering", "RKK", "Interview"]
 authors: ["yen"]
@@ -701,27 +701,7 @@ AUC 準確率             0.935             0.941             0.948
 
 ---
 
-## 十、面試答題要點
-
-**面試情境回顧**：50 萬筆/天訂單，即時詐騙偵測，< 5ms，需法務稽核，200 萬歷史資料，詐騙率 0.3%。
-
-> *「這個場景我會選 LightGBM 加 SHAP 值解釋，原因有四：第一，< 5ms 的延遲需求直接排除神經網路（CPU 推論 15–50ms 起跳），LightGBM CPU 推論 < 1ms；第二，0.3% 的嚴重類別不平衡，用 Stratified K-Fold + PR-AUC 評估，並設定 scale_pos_weight = 333 處理不平衡，同時把判斷閾值從 0.5 調到 0.2–0.3 以最大化詐騙召回率；第三，法務可稽核需求用 SHAP 值實現：每筆決策輸出 top-5 貢獻特徵，例如『IP 異常（+0.4）、設備首次出現（+0.3）、金額超出歷史均值 3σ（+0.2）』；第四，200 萬筆結構化資料是 LightGBM 的甜蜜點，AUC 可達 0.93–0.95，與深度模型差距 < 1.5%，但基礎設施成本低 20–40 倍。若未來詐騙模式出現概念漂移，PSI > 0.2 觸發自動重訓 pipeline，每週更新一次模型。」*
-
-**RKK 答題框架**：
-
-- **Requirements（需求釐清）**：延遲預算、可解釋性需求、資料規模、類別分布
-- **Key Design Decisions（關鍵決策）**：模型選型理由、不平衡處理策略、評估指標選擇、解釋性機制
-- **Knowledge of Tradeoffs（取捨認知）**：傳統 ML vs DL 的精度-成本-延遲三角，何時會重新評估選型
-
-**加分點**：
-1. 主動提到 PSI 漂移監控（顯示生產意識）
-2. 說出具體閾值數字（0.2–0.3 而非「調低閾值」）
-3. 提到 SHAP 而非只說「決策樹可解釋」
-4. 能說出 LightGBM 的 scale_pos_weight 超參數（顯示熟悉工具）
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 本系列「AI Engineering from Scratch」根據 [rohitg00/ai-engineering-from-scratch](https://github.com/rohitg00/ai-engineering-from-scratch) 整理，以工程師視角解析每個 Phase 的核心概念與生產實踐。
 

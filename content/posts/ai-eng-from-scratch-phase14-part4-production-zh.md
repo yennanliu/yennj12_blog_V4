@@ -698,13 +698,7 @@ Shadow Mode 確認 v2 無崩潰、無無限迴圈、無異常高成本後，才�
 
 ---
 
-## 十、面試答題要點
-
-> *「我會從可觀測性、成本控制、安全護欄三個維度設計 Agent 生產化架構。可觀測性方面，我在每個 Agent Step 注入 OpenTelemetry Span，記錄 trace_id、step_number、token 使用量、工具呼叫詳情和模型版本，推送到 Jaeger，當無限迴圈告警觸發時能在 2 分鐘內定位到哪個步驟出問題，MTTR 從 4–8 小時縮短到 15 分鐘。成本控制方面，我設計四層預算機制——per-request token 硬上限（50K tokens ≈ $0.15）、per-user 每日 Redis INCRBYFLOAT 原子操作預算、全域日費用告警觸發模型降級（GPT-4o-mini 省 97% 費用）、以及步數上限（max_steps=20）防無限迴圈，這套機制讓整體成本降低 76%，無限迴圈事件從每月 12 次降為零。安全護欄方面，三層 Guardrails——輸入層做 Prompt Injection 和 PII 偵測（< 50ms），輸出層用 Pydantic 驗證結構加取樣式 LLM-as-judge 語義檢查，行動層對不可逆操作要求 Human-in-the-loop，總 Injection 攔截率 99.2%。新版本部署先走 Shadow Mode 72 小時零用戶風險比較品質，再 1%→5%→10%→100% Canary，護欄指標（error rate、cost）任一觸發立即停止，這套流程讓 Agent 版本迭代從「改了就上」變成「科學驗證再放量」。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 14 Part 3：Agent 工具設計與記憶體管理](/posts/ai-eng-from-scratch-phase14-part3-tools-memory-zh/)
 

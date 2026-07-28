@@ -515,13 +515,7 @@ Flip：成本敏感場景，v1.5 模型小（865M vs 3.5B），推論快 4×，L
 
 ---
 
-## 十、面試答題要點（RKK）
-
-> *「針對電商圖片生成系統，我會選擇 Stable Diffusion XL + TensorRT INT8 量化部署，搭配品牌風格 LoRA（r=16，15MB）實現視覺一致性。推論採 DDIM 20 步，在 A10G 上 0.9s/張，遠低於 3s SLA。條件控制方面，用 ControlNet（Canny 邊緣）確保商品輪廓精確，避免純 prompt 無法控制構圖的問題。峰值處理透過 SQS 任務佇列 + K8s HPA 自動擴縮，以 GPU 佇列長度為擴縮信號，配合語義快取（CLIP embedding cosine > 0.95 命中複用），實測可降低 50% 生成請求。成本方面，10 萬張/日在 $15–20/日 以內，低於 $0.002/張 預算目標 10×，預留足夠空間應對峰值。關鍵取捨是 INT8 量化帶來 FID 損失 0.5，在電商展示圖場景視覺上可接受，但醫療或衛星影像場景需保留 fp16。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 **← 上一篇**：[Phase 7 Part 2：RAG 系統設計——向量資料庫與混合搜尋架構](/posts/ai-eng-from-scratch-phase7-part2-rag-vector-db-zh/)
 

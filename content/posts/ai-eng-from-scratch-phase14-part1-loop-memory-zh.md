@@ -596,13 +596,7 @@ vs                狀態機確保同一 session 不可            "好的隨便"
 
 ---
 
-## 十、面試答題要點
-
-> *「設計退款 Agent 的核心挑戰不是讓 LLM 更聰明，而是建立三個基礎：一個有狀態的記憶系統、一個確定性的狀態機、以及一個可觀測的思考迴圈。MVP 階段我會用 Redis 存工作記憶（TTL 2h，8K tokens 滑動視窗）、PostgreSQL 存情節記憶，讓 Agent 跨 session 記住用戶身份；狀態機確保退款操作只在 VALIDATING→AWAITING_CONFIRM→PROCESSING 的路徑上執行，LLM 幻覺無法繞過確認步驟。到 Scale 階段（20K+ 日均），再加入 pgvector 語意記憶、Worker Pool 水平擴展、OpenTelemetry traces，把 P99 控制在 6s 內。整體而言，有記憶的 Agent 比無記憶版本任務完成率從 43% 提升至 79%，退款錯誤率從 2.1% 降至 0.08%，ROI 超過 2,000%。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 本文是 **AI 工程從零開始** 系列 Phase 14 Part 1。
 

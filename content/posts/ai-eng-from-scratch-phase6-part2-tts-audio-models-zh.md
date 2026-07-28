@@ -468,13 +468,7 @@ Meta 的 AudioCraft 包含三個子模型：
 
 ---
 
-## 十、面試答題要點
-
-> *「這套有聲書 TTS 系統的設計分三個層次。首先，聲學模型選 FastSpeech2 而非 Tacotron2，非自回歸架構讓推論從 800ms 降至 50ms，Duration Predictor 解決 Attention 失對問題；若品質要求更高（MOS > 4.3），改用 VITS 端對端模型接受 150ms 的延遲換取自然度。其次，聲碼器選 HiFi-GAN V1，167× 即時速度加上 MOS 4.2，是品質與延遲最佳平衡點，Vocos 是未來升級選項。第三，零樣本克隆架構以 ECAPA-TDNN 從 6 秒參考音訊提取 256-dim speaker embedding，透過 cross-attention 注入聲學模型，克隆 MOS 達 3.8；互動場景用 XTTS v2（2 秒推論），離線有聲書用 Tortoise（MOS 4.2）。整體端對端 P95 延遲 300ms，拆解為：G2P 15ms + FastSpeech2 50ms + HiFi-GAN 60ms + 串流首包 30ms，符合需求。持續改善音質的方式是以用戶播放完成率（而非 MOS）作為主指標，自動挑選低完成率段落進行人工標注後 fine-tuning。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← 上一篇：[Phase 6 Part 1：語音辨識（ASR）— 讓機器聽懂人話](/posts/ai-eng-from-scratch-phase6-part1-asr-speech-recognition-zh/)
 

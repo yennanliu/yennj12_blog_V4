@@ -3,7 +3,7 @@ title: "AI 工程從零開始｜Phase 1 Part 1：線性代數與微積分 — AI
 date: 2026-06-21T09:00:00+08:00
 draft: false
 weight: 1
-description: "從工程師視角掌握 AI 必備的線性代數與微積分直覺：向量、矩陣、梯度下降、反向傳播背後的數學原理，附 ASCII 架構圖與面試答題要點"
+description: "從工程師視角掌握 AI 必備的線性代數與微積分直覺：向量、矩陣、梯度下降、反向傳播背後的數學原理，附 ASCII 架構圖與工程決策表"
 categories: ["engineering", "ai", "all"]
 tags: ["AI", "Math", "Linear Algebra", "Calculus", "Machine Learning", "RKK", "Interview"]
 authors: ["yen"]
@@ -585,15 +585,7 @@ torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 
 ---
 
-## 十、面試答題要點
-
-**面試問題：** 訓練 Embedding 推薦模型第 5 epoch 後 loss 變 NaN，GPU 正常，資料沒問題，請從數學角度診斷。
-
-> *「首先我會確認是 Gradient Explosion 而非 Loss Scaling 問題，具體做法是在每個 backward() 後印出各層的梯度範數——如果某層梯度範數 > 100 就幾乎確定是爆炸。數學根源是 Embedding 的梯度是 one-hot 稀疏梯度，稀疏更新疊加 Adam 的 v 分母過小時（初始幾個 epoch v 近乎為 0），等效 LR 可以暴增 100 倍以上，導致參數跳過穩定區間。修復策略分兩層：短期加上 `clip_grad_norm_(..., max_norm=1.0)` 立即防止 NaN；中期將 Adam 的 epsilon 從預設 1e-8 調大到 1e-4，或改用 AdamW + weight decay 0.01，從數學上限制 Embedding 矩陣的 L2 範數增長。如果問題仍存在，第三步是確認 Embedding 初始化是否用了 He init（Embedding 應用 normal(0, 1/√d)，預設 PyTorch 用 N(0,1) 可能過大）。這三步通常在 2 小時內可以定位並修復，不需要重新訓練資料。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 本文是 **AI Engineering from Scratch** 系列的第一篇，涵蓋 AI 數學基礎的線性代數與微積分核心直覺。
 

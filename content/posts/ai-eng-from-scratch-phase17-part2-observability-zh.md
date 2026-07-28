@@ -597,15 +597,7 @@ THEN: send_pagerduty_alert(severity="high")
 
 ---
 
-## 十、面試答題要點
-
-**面試官問**：「RAG 問答系統的答案品質下降，但系統指標正常，你怎麼設計可觀測性來定位這類問題？」
-
-> *「這是典型的語意品質漂移問題，系統層面無法偵測。我會設計三層防禦：首先，在 LLM 呼叫的 Span 中注入 prompt_version、input/output tokens、finish_reason 等 AI-specific 屬性，並對 5% 的請求做完整文字採樣；其次，用非同步 LLM-as-Judge 每隔 15 分鐘評估採樣樣本的 faithfulness score，維護 7 日滑動均值，當下降超過 5% 觸發 P2 告警；第三層，用 PSI 比較每日輸入 embedding 分佈，PSI > 0.2 代表輸入已偏移，需要 Prompt 重新校準。這套系統可以在 10K–200K 用戶規模以 $300–500/月的基礎設施成本，將品質退化 MTTR 從 3–5 天壓到 6–8 小時。排查時，先看 finish_reason 分佈確認是否截斷，再看 prompt_version 時序確認是否有提示更新，最後查供應商 changelog 確認是否有靜默模型更新——三步通常能在 2 小時內找到根本原因。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 17 Part 1：AI 系統部署策略 — 從 Shadow Mode 到 Canary Release](/posts/ai-eng-from-scratch-phase17-part1-deployment-zh/)
 

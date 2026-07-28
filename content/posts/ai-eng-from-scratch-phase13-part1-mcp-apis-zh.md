@@ -561,20 +561,7 @@ Prompt 限制       細粒度控制（金額上限等）             模型更�
 
 ---
 
-## 十、面試答題要點
-
-**問題**：設計一個處理 5 萬日查詢的 AI 客服代理，需整合訂單/物流/退款 API，P99 < 3 秒，說明你的工具層設計。
-
-> *「我會採用三階段演進設計。初期以直接 Function Calling 搭配 Tool Router 層快速上線，重點是 Secret Manager 管理 API key 和基本 Retry 邏輯。隨著規模成長，引入 MCP 架構：每個業務域（訂單、物流、退款）部署獨立的 MCP Server，透過 MCP Gateway 統一處理 RBAC 授權和速率限制，這樣訂單服務掛了不會影響物流查詢。對退款等副作用工具，強制加 idempotency key 防止重複執行；對查詢類工具，Redis 快取可將 P99 從 850ms 降至 80ms。安全面，工具結果標記為不可信外部資料，加上 Gateway 層 RBAC，讓 Prompt Injection 從月均 12 件降至 0.3 件。核心判斷：工具層不是 LLM 的外掛，而是帶有安全閘門的副作用管理系統。*」
-
-**RKK（Result-Knowledge-Kinetics）框架應用**：
-- **Result**：P99 < 3 秒，任務完成率 91%，安全事件 < 1 件/月
-- **Knowledge**：MCP 標準化、冪等性設計、注入攻擊防禦
-- **Kinetics**：三階段演進，快取 + Circuit Breaker 達到延遲目標
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 12 Part 2：多模態 AI 工程](/posts/ai-eng-from-scratch-phase12-part2-multimodal-zh/)
 

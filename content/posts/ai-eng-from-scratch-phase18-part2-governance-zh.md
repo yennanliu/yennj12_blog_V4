@@ -636,15 +636,7 @@ RDBMS           原生合規（SEC 17a-4 標準）      - 5 年保存期：100GB
 
 ---
 
-## 十、面試答題要點
-
-**面試情境回應模型（RKK 架構）**
-
-> *「我會把這個問題拆成三個層次：監管義務、偏見工程、隱私架構。EU AI Act 把信用評分列為高風險系統（Annex III），代表你在 2026 年 8 月前必須有技術文件（Article 11）、持續風險監控（Article 9）、人工監督機制（Article 14）三件事才能合法營運——這些必須在 CI/CD 裡自動生成，不是法務寫 PDF。偏見方面，我不會直接移除性別欄位了事，而是量測 Demographic Parity gap 和 Equalized Odds gap 基準，用 Fairlearn Reduction 在訓練時加公平性約束，目標把 DP gap 壓到 < 0.05，同時在推論時用 TreeSHAP 生成不利行動通知（這是 FCRA 要求的四個拒絕理由）。隱私工程上，如果跨境資料傳輸是合規風險點，Phase 3 我會轉向聯邦學習架構（Flower + Opacus DP，ε=1.0），讓原始資料不離開各機構；如果還是集中訓練，最低限度要用 ε=1.0 差分隱私保護聚合統計，並把決策日誌存到 S3 Object Lock（WORM）保存五年。對 PM 的『先上線再合規』，我的答案是 Phase 1 可以接受手動 Model Card 和基本日誌，但公平性評估和申訴 API 在第一天就必須上線，否則一旦收到監管查詢，補不回來的是舉證責任，不是技術文件。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 18 Part 1：AI 安全工程 — 對抗攻擊與模型強固化](/posts/ai-eng-from-scratch-phase18-part1-security-zh/)
 

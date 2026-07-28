@@ -661,13 +661,7 @@ Haiku 用於低複雜度任務（純查詢、格式化輸出），Sonnet 用於�
 
 ---
 
-## 十、面試答題要點
-
-> *「這個電商 AI 客服系統我分三個 Sprint 演進：Sprint 1 先跑通 ReAct 迴圈與 3 個工具的 E2E 流程，確認 LLM 工具呼叫可行性；Sprint 2–3 加入 Redis session 存儲、Guardrails 意圖分類、Tool Safety Wrapper（冪等 token + 高風險工具確認步驟）、hybrid search 知識庫，讓 20K sessions/day 可以安全生產運行；Sprint 4 引入 Agent Worker Pool 水平擴展、Circuit Breaker、per-user token budget、OpenTelemetry 全鏈路追蹤，支援 100K sessions/day 的峰值。關鍵決策是把 `issue_refund` 設計成「申請式」而非「直接執行」，AI 只建立申請，人工審核最終授權，這讓退換貨誤操作率從測試期的 2.3% 降到上線後的 0.09%。上線 90 天後，AI 處理率 72%，CSAT 從 3.7 提升到 4.1，月客服成本從 $180K 降到 $42K，最大教訓是 Guardrails 和工具冪等性必須在 Day 1 就做，而不是出了事故再補。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 本文是 **AI 工程從零開始** 系列 Phase 19 的第 2 篇。
 

@@ -582,15 +582,7 @@ Transformer（100 token 序列）的梯度路徑：
 
 ---
 
-## 十、面試答題要點
-
-**問題**：「設計英中翻譯系統，句子最長 200 token，請說明架構選擇與注意力機制引入的動機。」
-
-> *「純 RNN 在序列長度超過 30 token 時因梯度消失導致 BLEU 斷崖下跌 40%，因此首先升級到雙向 LSTM；但固定維度的 context vector 是長句翻譯的根本瓶頸 —— 實驗數據顯示無 Attention 時 40+ token 句子的 BLEU 僅 11，引入 Bahdanau 注意力後提升到 28。在 100K 以下的訓練資料規模，我會選擇 LSTM+Attention 而非 Transformer，因為 Transformer 需要大量資料才能收斂，且 LSTM 的 alignment matrix 提供了更好的可解釋性以利除錯。解碼策略上採用 beam=4，相比 greedy 只增加 2.1x 推理時間但 BLEU 提升 2.3 分，是最佳工程平衡點。如果資料量成長到 500K+，下一步就是遷移到 Transformer —— 那是 Seq2Seq+Attention 每個痛點的系統性解法。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 本文是「AI 工程從零開始」系列 Phase 5 的第 2 篇。
 

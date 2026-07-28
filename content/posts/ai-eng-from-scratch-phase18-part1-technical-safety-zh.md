@@ -590,13 +590,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 十、面試答題要點
-
-> *「面對 1.8% 有害輸出率的問題，我會先區分根因：是越獄攻擊（對抗性用戶）還是非故意觸發（邊界案例）。從稽核日誌採樣 100 個案例，通常 60% 是角色扮演繞過，30% 是間接提示注入。短期行動：在 CI/CD 加入針對這兩類的自動化探測套件，阻止回歸；中期：引入 ML 輸入分類器取代關鍵字過濾，預期有害輸出率從 1.8% 降至 0.3–0.5%；長期（下一季）：評估 Constitutional AI 訓練，解決模型層面的根本對齊問題，目標 < 0.1%。關鍵決策是選擇 Constitutional AI 而非純 RLHF，因為我們沒有足夠的人工標注預算，而 CAI 的自我批評循環可以用少量原則達到相近效果，同時降低諂媚風險。整個架構的核心原則是 defense in depth——任何單一防禦層都會被繞過，只有多層防禦才能把失效率壓到工程可接受的水平。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 [← Phase 17 Part 3](../ai-eng-from-scratch-phase17-part3-advanced-rag-techniques-zh) | [Phase 18 Part 2 →](../ai-eng-from-scratch-phase18-part2-ai-governance-zh)
 

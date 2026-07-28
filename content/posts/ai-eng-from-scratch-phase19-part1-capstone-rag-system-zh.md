@@ -754,13 +754,7 @@ def detect_embedding_drift(new_vectors, reference_vectors, threshold=0.05):
 
 ---
 
-## 十、面試答題要點
-
-> *「我會把這個系統的演進分成三週。第一週做 POC，用最簡單的工具驗證可行性，這時幻覺率 34%、延遲 8.2 秒都可以接受，目標只是讓老闆看到東西能動。第二三週做 MVP，核心轉型是引入 Hybrid Search（BM25 + 向量），加上 Cross-encoder Re-ranking——這個組合把 Context Recall 從 61% 拉到 83%，是後續所有品質提升的基礎。同步，我會在第二週就建立 200 題的 golden QA dataset 跑 RAGAS，沒有評估框架你根本不知道自己在往哪個方向走。第四週衝生產：Celery 異步 ingestion 解決上傳 blocking 問題，int8 量化 + Redis cache 把 P95 壓到 2.9 秒達成 SLA，Prompt caching + mini fallback 把成本從 $0.18/次壓到 $0.04/次。最大的學習是：系統的品質瓶頸通常不在 LLM，而在 Retrieval——Hybrid Search 和 Re-ranking 兩個改動，比換一個更強的 LLM 對幻覺率的改善大 3 倍。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 18 Part 2：LLM Observability — Tracing、Evaluation 與生產監控](../ai-eng-from-scratch-phase18-part2-llm-observability-zh) | [Phase 19 Part 2：Capstone — 多模態 RAG 與影像文件處理 →](../ai-eng-from-scratch-phase19-part2-multimodal-rag-zh)
 

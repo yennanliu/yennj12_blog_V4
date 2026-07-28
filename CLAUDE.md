@@ -140,6 +140,25 @@ Always include the "flip condition": when does Y become the right choice instead
 
 ---
 
+## AI 工程從零開始 series (`ai-eng-from-scratch-phase{N}-part{M}-*-zh.md`)
+
+Traditional-Chinese engineering curriculum, ~44 posts across 19 phases. Full plan, per-phase
+inventory, and quality checklist: [`AI_ENG_FROM_SCRATCH_PLAN.md`](AI_ENG_FROM_SCRATCH_PLAN.md).
+
+**This is NOT an interview-prep series.** It teaches AI engineering; it is not a study guide.
+Consequences for generation:
+
+- Do **not** add a **十、面試答題要點** (model interview answer) section. It was removed from all
+  44 existing posts; the section order now ends at **十、系列導航**.
+- Do not describe posts as interview material in the front-matter `description`.
+- Tags: keep `"RKK"`; do not add `"Interview"`.
+
+Otherwise the fde-interview-guide formatting conventions above still apply: 2–4 ASCII diagrams,
+「三個演進階段」, 4–6「為什麼選 X 不選 Y」decision tables with flip conditions, concrete numbers,
+600–900 lines, section numbering in Chinese numerals capped at 十, series nav links at the bottom.
+
+---
+
 ## Stock 10-K deep-dive posts (`*-10k-deep-dive-zh.md`)
 
 Traditional-Chinese, institutional-grade digests of SEC 10-K filings, titled

@@ -738,27 +738,7 @@ vs 直接部署       模型文件從 200MB 降至 20MB        精度損失 1–
 
 ---
 
-## 十、面試答題要點（RKK Model Answer）
-
-### 面試情境回顧
-
-> **問：** 信用風險模型，目前 XGBoost AUC 0.84，目標 0.88+。訓練資料不能增加、特徵工程已飽和。推論延遲 < 50ms，每日 500 萬次預測。
-
-### 模型答案
-
-> *「我會分三步走。第一步，在 48 小時內用 Optuna 做 Bayesian 超參數搜索，100 次試驗通常能讓 AUC 從 0.84 提升到 0.86–0.87，幾乎零成本。第二步，建立 3 個 Base Learners 的 Stacking：XGBoost、LightGBM、CatBoost，用 5-Fold OOF 防止資料洩漏，Meta-Learner 用 Logistic Regression，預期 AUC 再提升 0.01–0.02，達到 0.88 目標。第三步，推論延遲方面，三個模型並行推論後 Meta-Learner 只是一個矩陣乘法，配合 ONNX Runtime 導出和 Redis 特徵快取，p99 應控制在 20–30ms，遠低於 50ms SLA。選 LightGBM 而非第三棵 XGBoost，是因為兩者相關性低、多樣性高，Stacking 效益更大；選 Logistic Regression 作為 Meta-Learner，是因為 Base Learner 輸出的 OOF 預測數量只有 3 列，複雜 Meta-Learner 會過擬合。如果上述步驟後 AUC 仍未達標，我會考慮模型蒸餾：用 Stacking 集成生成軟標籤，訓練單一 XGBoost，精度損失 0.5–1%，但推論延遲降至 8ms，為進一步優化留出空間。」*
-
-### 加分項目
-
-- 提到 **OOF（Out-of-Fold）** 和為何不能直接用訓練集預測作為 Meta-Learner 輸入
-- 強調 Base Learners 的**多樣性**（不同演算法 > 同一演算法不同參數）
-- 給出**具體數字**：50 次 Bayesian 試驗、5-Fold CV、AUC 提升幅度
-- 考慮**業務影響**：AUC 每提升 0.01 對業務有多少實際價值
-- 提出**降級方案**：若集成推論太慢，可用蒸餾壓縮到 SLA 要求內
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 本文是 **AI 工程從零開始** 系列的 Phase 2 Part 2。
 

@@ -591,18 +591,7 @@ Flip condition：Planner 無法穩定輸出合法 JSON（常見於較弱的模�
 
 ---
 
-## 十、面試答題要點
-
-> *「我會把問題拆成兩層：為什麼 ReAct 失敗，以及規劃層要怎麼設計。ReAct 的核心問題是規劃與執行耦合在一起，每步只有局部視野，走錯無法回頭。我的解法是引入 Plan-and-Execute 架構：先用 Planner LLM 產出帶 pre/post-condition 的 JSON 計畫，靜態驗證後交給 Executor 執行；任何步驟失敗時，Replanner 只重寫失敗點往後的部分，已完成步驟保留。在 WebArena 上，這個架構把 10 步以上任務的完成率從 34% 提升到 82%，成本只增加 50%。如果要進一步到 90%+，我會在 Planner 層加入 Tree-of-Thought（Beam Width=3）讓 Evaluator 在執行前先篩選最優路徑，並把 DAG 裡的獨立步驟並行執行，P99 延遲反而能比純 ReAct 低 20%。關鍵決策：Planner 用 GPT-4o，Replanner 用 GPT-4o mini，讓成本和速度都最優。」*
-
-**RKK 結構拆解**：
-- **R（Requirement）**：任務完成率從 62% 提升到 90%+
-- **K（Key Insight）**：規劃與執行分離，失敗後局部 replan 而非重跑
-- **K（Key Design）**：JSON Plan + pre/post-condition + DAG 並行 + ToT 多路徑
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 14 Part 1：Agent 工具呼叫與 Function Calling 設計](/posts/ai-eng-from-scratch-phase14-part1-tool-calling-zh/)
 

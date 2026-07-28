@@ -493,15 +493,7 @@ def temporal_consistency_loss(frames, optical_flow_net):
 
 ---
 
-## 十、面試答題要點
-
-**題目**：電商平台需要「商品圖片風格轉換」系統，日處理 50 萬張，延遲 < 200ms，選 GAN 還是 Diffusion？
-
-> *「我選擇 GAN 方案，核心理由是 SLA。50 萬張/日 × 200ms 延遲要求，Diffusion（SDXL 推論約 3–5s）即使用最快的 DDIM 加速仍需 500ms 以上，無法達標。GAN（pix2pix 或 CycleGAN 架構）TensorRT INT8 量化後 512×512 約 15–50ms，符合要求且推論成本約 Diffusion 的 1/40（$0.0002 vs $0.008 每張）。架構上分三個階段演進：POC 階段用 DCGAN 驗證基礎效果；MVP 階段改用 WGAN-GP 解決訓練不穩定問題（模式崩潰率從 40% 降至 < 5%）；Scale 階段加入 TensorRT 量化和 K8s 自動擴縮，支援峰值 500 RPS。唯一要承擔的 tradeoff 是 GAN 訓練複雜度高，需要配對資料或 CycleGAN 的無配對訓練；若未來延遲 SLA 放寬至 > 500ms，我會重新評估是否切換到 Diffusion 獲得更高品質和更靈活的文字控制。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 本文是《AI 工程從零開始》Phase 8 的第二篇。
 

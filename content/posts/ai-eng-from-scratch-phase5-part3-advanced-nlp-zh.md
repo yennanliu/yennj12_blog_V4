@@ -580,15 +580,7 @@ Faiss           自架，資料不出境               Pinecone：managed servic
 
 ---
 
-## 十、面試答題要點
-
-**面試官問：** 「為法律文件平台設計問答系統，月查詢 50 萬筆，2 秒 SLA，準確率 > 90%。」
-
-> *「我會採用 Extractive QA 架構，分三個演進階段。Phase 1 用 TF-IDF + BERT-base-squad2 快速驗證，召回率約 70%，成本 $50/月。Phase 2 引入 Dense Retrieval（DPR + Faiss）解決詞彙鴻溝，搭配 RoBERTa-large reader，召回率提升至 85%，推論延遲約 80ms（遠低於 2 秒 SLA），成本約 $800/月。Phase 3 採用 Hybrid 檢索（BM25 + DPR 融合，召回率 93%）加上 Re-ranker 精排，確保 P99 < 500ms。選擇 Extractive 而非 Generative QA 的核心原因是合規：答案必須可追蹤到原文，Hallucination 在法律場景不可接受。信心分數低於 0.4 的查詢直接拒答並標記人工審核，這個設計讓準確率超過 92%，同時維持 99.5% 的可用性。*」
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← 上一篇：[Phase 5 Part 2：Transformer 注意力機制與自監督學習](/posts/ai-eng-from-scratch-phase5-part2-transformer-zh/)
 

@@ -489,13 +489,7 @@ DCGM 指標收集每個 Pod 的 GPU 時間使用量，配合 Kubernetes Cost All
 
 ---
 
-## 十、面試答題要點
-
-> *「我會分三個階段推進。Phase 1（現況 POC）先確診問題：GPU 使用率 23% 的根本原因是缺乏動態批次和請求聚合，而不是硬體不足；Phase 2（MVP，預算 2×）換用 Triton Inference Server 啟用 Dynamic Batching，配合 KEDA 基於佇列深度的自動擴縮容，預計 GPU 使用率從 23% 提升至 55–60%，P99 從 1.2s 降至 320ms，3 台 A10G 即可覆蓋 3× 流量增長；Phase 3（Scale，3 個月目標）加入 A100 MIG 切片以提升多模型共用效率、CDN 模型快取將冷啟動從 45s 壓到 8s、Istio 實現模型版本親和性路由，最終在預算 2× 的前提下支撐 10× 流量，P99 達到 180ms。最關鍵的 Why-X-not-Y 決策是選 Triton 而非 TorchServe：因為我們有多框架模型（PyTorch 推薦 + ONNX 精排 + TensorRT 圖像），Triton 的 Ensemble Pipeline 可以做 zero-copy 串接，單次請求端到端延遲比每步驟獨立服務節省 35–40ms。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 16 Part 2：AI 訓練平台的分散式儲存與資料管線](/posts/ai-eng-from-scratch-phase16-part2-storage-zh/)
 

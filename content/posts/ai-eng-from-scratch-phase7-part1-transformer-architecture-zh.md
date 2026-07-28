@@ -593,21 +593,7 @@ Flip condition：下游任務對細微差異敏感（如數值計算） → BF16
 
 ---
 
-## 十、面試答題要點
-
-**面試官問**：「7B 模型部署，P99 < 500ms，200+ req/s，40GB GPU 限制，你怎麼做？」
-
-> *「我會分三個層次解決這個問題。首先，啟用 KV Cache 是最大的單一優化——它把首 token 延遲從 4100ms 降至 380ms（↓91%），代價是記憶體；配合 vLLM 的 PagedAttention，記憶體碎片從 60% 降至 4%。其次，將 MHA 換成 GQA（8 個 KV head），KV Cache 從 2.1 GB/req 降至 0.53 GB/req（↓75%），在相同 40GB 預算下批次大小從 16 擴到 64，吞吐從 35 提升到 140 req/s。第三，換用 Flash Attention 2 進行 IO-aware tiling，避免 O(n²) 的 HBM 讀寫，再加 INT8 量化把模型從 14GB 壓到 7GB，最終 P99 達 210ms、吞吐 250 req/s、記憶體 15.5GB——三個指標都符合。如果未來需要進一步擴展，下一步是 Speculative Decoding 或 Tensor Parallelism 多卡部署。」*
-
-**評分要素**：
-- 每個優化有量化數字（不只說「更快」）
-- 清楚說明取捨（KV Cache 省時間但費記憶體，GQA 解決記憶體但需重新訓練或選對模型）
-- 說出三個演進步驟而非一次到位
-- 最後提出「下一步」顯示工程判斷力
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 6 Part 2：模型微調與 LoRA 工程實踐](/posts/ai-eng-from-scratch-phase6-part2-lora-finetuning-zh/)
 

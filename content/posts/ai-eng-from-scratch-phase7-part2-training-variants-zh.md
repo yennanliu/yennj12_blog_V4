@@ -594,13 +594,7 @@ Mamba 用 Selective State Space Model 取代 attention：
 
 ---
 
-## 十、面試答題要點
-
-> *「這個電商 NLP 系統需要三種任務：生成、分類、語義匹配，我會採用兩模型策略而非一個架構強行通吃。情感分析和語義搜尋用 Encoder-only（如 BGE-large 或 DeBERTa），這兩個任務需要雙向 context，Encoder 在相同計算量下品質最高——情感分類 F1 約高 3–5 個百分點。商品描述生成用 Decoder-only（如 Mistral-7B fine-tune），因為生成任務和 in-context learning 是 Decoder 的天然優勢。訓練策略上，兩個模型都採用 BF16 + Flash Attention 2，LR 2000 步 Warmup + Cosine Decay，grad clip norm=1.0；在 A100 上不用 FP16 是因為省掉 loss scaling 工程複雜度。預算 $50K 的情況下，生成模型用 LoRA fine-tune（只訓練 0.1% 參數，費用 < $3K），Encoder 模型從 BGE 開始 fine-tune 也僅需 $1K，剩餘預算用於推論基礎設施。如果未來合併為一個模型，考慮 Decoder-only + 高品質 embedding head，用統一的 LLaMA 架構處理全部三類任務，但初期這個雙模型設計 ROI 更高。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 7 Part 1：Transformer 核心機制——Self-Attention 與位置編碼](/posts/ai-eng-from-scratch-phase7-part1-transformer-core-zh/)
 

@@ -8,7 +8,7 @@ Reference curriculum: https://github.com/rohitg00/ai-engineering-from-scratch
 
 - **Series slug:** `aifs`
 - **Post naming:** `ai-eng-from-scratch-phase{N}-part{M}-{slug}-zh.md`
-- **Tags:** `["AI", "Machine Learning", "Engineering", "Interview", "RKK"]` + phase-specific tags
+- **Tags:** `["AI", "Machine Learning", "Engineering", "RKK"]` + phase-specific tags
 - **Category:** `["engineering", "ai", "all"]`
 - **Language:** Traditional Chinese (繁體中文)
 - **Authors:** `["yen"]`
@@ -60,15 +60,17 @@ One post per phase; larger phases split into 2–4 posts.
 
 ## Standard Post Structure
 
-Every post follows this section order (using Chinese numerals 一–十一):
+Every post follows this section order (using Chinese numerals 一–十):
 
 1. **一、核心問題** — why this topic matters; what breaks without it
 2. **二、三個演進階段** — beginner / practitioner / expert framing with ASCII diagrams
 3. **三–七、Deep Dives** — major concepts, each with ASCII diagram + decision rationale
 4. **八、為什麼選 X 不選 Y** — decision tables with flip conditions
 5. **九、系統效應** — before/after numbers (accuracy, latency, cost)
-6. **十、面試答題要點** — model RKK answer in blockquote
-7. **Series navigation** — previous / next phase links
+6. **十、系列導航** — previous / next phase links
+
+This is **not an interview-prep series** — it is an engineering curriculum. Do **not** add a
+**十、面試答題要點** (model interview answer) section; it was removed from every post in the series.
 
 ### Quality checklist per post
 
@@ -77,7 +79,8 @@ Every post follows this section order (using Chinese numerals 一–十一):
 - [ ] 4–6 Why-X-not-Y decisions
 - [ ] 600–900 lines
 - [ ] No mention of "Google" (use "Cloud" in tags)
-- [ ] Tags include `"RKK"` and `"Interview"`
+- [ ] Tags include `"RKK"`
+- [ ] No 面試答題要點 section
 - [ ] readTime calibrated: 500L≈18min, 700L≈23min, 900L≈28min
 - [ ] Opening 4-line contrast quote
 - [ ] Series nav links at bottom

@@ -600,13 +600,7 @@ vs 全體一致  容忍單 Agent 錯誤（噪聲）         全體一致：任�
 
 ---
 
-## 十、面試答題要點
-
-> *「這個研究助理平台我會用分片 Supervisor 架構：按任務 ID hash 分到 3 個 Supervisor，每個 Supervisor 管理約 670 個並發任務（2,000 ÷ 3）。Agent 間通訊用 Redis Streams——因為我們已經有 Redis，且訊息可重播利於除錯；當日任務量超過 100K 才考慮換 Kafka。共享狀態用樂觀鎖：Agent 衝突率預估 < 3%，樂觀鎖在這個場景吞吐比悲觀鎖高 5–8 倍。當兩個 Agent 搶同一份外部資源時，我用分段所有權解決：每個 Agent 只能寫自己分配到的 section，最後由 Writer Agent 做最終合併——這樣根本消除競爭而非解決衝突。品質共識用多數投票（4 票中 3 票通過），但安全檢查 Agent 保有一票否決權。預期延遲從串行 24s（8 步 × 3s）降到 8s，任務失敗率從 8% 降到 3%。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 ← [Phase 15 Part 2：Agent 記憶體與長期狀態管理](/posts/ai-eng-from-scratch-phase15-part2-memory-zh/)
 

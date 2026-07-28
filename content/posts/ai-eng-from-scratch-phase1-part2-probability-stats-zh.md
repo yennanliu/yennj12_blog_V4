@@ -659,15 +659,7 @@ vs Platt Scaling  能處理非單調的校準誤差            若資料夠多�
 
 ---
 
-## 十、面試答題要點
-
-**面試問題重述**：「分類模型驗證集 accuracy 92%，上線後客訴率比預期高三倍，你怎麼診斷？」
-
-> *「我會從三個方向診斷。第一，確認是否有分佈偏移：計算訓練集與線上資料各個特徵的 KL 散度，若任一特徵 KL > 0.1，說明線上分佈已偏離訓練集，92% 的 accuracy 在新分佈下不再有效。第二，檢查模型校準品質：計算 ECE，如果 ECE > 0.1，代表模型的機率輸出不可信——說 90% 把握的案例實際上可能只有 60% 準確率——這會導致下游決策邏輯過度信任模型。第三，重新審視評估指標：客訴通常對應 False Positive（錯誤拒絕合法用戶）或 False Negative（放行問題案件），accuracy 對這兩種錯誤的代價視為相同，但業務上代價截然不同；我會計算 precision/recall curve，並在對業務的實際代價做 cost-sensitive 分析後，重新設定決策閾值。修復路徑：若是分佈偏移，用新資料 fine-tune 模型；若是校準問題，用 Isotonic Regression 校準；若是閾值問題，直接調整 classification threshold，不需要重訓模型。」*
-
----
-
-## 十一、系列導航
+## 十、系列導航
 
 本文是「AI 工程從零開始」系列的 Phase 1 Part 2。系列基於 [ai-engineering-from-scratch](https://github.com/rohitg00/ai-engineering-from-scratch) 開源課程，從工程師視角系統性地建立 AI 基礎。
 

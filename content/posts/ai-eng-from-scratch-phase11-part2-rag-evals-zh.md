@@ -515,13 +515,7 @@ if p95_latency > 2000ms:
 
 ---
 
-## 十、面試答題要點
-
-> *「面對法律問答系統的 15% 幻覺率，我會按三個階段處理。第一步是診斷：部署 RAGAS 對現有流量抽樣評估，確認問題出在 Retrieval 端（Recall 低）還是 Generation 端（Faithfulness 低）。如果 Context Recall < 0.70，優先升級為 Hybrid Search（BM25 + Dense + RRF），這是單一改動 Recall@5 提升最大的槓桿，我們的數據顯示 +12 個百分點。如果 Faithfulness < 0.75，加入 Cross-Encoder Re-ranking，代價是 +80ms 延遲但 MRR@10 提升 15%；同時把 Chunking 從 Fixed-size 換成 Semantic，Faithfulness 可再提升 8%。第三步是防守：在 CI/CD 中加入 RAGAS 自動評估門控，Faithfulness < 0.80 的版本無法部署，每月維護工時從 20 小時降到 8 小時。綜合這三項改動，目標是把幻覺率從 15% 降到 4%、Faithfulness 從 0.65 提升到 0.89，並在四週內完成。」*
-
----
-
-## 十一、生產常見問題與診斷流程
+## 十、生產常見問題與診斷流程
 
 即使架構設計完善，生產環境仍會出現各種品質退化。以下是最常見的五個問題及對應的診斷鏈。
 
@@ -631,7 +625,7 @@ Context：
 
 ---
 
-## 十二、Embedding 模型選型：開源 vs 閉源
+## 十一、Embedding 模型選型：開源 vs 閉源
 
 Embedding 模型的選擇直接影響召回品質和成本結構。
 
