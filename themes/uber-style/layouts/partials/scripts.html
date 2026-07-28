@@ -1,5 +1,18 @@
-{{/* Inject the correct search index URL before main.js loads */}}
-<script>window.SEARCH_INDEX_URL = '{{ "index.json" | absURL }}';</script>
+{{/* Search index + page URLs.
+
+     These MUST be relative. GitHub Pages hands the build an http:// base_url
+     for the js.org CNAME, so absURL bakes in "http://…/index.json"; fetching
+     that from the https:// site is blocked as mixed content and search returns
+     nothing at all. relURL keeps the /yennj12_blog_V4 prefix without a scheme. */}}
+<script>
+window.SEARCH_INDEX_URL = '{{ "index.json" | relURL }}';
+window.SEARCH_PAGE_URL  = '{{ "search/" | relURL }}';
+</script>
+{{ $search := resources.Get "js/search.js" }}
+{{ if $search }}
+{{ $search = $search | resources.Minify }}
+<script src="{{ $search.RelPermalink }}"></script>
+{{ end }}
 {{ $js := resources.Get "js/main.js" }}
 {{ if $js }}
 {{ $js := $js | resources.Minify }}
@@ -139,35 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<script>
-// Simple search functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const searchToggle = document.querySelector('.search__toggle');
-    const searchOverlay = document.querySelector('.search__overlay');
-    const searchClose = document.querySelector('.search__close');
-    const searchInput = document.querySelector('.search__input');
-    
-    if (searchToggle && searchOverlay) {
-        searchToggle.addEventListener('click', function() {
-            searchOverlay.classList.add('search__overlay--open');
-            searchInput.focus();
-        });
-        
-        searchClose.addEventListener('click', function() {
-            searchOverlay.classList.remove('search__overlay--open');
-        });
-        
-        searchOverlay.addEventListener('click', function(e) {
-            if (e.target === searchOverlay) {
-                searchOverlay.classList.remove('search__overlay--open');
-            }
-        });
-        
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                searchOverlay.classList.remove('search__overlay--open');
-            }
-        });
-    }
-});
-</script>
+{{/* The search modal's open/close/keyboard handling lives in
+     assets/js/search modal code inside main.js — do not duplicate it here.
+     A second set of listeners used to be bound at this point, which
+     double-fired every toggle. */}}

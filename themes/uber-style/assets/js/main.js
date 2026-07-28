@@ -34,152 +34,234 @@ function initMobileMenu() {
     }
 }
 
-// Search functionality
+// Search functionality — header modal.
+// Ranking, matching and index loading live in assets/js/search.js (BlogSearch).
 function initSearch() {
-    const searchToggle = document.querySelector('.search__toggle');
+    const searchToggle  = document.querySelector('.search__toggle');
     const searchOverlay = document.querySelector('.search__overlay');
-    const searchClose = document.querySelector('.search__close');
-    const searchInput = document.querySelector('.search__input');
+    const searchClose   = document.querySelector('.search__close');
+    const searchInput   = document.querySelector('.search__input');
     const searchResults = document.querySelector('.search__results');
-    const searchFooter = document.querySelector('.search__footer');
+    const searchFooter  = document.querySelector('.search__footer');
     const searchViewAll = document.querySelector('.search__view-all');
 
-    if (!searchToggle || !searchOverlay) return;
+    if (!searchToggle || !searchOverlay || !window.BlogSearch) return;
 
-    let searchIndex = null;
+    const MAX_RESULTS = 8;
+    let index = null;
+    let active = -1;      // keyboard-highlighted result
+    let lastHits = [];
 
-    // Load search index
-    loadSearchIndex().then(index => {
-        searchIndex = index;
-    });
-
-    searchToggle.addEventListener('click', function() {
-        searchOverlay.classList.add('search__overlay--open');
-        searchInput.focus();
-    });
-
-    if (searchClose) {
-        searchClose.addEventListener('click', function() {
-            searchOverlay.classList.remove('search__overlay--open');
-        });
+    // The index is a few hundred KB, so it is only fetched once the user
+    // shows intent to search — not on every page load.
+    function ensureIndex() {
+        if (index) return Promise.resolve(index);
+        return BlogSearch.load().then(data => { index = data; return index; });
     }
 
-    searchOverlay.addEventListener('click', function(e) {
-        if (e.target === searchOverlay) {
-            searchOverlay.classList.remove('search__overlay--open');
-        }
+    function openModal() {
+        searchOverlay.classList.add('search__overlay--open');
+        document.body.classList.add('search-open');
+        // A visibility:hidden element cannot take focus, so the overlay's
+        // visibility must flip synchronously (see _header.scss). The deferred
+        // retry is a no-op safety net for slower style application.
+        focusInput();
+        setTimeout(focusInput, 0);
+        ensureIndex().then(() => { if (searchInput.value.trim()) run(); });
+    }
+
+    function focusInput() {
+        if (document.activeElement === searchInput) return;
+        searchInput.focus();
+        searchInput.select();
+    }
+
+    function closeModal() {
+        searchOverlay.classList.remove('search__overlay--open');
+        document.body.classList.remove('search-open');
+        searchInput.setAttribute('aria-expanded', 'false');
+    }
+
+    function isOpen() {
+        return searchOverlay.classList.contains('search__overlay--open');
+    }
+
+    searchToggle.addEventListener('click', openModal);
+    searchToggle.addEventListener('mouseenter', ensureIndex);  // warm the cache
+    if (searchClose) searchClose.addEventListener('click', closeModal);
+
+    searchOverlay.addEventListener('click', function (e) {
+        if (e.target === searchOverlay) closeModal();
     });
 
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            searchOverlay.classList.remove('search__overlay--open');
-        }
-        // Keyboard shortcut to open search (Cmd/Ctrl + K)
-        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    document.addEventListener('keydown', function (e) {
+        if (!e.key || e.isComposing) return;
+
+        // Cmd/Ctrl+K or "/" opens search from anywhere.
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
             e.preventDefault();
-            searchOverlay.classList.add('search__overlay--open');
-            searchInput.focus();
+            openModal();
+            return;
         }
+        if (e.key === '/' && !isOpen() && !isTypingTarget(e.target)) {
+            e.preventDefault();
+            openModal();
+            return;
+        }
+        if (e.key === 'Escape' && isOpen()) closeModal();
     });
 
-    // Navigate to search page on Enter
+    function isTypingTarget(el) {
+        if (!el) return false;
+        const tag = el.tagName;
+        return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+    }
+
+    /* ── Query execution ── */
+
+    function searchPageURL(q) {
+        const base = window.SEARCH_PAGE_URL ||
+            (searchViewAll && (searchViewAll.dataset.base || searchViewAll.href.split('?')[0])) ||
+            '/search/';
+        return base + '?q=' + encodeURIComponent(q);
+    }
+
+    function run() {
+        const q = searchInput.value.trim();
+        active = -1;
+
+        if (!q) {
+            lastHits = [];
+            searchResults.innerHTML = '';
+            if (searchFooter) searchFooter.style.display = 'none';
+            searchInput.setAttribute('aria-expanded', 'false');
+            return;
+        }
+        if (!index) {
+            searchResults.innerHTML = '<div class="search__status">Loading…</div>';
+            return;
+        }
+
+        const hits = BlogSearch.search(q, index, { limit: MAX_RESULTS });
+        lastHits = hits;
+        renderResults(hits, q);
+
+        if (searchFooter && searchViewAll) {
+            const base = searchViewAll.dataset.base || searchViewAll.href.split('?')[0];
+            searchViewAll.dataset.base = base;
+            searchViewAll.href = searchPageURL(q);
+            searchViewAll.textContent = hits.total > hits.length
+                ? `See all ${hits.total} results →`
+                : 'Open in search page →';
+            searchFooter.style.display = 'flex';
+        }
+        searchInput.setAttribute('aria-expanded', String(hits.length > 0));
+    }
+
+    function renderResults(hits, q) {
+        if (!hits.length) {
+            searchResults.innerHTML =
+                '<div class="search__no-results">No results for <strong>' +
+                BlogSearch.esc(q) + '</strong></div>';
+            return;
+        }
+
+        const banner = hits.relaxed
+            ? '<div class="search__status search__status--relaxed">No exact match — showing closest results.</div>'
+            : '';
+
+        searchResults.innerHTML = banner + hits.map(function (hit, i) {
+            const d = hit.doc;
+            const title = BlogSearch.highlight(BlogSearch.esc(d.title), hits.terms);
+            const snippet = BlogSearch.highlight(
+                BlogSearch.esc(BlogSearch.excerpt(d, hits.terms, 130)), hits.terms);
+            const tags = (d.tags || []).slice(0, 3)
+                .map(t => '<span class="search__result-tag">' + BlogSearch.esc(t) + '</span>').join('');
+            return '' +
+                '<a class="search__result" role="option" data-i="' + i + '" href="' + BlogSearch.esc(d.url) + '">' +
+                  '<h3 class="search__result-title">' + title + '</h3>' +
+                  (snippet ? '<p class="search__result-excerpt">' + snippet + '</p>' : '') +
+                  '<div class="search__result-meta">' +
+                    '<span class="search__result-date">' + formatDate(d.date) + '</span>' +
+                    (d.read ? '<span class="search__result-read">' + BlogSearch.esc(d.read) + '</span>' : '') +
+                    tags +
+                  '</div>' +
+                '</a>';
+        }).join('');
+    }
+
+    /* ── Input + keyboard navigation ── */
+
     if (searchInput) {
-        searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && this.value.trim()) {
-                const searchPageUrl = window.SEARCH_INDEX_URL
-                    ? window.SEARCH_INDEX_URL.replace('index.json', 'search/') + '?q=' + encodeURIComponent(this.value.trim())
-                    : '/search/?q=' + encodeURIComponent(this.value.trim());
-                window.location.href = searchPageUrl;
+        let timer;
+        // While a CJK IME is composing, the field holds provisional romaji /
+        // zhuyin and Enter/arrows belong to the IME candidate list, not to us.
+        let composing = false;
+
+        searchInput.addEventListener('compositionstart', function () { composing = true; });
+        searchInput.addEventListener('compositionend', function () {
+            composing = false;
+            clearTimeout(timer);
+            timer = setTimeout(() => ensureIndex().then(run), 60);
+        });
+
+        searchInput.addEventListener('input', function () {
+            if (composing) return;
+            clearTimeout(timer);
+            timer = setTimeout(() => ensureIndex().then(run), 120);
+        });
+
+        searchInput.addEventListener('keydown', function (e) {
+            if (composing || e.isComposing || e.keyCode === 229) return;
+
+            const items = searchResults.querySelectorAll('.search__result');
+
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                if (!items.length) return;
+                e.preventDefault();
+                active += (e.key === 'ArrowDown' ? 1 : -1);
+                if (active < 0) active = items.length - 1;
+                if (active >= items.length) active = 0;
+                setActive(items);
+                return;
+            }
+
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const q = this.value.trim();
+                if (active >= 0 && items[active]) {
+                    window.location.href = items[active].getAttribute('href');
+                } else if (q) {
+                    window.location.href = searchPageURL(q);
+                }
             }
         });
     }
 
-    // Search input handling — live preview in modal
-    if (searchInput && searchResults) {
-        let searchTimeout;
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            const q = this.value.trim();
-            searchTimeout = setTimeout(() => {
-                performSearch(q, searchIndex, searchResults);
-                // Update "View all results" link and show footer
-                if (searchFooter && searchViewAll) {
-                    if (q) {
-                        const base = searchViewAll.dataset.base || searchViewAll.href.split('?')[0];
-                        searchViewAll.dataset.base = base;
-                        searchViewAll.href = base + '?q=' + encodeURIComponent(q);
-                        searchFooter.style.display = 'block';
-                    } else {
-                        searchFooter.style.display = 'none';
-                    }
-                }
-            }, 150);
+    function setActive(items) {
+        items.forEach((el, i) => {
+            const on = i === active;
+            el.classList.toggle('search__result--active', on);
+            el.setAttribute('aria-selected', String(on));
+            if (on) el.scrollIntoView({ block: 'nearest' });
         });
     }
 }
 
-// Load search index
-async function loadSearchIndex() {
-    try {
-        const url = window.SEARCH_INDEX_URL || '/index.json';
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Failed to load search index:', error);
-        return [];
-    }
-}
-
-// Perform search
-function performSearch(query, searchIndex, resultsContainer) {
-    if (!query || !searchIndex) {
-        resultsContainer.innerHTML = '';
-        return;
-    }
-    
-    const results = searchIndex.filter(item => {
-        const tags = Array.isArray(item.tags) ? item.tags.join(' ') : '';
-        const searchText = (item.title + ' ' + item.content + ' ' + tags).toLowerCase();
-        return searchText.includes(query.toLowerCase());
-    }).slice(0, 10); // Limit to 10 results
-    
-    if (results.length === 0) {
-        resultsContainer.innerHTML = '<div class="search__no-results">No results found</div>';
-        return;
-    }
-    
-    const resultsHTML = results.map(result => `
-        <div class="search__result">
-            <h3 class="search__result-title">
-                <a href="${result.permalink}">${highlightText(result.title, query)}</a>
-            </h3>
-            <p class="search__result-excerpt">${highlightText(result.summary || result.content.substring(0, 150) + '...', query)}</p>
-            <div class="search__result-meta">
-                <span class="search__result-date">${formatDate(result.date)}</span>
-                ${result.tags.map(tag => `<span class="search__result-tag">${tag}</span>`).join('')}
-            </div>
-        </div>
-    `).join('');
-    
-    resultsContainer.innerHTML = resultsHTML;
-}
-
-// Highlight search terms
-function highlightText(text, query) {
-    if (!query) return text;
-    const regex = new RegExp(`(${query})`, 'gi');
-    return text.replace(regex, '<mark>$1</mark>');
-}
-
-// Format date for search results
+// Format date for search results.
+// The index stores plain "YYYY-MM-DD"; new Date() would read that as UTC
+// midnight and render the previous day for anyone west of Greenwich.
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
+    if (!dateString) return '';
+    const parts = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateString);
+    const date = parts
+        ? new Date(+parts[1], +parts[2] - 1, +parts[3])
+        : new Date(dateString);
+    if (isNaN(date)) return '';
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
     });
 }
 

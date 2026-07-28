@@ -1,9 +1,9 @@
 # Alternative deployment method if GitHub Pages isn't enabled
 name: Build Hugo Site (Alternative)
 
+# Fallback build only — does not deploy. Run it by hand if Pages is disabled.
+# It used to run on every push to main, tripling the CI cost of a commit.
 on:
-  push:
-    branches: ["main"]
   workflow_dispatch:
 
 permissions:
