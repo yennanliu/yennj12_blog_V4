@@ -1,11 +1,12 @@
 name: Deploy Hugo site to GitHub Pages
 
+# NOTE: hugo-latest.yml is the workflow that deploys on push to main.
+# This one no longer runs automatically: it raced hugo-latest.yml for the same
+# "pages" concurrency group, and it overrides baseURL with the Pages-provided
+# `base_url`, which is http:// for the js.org CNAME. Whichever run landed last
+# decided whether the live site had http:// or https:// absolute URLs.
+# Kept for manual recovery only.
 on:
-  # Trigger deployment on push to main branch
-  push:
-    branches: ["main"]
-  
-  # Allow manual workflow dispatch
   workflow_dispatch:
 
 # Set permissions needed for GitHub Pages deployment
@@ -57,11 +58,13 @@ jobs:
           # For maximum backward compatibility with Hugo modules
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
+        # Do NOT pass --baseURL "${{ steps.pages.outputs.base_url }}": for a
+        # custom CNAME that value is http://, which bakes mixed-content URLs
+        # into the site. hugo.toml already holds the correct https baseURL.
         run: |
           hugo \
             --gc \
-            --minify \
-            --baseURL "${{ steps.pages.outputs.base_url }}/"
+            --minify
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -175,11 +175,16 @@
     z-index: $z-search;
     opacity: 0;
     visibility: hidden;
-    transition: all $transition-normal;
-    
+    // `transition: all` also animated `visibility`, which kept the modal
+    // unfocusable for the duration of the fade — autofocusing the search box
+    // silently did nothing. Fade the opacity; switch visibility discretely
+    // (immediately on open, only after the fade-out on close).
+    transition: opacity $transition-normal, visibility 0s linear 0.25s;
+
     &--open {
       opacity: 1;
       visibility: visible;
+      transition: opacity $transition-normal, visibility 0s;
     }
   }
   

@@ -1,5 +1,62 @@
-{{- $.Scratch.Add "index" slice -}}
-{{- range site.RegularPages -}}
-    {{- $.Scratch.Add "index" (dict "title" .Title "permalink" .Permalink "description" .Params.description "date" .Date "tags" .Params.tags "categories" .Params.categories "readTime" .Params.readTime "weight" .Weight) -}}
+{{- /*
+  Search index consumed by the header search modal and /search/.
+
+  Design notes:
+   - `url` is a RELATIVE permalink. Never use absURL here: GitHub Pages hands the
+     build an `http://` base_url for the js.org CNAME, and an absolute http:// URL
+     fetched from an https:// page is blocked as mixed content, which silently
+     breaks search everywhere. Relative URLs are scheme-agnostic.
+   - `body` is section headings + a prose excerpt with fenced code blocks removed.
+     The posts contain large ASCII diagrams that add weight but no search signal.
+   - `tagUrls` maps a tag's display name to the URL Hugo actually generated for
+     it. Do NOT slugify tag names in JS: Hugo uses `urlize`, so "Developer Tools
+     & Techniques" becomes "developer-tools--techniques", which no hand-rolled
+     lowercase-and-hyphenate rule reproduces.
+   - Field names are kept short; this file ships to every visitor who searches.
+*/ -}}
+{{- $pages := where site.RegularPages "Params.searchExclude" "!=" true -}}
+{{- $index := slice -}}
+{{- range $pages -}}
+  {{- /* Strip fenced code blocks (ASCII architecture diagrams) before indexing. */ -}}
+  {{- $raw := replaceRE "(?s)```.*?```" " " .RawContent -}}
+  {{- /* Only real tags — a bare `<` (e.g. "< 10K 用戶") must not swallow the line. */ -}}
+  {{- $raw = replaceRE `</?[a-zA-Z][^>\n]*>` " " $raw -}}
+
+  {{- /* Section headings carry most of the topical signal in these long posts. */ -}}
+  {{- $headings := slice -}}
+  {{- range findRE `(?m)^#{2,4}[ \t]+.+$` $raw 60 -}}
+    {{- $headings = $headings | append (replaceRE `^#+[ \t]+` "" . | replaceRE "[*_`]" "") -}}
+  {{- end -}}
+
+  {{- /* Prose excerpt: drop headings, blockquotes and markdown punctuation. */ -}}
+  {{- $prose := replaceRE `(?m)^[#>|].*$` " " $raw -}}
+  {{- $prose = replaceRE "\\[([^\\]]*)\\]\\([^)]*\\)" "$1" $prose -}}
+  {{- $prose = replaceRE "[*_`~\\-=+│┌┐└┘├┤┬┴┼─▶►╔╗╚╝║═]+" " " $prose -}}
+  {{- $prose = replaceRE `\s+` " " $prose -}}
+
+  {{- $body := printf "%s %s" (delimit $headings " ") $prose -}}
+  {{- $body = replaceRE `\s+` " " $body | strings.TrimSpace | truncate 900 "" -}}
+
+  {{- $index = $index | append (dict
+        "title" .Title
+        "url" .RelPermalink
+        "desc" (.Params.description | default "")
+        "date" (.Date.Format "2006-01-02")
+        "tags" (.Params.tags | default slice)
+        "cats" (.Params.categories | default slice)
+        "read" (.Params.readTime | default "")
+        "w" .Weight
+        "series" (.Params.series | default slice)
+        "body" $body
+      ) -}}
 {{- end -}}
-{{- $.Scratch.Get "index" | jsonify -}}
+
+{{- /* name -> real taxonomy URL, straight from Hugo's own term pages. */ -}}
+{{- $tagUrls := dict -}}
+{{- range $name, $term := site.Taxonomies.tags -}}
+  {{- with $term.Page -}}
+    {{- $tagUrls = merge $tagUrls (dict $name .RelPermalink) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- dict "posts" $index "tagUrls" $tagUrls | jsonify -}}

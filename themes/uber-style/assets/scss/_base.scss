@@ -3,6 +3,13 @@
   box-sizing: border-box;
 }
 
+// The UA rule for [hidden] is `display: none` at element specificity, so any
+// class that sets `display` beats it and the element stays on screen. Anything
+// toggled via the `hidden` attribute needs this to actually hide.
+[hidden] {
+  display: none !important;
+}
+
 html {
   font-size: 16px;
   scroll-behavior: smooth;
