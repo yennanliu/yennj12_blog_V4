@@ -706,6 +706,8 @@
   &__meta {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
     gap: $spacing-md;
     margin-bottom: $spacing-lg;
     font-size: 0.85rem;
@@ -716,16 +718,116 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    cursor: pointer;
     color: $color-accent;
     text-decoration: none;
     font-size: 0.82rem;
+
     &:hover { text-decoration: underline; }
   }
 
-  &__copied {
-    color: $color-accent;
+  &__syntax {
+    font-size: 0.8rem;
+    color: $color-text-muted;
+
+    summary {
+      cursor: pointer;
+      user-select: none;
+      width: fit-content;
+
+      &:hover { color: $color-accent; }
+    }
+
+    ul {
+      margin: $spacing-sm 0 0;
+      padding-left: $spacing-lg;
+      line-height: 1.9;
+    }
+
+    code {
+      background: $color-bg;
+      border: 1px solid $color-border;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: $font-family-mono;
+      font-size: 0.75rem;
+      color: $color-text;
+    }
+  }
+
+  &__pill-count {
+    opacity: 0.6;
+    font-size: 0.7rem;
+    margin-left: 2px;
+  }
+
+  &__meta-right {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  &__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: 0.82rem;
-    font-weight: 600;
+    color: $color-text-muted;
+
+    select {
+      background: $color-bg-light;
+      border: 1px solid $color-border;
+      border-radius: 6px;
+      color: $color-text;
+      font-family: inherit;
+      font-size: 0.82rem;
+      padding: 3px 6px;
+      cursor: pointer;
+    }
+  }
+
+  &__notice {
+    background: rgba($color-accent, 0.08);
+    border-left: 3px solid $color-accent;
+    border-radius: 4px;
+    padding: $spacing-sm $spacing-md;
+    margin-bottom: $spacing-lg;
+    font-size: 0.85rem;
+    color: $color-text-light;
+  }
+
+  &__loading {
+    padding: $spacing-2xl 0;
+    text-align: center;
+    color: $color-text-muted;
+    font-size: 0.9rem;
+  }
+
+  &__more {
+    @include button-secondary;
+    display: block;
+    margin: $spacing-xl auto 0;
+    padding: $spacing-sm $spacing-xl;
+    font-family: inherit;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+
+    &:hover { color: $color-accent; }
+  }
+
+  &__link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: $color-accent;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
   }
 
   &__empty {
@@ -1110,122 +1212,6 @@ a.search__result {
     line-height: 1.5;
   }
 }
-
-.search-page {
-  &__syntax {
-    font-size: 0.8rem;
-    color: $color-text-muted;
-
-    summary {
-      cursor: pointer;
-      user-select: none;
-      width: fit-content;
-
-      &:hover { color: $color-accent; }
-    }
-
-    ul {
-      margin: $spacing-sm 0 0;
-      padding-left: $spacing-lg;
-      line-height: 1.9;
-    }
-
-    code {
-      background: $color-bg;
-      border: 1px solid $color-border;
-      border-radius: 4px;
-      padding: 1px 5px;
-      font-family: $font-family-mono;
-      font-size: 0.75rem;
-      color: $color-text;
-    }
-  }
-
-  &__pill-count {
-    opacity: 0.6;
-    font-size: 0.7rem;
-    margin-left: 2px;
-  }
-
-  &__meta {
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-
-  &__meta-right {
-    display: flex;
-    align-items: center;
-    gap: $spacing-md;
-  }
-
-  &__sort {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.82rem;
-    color: $color-text-muted;
-
-    select {
-      background: $color-bg-light;
-      border: 1px solid $color-border;
-      border-radius: 6px;
-      color: $color-text;
-      font-family: inherit;
-      font-size: 0.82rem;
-      padding: 3px 6px;
-      cursor: pointer;
-    }
-  }
-
-  &__share {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    padding: 0;
-  }
-
-  &__notice {
-    background: rgba($color-accent, 0.08);
-    border-left: 3px solid $color-accent;
-    border-radius: 4px;
-    padding: $spacing-sm $spacing-md;
-    margin-bottom: $spacing-lg;
-    font-size: 0.85rem;
-    color: $color-text-light;
-  }
-
-  &__loading {
-    padding: $spacing-2xl 0;
-    text-align: center;
-    color: $color-text-muted;
-    font-size: 0.9rem;
-  }
-
-  &__more {
-    @include button-secondary;
-    display: block;
-    margin: $spacing-xl auto 0;
-    padding: $spacing-sm $spacing-xl;
-    font-family: inherit;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
-    cursor: pointer;
-
-    &:hover { color: $color-accent; }
-  }
-
-  &__link {
-    background: none;
-    border: none;
-    padding: 0;
-    color: $color-accent;
-    font: inherit;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-}
-
 // Mobile responsiveness improvements
 @media (max-width: #{$breakpoint-md - 1px}) {
   .header__content {

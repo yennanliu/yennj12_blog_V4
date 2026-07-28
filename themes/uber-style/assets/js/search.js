@@ -11,6 +11,29 @@ window.BlogSearch = (function () {
   'use strict';
 
   /* ────────────────────────────────────────────────────────────
+   * Site root
+   *
+   * Everything here must resolve against the site root, which on GitHub Pages
+   * is /yennj12_blog_V4/, not /. A bare '/index.json' 404s, and a document-
+   * relative 'index.json' resolves against the current page — wrong on
+   * /search/ and on every post. So derive the root from this script's own
+   * src, which is the one URL that is always correct, and let the value
+   * injected by the template win when it is present.
+   * ──────────────────────────────────────────────────────────── */
+
+  var SCRIPT_SRC = (document.currentScript && document.currentScript.src) || '';
+
+  function siteRoot() {
+    if (window.SEARCH_INDEX_URL) return window.SEARCH_INDEX_URL.replace(/index\.json$/, '');
+    if (SCRIPT_SRC) return SCRIPT_SRC.replace(/js\/search(\.min)?\.js.*$/, '');
+    return '/';
+  }
+
+  function indexURL() {
+    return window.SEARCH_INDEX_URL || (siteRoot() + 'index.json');
+  }
+
+  /* ────────────────────────────────────────────────────────────
    * Text normalisation
    * ──────────────────────────────────────────────────────────── */
 
@@ -542,7 +565,7 @@ window.BlogSearch = (function () {
 
   function load() {
     if (indexPromise) return indexPromise;
-    var url = window.SEARCH_INDEX_URL || '/index.json';
+    var url = indexURL();
     indexPromise = fetch(url)
       .then(function (r) {
         if (!r.ok) throw new Error('HTTP ' + r.status + ' for ' + url);
@@ -591,8 +614,8 @@ window.BlogSearch = (function () {
     return tagUrlsAlt.lower[name.toLowerCase()] ||
       tagUrlsAlt.loose[looseKey(name)] ||
       // Only reachable if the index predates tagUrls entirely.
-      (window.SEARCH_INDEX_URL || '/index.json').replace(/index\.json$/, '') +
-        'tags/' + encodeURIComponent(name.toLowerCase().replace(/\s+/g, '-')) + '/';
+      siteRoot() + 'tags/' +
+        encodeURIComponent(name.toLowerCase().replace(/\s+/g, '-')) + '/';
   }
 
   function looseKey(s) {
