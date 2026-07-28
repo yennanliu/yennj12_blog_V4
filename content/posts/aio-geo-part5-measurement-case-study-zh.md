@@ -908,3 +908,8 @@ MQL               142/月                        219/月      +54%
 - [Part 3：方法篇 — 內容、結構、技術三層優化策略](/posts/aio-geo-part3-strategies-zh/)
 - [Part 4：實作篇 — 把一個網站改造成 AI 可引用](/posts/aio-geo-part4-implementation-zh/)
 - **Part 5（本篇）：量測與案例篇 — 建立監測系統與六個月實戰復盤**
+- [Part 6：實戰案例 — 大型企業官網（多語系 + AWS + 法遵）](/posts/aio-geo-part6-case-enterprise-site-zh/)
+- [Part 7：實戰案例 — 電商網站（12,000 SKU + 價格新鮮度）](/posts/aio-geo-part7-case-ecommerce-zh/)
+- [Part 8：實戰案例 — 單頁式產品 Landing Page](/posts/aio-geo-part8-case-landing-page-zh/)
+- [Part 9：實戰案例 — 線上課程平台（付費牆 + 影片）](/posts/aio-geo-part9-case-course-platform-zh/)
+- [Part 10：實戰案例 — 私有 Repo 與內部知識庫](/posts/aio-geo-part10-case-internal-rag-zh/)
