@@ -179,7 +179,7 @@
     // unfocusable for the duration of the fade — autofocusing the search box
     // silently did nothing. Fade the opacity; switch visibility discretely
     // (immediately on open, only after the fade-out on close).
-    transition: opacity $transition-normal, visibility 0s linear 0.25s;
+    transition: opacity $transition-normal, visibility 0s linear $duration-normal;
 
     &--open {
       opacity: 1;

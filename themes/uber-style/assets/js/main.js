@@ -77,9 +77,15 @@ function initSearch() {
     }
 
     function closeModal() {
+        const wasFocused = searchOverlay.contains(document.activeElement);
         searchOverlay.classList.remove('search__overlay--open');
         document.body.classList.remove('search-open');
         searchInput.setAttribute('aria-expanded', 'false');
+        searchInput.removeAttribute('aria-activedescendant');
+        // The overlay becomes visibility:hidden with focus still inside it, so
+        // focus would fall back to <body> and a keyboard user would lose their
+        // place. Hand it back to the control that opened the modal.
+        if (wasFocused && searchToggle.focus) searchToggle.focus();
     }
 
     function isOpen() {
@@ -129,6 +135,7 @@ function initSearch() {
     function run() {
         const q = searchInput.value.trim();
         active = -1;
+        searchInput.removeAttribute('aria-activedescendant'); // options are about to be replaced
 
         if (!q) {
             lastHits = [];
@@ -178,7 +185,8 @@ function initSearch() {
             const tags = (d.tags || []).slice(0, 3)
                 .map(t => '<span class="search__result-tag">' + BlogSearch.esc(t) + '</span>').join('');
             return '' +
-                '<a class="search__result" role="option" data-i="' + i + '" href="' + BlogSearch.esc(d.url) + '">' +
+                '<a class="search__result" role="option" id="search-opt-' + i + '"' +
+                   ' aria-selected="false" data-i="' + i + '" href="' + BlogSearch.esc(d.url) + '">' +
                   '<h3 class="search__result-title">' + title + '</h3>' +
                   (snippet ? '<p class="search__result-excerpt">' + snippet + '</p>' : '') +
                   '<div class="search__result-meta">' +
@@ -245,6 +253,11 @@ function initSearch() {
             el.setAttribute('aria-selected', String(on));
             if (on) el.scrollIntoView({ block: 'nearest' });
         });
+        // Focus stays in the input while arrows move the highlight, so the
+        // combobox has to point at the active option for it to be announced.
+        const current = items[active];
+        if (current && current.id) searchInput.setAttribute('aria-activedescendant', current.id);
+        else searchInput.removeAttribute('aria-activedescendant');
     }
 }
 
