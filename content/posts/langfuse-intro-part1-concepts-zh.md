@@ -3,7 +3,7 @@ title: "Langfuse 入門 Part 1 — 為什麼 LLM 應用需要可觀測性?核心
 date: 2026-06-30T13:00:00+08:00
 draft: false
 description: "LLM 應用最可怕的地方,是它「壞掉時看起來跟正常時一模一樣」。本篇用最白話的方式講清楚:為什麼傳統監控救不了 LLM、Langfuse 是什麼、以及它的核心資料模型——Trace、Observation、Span、Generation、Session、Score——彼此怎麼組合成一張可觀測的全貌。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Langfuse", "LLM", "Observability", "LLMOps", "Tracing", "Evaluation", "Monitoring", "AI Engineering"]
 authors: ["yen"]
 readTime: "14 min"

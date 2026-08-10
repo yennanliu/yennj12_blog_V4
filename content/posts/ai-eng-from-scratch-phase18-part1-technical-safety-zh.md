@@ -4,7 +4,7 @@ date: 2026-06-22T04:00:00+08:00
 draft: false
 weight: 39
 description: "深入解析 AI 技術安全工程：對齊問題的技術根源、紅隊測試方法論、越獄攻擊分類、毒化攻擊防禦、模型可解釋性與安全評估框架"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Safety", "Alignment", "Red Teaming", "Interpretability", "Ethics", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

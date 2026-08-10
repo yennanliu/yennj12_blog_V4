@@ -4,7 +4,7 @@ date: 2026-06-08T09:00:00+08:00
 draft: false
 weight: 47
 description: "深度拆解 Edge/On-Premise 小模型與雲端大模型的雙軌路由架構：基於 Token 概率熵值的早停路由（Early-Exit Confidence Routing）、vLLM logprobs API 整合、PII 強制本地路由、冷啟動優化策略，以及三個演進階段的完整系統設計"
-categories: ["engineering", "all"]
+categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "LLM", "EdgeAI", "ModelRouting", "vLLM", "VertexAI", "OnPremise", "FDE"]
 authors: ["yen"]
 readTime: "26 min"

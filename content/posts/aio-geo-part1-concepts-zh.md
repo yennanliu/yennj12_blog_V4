@@ -4,8 +4,8 @@ date: 2026-07-28T09:00:00+08:00
 draft: false
 weight: 1
 description: "AIO（AI Overview）與 GEO（Generative Engine Optimization）到底在優化什麼？本篇釐清 SEO / AEO / GEO / LLMO 的定義邊界，拆解生成式引擎產生答案的內部流程，並提出一套從 Ranking 思維轉向 Citation Share 思維的可見度指標與成熟度模型。"
-categories: ["AI", "SEO", "GEO", "Marketing", "all"]
-tags: ["GEO", "AIO", "AI Overview", "生成式引擎優化", "SEO", "LLM", "RAG", "繁體中文"]
+categories: ["all", "ai", "business"]
+tags: ["GEO", "AIO", "AI Overview", "生成式引擎優化", "SEO", "LLM", "RAG", "繁體中文", "Marketing"]
 authors: ["yen"]
 readTime: "24 min"
 ---

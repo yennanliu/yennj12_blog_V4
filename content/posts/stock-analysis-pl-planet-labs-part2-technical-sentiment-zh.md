@@ -3,8 +3,8 @@ title: "Stock Analysis - PL (Planet Labs) - 技術面、籌碼面與市場情緒
 date: 2026-06-27T10:00:00+08:00
 draft: false
 description: "Planet Labs（NYSE: PL）三部曲完整選股分析（中）：從 $51.76 高點回落 45% 後的均線結構、支撐阻力、RSI / MACD / 布林通道，到內部人士交易、機構持股（含 Alphabet）、9% 空頭興趣、總體經濟與國防預算週期，全面拆解籌碼與市場情緒。"
-categories: ["all", "finance", "investment"]
-tags: ["Stock Analysis", "PL", "Planet Labs", "Technical Analysis", "Short Interest", "Institutional Ownership", "Insider Trading", "Macro", "Satellite", "InvestSkill", "繁體中文"]
+categories: ["all", "finance"]
+tags: ["Stock Analysis", "PL", "Planet Labs", "Technical Analysis", "Short Interest", "Institutional Ownership", "Insider Trading", "Macro", "Satellite", "InvestSkill", "繁體中文", "investment"]
 authors: ["yen"]
 readTime: "21 min"
 ---

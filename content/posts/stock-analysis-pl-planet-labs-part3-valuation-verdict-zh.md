@@ -3,8 +3,8 @@ title: "Stock Analysis - PL (Planet Labs) - 估值模型與投資裁決（下）
 date: 2026-06-27T11:00:00+08:00
 draft: false
 description: "Planet Labs（NYSE: PL）三部曲完整選股分析（下）：DCF 三情境機率加權、P/S 與 EV/Revenue 相對估值、可比公司分析、足球場估值匯總、安全邊際、資本配置與股本稀釋，最終給出目標價區間與綜合投資裁決訊號。"
-categories: ["all", "finance", "investment"]
-tags: ["Stock Analysis", "PL", "Planet Labs", "DCF", "Valuation", "Football Field", "Price Target", "Investment Thesis", "Satellite", "InvestSkill", "繁體中文"]
+categories: ["all", "finance"]
+tags: ["Stock Analysis", "PL", "Planet Labs", "DCF", "Valuation", "Football Field", "Price Target", "Investment Thesis", "Satellite", "InvestSkill", "繁體中文", "investment"]
 authors: ["yen"]
 readTime: "23 min"
 ---

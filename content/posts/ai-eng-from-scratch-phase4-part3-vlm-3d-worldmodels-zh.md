@@ -4,7 +4,7 @@ date: 2026-06-21T12:30:00+08:00
 draft: false
 weight: 8
 description: "深入解析 CLIP/BLIP/LLaVA 視覺語言模型架構、NeRF/3D Gaussian Splatting 三維重建、以及 Sora 等影片生成世界模型的工程原理"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Computer Vision", "VLM", "CLIP", "LLaVA", "NeRF", "3D Vision", "World Models", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

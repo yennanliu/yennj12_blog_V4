@@ -3,8 +3,8 @@ title: "Harness 工程入門指南：AI 時代的基礎設施自動化"
 date: 2026-04-11T10:00:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "AI", "DevOps", "infrastructure"]
-tags: ["Harness", "CI/CD", "基礎設施", "自動化", "AI", "部署", "工程實踐"]
+categories: ["all", "ai", "infrastructure"]
+tags: ["Harness", "CI/CD", "基礎設施", "自動化", "AI", "部署", "工程實踐", "DevOps"]
 summary: "深入探討 Harness 在 AI 時代的角色，從基本概念、核心功能到實戰應用，幫助工程團隊建立高效的自動化部署流程，加速 AI 應用的上線速度。"
 readTime: "35 min"
 ---

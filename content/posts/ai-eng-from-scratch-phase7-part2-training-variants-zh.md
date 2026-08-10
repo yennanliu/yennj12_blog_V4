@@ -4,7 +4,7 @@ date: 2026-06-21T16:00:00+08:00
 draft: false
 weight: 15
 description: "深入解析 Transformer 訓練：學習率 Warmup/Schedule、梯度裁剪、混合精度訓練、Encoder-only/Decoder-only/Encoder-Decoder 架構選型，以及 MoE 混合專家系統"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Transformer", "Training", "MoE", "BERT", "GPT", "T5", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

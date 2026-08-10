@@ -4,7 +4,7 @@ date: 2026-06-21T11:30:00+08:00
 draft: false
 weight: 6
 description: "深入解析卷積神經網路的工程直覺：卷積運算、池化、ResNet/EfficientNet 架構演進、影像資料增強與遷移學習策略"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Computer Vision", "CNN", "ResNet", "Transfer Learning", "Image Classification", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

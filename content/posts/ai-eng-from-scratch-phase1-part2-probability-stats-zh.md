@@ -4,7 +4,7 @@ date: 2026-06-21T09:30:00+08:00
 draft: false
 weight: 2
 description: "從工程師視角掌握 AI 必備的機率論與統計直覺：貝葉斯定理、最大概似估計、資訊理論、分佈假設背後的設計決策"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Math", "Probability", "Statistics", "Bayesian", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

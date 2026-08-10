@@ -4,7 +4,7 @@ date: 2026-06-22T01:00:00+08:00
 draft: false
 weight: 33
 description: "深入解析 AI 自我改進機制：Constitutional AI/Self-Refinement/RLVR，以及 2026 年生產安全技術棧：越獄防禦/提示注入防護/行動沙箱"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Safety", "Self-Improvement", "Constitutional AI", "Autonomous Systems", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

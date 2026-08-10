@@ -3,8 +3,8 @@ title: "開源 LLM Post-Training 全攻略：從 SFT 到 RLHF，手把手帶你�
 date: 2026-03-13T10:00:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "AI", "Machine Learning", "MLOps", "LLM"]
-tags: ["LLM", "post-training", "fine-tuning", "Qwen", "HuggingFace", "SFT", "RLHF", "DPO", "LoRA", "PEFT", "open-source", "AI"]
+categories: ["all", "ai"]
+tags: ["LLM", "post-training", "fine-tuning", "Qwen", "HuggingFace", "SFT", "RLHF", "DPO", "LoRA", "PEFT", "open-source", "AI", "Machine Learning", "MLOps"]
 summary: "全面介紹開源 LLM 的 Post-Training 方法，包含 SFT、RLHF、DPO、ORPO、持續預訓練等技術，以 Qwen 為範例，深入分析各方法的優缺點、所需資源與適用場景，幫助你選擇最合適的訓練策略。"
 readTime: "35 min"
 ---

@@ -4,7 +4,7 @@ date: 2026-06-21T15:30:00+08:00
 draft: false
 weight: 14
 description: "從工程師視角完整解析 Transformer：Multi-Head Attention 矩陣計算、位置編碼、KV Cache、Flash Attention 與 MQA/GQA 生產優化"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Transformer", "Attention", "KV Cache", "Flash Attention", "Architecture", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

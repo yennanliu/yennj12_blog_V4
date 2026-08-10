@@ -4,8 +4,8 @@ date: 2026-08-01T09:00:00+08:00
 draft: false
 weight: 5
 description: "GEO 的最後一哩：設計 prompt set、用 Python 建置多引擎引用監測系統、計算 AI Visibility Score、從伺服器日誌與 GA4 辨識 AI 流量，最後以一個 B2B SaaS 站的六個月完整復盤（含失敗的部分）與 ROI 試算收尾。"
-categories: ["AI", "SEO", "GEO", "Analytics", "Case Study", "all"]
-tags: ["GEO", "AIO", "監測", "Analytics", "Python", "GA4", "ROI", "案例研究", "繁體中文"]
+categories: ["all", "ai", "business"]
+tags: ["GEO", "AIO", "監測", "Analytics", "Python", "GA4", "ROI", "案例研究", "繁體中文", "SEO", "Case Study"]
 authors: ["yen"]
 readTime: "28 min"
 ---

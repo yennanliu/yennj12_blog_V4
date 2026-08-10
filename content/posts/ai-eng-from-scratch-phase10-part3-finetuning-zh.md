@@ -4,7 +4,7 @@ date: 2026-06-21T19:00:00+08:00
 draft: false
 weight: 21
 description: "深入解析 LLM 微調策略：LoRA/QLoRA 低秩分解原理、SFT 指令資料品質、PEFT 家族比較、微調陷阱與生產部署的工程決策"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "LLM", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "SFT", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

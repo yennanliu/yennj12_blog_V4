@@ -1,7 +1,7 @@
 // Main JavaScript for Uber Style theme
 document.addEventListener('DOMContentLoaded', function() {
-    // Mobile menu functionality
-    initMobileMenu();
+    // Primary navigation (drawer + dropdowns)
+    initNav();
     
     // Search functionality  
     initSearch();
@@ -13,25 +13,94 @@ document.addEventListener('DOMContentLoaded', function() {
     initReadingProgress();
 });
 
-// Mobile menu
-function initMobileMenu() {
-    const menuToggle = document.querySelector('.nav__toggle');
-    const mobileMenu = document.querySelector('.nav__mobile');
-    
-    if (menuToggle && mobileMenu) {
-        menuToggle.addEventListener('click', function() {
-            mobileMenu.classList.toggle('nav__mobile--open');
-            menuToggle.classList.toggle('nav__toggle--active');
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!menuToggle.contains(e.target) && !mobileMenu.contains(e.target)) {
-                mobileMenu.classList.remove('nav__mobile--open');
-                menuToggle.classList.remove('nav__toggle--active');
-            }
+// Primary navigation — drawer toggle (below lg) plus the dropdown disclosures,
+// which are shared by both layouts. CSS handles hover/focus opening on desktop;
+// this only manages the explicit click/keyboard state so touch and keyboard
+// users get the same panels.
+const NAV_DESKTOP_QUERY = '(min-width: 1024px)';
+
+function initNav() {
+    const menu    = document.getElementById('primaryNav');
+    const toggle  = document.getElementById('navToggle');
+    const scrim   = document.getElementById('navScrim');
+    const header  = document.getElementById('siteHeader');
+    if (!menu) return;
+
+    const dropdowns = Array.from(menu.querySelectorAll('[data-nav-dropdown]'));
+    const isDesktop = () => window.matchMedia(NAV_DESKTOP_QUERY).matches;
+
+    function closeDropdowns(except) {
+        dropdowns.forEach(function (item) {
+            if (item === except) return;
+            item.classList.remove('nav__item--open');
+            const caret = item.querySelector('.nav__caret');
+            if (caret) caret.setAttribute('aria-expanded', 'false');
         });
     }
+
+    function setDrawer(open) {
+        if (!toggle) return;
+        menu.classList.toggle('nav__menu--open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        document.body.classList.toggle('nav-open', open);
+        if (scrim) scrim.hidden = !open;
+        if (!open) closeDropdowns(null);
+    }
+
+    const drawerOpen = () => menu.classList.contains('nav__menu--open');
+
+    if (toggle) {
+        toggle.addEventListener('click', function () {
+            setDrawer(!drawerOpen());
+        });
+    }
+    if (scrim) scrim.addEventListener('click', function () { setDrawer(false); });
+
+    dropdowns.forEach(function (item) {
+        const caret = item.querySelector('.nav__caret');
+        if (!caret) return;
+        caret.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const willOpen = !item.classList.contains('nav__item--open');
+            // On desktop the panels are mutually exclusive; in the drawer they
+            // are accordion sections and may sit open side by side.
+            if (isDesktop()) closeDropdowns(item);
+            item.classList.toggle('nav__item--open', willOpen);
+            caret.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        });
+    });
+
+    // Click outside closes whatever is open.
+    document.addEventListener('click', function (e) {
+        if (header && header.contains(e.target)) {
+            if (!menu.contains(e.target)) closeDropdowns(null);
+            return;
+        }
+        closeDropdowns(null);
+        if (drawerOpen()) setDrawer(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        const open = dropdowns.find(function (i) { return i.classList.contains('nav__item--open'); });
+        if (open) {
+            closeDropdowns(null);
+            const caret = open.querySelector('.nav__caret');
+            if (caret) caret.focus();
+            return;
+        }
+        if (drawerOpen()) {
+            setDrawer(false);
+            if (toggle) toggle.focus();
+        }
+    });
+
+    // Crossing into the desktop layout leaves the drawer classes stale.
+    const mq = window.matchMedia(NAV_DESKTOP_QUERY);
+    const onChange = function () { if (isDesktop()) setDrawer(false); };
+    if (mq.addEventListener) mq.addEventListener('change', onChange);
+    else if (mq.addListener) mq.addListener(onChange);
 }
 
 // Search functionality — header modal.

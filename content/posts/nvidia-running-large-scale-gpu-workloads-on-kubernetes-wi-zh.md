@@ -3,8 +3,8 @@ title: "在 Kubernetes 上使用 Slurm 運行大規模 GPU 工作負載"
 date: 2026-04-10T08:00:00+08:00
 draft: false
 authors: ["nvidia-auto"]
-categories: ["all", "NVIDIA", "技術"]
-tags: ["Data Center", "Cloud", "Developer Tools & Techniques", "Cloud Services", "Kubernetes"]
+categories: ["all", "ai"]
+tags: ["Data Center", "Cloud", "Developer Tools & Techniques", "Cloud Services", "Kubernetes", "NVIDIA"]
 summary: "本文深入探討如何在 Kubernetes 環境中利用 Slurm 進行大規模 GPU 工作負載的管理和調度。文章將介紹核心概念、技術架構、實現細節，並通過代碼示例展示如何配置和優化系統性能，最後討論常見問題和最佳實踐。"
 readTime: "25-30 min"
 ---

@@ -4,8 +4,8 @@ date: 2026-08-12T09:00:00+08:00
 draft: false
 weight: 16
 description: "顧問生意在第 6 到第 10 個客戶之間會壞掉。本篇拆解交付 SOP、團隊配置、retainer 合約結構與詳細的單位經濟試算，並誠實處理兩個問題：GEO 服務往 SaaS 走的陷阱，以及什麼時候該停止擴張。"
-categories: ["AI", "GEO", "Business", "Consulting", "all"]
-tags: ["GEO", "AIO", "規模化", "Agency", "單位經濟", "SOP", "SaaS", "創業", "繁體中文"]
+categories: ["all", "ai", "business"]
+tags: ["GEO", "AIO", "規模化", "Agency", "單位經濟", "SOP", "SaaS", "創業", "繁體中文", "Consulting"]
 authors: ["yen"]
 readTime: "20 min"
 ---

@@ -4,7 +4,7 @@ date: 2026-06-21T09:00:00+08:00
 draft: false
 weight: 1
 description: "從工程師視角掌握 AI 必備的線性代數與微積分直覺：向量、矩陣、梯度下降、反向傳播背後的數學原理，附 ASCII 架構圖與工程決策表"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Math", "Linear Algebra", "Calculus", "Machine Learning", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

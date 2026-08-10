@@ -4,7 +4,7 @@ date: 2026-06-21T18:30:00+08:00
 draft: false
 weight: 20
 description: "深入解析 LLM 預訓練工程：資料清洗管線、Scaling Laws、分散式訓練（DP/TP/PP）、梯度累積與 Chinchilla 最優計算分配"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "LLM", "Pretraining", "Scaling Laws", "Distributed Training", "Data Pipeline", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

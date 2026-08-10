@@ -3,8 +3,8 @@ title: "Fine-Tuning LLMs with AWS Bedrock: A Complete Guide to Post-Training Cus
 date: 2025-12-21T11:00:00Z
 draft: false
 authors: ["yen"]
-categories: ["all", "AI", "AWS", "Machine Learning", "MLOps"]
-tags: ["AWS Bedrock", "LLM", "fine-tuning", "machine-learning", "AI", "Claude", "Titan", "AWS CDK", "Python", "boto3", "reinforcement-learning"]
+categories: ["all", "ai", "infrastructure"]
+tags: ["AWS Bedrock", "LLM", "fine-tuning", "machine-learning", "AI", "Claude", "Titan", "AWS CDK", "Python", "boto3", "reinforcement-learning", "AWS", "Machine Learning", "MLOps"]
 summary: "Comprehensive guide to fine-tuning and customizing Large Language Models (LLMs) with AWS Bedrock - covering supervised fine-tuning, continued pre-training, and reinforcement fine-tuning with practical examples and AWS CDK infrastructure setup."
 readTime: "28 min"
 ---

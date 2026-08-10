@@ -3,8 +3,8 @@ title: "深入理解 Claude Code 架構：Plugin、Skill、Sub-agent 與 MCP 完
 date: 2026-01-17T10:00:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "AI", "development-tools"]
-tags: ["AI", "claude-code", "mcp", "plugin", "skill", "agent", "開發工具", "自動化", "架構設計"]
+categories: ["all", "ai", "tools"]
+tags: ["AI", "claude-code", "mcp", "plugin", "skill", "agent", "開發工具", "自動化", "架構設計", "development-tools"]
 summary: "完整解析 Claude Code 的核心架構元件：從底層的 MCP 協議到高層的 Sub-agent，了解 Plugin、Skill、Sub-agent 與 MCP 的運作原理、使用時機與層級關係。"
 readTime: "20 min"
 ---

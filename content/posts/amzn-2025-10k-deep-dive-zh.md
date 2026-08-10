@@ -3,8 +3,8 @@ title: "Amazon (AMZN) 2025 10-K 深度解析"
 date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 Amazon.com FY2025 年報做機構級深度拆解:五年財務軌跡、三大事業體損益、AWS 這台獲利引擎、$1,318 億 AI 資本支出如何把自由現金流砍掉七成、Anthropic 未實現利得的會計假象、DuPont/ROIC、情境分析、競爭格局、風險矩陣與投資訊號。"
-categories: ["finance", "investing", "all"]
-tags: ["AMZN", "Amazon", "10-K", "SEC", "財報分析", "價值投資", "美股", "雲端", "AWS", "電商", "AI", "InvestSkill"]
+categories: ["all", "finance"]
+tags: ["AMZN", "Amazon", "10-K", "SEC", "財報分析", "價值投資", "美股", "雲端", "AWS", "電商", "AI", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "30 min"
 ---

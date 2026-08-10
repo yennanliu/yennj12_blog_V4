@@ -4,7 +4,7 @@ date: 2026-06-04T19:30:00+08:00
 draft: false
 weight: 27
 description: "以 Google FDE 顧問視角拆解 POC Scoping 技藝：如何在客戶會議中從模糊需求提取可執行計畫、Discovery 問題的設計、Success Criteria 怎麼訂、以及如何防止 POC 變成無止境的免費諮詢"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Consultant", "POC", "Scoping", "Discovery", "GCP", "Vertex AI", "Interview", "Google", "RKK"]
 authors: ["yen"]
 readTime: "14 min"

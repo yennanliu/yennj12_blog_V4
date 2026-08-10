@@ -4,7 +4,7 @@ date: 2026-05-26T17:01:52+09:00
 draft: false
 weight: 3
 description: "深入探討企業級 AI 系統整合策略，包含雲端平台部署、安全性管理、RAG 架構設計與企業數據管道建構"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Cloud Deployment", "GCP", "AWS", "Azure", "RAG", "Data Pipeline", "Security", "cheatsheet"]
 authors: ["yen"]
 readTime: "18 min"

@@ -4,7 +4,7 @@ date: 2026-05-26T16:55:10+09:00
 draft: false
 weight: 2
 description: "深入探討多智慧體系統架構設計，包含 LangGraph、CrewAI 框架實作，以及 Model Context Protocol (MCP) 的企業級應用"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Multi-Agent", "LangGraph", "CrewAI", "MCP", "Agent Framework", "cheatsheet"]
 authors: ["yen"]
 readTime: "15 min"

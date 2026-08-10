@@ -4,7 +4,7 @@ date: 2026-06-08T09:00:00+08:00
 draft: false
 weight: 49
 description: "深度解析企業 RAG 系統中的向量資料漂移問題：Lambda Vector Architecture、HNSW Graph Drift 監控、Blue-Green Index Deployment，以及如何在零停機的前提下維持百萬級知識庫的索引精準度。"
-categories: ["engineering", "all"]
+categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "VectorSearch", "DataPipeline", "MLOps", "VertexAI"]
 authors: ["yen"]
 readTime: "26 min"

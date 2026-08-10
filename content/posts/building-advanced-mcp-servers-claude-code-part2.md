@@ -4,8 +4,8 @@ date: 2025-09-27T10:00:00Z
 draft: false
 weight: 2
 authors: ["yen"]
-categories: ["all", "AI", "development-tools", "automation"]
-tags: ["AI", "mcp", "claude-code", "database", "api-integration", "production", "docker", "postgresql", "monitoring"]
+categories: ["all", "ai", "tools"]
+tags: ["AI", "mcp", "claude-code", "database", "api-integration", "production", "docker", "postgresql", "monitoring", "development-tools", "automation"]
 summary: "Advanced MCP server development covering database integration, REST API connectors, real-time data processing, and production deployment strategies for Claude Code development workflows."
 readTime: "24 min"
 ---

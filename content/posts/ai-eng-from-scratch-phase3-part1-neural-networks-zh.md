@@ -4,7 +4,7 @@ date: 2026-06-21T11:00:00+08:00
 draft: false
 weight: 5
 description: "從感知機到多層神經網路，理解反向傳播、激活函數、正則化與批次正規化的工程本質，不依賴框架手刻神經網路"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Deep Learning", "Neural Networks", "Backpropagation", "PyTorch", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

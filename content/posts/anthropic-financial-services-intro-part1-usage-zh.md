@@ -3,7 +3,7 @@ title: "Anthropic Financial Services 入門 Part 1 — 怎麼安裝、怎麼用"
 date: 2026-07-04T09:00:00+08:00
 draft: false
 description: "Anthropic 官方開源的 financial-services 套件,把投資銀行、股票研究、私募股權、財富管理最常見的工作流程,包成 Claude 的 Agent 和 Skill。本篇講清楚怎麼在 Cowork 和 Claude Code 裡安裝它、怎麼選你需要的 Agent 或 Vertical Plugin,以及裝完之後第一次該怎麼用。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Anthropic", "Claude", "Financial Services", "Claude Code", "Cowork", "Agent", "MCP", "AI Engineering"]
 authors: ["yen"]
 readTime: "12 min"

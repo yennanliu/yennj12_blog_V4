@@ -3,8 +3,8 @@ title: "Redis Sentinel: Complete High Availability Setup Guide with Java Integra
 date: 2025-09-29T07:54:22+08:00
 draft: false
 description: "Master Redis Sentinel for high availability with comprehensive setup guides, mode comparisons, failover mechanisms, and production-ready Java integration. Learn monitoring, troubleshooting, and best practices for enterprise deployments."
-categories: ["Engineering", "Architecture", "Database", "all"]
-tags: ["Redis", "Redis Sentinel", "High Availability", "Distributed Systems", "Java", "Spring Boot", "Caching", "Database Architecture", "Failover", "Monitoring"]
+categories: ["all", "engineering", "architecture"]
+tags: ["Redis", "Redis Sentinel", "High Availability", "Distributed Systems", "Java", "Spring Boot", "Caching", "Database Architecture", "Failover", "Monitoring", "Database"]
 authors: ["YennJ12 Engineering Team"]
 readTime: "50 min"
 ---

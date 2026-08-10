@@ -4,7 +4,7 @@ date: 2026-06-21T23:30:00+08:00
 draft: false
 weight: 30
 description: "深入比較主流 Agent 框架：AutoGen/CrewAI/LangGraph/Semantic Kernel 的架構差異、適用場景與生產成熟度，以及何時應該自建框架"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Agent", "AutoGen", "CrewAI", "LangGraph", "Framework", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

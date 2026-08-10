@@ -2,8 +2,8 @@
 title: "AWS DynamoDB Complete Guide: Architecture, Indexing & Performance Optimization"
 date: 2025-09-29T10:02:35+08:00
 draft: false
-tags: ["AWS", "DynamoDB", "NoSQL", "Database", "Performance", "Optimization", "Java", "Architecture"]
-categories: ["Database", "Cloud Computing", "AWS"]
+tags: ["AWS", "DynamoDB", "NoSQL", "Database", "Performance", "Optimization", "Java", "Architecture", "Cloud Computing"]
+categories: ["all", "engineering", "infrastructure"]
 author: "Yen-Nan Liu"
 description: "Comprehensive guide to AWS DynamoDB covering data structures, architecture, indexing strategies, secondary indexes, sort keys, and performance optimization techniques for high-speed I/O operations."
 ---

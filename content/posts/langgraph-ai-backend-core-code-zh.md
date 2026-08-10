@@ -3,7 +3,7 @@ title: "LangGraph AI 後端核心代碼實現：生產級代碼範本"
 date: 2026-04-11T10:00:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "AI", "LangGraph", "implementation"]
+categories: ["all", "ai"]
 tags: ["LangGraph", "代碼實現", "生產級", "範本", "最佳實踐"]
 summary: "提供可直接用於生產環境的 LangGraph AI 後端核心代碼實現，包括完整的 FastAPI 集成、持久化層、錯誤處理、監控日誌等，幫助開發者快速構建產品級應用。"
 readTime: "48 min"

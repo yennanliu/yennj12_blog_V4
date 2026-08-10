@@ -4,8 +4,8 @@ date: 2026-01-18T19:00:00+08:00
 draft: false
 weight: 1
 authors: ["yen"]
-categories: ["all", "business", "streaming", "music"]
-tags: ["Synthwave", "復古合成器", "80年代", "賽博龐克", "YouTube", "24/7直播", "遊戲音樂"]
+categories: ["all", "business", "creative"]
+tags: ["Synthwave", "復古合成器", "80年代", "賽博龐克", "YouTube", "24/7直播", "遊戲音樂", "streaming", "music"]
 summary: "系列第一篇：深入探索 Synthwave 文化起源、為什麼它是 2026 年的黃金利基市場、如何精準定位高價值受眾（遊戲玩家、程式設計師、創作者），以及建立差異化品牌策略。"
 readTime: "26 min"
 ---

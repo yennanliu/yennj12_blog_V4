@@ -4,7 +4,7 @@ date: 2026-06-21T21:00:00+08:00
 draft: false
 weight: 25
 description: "深入解析多模態 Agent 架構：OCR+VLM 文件理解、電腦視覺 UI 自動化、SeeAct/Computer Use 系統設計與安全邊界"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Multimodal", "Agent", "Computer Use", "VLM", "Document AI", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

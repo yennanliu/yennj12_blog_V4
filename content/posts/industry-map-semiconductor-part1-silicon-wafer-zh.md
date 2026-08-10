@@ -3,8 +3,8 @@ title: "industry-map - 半導體產業鏈 Part 1:矽晶圓 / 基板（上游 Ups
 date: 2026-07-19T10:01:00+08:00
 draft: false
 description: "深拆半導體最上游的矽晶圓 / 基板這一層:誰在做、五強寡占的競爭格局、瓶頸分數與定價權方向、為何是「中低價值捕獲」的週期寡占、上游多晶矽與高純度石英依賴、下游代工廠客戶集中,以及分層投資點子。"
-categories: ["finance", "investing", "all"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "矽晶圓", "GlobalWafers", "美股", "InvestSkill"]
+categories: ["all", "finance"]
+tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "矽晶圓", "GlobalWafers", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "16 min"
 ---

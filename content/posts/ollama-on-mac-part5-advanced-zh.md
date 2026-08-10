@@ -3,7 +3,7 @@ title: "ollama on mac - part 5 - 工具呼叫、多模型服務與進階實踐"
 date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "從會跑模型到蓋 agent、上生產：Ollama 工具呼叫與 function calling、多模態 vision、reasoning 推理模型、Apple Silicon 效能調校、多模型並行服務、遠端存取安全與生產實務全攻略。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Ollama", "LLM", "Tool Calling", "Agent", "Function Calling", "Performance", "Metal", "macOS", "AI Engineering"]
 authors: ["yen"]
 readTime: "24 min"

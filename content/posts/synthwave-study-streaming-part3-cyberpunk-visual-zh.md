@@ -4,8 +4,8 @@ date: 2026-01-18T20:00:00+08:00
 draft: false
 weight: 3
 authors: ["yen"]
-categories: ["all", "business", "streaming", "visual-design"]
-tags: ["賽博龐克", "霓虹燈", "視覺設計", "Midjourney", "80年代", "復古美學", "After Effects"]
+categories: ["all", "business", "creative"]
+tags: ["賽博龐克", "霓虹燈", "視覺設計", "Midjourney", "80年代", "復古美學", "After Effects", "streaming", "visual-design"]
 summary: "系列第三篇：掌握賽博龐克視覺設計精髓、使用 AI 生成霓虹燈美學場景、復刻 80 年代經典設計元素，以及創造沉浸式的直播視覺體驗。"
 readTime: "32 min"
 ---

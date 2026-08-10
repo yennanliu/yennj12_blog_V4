@@ -4,7 +4,7 @@ date: 2026-06-29T11:00:00+08:00
 draft: false
 weight: 3
 description: "知識圖譜 vs 關聯式資料庫 vs 向量資料庫 vs 文件資料庫：資料模型、查詢能力、效能與適用場景的深度比較，附決策表與混合架構建議。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Knowledge Graph", "知識圖譜", "Vector Database", "Graph Database", "RDBMS", "Database", "Architecture"]
 authors: ["yen"]
 readTime: "22 min"

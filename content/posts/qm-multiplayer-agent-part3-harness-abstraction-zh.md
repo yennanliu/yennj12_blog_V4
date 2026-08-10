@@ -4,7 +4,7 @@ date: 2026-08-07T16:00:00+08:00
 draft: false
 weight: 3
 description: "拆解 QM 如何讓 Pi、OpenCode、Codex、Claude Code 四種完全不同的 Agent 引擎驅動同一個核心：Harness 契約的三軸能力宣告、60 欄位的 HarnessTurnInput 依賴注入、Entries 與 Tape 雙軌重放、context 壓縮的 throughSeq 錨點，以及 runtime 選擇的三層繼承。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["QM", "AI Agent", "Agent Harness", "Abstraction", "TypeScript", "LLM", "繁體中文"]
 authors: ["yen"]
 readTime: "27 min"

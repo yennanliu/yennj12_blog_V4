@@ -4,7 +4,7 @@ date: 2026-06-08T10:00:00+08:00
 draft: false
 weight: 20
 description: "深入解析 RAG 系統三大評估指標——Context Relevance、Groundedness、Answer Relevance——以及如何透過 OpenTelemetry 與 Grafana 建立生產級可觀測性追蹤管道。"
-categories: ["engineering", "all"]
+categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "Observability", "Evaluation"]
 authors: ["yen"]
 readTime: "18 min"

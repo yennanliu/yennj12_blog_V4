@@ -4,7 +4,7 @@ date: 2026-08-11T09:00:00+08:00
 draft: false
 weight: 15
 description: "GEO 工具市場已經很擁擠，但九成的工具只做同一件事：給你 dashboard。本篇畫出完整工具地圖、比較商業與開源選項、給出自建 vs 買的分界線，並提醒一個 2026 年 9 月生效、會改變所有人前提的變動：Cloudflare 對新網域預設封鎖 AI 爬蟲。"
-categories: ["AI", "GEO", "Business", "Engineering", "all"]
+categories: ["all", "ai", "engineering", "business"]
 tags: ["GEO", "AIO", "工具", "開源", "Cloudflare", "監測", "技術棧", "繁體中文"]
 authors: ["yen"]
 readTime: "20 min"

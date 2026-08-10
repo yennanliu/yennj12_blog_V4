@@ -3,8 +3,8 @@ title: "多 Agent Token 優化系列 pt.1：完整指南 — 使用 Claude API �
 date: 2026-03-12T10:00:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "AI", "agent-orchestration", "development-tools"]
-tags: ["AI", "claude-code", "multi-agent", "token-optimization", "cost-optimization", "prompt-engineering", "API", "效能調優"]
+categories: ["all", "ai", "tools"]
+tags: ["AI", "claude-code", "multi-agent", "token-optimization", "cost-optimization", "prompt-engineering", "API", "效能調優", "agent-orchestration", "development-tools"]
 summary: "多 Agent Token 優化系列總覽：深入解析 Token 用量優化策略，涵蓋 Prompt Caching、Context 壓縮、Agent 專責化、模型分層、選擇性 Context 傳遞等方法，幫助你建構高效且低成本的多 Agent 系統。"
 readTime: "25 min"
 ---

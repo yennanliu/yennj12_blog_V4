@@ -3,7 +3,7 @@ title: "Auto Agent System - Part 5 - 前端體驗與 Pipeline 編排:SSE 即時�
 date: 2026-07-04T13:00:00+08:00
 draft: false
 description: "系列最終篇,回到使用者直接感受到的那一層。拆解那條每 0.5 秒更新的 SSE 即時進度串流是怎麼用 asyncio + 原子 json_insert 撐起來的、為什麼前端刻意用 Vanilla JS、Waymo 電影感 UI 主題(PR #15)與 landing page(PR #6)的取捨,以及如何用 {{steps.N.result}} 模板把多個 AI 任務串成一條自動化工作流。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["SSE", "Frontend", "Pipeline", "CrewAI", "Vanilla JS", "UX", "Automation", "AI Engineering"]
 authors: ["yen"]
 readTime: "21 min"

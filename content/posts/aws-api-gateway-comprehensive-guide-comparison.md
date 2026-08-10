@@ -3,8 +3,8 @@ title: "AWS API Gateway: Complete Guide with Load Balancer Comparison, Microserv
 date: 2025-09-29T08:19:47+08:00
 draft: false
 description: "Master AWS API Gateway with comprehensive comparisons to load balancers, microservices integration patterns, and production-ready Java implementations. Learn when to use API Gateway vs Load Balancer, security best practices, and scaling strategies."
-categories: ["Engineering", "Architecture", "AWS", "all"]
-tags: ["AWS API Gateway", "Load Balancer", "Microservices", "Java", "Spring Boot", "AWS Lambda", "REST API", "System Design", "Cloud Architecture", "Serverless"]
+categories: ["all", "engineering", "architecture", "infrastructure"]
+tags: ["AWS API Gateway", "Load Balancer", "Microservices", "Java", "Spring Boot", "AWS Lambda", "REST API", "System Design", "Cloud Architecture", "Serverless", "AWS"]
 authors: ["YennJ12 Engineering Team"]
 readTime: "60 min"
 ---

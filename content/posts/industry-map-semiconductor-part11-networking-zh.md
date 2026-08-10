@@ -3,8 +3,8 @@ title: "industry-map - 半導體產業鏈 Part 11:網通 / 互連（下游 Downs
 date: 2026-07-19T10:11:00+08:00
 draft: false
 description: "深拆半導體產業鏈的網通/互連這一層:交換晶片、光通訊與 CPO、Ethernet vs InfiniBand 之戰。看博通、Marvell、Arista 誰吃到 AI 資料中心「把數萬顆 GPU 接成一台機器」的紅利,以及這層的瓶頸、定價權、利潤池、上下游依賴、風險與投資點子。"
-categories: ["finance", "investing", "all"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "網通互連", "Broadcom", "Arista", "美股", "InvestSkill"]
+categories: ["all", "finance"]
+tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "網通互連", "Broadcom", "Arista", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "16 min"
 ---

@@ -4,7 +4,7 @@ date: 2026-06-08T10:00:00+08:00
 draft: false
 weight: 15
 description: "深入解析 HNSW 向量圖在持續增量更新下的 recall 衰退機制，以及 Lambda 架構 + Blue-Green 切換如何在不停機的前提下將 recall@10 恢復至 94% 以上。"
-categories: ["engineering", "all"]
+categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "VectorDB", "RAG", "DataPipeline"]
 authors: ["yen"]
 readTime: "18 min"

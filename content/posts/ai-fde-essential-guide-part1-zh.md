@@ -4,7 +4,7 @@ date: 2026-05-26T16:53:54+09:00
 draft: false
 weight: 1
 description: "深入解析 AI FDE 角色所需的核心技術基礎，包含 Python 生態系統、深度學習框架、大語言模型基礎與提示工程技術"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Python", "TensorFlow", "PyTorch", "LLM", "Prompt Engineering", "cheatsheet"]
 authors: ["yen"]
 readTime: "12 min"

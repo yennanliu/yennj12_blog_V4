@@ -3,8 +3,8 @@ title: "Alphabet (GOOGL) 2025 10-K 深度解析"
 date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 Alphabet FY2025 年報做機構級深度拆解:五年財務軌跡、Search/YouTube/雲端/Other Bets 事業體損益、淨利被股權投資利得墊高的假象、Google Cloud 獲利拐點、AI 千億資本支出與 2026 指引、TAC、買回與股利、反壟斷矩陣、情境分析與投資訊號。"
-categories: ["finance", "investing", "all"]
-tags: ["GOOGL", "Alphabet", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "雲端", "AI", "廣告", "Gemini"]
+categories: ["all", "finance"]
+tags: ["GOOGL", "Alphabet", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "雲端", "AI", "廣告", "Gemini", "investing"]
 authors: ["yen"]
 readTime: "30 min"
 ---

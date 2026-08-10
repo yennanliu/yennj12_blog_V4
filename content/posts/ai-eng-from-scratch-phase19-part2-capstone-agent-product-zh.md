@@ -4,7 +4,7 @@ date: 2026-06-22T05:30:00+08:00
 draft: false
 weight: 42
 description: "端對端構建生產級 AI Agent 產品：從架構設計到上線，涵蓋 ReAct 迴圈、工具整合、記憶系統、Guardrails、可觀測性與商業指標追蹤"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Agent", "LLM Engineering", "Production", "Capstone", "ReAct", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "28 min"

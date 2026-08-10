@@ -4,7 +4,7 @@ date: 2026-06-21T14:30:00+08:00
 draft: false
 weight: 12
 description: "深入解析 ASR 工程架構：聲學特徵提取（MFCC/Mel Spectrogram）、CTC/Attention 解碼、Whisper 架構與生產級語音辨識系統設計"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Speech", "ASR", "Whisper", "CTC", "Audio", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "20 min"

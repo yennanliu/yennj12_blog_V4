@@ -4,7 +4,7 @@ date: 2026-06-29T12:00:00+08:00
 draft: false
 weight: 4
 description: "為什麼純向量 RAG 在多跳問題上失敗？GraphRAG 如何用知識圖譜補足、降低 LLM 幻覺。含 LangChain + Neo4j 的可跑程式碼與 Text2Cypher 實作。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Knowledge Graph", "知識圖譜", "GraphRAG", "LLM", "RAG", "Neo4j", "LangChain"]
 authors: ["yen"]
 readTime: "25 min"

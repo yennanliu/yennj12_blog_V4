@@ -3,7 +3,7 @@ title: "ollama on mac - part 2 - 公開模型全覽與選型指南"
 date: 2026-07-16T09:00:00+08:00
 draft: false
 description: "從硬體、任務到量化,一套可落地的 Ollama 開源模型選型心智模型:看懂 Llama / Qwen / Gemma / Mistral / Phi / DeepSeek 家族,選對尺寸與量化,讓你的 Mac 跑出最佳性價比。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Ollama", "LLM", "Open Models", "Llama", "Qwen", "Gemma", "Mistral", "DeepSeek", "Quantization", "AI Engineering"]
 authors: ["yen"]
 readTime: "20 min"

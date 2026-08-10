@@ -3,8 +3,8 @@ title: "Building a Centralized Monitoring System with AWS CloudWatch and Grafana
 date: 2025-11-30T14:00:00Z
 draft: false
 description: "Design and implement a production-ready centralized monitoring and observability platform using AWS CloudWatch, Grafana, and CDK (TypeScript). Learn cross-service log aggregation, metric collection, IAM permissions, dashboard creation, and alerting strategies for monitoring distributed systems."
-categories: ["Engineering", "AWS", "Monitoring", "DevOps", "AI", "all"]
-tags: ["AWS CloudWatch", "Grafana", "CDK", "TypeScript", "Monitoring", "Observability", "Metrics", "Logging", "Alerting", "SNS", "Lambda Insights", "Container Insights", "DevOps", "AI"]
+categories: ["all", "ai", "engineering", "infrastructure"]
+tags: ["AWS CloudWatch", "Grafana", "CDK", "TypeScript", "Monitoring", "Observability", "Metrics", "Logging", "Alerting", "SNS", "Lambda Insights", "Container Insights", "DevOps", "AI", "AWS"]
 authors: ["YennJ12 Engineering Team"]
 readTime: "65 min"
 ---

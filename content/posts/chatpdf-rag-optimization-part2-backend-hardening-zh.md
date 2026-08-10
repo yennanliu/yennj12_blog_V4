@@ -3,7 +3,7 @@ title: "ChatPDF RAG 優化（二）：後端強化與進階 RAG —— 安全、
 date: 2026-06-30T10:30:00+08:00
 draft: false
 description: "RAG demo 能跑,不代表能上線。本篇拆解 chatPDF 如何補上 production 該有的防線:上傳的 PDF magic bytes 驗證與 OOM 防護、BM25 的 LRU 快取、多查詢擴展、檢索評分過濾、頁碼級引用、LLM gateway 重試退避——把 RAG pipeline 從「能跑」變成「能扛」。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["RAG", "LLM", "ChatPDF", "Security", "Backend", "Production", "Multi-Query", "LRU Cache", "API Hardening"]
 authors: ["yen"]
 readTime: "17 min"

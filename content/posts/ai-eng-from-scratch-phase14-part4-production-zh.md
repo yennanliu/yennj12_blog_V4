@@ -4,7 +4,7 @@ date: 2026-06-22T00:00:00+08:00
 draft: false
 weight: 31
 description: "深入解析 Agent 生產部署工程：執行追蹤、成本預算控制、並發限流、Guardrails 安全防護、A/B 測試框架與 Agent 監控告警設計"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Agent", "Production", "Observability", "Guardrails", "Cost Control", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

@@ -4,7 +4,7 @@ date: 2026-06-04T21:00:00+08:00
 draft: false
 weight: 30
 description: "以 Google FDE 顧問視角拆解限制驅動的 AI 架構設計：當客戶說「所有資料不能離開我們的 VPC」，你的 Vertex AI 架構要怎麼調整、VPC Service Controls 的設計原理、Private Service Connect 的部署模式，以及金融與政府客戶常見的合規限制應對"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Consultant", "VPC", "Security", "Vertex AI", "GCP", "Compliance", "Architecture", "Interview", "Google", "RKK"]
 authors: ["yen"]
 readTime: "17 min"

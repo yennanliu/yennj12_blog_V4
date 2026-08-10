@@ -3,7 +3,7 @@ title: "Auto Agent System - Part 3 - 自動化任務實戰:Shopee 爬蟲、Googl
 date: 2026-07-04T11:00:00+08:00
 draft: false
 description: "把 Harness 打好地基後,真正的價值在任務本身。本篇順著 merged PR,拆解四個代表性自動化任務:Shopee 賣家爬蟲(以及它的兩次分頁修正)、Google Maps 潛在客戶名單漏斗、tasker.com.tw 自動投標,以及四代理協作的利潤健檢 PDF 報告。每一個都示範了一種不同的 agent × tool 設計模式。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "AI Agent", "Web Scraping", "Playwright", "Lead Generation", "Automation", "AI Engineering"]
 authors: ["yen"]
 readTime: "23 min"

@@ -3,8 +3,8 @@ title: "Ondas Holdings (ONDS) 2025 10-K 深度解析"
 date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 Ondas(ONDS)FY2025 年報做機構級深度拆解:一家營收僅 $5,073 萬的小型無人機/國防科技公司,如何用一年內近 $18 億的股權募資與 $2.5 億的併購潮徹底改頭換面;拆解 605% 營收成長的真相、$8,222 萬非現金認股權證損失、5 倍股數稀釋、$4.89 億認股權證負債懸掛、極端客戶集中,以及一家「現金滿手但本業年年虧損」的投機小型股該給什麼訊號。"
-categories: ["finance", "investing", "all"]
-tags: ["ONDS", "Ondas Holdings", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "無人機", "無線通訊", "國防", "小型股"]
+categories: ["all", "finance"]
+tags: ["ONDS", "Ondas Holdings", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "無人機", "無線通訊", "國防", "小型股", "investing"]
 authors: ["yen"]
 readTime: "27 min"
 ---

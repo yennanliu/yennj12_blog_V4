@@ -4,7 +4,7 @@ date: 2026-06-04T20:30:00+08:00
 draft: false
 weight: 29
 description: "以 Google FDE 顧問視角拆解 AI 系統的總持有成本（TCO）估算方法：Token 成本、Infra 成本、人力成本的計算框架、如何用 ROI 語言說服財務決策者，以及 Vertex AI 定價模型的實際試算"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Consultant", "TCO", "ROI", "Pricing", "Vertex AI", "GCP", "Cost Optimization", "Interview", "Google", "RKK"]
 authors: ["yen"]
 readTime: "15 min"

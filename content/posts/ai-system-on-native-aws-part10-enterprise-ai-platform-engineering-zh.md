@@ -3,7 +3,7 @@ title: "AI System on Native AWS - Part 10 - 企業 AI 平台工程"
 date: 2026-07-27T09:00:00+08:00
 draft: false
 description: "系列終章。當一個企業有幾十個團隊、上百個 AI 專案時,讓每個團隊各自接 Bedrock、各自寫 CDK、各自處理合規,是災難。平台團隊要把前九篇的能力打包成『內部產品』:多帳號落地區(Control Tower)、統一的 LLM Gateway(集中路由/限流/快取/日誌/分帳)、Service Catalog 與可重用 CDK Construct 黃金路徑、FinOps 分帳、平台級可觀測性。全部用 CDK(CloudFormation)描述,並以一張橫跨 Part 1–10 的總表收束整個系列。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Platform Engineering", "LLM Gateway", "FinOps", "Control Tower", "Service Catalog", "Enterprise", "AI Engineering"]
 authors: ["yen"]
 readTime: "28 min"

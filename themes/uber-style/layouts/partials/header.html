@@ -1,13 +1,44 @@
+{{/* ---------------------------------------------------------------------------
+     Primary navigation.
+
+     Top-level items come from [menu.main] in hugo.toml. The "Topics" dropdown is
+     the exception: its children are derived from the category taxonomy so that
+     each content/categories/<slug>/_index.md remains the single source of truth
+     for which categories exist, their titles, taglines and ordering. `all` is a marker term
+     carried by every post (params.archive) and is surfaced as a single archive
+     link rather than as a topic.
+
+     One DOM tree serves both layouts: at ≥lg it renders as a horizontal bar with
+     hover/click dropdowns, below that as a drawer with accordion sections.
+     ------------------------------------------------------------------------ */}}
+
+{{ $topics := slice }}
+{{ $archiveURL := "" }}
+{{ $archiveCount := 0 }}
+{{ with site.GetPage "categories" }}
+  {{ $topics = (where (where .Pages "Params.archive" "!=" true) "Weight" ">" 0).ByWeight }}
+  {{/* Count off the archive term itself rather than site.RegularPages, which
+       also counts standalone pages like /search/ and /posts-list/. */}}
+  {{ range first 1 (where .Pages "Params.archive" true) }}
+    {{ $archiveURL = .RelPermalink }}
+    {{ $archiveCount = len .Pages }}
+  {{ end }}
+{{ end }}
+
+{{ $cur := .RelPermalink }}
+{{ $home := site.Home.RelPermalink }}
+
 <!-- Top Banner Link -->
 <div class="top-banner">
     <div class="container">
         <a href="https://yennj12.js.org/" class="banner-link">
-            <span class="banner-text">← Back to Main Site</span>
+            {{/* The arrow is drawn by .banner-text::before — no literal glyph here. */}}
+            <span class="banner-text">Back to Main Site</span>
         </a>
     </div>
 </div>
 
-<header class="header">
+<header class="header" id="siteHeader">
     <div class="container">
         <div class="header__content">
             <div class="header__brand">
@@ -16,16 +47,74 @@
                 </a>
                 <p class="header__tagline">{{ .Site.Params.description }}</p>
             </div>
-            
-            <nav class="header__nav" role="navigation">
-                <div class="nav__menu">
+
+            <nav class="header__nav" role="navigation" aria-label="Primary">
+                <button class="nav__toggle" type="button" id="navToggle"
+                        aria-expanded="false" aria-controls="primaryNav" aria-label="Open menu">
+                    <span class="nav__toggle-bars" aria-hidden="true"></span>
+                </button>
+
+                <div class="nav__menu" id="primaryNav">
                     {{ range .Site.Menus.main }}
-                    <a href="{{ .URL | relLangURL }}" class="nav__link{{ if $.IsMenuCurrent "main" . }} nav__link--active{{ end }}">
-                        {{ .Name }}
-                    </a>
+                        {{ $url := .URL | relLangURL }}
+                        {{/* Home would prefix-match every page, so it matches exactly. */}}
+                        {{ $active := cond (eq $url $home) (eq $cur $home) (hasPrefix $cur $url) }}
+                        {{ $children := .Children }}
+                        {{ if eq .Identifier "topics" }}{{ $children = $topics }}{{ end }}
+
+                        {{ if $children }}
+                        <div class="nav__item nav__item--dropdown" data-nav-dropdown>
+                            <a href="{{ $url }}" class="nav__link{{ if $active }} nav__link--active{{ end }}">{{ .Name }}</a>
+                            <button class="nav__caret" type="button"
+                                    aria-expanded="false" aria-controls="navPanel-{{ .Identifier }}"
+                                    aria-label="{{ .Name }} submenu">
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"
+                                          stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+
+                            <div class="nav__panel" id="navPanel-{{ .Identifier }}" role="group" aria-label="{{ .Name }}">
+                                <div class="nav__panel-grid">
+                                    {{ if eq .Identifier "topics" }}
+                                        {{ range $children }}
+                                        <a href="{{ .RelPermalink }}" class="nav__panel-link{{ if eq $cur .RelPermalink }} nav__panel-link--active{{ end }}">
+                                            <span class="nav__panel-head">
+                                                <span class="nav__panel-name">{{ .Title }}</span>
+                                                <span class="nav__panel-count">{{ len .Pages }}</span>
+                                            </span>
+                                            {{ with .Params.tagline }}<span class="nav__panel-note">{{ . }}</span>{{ end }}
+                                        </a>
+                                        {{ end }}
+                                    {{ else }}
+                                        {{ range $children }}
+                                        {{ $childURL := .URL | relLangURL }}
+                                        <a href="{{ $childURL }}" class="nav__panel-link{{ if eq $cur $childURL }} nav__panel-link--active{{ end }}">
+                                            <span class="nav__panel-head">
+                                                <span class="nav__panel-name">{{ .Name }}</span>
+                                            </span>
+                                            {{ with .Params.note }}<span class="nav__panel-note">{{ . }}</span>{{ end }}
+                                        </a>
+                                        {{ end }}
+                                    {{ end }}
+                                </div>
+
+                                {{ if eq .Identifier "topics" }}
+                                <div class="nav__panel-foot">
+                                    <a href="{{ "categories/" | relURL }}">All categories</a>
+                                    {{ with $archiveURL }}<a href="{{ . }}">Full archive ({{ $archiveCount }})</a>{{ end }}
+                                </div>
+                                {{ end }}
+                            </div>
+                        </div>
+                        {{ else }}
+                        <div class="nav__item">
+                            <a href="{{ $url }}" class="nav__link{{ if $active }} nav__link--active{{ end }}">{{ .Name }}</a>
+                        </div>
+                        {{ end }}
                     {{ end }}
                 </div>
-                
+
                 <div class="nav__search">
                     <button class="search__toggle" type="button" aria-label="Search">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -37,6 +126,8 @@
         </div>
     </div>
 </header>
+
+<div class="nav__scrim" id="navScrim" hidden></div>
 
 <div class="search__overlay" id="searchOverlay">
     <div class="search__modal">

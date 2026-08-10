@@ -3,7 +3,7 @@ title: "Essential Design Patterns in Java: A Comprehensive Guide to Creational, 
 date: 2025-09-29T07:45:06+08:00
 draft: false
 description: "Master essential design patterns in Java with practical implementations. Learn Singleton, Factory, Builder, Observer, Strategy, Decorator, and more patterns with real-world examples, best practices, and performance considerations."
-categories: ["Engineering", "Architecture", "AI", "all"]
+categories: ["all", "ai", "engineering", "architecture"]
 tags: ["Java", "Design Patterns", "Software Architecture", "Object-Oriented Programming", "Gang of Four", "Creational Patterns", "Structural Patterns", "Behavioral Patterns", "AI"]
 authors: ["YennJ12 Engineering Team"]
 readTime: "50 min"
