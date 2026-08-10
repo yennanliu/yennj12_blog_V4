@@ -3,7 +3,7 @@ title: "AI System on Native AWS - Part 1 - Serverless RAG 智慧客服知識庫"
 date: 2026-07-18T09:00:00+08:00
 draft: false
 description: "用純 AWS 原生服務打造一套 Serverless RAG 問答系統:Bedrock Knowledge Bases 負責切塊與嵌入、OpenSearch Serverless 當向量庫、Lambda + API Gateway 提供問答 API,全部用 CDK(CloudFormation)一鍵部署。本篇是系列開場,先講清楚 RAG 這個最常見的 AI 系統怎麼在 AWS 上長出來,包含情境、系統設計、架構、CDK 實作、技術選型與成本。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "RAG", "OpenSearch Serverless", "Lambda", "LLM", "AI Engineering", "Serverless"]
 authors: ["yen"]
 readTime: "24 min"

@@ -3,8 +3,8 @@ title: "Webhooks: Complete Guide with Java Implementation - Event-Driven Archite
 date: 2025-09-29T08:06:11+08:00
 draft: false
 description: "Master webhooks with comprehensive comparisons to HTTP calls and polling, real-world Java implementations, and practical examples using Stripe, Shopify, and GitHub APIs. Learn when to use webhooks, security best practices, and production-ready patterns."
-categories: ["Engineering", "Architecture", "Integration", "all"]
-tags: ["Webhooks", "Event-Driven Architecture", "Java", "Spring Boot", "API Integration", "Real-Time Systems", "Stripe", "GitHub", "Shopify", "HTTP", "REST API"]
+categories: ["all", "engineering", "architecture"]
+tags: ["Webhooks", "Event-Driven Architecture", "Java", "Spring Boot", "API Integration", "Real-Time Systems", "Stripe", "GitHub", "Shopify", "HTTP", "REST API", "Integration"]
 authors: ["YennJ12 Engineering Team"]
 readTime: "55 min"
 ---

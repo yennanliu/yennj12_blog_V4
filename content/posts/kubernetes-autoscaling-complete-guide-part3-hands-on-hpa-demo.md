@@ -4,8 +4,8 @@ date: 2025-11-09T16:00:00+08:00
 draft: false
 weight: 3
 authors: ["yennj12 team"]
-categories: ["all", "engineering", "devops", "kubernetes", "tutorial"]
-tags: ["Kubernetes", "K8S", "HPA", "Autoscaling", "AWS", "EKS", "CDK", "TypeScript", "Tutorial", "Demo", "Apache", "PHP", "Load Testing"]
+categories: ["all", "engineering", "infrastructure"]
+tags: ["Kubernetes", "K8S", "HPA", "Autoscaling", "AWS", "EKS", "CDK", "TypeScript", "Tutorial", "Demo", "Apache", "PHP", "Load Testing", "devops"]
 summary: "Part 3 of the Kubernetes Autoscaling series: Hands-on tutorial demonstrating Horizontal Pod Autoscaler with a real Apache-PHP application. Includes complete AWS CDK infrastructure code, Kubernetes manifests, load testing, and step-by-step deployment guide."
 readTime: "25 min"
 ---

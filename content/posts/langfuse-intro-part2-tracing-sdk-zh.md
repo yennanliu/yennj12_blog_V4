@@ -3,7 +3,7 @@ title: "Langfuse 入門 Part 2 — 三行程式碼開始追蹤:SDK 整合與 Tra
 date: 2026-06-30T13:30:00+08:00
 draft: false
 description: "概念懂了,該動手了。本篇示範用 Langfuse Python SDK 把應用接上可觀測性:@observe 裝飾器、get_client 與 context manager、OpenAI 一行替換整合、LangChain callback handler,以及如何用 Session、User、Metadata 讓 trace 真正可查可比。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Langfuse", "LLM", "Observability", "Tracing", "Python", "SDK", "OpenAI", "LangChain", "LLMOps"]
 authors: ["yen"]
 readTime: "15 min"

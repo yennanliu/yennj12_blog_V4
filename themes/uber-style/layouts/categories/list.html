@@ -1,9 +1,17 @@
 {{ define "main" }}
-{{ $paginator := .Paginate (.Pages.ByWeight) }}
+{{/* Categories are archives, so newest-first. (Tag pages keep weight ordering
+     because tags back the numbered series.) */}}
+{{ $paginator := .Paginate .Pages.ByDate.Reverse }}
 <div class="page-header">
     <div class="container">
         <h1>{{ .Title }}</h1>
-        <p class="page-header__description">{{ len .Pages }} posts in {{ .Title | lower }}</p>
+        {{ with .Params.tagline }}<p class="page-header__lead">{{ . }}</p>{{ end }}
+        <p class="page-header__description">
+            {{ with .Description }}{{ . }}{{ else }}{{ len .Pages }} posts in {{ .Title | lower }}.{{ end }}
+        </p>
+        <p class="page-header__meta">
+            {{ len .Pages }} posts · <a href="{{ "categories/" | relURL }}">All topics</a>
+        </p>
     </div>
 </div>
 

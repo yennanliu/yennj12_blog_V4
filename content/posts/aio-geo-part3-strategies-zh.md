@@ -4,8 +4,8 @@ date: 2026-07-30T09:00:00+08:00
 draft: false
 weight: 3
 description: "把 GEO 拆成內容層、結構層、技術層與實體層四個可執行的工作面：可引用性寫作的九條規則、Schema.org / JSON-LD 完整配方、Entity SEO 與站外一致性，最後給出影響 × 成本優先矩陣與 90 天執行路線圖。"
-categories: ["AI", "SEO", "GEO", "Marketing", "Engineering", "all"]
-tags: ["GEO", "AIO", "Schema.org", "JSON-LD", "Entity SEO", "內容策略", "E-E-A-T", "繁體中文"]
+categories: ["all", "ai", "engineering", "business"]
+tags: ["GEO", "AIO", "Schema.org", "JSON-LD", "Entity SEO", "內容策略", "E-E-A-T", "繁體中文", "SEO", "Marketing"]
 authors: ["yen"]
 readTime: "27 min"
 ---

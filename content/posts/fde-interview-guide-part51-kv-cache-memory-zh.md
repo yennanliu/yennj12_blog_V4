@@ -4,7 +4,7 @@ date: 2026-06-08T09:00:00+08:00
 draft: false
 weight: 51
 description: "深度解析 B2B 長對話 SaaS 系統中 KV Cache 驅逐策略設計，涵蓋 L1 Redis、L2 Vertex AI Context Caching、L3 Firestore Snapshot 三層架構，以及 LRU 結合語義重要性評分的快取壓縮閘道，節省 80% 顯存開銷、帳單砍半的 Staff FDE 級解法。"
-categories: ["engineering", "all"]
+categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "KV Cache", "LLM", "Vertex AI", "Redis", "Memory Optimization", "Eviction Policy"]
 authors: ["yen"]
 readTime: "26 min"

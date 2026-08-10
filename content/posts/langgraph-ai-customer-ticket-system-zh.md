@@ -3,8 +3,8 @@ title: "LangGraph + AI 後端實戰：構建智能客服工單處理系統"
 date: 2026-04-11T10:00:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "AI", "LangGraph", "backend"]
-tags: ["LangGraph", "LangChain", "AI", "客服系統", "工作流", "多 Agent", "生產級應用"]
+categories: ["all", "ai", "engineering"]
+tags: ["LangGraph", "LangChain", "AI", "客服系統", "工作流", "多 Agent", "生產級應用", "backend"]
 summary: "詳細講解如何使用 LangGraph 和 AI 構建生產級的智能客服工單處理系統，涵蓋架構設計、Agent 定義、狀態管理、錯誤處理和實際案例，幫助你快速上線 AI 驅動的客服系統。"
 readTime: "45 min"
 ---

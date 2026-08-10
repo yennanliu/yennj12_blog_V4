@@ -3,7 +3,7 @@ title: "ChatPDF RAG 優化（一）：語意切塊與混合檢索 Semantic Chunk
 date: 2026-06-30T10:00:00+08:00
 draft: false
 description: "RAG 的成敗，八成決定在「切塊」與「檢索」這兩步。本篇拆解 chatPDF 如何從寫死的固定切塊，升級成 embedding 偵測語意轉折的 Semantic Chunking，以及如何把 dense 向量檢索與 BM25 關鍵字檢索融合成 Hybrid Retrieval——附完整 Python 實作與設計取捨。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["RAG", "LLM", "ChatPDF", "Semantic Chunking", "BM25", "Hybrid Retrieval", "Embedding", "Vector Search", "Information Retrieval"]
 authors: ["yen"]
 readTime: "16 min"

@@ -4,7 +4,7 @@ date: 2026-06-22T00:30:00+08:00
 draft: false
 weight: 32
 description: "深入解析長時程 Agent 工程挑戰：跨會話記憶持久化、多步驟任務分解、進度恢復、人機協作設計與長時程 Agent 的可靠性保障"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Agent", "Autonomous Systems", "Long Horizon", "Persistent Memory", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

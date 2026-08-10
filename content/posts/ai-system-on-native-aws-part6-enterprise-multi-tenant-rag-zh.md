@@ -3,7 +3,7 @@ title: "AI System on Native AWS - Part 6 - 企業級多租戶 RAG 平台"
 date: 2026-07-23T09:00:00+08:00
 draft: false
 description: "系列進入企業篇。Part 1 的單租戶 RAG 一上到企業就崩:租戶之間的資料絕不能互看、每個使用者只能看到有權限的文件、成本要能拆到每個租戶頭上、還要能撐住幾百個租戶。本篇用純 AWS 原生服務打造多租戶 RAG 平台:租戶隔離的三種模型(silo/pool/bridge)、以 Verified Permissions(Cedar)做文件級授權、metadata filtering、hybrid search + reranking、語意快取降本、以及每租戶成本歸因,全部用 CDK(CloudFormation)描述。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "RAG", "Multi-tenancy", "Verified Permissions", "OpenSearch Serverless", "Enterprise", "AI Engineering"]
 authors: ["yen"]
 readTime: "27 min"

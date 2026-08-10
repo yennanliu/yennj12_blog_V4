@@ -4,7 +4,7 @@ date: 2026-06-29T09:00:00+08:00
 draft: false
 weight: 1
 description: "從零理解知識圖譜：實體、關係、三元組、本體（Ontology），以及 RDF/OWL/SPARQL 語意網路標準。用具體範例與程式碼建立直覺。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Knowledge Graph", "知識圖譜", "RDF", "SPARQL", "Ontology", "Semantic Web", "Graph Database"]
 authors: ["yen"]
 readTime: "20 min"

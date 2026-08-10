@@ -4,7 +4,7 @@ date: 2026-06-04T09:00:00+08:00
 draft: false
 weight: 16
 description: "以系統設計視角拆解 Multi-Agent 的狀態管理與死鎖問題：為什麼階層式授權架構會產生死循環、State Reducer 的設計原理、分散式 Checkpoint 策略，以及如何在 LangGraph 中設計收斂的 Agent 圖"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Multi-Agent", "LangGraph", "State Management", "Deadlock", "System Design", "RKK", "Interview", "Google"]
 authors: ["yen"]
 readTime: "18 min"

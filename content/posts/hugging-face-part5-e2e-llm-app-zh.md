@@ -4,7 +4,7 @@ date: 2026-08-17T09:00:00+08:00
 draft: false
 weight: 5
 description: "把前四篇串起來：用 bge-m3 + FAISS + reranker + 微調模型，從文件切分、混合檢索、引用生成、FastAPI 服務化到 Gradio 部署與線上評估，一套可直接執行的完整專案程式碼。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Hugging Face", "RAG", "LLM", "FAISS", "Gradio", "FastAPI", "vLLM", "Python", "繁體中文"]
 authors: ["yen"]
 readTime: "30 min"

@@ -4,7 +4,7 @@ date: 2026-08-07T15:00:00+08:00
 draft: false
 weight: 2
 description: "拆解 QM 多人隔離的核心：五種 ScopeId、workspace 分層掛載、soul 指令的不可覆寫疊層、audience floor 如何用「受眾交集」防止頻道洩漏、ACL grant 變成 shared/ handle，以及 session 租約與 tape 雙軌記錄。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["QM", "AI Agent", "Multi-tenant", "ACL", "TypeScript", "Access Control", "繁體中文"]
 authors: ["yen"]
 readTime: "27 min"

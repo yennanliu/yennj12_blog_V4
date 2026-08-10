@@ -3,8 +3,8 @@ title: "MiniMax M2.7 在 NVIDIA 平台上推動可擴展的智能工作流程，
 date: 2026-04-13T10:30:48+08:00
 draft: false
 authors: ["Anu Srivastava"]
-categories: ["all", "NVIDIA", "技術"]
-tags: ["Agentic AI", "Generative AI", "Data Center", "Cloud", "Top Stories", "Mixture of Experts", "NemoClaw", "Open Source"]
+categories: ["all", "ai"]
+tags: ["Agentic AI", "Generative AI", "Data Center", "Cloud", "Top Stories", "Mixture of Experts", "NemoClaw", "Open Source", "NVIDIA"]
 summary: "MiniMax M2.7 版本不僅增強了其前一版本 MiniMax M2.5 的功能，還引入了多項創新特性，這些特性使得在 NVIDIA 平台上實現複雜 AI 應用的可擴展智能工作流程變得更加高效。本文將深入探討 MiniMax M2.7 的核心技術架構、實現細節及其在實際場景中的應用，並分析其性能優化和最佳實踐策略。"
 readTime: "25-30 min"
 ---

@@ -3,7 +3,7 @@ title: "ollama on mac - part 1 - 安裝與第一個本地模型"
 date: 2026-07-15T09:00:00+08:00
 draft: false
 description: "從零開始在 macOS 上安裝 Ollama,認識硬體需求與記憶體對照,並跑起你的第一個本地 LLM,完整掌握 CLI 指令與背後運作原理。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Ollama", "LLM", "macOS", "Local LLM", "Apple Silicon", "AI Engineering", "Llama"]
 authors: ["yen"]
 readTime: "18 min"

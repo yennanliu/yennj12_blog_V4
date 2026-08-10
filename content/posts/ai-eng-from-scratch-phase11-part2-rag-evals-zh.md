@@ -4,7 +4,7 @@ date: 2026-06-21T20:00:00+08:00
 draft: false
 weight: 23
 description: "深入解析 RAG 架構設計：向量資料庫選型、Hybrid Search、Re-ranking、Chunking 策略，以及 LLM 評估框架：RAGAS/G-Eval/LLM-as-Judge"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "LLM", "RAG", "Vector Database", "Evaluation", "LLM Engineering", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

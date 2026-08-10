@@ -3,7 +3,7 @@ title: "LangGraph AI 後端架構設計模式：從單體到分佈式"
 date: 2026-04-11T10:00:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "AI", "LangGraph", "architecture"]
+categories: ["all", "ai", "architecture"]
 tags: ["LangGraph", "AI", "架構", "後端設計", "系統設計", "可擴展性"]
 summary: "深入講解如何設計可擴展、高性能的 LangGraph AI 後端架構，涵蓋從單體應用到微服務的演進，包括 Agent 拓撲、數據流、錯誤恢復、分佈式協調等生產級設計模式。"
 readTime: "40 min"

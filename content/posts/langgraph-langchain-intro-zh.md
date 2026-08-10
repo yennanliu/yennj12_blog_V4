@@ -3,7 +3,7 @@ title: "LangGraph + LangChain 完全入門指南：從基礎到生產"
 date: 2026-04-11T10:00:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "AI", "LangChain", "LangGraph"]
+categories: ["all", "ai"]
 tags: ["LangChain", "LangGraph", "AI", "Agent", "工作流", "RAG", "介紹"]
 summary: "全面介紹 LangChain 和 LangGraph 的核心概念、架構和實戰應用，涵蓋從簡單的 Chain 到複雜的多 Agent 工作流，幫助開發者快速掌握現代 AI 應用開發框架。"
 readTime: "50 min"

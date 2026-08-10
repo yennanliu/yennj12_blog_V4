@@ -4,7 +4,7 @@ date: 2026-06-08T09:00:00+08:00
 draft: false
 weight: 45
 description: "深度解析間接提示詞注入（Indirect Prompt Injection）在 Agent 工具鏈的防禦架構，涵蓋雙模型特權分離、Cloud Run VPC 沙盒隔離、Pydantic Schema 強型別校驗，適合 Staff FDE 面試備考。"
-categories: ["engineering", "all"]
+categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "Security", "LLM", "Agent", "Prompt Injection", "Vertex AI", "Cloud Run"]
 authors: ["yen"]
 readTime: "27 min"

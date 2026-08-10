@@ -4,7 +4,7 @@ date: 2026-06-21T10:00:00+08:00
 draft: false
 weight: 3
 description: "深入解析線性回歸、邏輯回歸、決策樹、SVM、特徵工程等傳統 ML 技術為何在 80% 生產 AI 系統中仍是首選，附完整決策框架與量化比較"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Machine Learning", "Linear Regression", "Decision Tree", "SVM", "Feature Engineering", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

@@ -4,7 +4,7 @@ date: 2025-09-27T10:00:00Z
 draft: false
 weight: 1
 authors: ["yen"]
-categories: ["all", "AI", "development-tools", "automation"]
+categories: ["all", "ai", "tools"]
 tags: ["AI", "mcp", "claude-code", "development-tools", "automation", "python", "typescript", "tooling"]
 summary: "Complete guide to setting up Model Control Protocol (MCP) servers for Claude Code, from basic configuration to building custom tools that enhance your AI-powered development workflow."
 readTime: "18 min"

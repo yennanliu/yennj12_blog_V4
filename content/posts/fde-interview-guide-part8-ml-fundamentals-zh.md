@@ -4,7 +4,7 @@ date: 2026-05-31T10:30:00+08:00
 draft: false
 weight: 8
 description: "以 Google AI 工程師兼面試官的視角，系統整理 FDE 面試不能缺的 ML 基礎：Supervised Learning、評估指標、Overfitting 處理，以及從 MLP 到 Transformer 的 Deep Learning 核心概念"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Machine Learning", "Deep Learning", "Transformer", "XGBoost", "Neural Network", "Interview", "Google"]
 authors: ["yen"]
 readTime: "18 min"

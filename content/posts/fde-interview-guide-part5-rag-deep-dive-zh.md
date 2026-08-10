@@ -4,7 +4,7 @@ date: 2026-05-31T09:00:00+08:00
 draft: false
 weight: 5
 description: "以 Google AI 工程師兼面試官的視角，深度拆解 RAG 的技術細節：Chunking 策略選擇、Embedding 模型挑選、向量資料庫設計、混合搜尋與 Reranking，以及 Context Window 爆炸的處理方式"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "RAG", "Chunking", "Embedding", "Vector DB", "Hybrid Search", "Reranking", "Interview", "Google"]
 authors: ["yen"]
 readTime: "15 min"

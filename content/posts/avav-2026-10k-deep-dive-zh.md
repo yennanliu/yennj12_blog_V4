@@ -3,8 +3,8 @@ title: "AeroVironment (AVAV) 2026 10-K 深度解析"
 date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 AeroVironment FY2026 年報做機構級深度拆解:一場把營收翻倍到 20 億美元的 BlueHalo 世紀併購,如何同時帶來 GAAP 虧損、負自由現金流、內控失效(ICFR 不利意見)與收購當年就發生的商譽減損。涵蓋五年財務軌跡、雙事業體、購買法會計扭曲、股本稀釋、國防積壓訂單、風險矩陣與投資訊號。"
-categories: ["finance", "investing", "all"]
-tags: ["AVAV", "AeroVironment", "10-K", "SEC", "財報分析", "價值投資", "美股", "國防", "無人機", "UAS", "InvestSkill"]
+categories: ["all", "finance"]
+tags: ["AVAV", "AeroVironment", "10-K", "SEC", "財報分析", "價值投資", "美股", "國防", "無人機", "UAS", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "30 min"
 ---

@@ -3,7 +3,7 @@ title: "ollama on mac - part 4 - 與應用整合(Python、OpenAI SDK、LangChain
 date: 2026-07-18T09:00:00+08:00
 draft: false
 description: "把本機 Ollama 模型接進真實應用的完整實戰:官方 Python/JS SDK、OpenAI 相容層、LangChain、Open WebUI,以及手把手打造一個離線可跑的本地 RAG。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Ollama", "LLM", "Python", "OpenAI API", "LangChain", "Open WebUI", "RAG", "Embeddings", "AI Engineering"]
 authors: ["yen"]
 readTime: "24 min"

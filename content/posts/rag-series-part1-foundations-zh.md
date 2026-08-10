@@ -4,7 +4,7 @@ date: 2026-05-16T09:00:00+08:00
 draft: false
 weight: 1
 description: "從零開始理解 RAG（Retrieval-Augmented Generation）：為什麼 LLM 需要外部知識、RAG 的核心架構是什麼，以及如何用 Python 實作一個最基本的 RAG pipeline。"
-categories: ["AI", "Engineering", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["RAG", "LLM", "Vector Database", "Embeddings", "Python", "繁體中文"]
 authors: ["YennJ12 Engineering Team"]
 readTime: "20 min"

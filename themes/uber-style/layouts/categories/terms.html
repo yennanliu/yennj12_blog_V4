@@ -1,0 +1,71 @@
+{{/* Curated category index.
+
+     Ordering, titles, taglines and descriptions all come from
+     content/categories/<slug>/_index.md. Terms without an `_index.md` have no
+     weight, so they surface in the "Uncurated" strip below instead of the grid —
+     that is the signal to either curate them or fold them into an existing
+     category (see the taxonomy notes in CLAUDE.md). */}}
+{{ define "main" }}
+{{ $topics := where .Pages "Params.archive" "!=" true }}
+{{ $curated := (where $topics "Weight" ">" 0).ByWeight }}
+{{ $loose := (where $topics "Weight" "==" 0).ByTitle }}
+{{ $archiveURL := "" }}
+{{ $archiveCount := 0 }}
+{{ range first 1 (where .Pages "Params.archive" true) }}
+  {{ $archiveURL = .RelPermalink }}{{ $archiveCount = len .Pages }}
+{{ end }}
+
+<div class="page-header">
+    <div class="container">
+        <h1>Topics</h1>
+        <p class="page-header__description">
+            {{ len $curated }} curated categories across {{ $archiveCount }} posts.
+            Every post also carries the <a href="{{ $archiveURL }}">full archive</a> marker.
+        </p>
+    </div>
+</div>
+
+<div class="posts__section">
+    <div class="posts__container">
+        <div class="cat-index">
+            {{ range $curated }}
+            <a href="{{ .RelPermalink }}" class="cat-index__card">
+                <div class="cat-index__top">
+                    <h2 class="cat-index__name">{{ .Title }}</h2>
+                    <span class="cat-index__count">{{ len .Pages }}</span>
+                </div>
+                {{ with .Params.tagline }}<p class="cat-index__tagline">{{ . }}</p>{{ end }}
+                {{ with .Description }}<p class="cat-index__desc">{{ . }}</p>{{ end }}
+
+                {{ with first 3 .Pages.ByDate.Reverse }}
+                <ul class="cat-index__recent">
+                    {{ range . }}
+                    <li>{{ .Title }}</li>
+                    {{ end }}
+                </ul>
+                {{ end }}
+                <span class="cat-index__cta">Browse {{ .Title }} →</span>
+            </a>
+            {{ end }}
+        </div>
+
+        {{ with $loose }}
+        <div class="cat-index__loose">
+            <h2 class="cat-index__loose-title">Uncurated</h2>
+            <p class="cat-index__loose-note">
+                These terms have no <code>content/categories/&lt;slug&gt;/_index.md</code> and are not
+                part of the curated taxonomy.
+            </p>
+            <div class="tags-index">
+                {{ range . }}
+                <a href="{{ .RelPermalink }}" class="tags-index__item">
+                    <span class="tags-index__name">{{ .Title }}</span>
+                    <span class="tags-index__count">{{ len .Pages }}</span>
+                </a>
+                {{ end }}
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

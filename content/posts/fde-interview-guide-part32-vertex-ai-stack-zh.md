@@ -4,7 +4,7 @@ date: 2026-06-05T10:00:00+08:00
 draft: false
 weight: 32
 description: "以 Google FDE 視角完整拆解 Vertex AI AI 產品棧：何時選 Agent Builder vs 自建、Vertex AI Search 和 DIY RAG 的根本差異、Gemini API 四個關鍵特性（system instruction、tool use、grounding、context caching），以及企業 AI 系統的 GCP 部署架構"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Vertex AI", "Gemini", "Agent Builder", "GCP", "System Design", "RKK", "Interview", "Google"]
 authors: ["yen"]
 readTime: "19 min"

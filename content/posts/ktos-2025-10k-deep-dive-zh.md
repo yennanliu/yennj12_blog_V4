@@ -3,8 +3,8 @@ title: "Kratos Defense (KTOS) 2025 10-K 深度解析"
 date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 Kratos Defense & Security Solutions FY2025 年報做機構級深度拆解:五年財務軌跡、KGS/US 兩大事業體、目標無人機與超音速/火箭系統、超薄利潤率 vs 高營收成長、股權薪酬吃光營業利益、自由現金流大失血、股權稀釋引擎、國防部客戶集中、情境分析、風險矩陣與投資訊號。"
-categories: ["finance", "investing", "all"]
-tags: ["KTOS", "Kratos Defense", "10-K", "SEC", "財報分析", "價值投資", "美股", "國防", "無人機", "超音速", "航太", "InvestSkill"]
+categories: ["all", "finance"]
+tags: ["KTOS", "Kratos Defense", "10-K", "SEC", "財報分析", "價值投資", "美股", "國防", "無人機", "超音速", "航太", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "30 min"
 ---

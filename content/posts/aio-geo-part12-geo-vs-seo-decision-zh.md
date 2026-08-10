@@ -4,7 +4,7 @@ date: 2026-08-08T09:00:00+08:00
 draft: false
 weight: 12
 description: "Google 官方說「這就是 SEO」——這句話對，也不對。本篇正面處理這個質疑，給出一套決策樹與四維評分表，並列出五種不該賣 GEO 的客戶。附預算配比建議與該怎麼跟客戶解釋這件事。"
-categories: ["AI", "GEO", "SEO", "Business", "all"]
+categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "SEO", "決策框架", "顧問", "預算配置", "繁體中文"]
 authors: ["yen"]
 readTime: "18 min"

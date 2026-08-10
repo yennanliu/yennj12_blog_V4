@@ -3,8 +3,8 @@ title: "多 Agent Token 優化系列 pt.5：選擇性 Context 傳遞 — 打造�
 date: 2026-03-12T20:00:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "AI", "agent-orchestration", "development-tools"]
-tags: ["AI", "claude-code", "multi-agent", "context-passing", "token-optimization", "agent-orchestration", "API"]
+categories: ["all", "ai", "tools"]
+tags: ["AI", "claude-code", "multi-agent", "context-passing", "token-optimization", "agent-orchestration", "API", "development-tools"]
 summary: "多 Agent Token 優化系列 pt.5：深入探索選擇性 Context 傳遞策略，從依賴關係映射、結構化輸出到相關性過濾，提供完整實作範例，幫助你大幅降低 Agent 間通訊的 Token 消耗。"
 readTime: "35 min"
 ---

@@ -3,7 +3,7 @@ title: "Auto Agent System - Part 1 - 系統總覽:一個 CrewAI 多代理自動�
 date: 2026-07-04T09:00:00+08:00
 draft: false
 description: "從 0 認識 agent_auto_system:一個用 CrewAI 打造、能透過 API 與網頁介面定義並執行 AI 自動化任務的平台。本篇拆解它的整體架構、11 種任務類型、最核心的 Harness 引擎層,以及一個請求從按下按鈕到拿到結果的完整資料流。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "AI Agent", "Automation", "FastAPI", "LLM", "Multi-Agent", "AI Engineering", "Harness"]
 authors: ["yen"]
 readTime: "20 min"

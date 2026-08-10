@@ -4,7 +4,7 @@ date: 2026-06-21T10:30:00+08:00
 draft: false
 weight: 4
 description: "深入解析 Random Forest、Gradient Boosting、XGBoost、超參數調優與 AutoML，理解集成方法為何在表格資料競賽與生產系統持續稱霸"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Machine Learning", "XGBoost", "Random Forest", "Gradient Boosting", "Optimization", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

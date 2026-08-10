@@ -37,43 +37,76 @@ paginate = 25
   tag = 'tags'
   author = 'authors'
 
+# Primary navigation.
+#
+# The "Topics" dropdown is NOT listed here — it is generated from the category
+# taxonomy at render time (see layouts/partials/header.html) so that
+# content/categories/*/_index.md stays the single source of truth for what
+# categories exist, how they are titled and in what order they appear.
 [menu]
   [[menu.main]]
+    identifier = 'home'
     name = 'Home'
     url = '/'
     weight = 10
+
   [[menu.main]]
-    name = 'Engineering'
-    url = '/categories/engineering/'
+    identifier = 'topics'
+    name = 'Topics'
+    url = '/categories/'
     weight = 20
+
   [[menu.main]]
-    name = 'Architecture'
-    url = '/categories/architecture/'
+    identifier = 'series'
+    name = 'Series'
+    url = '/tags/'
     weight = 30
+
   [[menu.main]]
-    name = 'Data'
-    url = '/categories/data-engineering/'
-    weight = 40
-  [[menu.main]]
-    name = 'All Posts'
-    url = '/posts-list/'
-    weight = 45
-  [[menu.main]]
-    name = 'FDE Series'
+    parent = 'series'
+    name = 'FDE Interview Guide'
     url = '/tags/fde/'
-    weight = 48
+    weight = 10
+    [menu.main.params]
+      note = 'Forward-deployed engineering, end to end'
   [[menu.main]]
+    parent = 'series'
     name = 'FDE Core Topics'
     url = '/tags/fde-core-topic/'
-    weight = 49
+    weight = 20
+    [menu.main.params]
+      note = 'The recurring themes, deep-dived'
   [[menu.main]]
+    parent = 'series'
+    name = 'AI Engineering'
+    url = '/tags/ai-engineering/'
+    weight = 30
+    [menu.main.params]
+      note = 'From zero to production AI systems'
+  [[menu.main]]
+    parent = 'series'
+    name = '10-K Deep Dives'
+    url = '/tags/10-k/'
+    weight = 40
+    [menu.main.params]
+      note = 'Institutional-grade filing digests'
+  [[menu.main]]
+    parent = 'series'
+    name = 'Browse all tags →'
+    url = '/tags/'
+    weight = 99
+
+  [[menu.main]]
+    identifier = 'archive'
+    name = 'Archive'
+    url = '/posts-list/'
+    weight = 40
+
+  [[menu.main]]
+    identifier = 'about'
     name = 'About'
     url = '/about/'
     weight = 50
-  [[menu.main]]
-    name = 'Search'
-    url = '/search/'
-    weight = 55
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]

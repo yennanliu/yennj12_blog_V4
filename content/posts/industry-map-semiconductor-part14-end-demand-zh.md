@@ -3,8 +3,8 @@ title: "industry-map - 半導體產業鏈 Part 14:終端需求（需求端 Deman
 date: 2026-07-19T10:14:00+08:00
 draft: false
 description: "系列完結篇:深拆半導體整條鏈的最終買單者——終端需求。用四大板塊(資料中心/AI、手機/PC、車用、工業)拆解需求佔比與成長動能,回答最關鍵的問題:驅動全鏈的 AI 資料中心需求,是結構性成長還是資本支出泡沫?並解釋終端需求為什麼是整條鏈週期性(長鞭效應)的源頭,最後回顧全系列的價值捕獲與遷移。"
-categories: ["finance", "investing", "all"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "終端需求", "AI 資本支出", "美股", "InvestSkill"]
+categories: ["all", "finance"]
+tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "終端需求", "AI 資本支出", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "16 min"
 ---

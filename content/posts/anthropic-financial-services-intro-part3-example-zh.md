@@ -3,7 +3,7 @@ title: "Anthropic Financial Services 入門 Part 3 — 實戰:用 GL Reconciler 
 date: 2026-07-04T11:00:00+08:00
 draft: false
 description: "從安裝到真的跑出一份待簽核的對帳報告——本篇挑 financial-services 套件裡的 GL Reconciler Agent,走一次完整流程:找斷點、追根因、標記待人工簽核,並比較 Cowork 互動模式和 Managed Agents headless 部署兩種跑法的差異。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Anthropic", "Claude", "Financial Services", "GL Reconciliation", "Fund Admin", "Managed Agents", "AI Engineering"]
 authors: ["yen"]
 readTime: "13 min"

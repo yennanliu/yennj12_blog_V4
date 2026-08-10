@@ -3,8 +3,8 @@ title: "Building Multi-Agent Orchestration Systems with Claude Code"
 date: 2025-12-21T10:00:00Z
 draft: false
 authors: ["yen"]
-categories: ["all", "AI", "agent-orchestration", "development-tools"]
-tags: ["AI", "claude-code", "agent-orchestration", "multi-agent-systems", "automation", "python", "crewai", "langchain"]
+categories: ["all", "ai", "tools"]
+tags: ["AI", "claude-code", "agent-orchestration", "multi-agent-systems", "automation", "python", "crewai", "langchain", "development-tools"]
 summary: "Comprehensive guide to building multi-agent orchestration systems with Claude Code - learn to coordinate specialized AI agents for complex software development workflows, from architecture design to implementation."
 readTime: "22 min"
 ---

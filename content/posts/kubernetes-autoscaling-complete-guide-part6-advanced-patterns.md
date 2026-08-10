@@ -4,8 +4,8 @@ date: 2025-11-09T22:00:00+08:00
 draft: false
 weight: 6
 authors: ["yennj12 team"]
-categories: ["all", "engineering", "devops", "kubernetes", "architecture"]
-tags: ["Kubernetes", "K8S", "Autoscaling", "StatefulSet", "Multi-Cluster", "Cost Optimization", "Spot Instances", "FinOps", "Advanced Patterns", "Batch Jobs"]
+categories: ["all", "engineering", "architecture", "infrastructure"]
+tags: ["Kubernetes", "K8S", "Autoscaling", "StatefulSet", "Multi-Cluster", "Cost Optimization", "Spot Instances", "FinOps", "Advanced Patterns", "Batch Jobs", "devops"]
 summary: "Part 6 of the Kubernetes Autoscaling series: Advanced autoscaling patterns for stateful applications, multi-cluster deployments, cost optimization strategies, batch job scaling, and emerging technologies. Real-world architectures and production-grade implementations."
 readTime: "40 min"
 ---

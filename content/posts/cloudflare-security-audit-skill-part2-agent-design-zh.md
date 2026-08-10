@@ -3,7 +3,7 @@ title: "Cloudflare AI 安全稽核系統（二）：Agent 設計深潛——Hunt
 date: 2026-06-29T10:00:00+08:00
 draft: false
 description: "深入拆解 security-audit-skill 的 Agent 設計：Hunt phase 怎麼派 agent、sub-agent 什麼時候 spawn、adversarial validation 為什麼是 multi-agent 系統的核心防線"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Agent", "Multi-Agent", "Security", "LLM", "Cloudflare", "System Design", "Adversarial", "Agent Pipeline"]
 authors: ["yen"]
 readTime: "20 min"

@@ -3,7 +3,7 @@ title: "SAGA Pattern: Managing Distributed Transactions in Spring Boot Microserv
 date: 2025-01-28T01:00:00+08:00
 draft: false
 description: "Complete guide to implementing SAGA pattern for distributed transactions in Java Spring Boot applications. Learn orchestration vs choreography approaches, failure handling, and best practices with real-world examples."
-categories: ["Engineering", "Architecture", "AI", "all"]
+categories: ["all", "ai", "engineering", "architecture"]
 tags: ["Java", "Spring Boot", "SAGA Pattern", "Distributed Transactions", "Microservices", "Event Sourcing", "Orchestration", "Choreography", "AI"]
 authors: ["YennJ12 Engineering Team"]
 readTime: "30 min"

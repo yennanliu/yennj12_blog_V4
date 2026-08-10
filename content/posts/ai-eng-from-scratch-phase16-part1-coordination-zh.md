@@ -4,7 +4,7 @@ date: 2026-06-22T01:30:00+08:00
 draft: false
 weight: 34
 description: "深入解析多 Agent 系統協調工程：Supervisor/Peer-to-Peer/Market 協調模式、Agent 間通訊協議、衝突解決、任務分配與共識機制"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Multi-Agent", "Coordination", "Swarm", "Agent Communication", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

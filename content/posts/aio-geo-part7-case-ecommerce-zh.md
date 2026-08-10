@@ -4,8 +4,8 @@ date: 2026-08-03T09:00:00+08:00
 draft: false
 weight: 7
 description: "一家台灣戶外用品電商，12,000 個 SKU、跑在 Vercel + Shopify Headless 上。電商 GEO 的兩個獨有難題：長尾商品頁怎麼模板化才不變成薄內容，以及價格與庫存怎麼讓模型抓到最新的。"
-categories: ["AI", "SEO", "GEO", "Case Study", "E-commerce", "all"]
-tags: ["GEO", "AIO", "電商", "Shopify", "Next.js", "Product Schema", "SKU", "案例研究", "繁體中文"]
+categories: ["all", "ai", "business"]
+tags: ["GEO", "AIO", "電商", "Shopify", "Next.js", "Product Schema", "SKU", "案例研究", "繁體中文", "SEO", "Case Study", "E-commerce"]
 authors: ["yen"]
 readTime: "18 min"
 ---

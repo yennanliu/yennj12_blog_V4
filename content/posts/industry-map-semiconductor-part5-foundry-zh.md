@@ -3,8 +3,8 @@ title: "industry-map - 半導體產業鏈 Part 5:晶圓代工(中游)"
 date: 2026-07-19T10:05:00+08:00
 draft: false
 description: "深拆半導體晶圓代工這一層:台積電近獨占先進製程的護城河、純代工模式 vs IDM、資本軍備競賽與良率/信任壁壘、~55–59% 毛利、CoWoS 先進封裝咽喉,以及台灣單點集中對全球的級聯風險與分層投資點子。"
-categories: ["finance", "investing", "all"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "晶圓代工", "TSMC", "美股", "InvestSkill"]
+categories: ["all", "finance"]
+tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "晶圓代工", "TSMC", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "16 min"
 ---

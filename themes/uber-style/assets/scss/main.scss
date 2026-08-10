@@ -188,6 +188,137 @@
     margin-left: auto;
     margin-right: auto;
   }
+
+  &__lead {
+    @include body-large;
+    color: $color-text;
+    font-weight: $font-weight-medium;
+    margin: -#{$spacing-xs} auto $spacing-sm;
+    max-width: 600px;
+  }
+
+  &__meta {
+    @include body-small;
+    color: $color-text-muted;
+    margin: $spacing-md 0 0;
+
+    a { color: $color-text-light; }
+    a:hover { color: $color-accent; }
+  }
+}
+
+// Curated category index (/categories/)
+.cat-index {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+  padding: $spacing-xl 0;
+
+  @include bp('md') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include bp('lg') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &__card {
+    @include card;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: $color-text;
+    // Grid items default to min-width:auto, so the nowrap recent-post titles
+    // below would push the track wider than its 1fr share and overflow the row.
+    min-width: 0;
+
+    &:hover {
+      text-decoration: none;
+      border-color: $color-accent;
+    }
+
+    &:hover .cat-index__cta { color: $color-accent; }
+  }
+
+  &__top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $spacing-sm;
+  }
+
+  &__name {
+    @include heading-4;
+    margin: 0;
+    color: $color-text;
+  }
+
+  &__count {
+    font-family: $font-family-mono;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    flex: none;
+  }
+
+  &__tagline {
+    @include body-small;
+    color: $color-text;
+    font-weight: $font-weight-medium;
+    margin: $spacing-sm 0 0;
+  }
+
+  &__desc {
+    @include body-small;
+    color: $color-text-light;
+    margin: $spacing-xs 0 0;
+  }
+
+  &__recent {
+    list-style: none;
+    margin: $spacing-md 0 0;
+    padding: $spacing-md 0 0;
+    border-top: 1px solid $color-border-light;
+
+    li {
+      @include truncate;
+      font-size: $font-size-xs;
+      color: $color-text-muted;
+      padding: 2px 0;
+
+      &::before {
+        content: '·';
+        margin-right: $spacing-xs;
+      }
+    }
+  }
+
+  &__cta {
+    margin-top: auto;
+    padding-top: $spacing-md;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-light;
+    transition: color $transition-fast;
+  }
+
+  &__loose {
+    padding: $spacing-xl 0 $spacing-3xl;
+    border-top: 1px solid $color-border;
+  }
+
+  &__loose-title {
+    @include heading-4;
+    margin: 0;
+    text-align: center;
+  }
+
+  &__loose-note {
+    @include body-small;
+    color: $color-text-muted;
+    text-align: center;
+    max-width: 620px;
+    margin: $spacing-sm auto 0;
+  }
 }
 
 // Related posts section
@@ -1214,16 +1345,14 @@ a.search__result {
 }
 // Mobile responsiveness improvements
 @media (max-width: #{$breakpoint-md - 1px}) {
+  // The brand and the hamburger share one row; the drawer opens beneath the
+  // header. (This block used to stack the header and hard-disable .nav__menu,
+  // which left small screens with no way to reach the menu at all.)
   .header__content {
-    flex-direction: column;
     gap: $spacing-md;
-    align-items: flex-start;
+    align-items: center;
   }
-  
-  .nav__menu {
-    display: none;
-  }
-  
+
   .posts__grid {
     grid-template-columns: 1fr;
   }

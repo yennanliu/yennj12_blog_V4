@@ -3,8 +3,8 @@ title: "Meta (META) 2025 10-K 深度解析"
 date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 Meta Platforms FY2025 年報做機構級深度拆解:五年財務軌跡、事業體與地區損益、OBBBA 稅務假象、折舊定時炸彈、DuPont/ROIC、Rule of 40、AI 千億資本支出賭注、情境分析、競爭格局、風險矩陣與投資訊號。"
-categories: ["finance", "investing", "all"]
-tags: ["META", "Meta Platforms", "10-K", "SEC", "財報分析", "價值投資", "美股", "AI", "InvestSkill"]
+categories: ["all", "finance"]
+tags: ["META", "Meta Platforms", "10-K", "SEC", "財報分析", "價值投資", "美股", "AI", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "32 min"
 ---

@@ -4,7 +4,7 @@ date: 2025-01-28T03:00:00+08:00
 draft: false
 weight: 2
 description: "Deep dive into Java concurrency fundamentals: Runnable and Callable internals, thread synchronization mechanisms, memory models, and advanced patterns. Master the building blocks of Java concurrent programming."
-categories: ["Engineering", "Architecture", "AI", "all"]
+categories: ["all", "ai", "engineering", "architecture"]
 tags: ["Java", "Concurrency", "Threading", "Runnable", "Callable", "Synchronization", "Memory Model", "Thread Safety", "AI"]
 authors: ["YennJ12 Engineering Team"]
 readTime: "40 min"

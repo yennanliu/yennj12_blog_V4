@@ -54,7 +54,8 @@
   
   &__brand {
     flex: 1;
-    
+    min-width: 0; // let the title wrap instead of squeezing the nav out of view
+
     @include bp('md') {
       flex: none;
     }
@@ -77,69 +78,374 @@
   }
   
   &__tagline {
+    // Hidden on the narrowest screens so the brand and the hamburger fit on one
+    // row; the same words are in the meta description and on /about/.
+    display: none;
     margin: $spacing-xs 0 0 0;
     @include body-small;
     color: rgba(255, 255, 255, 0.7);
-    
+
+    @include bp('sm') {
+      display: block;
+    }
+
     @include bp('md') {
       margin-top: $spacing-sm;
     }
   }
   
   &__nav {
-    @include flex-between;
-    gap: $spacing-lg;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    @include bp('lg') {
+      gap: $spacing-md;
+    }
   }
 }
 
+// ---------------------------------------------------------------------------
+// Primary navigation.
+//
+// A single DOM tree (see partials/header.html) renders two ways: a horizontal
+// bar with dropdown panels at >=lg, and a drawer with accordion sections below
+// that. Everything above the `bp('lg')` block is the drawer; the block overrides
+// it for desktop.
+// ---------------------------------------------------------------------------
 .nav {
+  // Hamburger — drawer only.
+  &__toggle {
+    @include flex-center;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.75);
+    cursor: pointer;
+    border-radius: $border-radius-md;
+    transition: all $transition-fast;
+
+    &:hover { color: #ffffff; background-color: rgba(255, 255, 255, 0.1); }
+
+    &:focus-visible {
+      outline: 2px solid $color-accent;
+      outline-offset: 2px;
+    }
+
+    @include bp('lg') { display: none; }
+  }
+
+  // Three bars drawn from one element so the burger→close morph needs no extra
+  // markup: the middle bar is the element, the outer two are pseudo-elements.
+  &__toggle-bars {
+    position: relative;
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: background-color $transition-fast, transform $transition-fast;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 20px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 2px;
+      transition: transform $transition-fast, top $transition-fast;
+    }
+
+    &::before { top: -6px; }
+    &::after  { top: 6px; }
+  }
+
+  &__toggle[aria-expanded='true'] &__toggle-bars {
+    background: transparent;
+
+    &::before { top: 0; transform: rotate(45deg); }
+    &::after  { top: 0; transform: rotate(-45deg); }
+  }
+
   &__menu {
     display: none;
-    align-items: center;
-    gap: $spacing-lg;
-    
-    @include bp('md') {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #0a0a0a;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: $shadow-xl;
+    max-height: calc(100vh - 100%);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: $spacing-sm 0 $spacing-md;
+
+    &--open { display: block; }
+
+    @include bp('lg') {
       display: flex;
-      gap: $spacing-xl;
+      position: static;
+      align-items: center;
+      gap: $spacing-lg;
+      background: none;
+      border: 0;
+      box-shadow: none;
+      max-height: none;
+      overflow: visible;
+      padding: 0;
     }
   }
-  
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    // The accordion panel is a third flex child with flex-basis:100%, so wrapping
+    // is what drops it onto its own full-width line under the link + caret.
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    padding: 0 $container-padding;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    &:last-child { border-bottom: 0; }
+
+    @include bp('lg') {
+      position: relative;
+      padding: 0;
+      border-bottom: 0;
+      gap: $spacing-xs;
+    }
+  }
+
   &__link {
     @include body-normal;
-    color: rgba(255, 255, 255, 0.7);
+    flex: 1;
+    padding: $spacing-md 0;
+    color: rgba(255, 255, 255, 0.75);
     text-decoration: none;
     font-weight: $font-weight-medium;
     transition: color $transition-fast;
     position: relative;
-    
+
     &:hover {
       color: #ffffff;
       text-decoration: none;
     }
-    
+
+    &:focus-visible {
+      outline: 2px solid $color-accent;
+      outline-offset: 2px;
+      border-radius: $border-radius-sm;
+    }
+
     &--active {
       color: #ffffff;
-      
+
       &::after {
         content: '';
         position: absolute;
-        bottom: -$spacing-lg;
         left: 0;
-        right: 0;
+        bottom: $spacing-sm;
+        width: 18px;
         height: 2px;
         background: $color-accent;
-        
-        @include bp('md') {
-          bottom: -$spacing-xl;
-        }
+      }
+    }
+
+    @include bp('lg') {
+      flex: none;
+      padding: $spacing-sm 0;
+
+      &--active::after {
+        bottom: -2px;
+        width: auto;
+        right: 0;
       }
     }
   }
-  
+
+  // Disclosure button, kept separate from the link so the parent stays
+  // navigable while the panel is independently openable by keyboard.
+  &__caret {
+    @include flex-center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    border-radius: $border-radius-md;
+    transition: all $transition-fast;
+
+    svg { width: 18px; height: 18px; transition: transform $transition-fast; }
+
+    &:hover { color: #ffffff; background: rgba(255, 255, 255, 0.08); }
+
+    &:focus-visible {
+      outline: 2px solid $color-accent;
+      outline-offset: 2px;
+    }
+
+    &[aria-expanded='true'] {
+      color: #ffffff;
+      svg { transform: rotate(180deg); }
+    }
+
+    @include bp('lg') {
+      width: 20px;
+      height: 20px;
+      svg { width: 14px; height: 14px; }
+    }
+  }
+
+  &__panel {
+    display: none;
+    flex-basis: 100%;
+    padding-bottom: $spacing-sm;
+
+    @include bp('lg') {
+      position: absolute;
+      top: calc(100% + #{$spacing-md});
+      left: -$spacing-md;
+      width: 340px;
+      padding: $spacing-sm;
+      background: #0a0a0a;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: $border-radius-lg;
+      box-shadow: $shadow-xl;
+
+      // Bridges the gap between trigger and panel so a diagonal mouse path
+      // does not close the menu mid-travel.
+      &::before {
+        content: '';
+        position: absolute;
+        top: -$spacing-md;
+        left: 0;
+        right: 0;
+        height: $spacing-md;
+      }
+    }
+  }
+
+  &__item--open > &__panel { display: block; }
+
+  @include bp('lg') {
+    // Keyboard users get the panel from focus; pointer users from hover. The
+    // hover query keeps touch devices on the explicit caret tap instead of
+    // firing a sticky :hover on first touch.
+    &__item--dropdown:focus-within > &__panel { display: block; }
+
+    @media (hover: hover) {
+      &__item--dropdown:hover > &__panel { display: block; }
+    }
+  }
+
+  &__panel-grid {
+    display: grid;
+    gap: 2px;
+  }
+
+  &__panel-link {
+    display: block;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $border-radius-md;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.75);
+    transition: background-color $transition-fast, color $transition-fast;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-accent;
+      outline-offset: -2px;
+    }
+
+    &--active {
+      background: rgba($color-accent, 0.18);
+      color: #ffffff;
+    }
+  }
+
+  &__panel-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $spacing-sm;
+  }
+
+  &__panel-name {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: inherit;
+  }
+
+  &__panel-count {
+    font-family: $font-family-mono;
+    font-size: $font-size-xs;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  &__panel-note {
+    display: block;
+    margin-top: 2px;
+    font-size: $font-size-xs;
+    line-height: $line-height-normal;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  &__panel-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+    margin-top: $spacing-sm;
+    padding: $spacing-sm $spacing-md 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    a {
+      font-size: $font-size-xs;
+      font-weight: $font-weight-medium;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+
+      &:hover { color: #ffffff; text-decoration: none; }
+    }
+  }
+
+  // Dims the page behind the open drawer.
+  &__scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: $z-header - 1;
+
+    &[hidden] { display: none; }
+
+    @include bp('lg') { display: none; }
+  }
+
   &__search {
     display: flex;
     align-items: center;
   }
+}
+
+// Drawer open — stop the page behind it from scrolling.
+body.nav-open {
+  overflow: hidden;
+
+  @include bp('lg') { overflow: visible; }
 }
 
 .search {

@@ -4,7 +4,7 @@ date: 2026-08-07T09:00:00+08:00
 draft: false
 weight: 1
 description: "從零拆解 Andrew Ng 團隊的開源專案 OpenWorker：它為什麼強調「交付成果而非聊天」、三層本地優先架構如何組成、37000 行 Python 後端的目錄職責分工，以及一次任務從輸入到產出的完整生命週期。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["OpenWorker", "AI Agent", "Agent Harness", "LLM", "Python", "開源專案解析", "繁體中文"]
 authors: ["yen"]
 readTime: "24 min"

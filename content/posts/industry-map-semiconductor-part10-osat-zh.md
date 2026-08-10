@@ -3,8 +3,8 @@ title: "industry-map - 半導體產業鏈 Part 10:封裝測試 OSAT（中游）"
 date: 2026-07-19T10:10:00+08:00
 draft: false
 description: "深拆半導體封裝測試 OSAT 這一層:日月光、艾克爾、長電科技的競爭格局、瓶頸與定價權、利潤池、上下游依賴、風險與投資點子——並解釋為何傳統封測是薄利商品層,而先進封裝(CoWoS/2.5D/3D、Chiplet)卻變成卡住 AI GPU 出貨的新咽喉。"
-categories: ["finance", "investing", "all"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "封裝測試", "CoWoS", "ASE", "Amkor", "美股", "InvestSkill"]
+categories: ["all", "finance"]
+tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "封裝測試", "CoWoS", "ASE", "Amkor", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "16 min"
 ---

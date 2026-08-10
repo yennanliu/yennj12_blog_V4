@@ -4,7 +4,7 @@ date: 2026-06-21T21:30:00+08:00
 draft: false
 weight: 26
 description: "深入解析 Model Context Protocol（MCP）架構、Function Calling 設計模式、工具整合生產化、API 安全與速率控制，以及 AI 系統的外部工具編排"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "MCP", "Function Calling", "API", "Tool Use", "Integration", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

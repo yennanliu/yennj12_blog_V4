@@ -3,7 +3,7 @@ title: "把站台從 3.1GB 砍到 503MB：finance_data 部署效能調校全紀�
 date: 2026-06-30T09:00:00+08:00
 draft: false
 description: "finance_data 是一個由 ~42 個每日分析任務自動產生報告的 MkDocs 站台，膨脹到搜尋索引 195MB、首頁 1MB、單次部署 752MB、CI 跑 15 分鐘。這篇拆解我們用六個改動把它降到搜尋索引 0.86MB、首頁 53KB、部署 387MB、CI 6.5 分鐘的完整過程與設計取捨。"
-categories: ["engineering", "all"]
+categories: ["all", "engineering"]
 tags: ["MkDocs", "Performance", "CI/CD", "GitHub Pages", "GitHub Actions", "Static Site", "Optimization", "WebP", "Search Index"]
 authors: ["yen"]
 readTime: "16 min"

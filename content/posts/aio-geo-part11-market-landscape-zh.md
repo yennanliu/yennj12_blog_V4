@@ -4,8 +4,8 @@ date: 2026-08-07T09:00:00+08:00
 draft: false
 weight: 11
 description: "把 GEO 當生意做之前，先看清楚市場。本篇拆解需求端與供給端、服務型態與毛利結構，並誠實處理一件事：關於 GEO 的市場數據，絕大多數是賣 GEO 的人寫的。附三種可行的商業定位與風險清單。"
-categories: ["AI", "GEO", "Business", "Marketing", "all"]
-tags: ["GEO", "AIO", "商業模式", "市場分析", "顧問", "Agency", "創業", "繁體中文"]
+categories: ["all", "ai", "business"]
+tags: ["GEO", "AIO", "商業模式", "市場分析", "顧問", "Agency", "創業", "繁體中文", "Marketing"]
 authors: ["yen"]
 readTime: "20 min"
 ---

@@ -4,7 +4,7 @@ date: 2026-05-26T17:05:09+09:00
 draft: false
 weight: 4
 description: "深入探討生產環境 AI 系統的全方位監控策略、效能最佳化技術、故障診斷流程與成本管理實務"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Monitoring", "Optimization", "MLOps", "Performance", "Cost Management", "Production", "cheatsheet"]
 authors: ["yen"]
 readTime: "20 min"

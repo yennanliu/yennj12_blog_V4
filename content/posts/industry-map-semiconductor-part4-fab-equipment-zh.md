@@ -3,8 +3,8 @@ title: "industry-map - 半導體產業鏈 Part 4:晶圓設備（上游）"
 date: 2026-07-19T10:04:00+08:00
 draft: false
 description: "深拆半導體晶圓設備（WFE）這一層:ASML 的 EUV 獨占、AMAT/Lam/TEL 的沉積蝕刻、KLA 的製程控制。這是整條鏈最硬的咽喉——玩家、競爭格局、瓶頸與定價權、利潤池、上下游依賴、出口管制風險與投資點子。"
-categories: ["finance", "investing", "all"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "晶圓設備", "ASML", "美股", "InvestSkill"]
+categories: ["all", "finance"]
+tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "晶圓設備", "ASML", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "16 min"
 ---

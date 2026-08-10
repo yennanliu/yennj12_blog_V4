@@ -3,8 +3,8 @@ title: "Stock Analysis - PL (Planet Labs) - 基本面與產業競爭力深度解
 date: 2026-06-27T09:00:00+08:00
 draft: false
 description: "Planet Labs（NYSE: PL）三部曲完整選股分析（上）：從衛星對地觀測商業模式、損益表 / 資產負債表 / 現金流三表拆解、FY2026 首次調整後 EBITDA 轉正、Q1 FY2027 財報電話會議、到產業五力與競爭護城河，逐項拆解這家對地觀測龍頭的基本面。"
-categories: ["all", "finance", "investment"]
-tags: ["Stock Analysis", "PL", "Planet Labs", "Earth Observation", "Satellite", "Fundamental Analysis", "Defense", "Space", "InvestSkill", "繁體中文"]
+categories: ["all", "finance"]
+tags: ["Stock Analysis", "PL", "Planet Labs", "Earth Observation", "Satellite", "Fundamental Analysis", "Defense", "Space", "InvestSkill", "繁體中文", "investment"]
 authors: ["yen"]
 readTime: "22 min"
 ---

@@ -3,7 +3,7 @@ title: "AI System on Native AWS - Part 4 - 自主 AI Agent 工具呼叫系統"
 date: 2026-07-21T09:00:00+08:00
 draft: false
 description: "當 AI 不只是回答,而要主動規劃、呼叫工具、串起多步驟任務時,你需要的是 Agent。本篇用純 AWS 原生服務打造一套自主 AI Agent:Bedrock Agents 做規劃與工具編排、Lambda Action Groups 當可呼叫的工具、Knowledge Base 提供知識、Guardrails 做安全護欄,全部用 CDK(CloudFormation)描述,深入談 ReAct 迴圈、工具設計、權限邊界、幻覺與惡意輸入防護、以及人工確認關卡。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Bedrock Agents", "AI Agent", "Guardrails", "Lambda", "LLM", "Tool Use", "AI Engineering"]
 authors: ["yen"]
 readTime: "26 min"

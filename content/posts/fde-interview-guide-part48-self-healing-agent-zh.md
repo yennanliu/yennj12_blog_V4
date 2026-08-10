@@ -4,7 +4,7 @@ date: 2026-06-08T09:00:00+08:00
 draft: false
 weight: 48
 description: "深入解析如何在 LangGraph 中設計 Compiler-Validator Pattern，透過 Pydantic 強型別校驗、Critic Agent 反思重寫、Circuit Breaker 與 Human-in-the-loop，打造能自我修復的高可靠性供應鏈 Agent 架構。"
-categories: ["engineering", "all"]
+categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "LangGraph", "Agent", "Self-Healing", "LLM", "Reliability"]
 authors: ["yen"]
 readTime: "26 min"

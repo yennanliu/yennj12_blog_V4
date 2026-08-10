@@ -3,8 +3,8 @@ title: "Spring Boot 多環境配置完整指南：開發、測試、生產環境
 date: 2025-10-15T10:00:00Z
 draft: false
 authors: ["yen"]
-categories: ["all", "spring-boot", "backend", "devops"]
-tags: ["spring-boot", "configuration", "docker", "environment", "redis", "database", "production"]
+categories: ["all", "engineering", "infrastructure"]
+tags: ["spring-boot", "configuration", "docker", "environment", "redis", "database", "production", "backend", "devops"]
 summary: "深入探討 Spring Boot 多環境配置管理，包括資料庫切換、Redis 配置、以及 Docker 容器化部署的完整實作指南。"
 readTime: "18 min"
 ---

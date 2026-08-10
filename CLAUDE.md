@@ -31,7 +31,9 @@ This is a **Hugo static site** using a custom theme called `uber-style` (in `the
 
 - `content/posts/` — Blog articles (Markdown). Filenames ending in `-zh` are Traditional Chinese posts.
 - `content/authors/<slug>/_index.md` — Author profiles. The slug must match the `authors:` field in post front matter.
-- `content/about/`, `content/categories/`, `content/tags/` — Static and taxonomy pages.
+- `content/about/`, `content/tags/` — Static and taxonomy pages.
+- `content/categories/<slug>/_index.md` — Definition of each category (title, description, tagline,
+  `weight` for ordering). See "Category taxonomy" below.
 - `themes/uber-style/` — Custom theme. Layouts live in `layouts/`, styles in `assets/scss/`.
 - `themes/uber-style/assets/scss/_variables.scss` — Design tokens (colors, typography, spacing).
 - `static/` — Unprocessed assets (favicon, author avatars at `static/images/authors/`).
@@ -48,20 +50,50 @@ title: "Post Title"
 date: 2026-01-01T09:00:00+08:00
 draft: false
 description: "Used for SEO and post cards"
-categories: ["engineering"]   # maps to /categories/ URLs; include "all" for full listing
+categories: ["all", "engineering"]  # "all" + one or more canonical categories (see below)
 tags: ["tag1", "tag2"]
 authors: ["yen"]              # must match a slug under content/authors/
 readTime: "10 min"
 ---
 ```
 
+### Category taxonomy
+
+`categories` is a **closed set**. Only these values are allowed, and every post starts with `"all"`:
+
+| slug | title | scope |
+|---|---|---|
+| `all` | All Posts | Marker on every post; backs the full archive at `/categories/all/`. Never the only value. |
+| `ai` | AI & LLM | LLM apps, agents, RAG, evaluation, model deployment |
+| `engineering` | Engineering | Backend/frontend/full-stack, languages, data pipelines, debugging, performance |
+| `architecture` | Architecture | System design, integration, real-time, enterprise |
+| `infrastructure` | Cloud & Infrastructure | AWS, Kubernetes, containers, CI/CD, observability |
+| `finance` | Finance & Investing | 10-K deep dives, valuation, market analysis |
+| `business` | Business & Growth | Consulting, go-to-market, SEO/GEO, product strategy |
+| `tools` | Developer Tools | Claude Code, MCP servers, agent tooling |
+| `creative` | Creative & Media | Ambient streaming, music production, visual design |
+
+Pick 1–3 canonical categories; anything more specific (`kubernetes`, `LangGraph`, `SEO`, `10-K`, …)
+belongs in `tags`, which stays open-ended. Titles, descriptions, taglines and ordering live in
+`content/categories/<slug>/_index.md` — that is the single source of truth, and both the nav
+"Topics" dropdown and the footer topic list are generated from it, so **do not hand-edit category
+lists in `hugo.toml` or `footer.html`**.
+
+Adding a category means creating `content/categories/<slug>/_index.md` with a `title`, `weight`
+(ordering) and `description`. A term used by posts but lacking an `_index.md` has weight 0 and
+shows up under "Uncurated" on `/categories/` — that page is the drift alarm; it should stay empty.
+
 ### Theme layout flow
 
 `baseof.html` → `single.html` / `list.html` / `posts-list.html`. Partials in `themes/uber-style/layouts/partials/` are: `head.html`, `header.html`, `footer.html`, `scripts.html`, `share.html`.
 
+Taxonomy templates: `categories/terms.html` renders the curated `/categories/` index,
+`categories/list.html` a single category (newest-first), `tags/terms.html` the tag cloud and
+`tags/list.html` a single tag (weight-ordered, because tags back the numbered series).
+
 ### Deployment
 
-Pushing to `main` triggers `.github/workflows/hugo-latest.yml`, which builds with Hugo Extended 0.121.1 and deploys to GitHub Pages. The live site is at `https://yennj12.js.org/yennj12_blog_V4`. The `baseURL` in `hugo.toml` must match the deployment URL or relative links will break.
+Pushing to `main` triggers `.github/workflows/hugo-latest.yml`, which builds with Hugo Extended 0.124.1 and deploys to GitHub Pages. The live site is at `https://yennj12.js.org/yennj12_blog_V4`. The `baseURL` in `hugo.toml` must match the deployment URL or relative links will break.
 
 ### Content naming convention
 

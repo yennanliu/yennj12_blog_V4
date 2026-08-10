@@ -3,7 +3,7 @@ title: "Langfuse 入門 Part 4 — 監控與 Prompt 管理:把實驗成果變成
 date: 2026-06-30T14:30:00+08:00
 draft: false
 description: "系列最終篇。把前三篇的追蹤與評估收進日常營運:用監控儀表板盯緊成本、延遲、品質的趨勢與異常;用 Prompt 管理把 prompt 從程式碼裡抽出來做版本控制,讓你改 prompt 不必改程式、不必重新部署——並把整個 LLM 工程循環完整串起來。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["Langfuse", "LLM", "Monitoring", "Prompt Management", "Observability", "Analytics", "LLMOps", "AI Engineering"]
 authors: ["yen"]
 readTime: "15 min"

@@ -4,8 +4,8 @@ date: 2026-01-18T18:00:00+08:00
 draft: false
 weight: 3
 authors: ["yen"]
-categories: ["all", "business", "streaming", "technical"]
-tags: ["OBS", "串流", "技術設定", "自動化", "監控", "YouTube直播", "24/7"]
+categories: ["all", "business", "creative"]
+tags: ["OBS", "串流", "技術設定", "自動化", "監控", "YouTube直播", "24/7", "streaming"]
 summary: "系列第三篇：完整的 OBS Studio 設定指南、YouTube 串流配置、自動化腳本開發，以及 24/7 穩定運行的監控系統。從技術小白到專業串流者的完整路徑。"
 readTime: "32 min"
 ---

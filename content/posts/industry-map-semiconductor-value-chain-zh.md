@@ -3,8 +3,8 @@ title: "industry-map - 半導體晶片產業鏈全景（上游到下游）"
 date: 2026-07-19T10:00:00+08:00
 draft: false
 description: "用 industry-map 方法把半導體產業畫成一張有向圖:從矽晶圓、EDA、設備等上游,經晶圓代工、IC 設計、記憶體、封測的中游,一路到網通、系統與雲端下游。找出咽喉點、利潤池與價值遷移方向,並給出分層投資點子。"
-categories: ["finance", "investing", "all"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "TSMC", "NVDA", "ASML", "晶片", "美股", "InvestSkill"]
+categories: ["all", "finance"]
+tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "TSMC", "NVDA", "ASML", "晶片", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "28 min"
 ---

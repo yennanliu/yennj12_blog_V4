@@ -4,7 +4,7 @@ date: 2026-06-21T20:30:00+08:00
 draft: false
 weight: 24
 description: "深入解析 ViT 的 Patch Embedding 機制、多模態融合策略（Early/Late/Cross-Modal Fusion）、CLIP/ALIGN 對比學習與多模態生產系統設計"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AI", "Multimodal", "Vision Transformer", "ViT", "CLIP", "Fusion", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "23 min"

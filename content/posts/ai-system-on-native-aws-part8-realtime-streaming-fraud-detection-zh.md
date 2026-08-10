@@ -3,7 +3,7 @@ title: "AI System on Native AWS - Part 8 - 即時串流 ML 與詐欺偵測"
 date: 2026-07-25T09:00:00+08:00
 draft: false
 description: "詐欺偵測是即時 ML 的極限測試:要在幾十毫秒內對每筆交易做出放行或攔截的決定,特徵要用『此刻及過去幾秒』的行為即時算出,對手還會主動規避你的規則。本篇用純 AWS 原生服務打造即時串流風控:Kinesis 收交易流、Managed Service for Apache Flink 做串流特徵、SageMaker/Fraud Detector 毫秒級評分、Neptune 圖資料庫抓詐欺團夥、DynamoDB 當線上特徵與決策存放,全部用 CDK(CloudFormation)描述,深入談串流特徵一致性、時間窗、圖偵測與規則+ML 混合決策。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Kinesis", "Managed Flink", "Fraud Detection", "Neptune", "SageMaker", "Streaming", "AI Engineering"]
 authors: ["yen"]
 readTime: "27 min"

@@ -20,7 +20,8 @@
                     <span class="hero__stat-label">Articles</span>
                 </div>
                 <div class="hero__stat">
-                    <span class="hero__stat-number">{{ len .Site.Taxonomies.categories }}</span>
+                    {{/* Curated categories, excluding the `all` archive marker. */}}
+                    <span class="hero__stat-number">{{ len (where (where (site.GetPage "categories").Pages "Params.archive" "!=" true) "Weight" ">" 0) }}</span>
                     <span class="hero__stat-label">Categories</span>
                 </div>
                 <div class="hero__stat">
@@ -196,11 +197,15 @@
         </div>
 
         <div class="categories-grid">
-            {{ range .Site.Taxonomies.categories.ByCount }}
-            <a href="{{ .Page.RelPermalink }}" class="category-card">
+            {{/* Curated categories only, in the order defined by
+                 content/categories/<slug>/_index.md — the `all` archive marker and any
+                 stray uncurated term are deliberately left out. */}}
+            {{ range (where (where (site.GetPage "categories").Pages "Params.archive" "!=" true) "Weight" ">" 0).ByWeight }}
+            <a href="{{ .RelPermalink }}" class="category-card">
                 <div class="category-card__content">
-                    <h3 class="category-card__title">{{ .Page.Title }}</h3>
-                    <span class="category-card__count">{{ .Count }} {{ if eq .Count 1 }}article{{ else }}articles{{ end }}</span>
+                    <h3 class="category-card__title">{{ .Title }}</h3>
+                    {{ with .Params.tagline }}<p class="category-card__tagline">{{ . }}</p>{{ end }}
+                    <span class="category-card__count">{{ len .Pages }} {{ if eq (len .Pages) 1 }}article{{ else }}articles{{ end }}</span>
                 </div>
                 <div class="category-card__arrow">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -772,6 +777,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem; /* keeps the arrow clear of the tagline */
+}
+
+.category-card__content {
+    min-width: 0;
+}
+
+.category-card__arrow {
+    flex: none;
 }
 
 .category-card:hover {
@@ -785,7 +799,15 @@
     font-weight: 700;
     color: var(--color-black);
     margin: 0 0 0.25rem 0;
-    text-transform: capitalize;
+    /* Titles are authored in content/categories/*, so they already carry the
+       intended casing ("AI & LLM", not "Ai & Llm"). */
+}
+
+.category-card__tagline {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-600, #4b5563);
+    margin: 0 0 0.35rem 0;
+    line-height: 1.5;
 }
 
 .category-card__count {

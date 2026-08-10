@@ -4,7 +4,7 @@ date: 2026-08-07T14:00:00+08:00
 draft: false
 weight: 1
 description: "拆解 yc-software/qm — 一個為公司而非個人設計的開源 Agent 平台。從「每個人一個隔離工作區」的核心命題出發，看懂它的無頭核心 + 外掛式介面架構、76K 行 TypeScript 的目錄分工，以及一次 Slack 對話如何走完整條路徑。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["QM", "AI Agent", "Multi-tenant", "TypeScript", "Slack", "Agent Platform", "開源專案解析", "繁體中文"]
 authors: ["yen"]
 readTime: "25 min"

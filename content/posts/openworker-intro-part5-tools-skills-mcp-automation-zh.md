@@ -4,7 +4,7 @@ date: 2026-08-07T13:00:00+08:00
 draft: false
 weight: 5
 description: "拆解 OpenWorker 的五層能力擴充體系：ToolRegistry 與封閉式 Capability 目錄、Persona 作為資料而非程式碼、Skills 的漸進式揭露、explore 子代理的 context 隔離、MCP 客戶端的單任務生命週期，以及排程器的 catch-up 與 skip-on-overlap 策略。"
-categories: ["engineering", "ai", "all"]
+categories: ["all", "ai", "engineering"]
 tags: ["OpenWorker", "AI Agent", "MCP", "Agent Skills", "Tool Use", "Multi-Agent", "Python", "繁體中文"]
 authors: ["yen"]
 readTime: "28 min"
