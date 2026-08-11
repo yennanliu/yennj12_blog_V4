@@ -1527,6 +1527,7 @@ a.search__result {
     }
   }
 }
+
 // ---------------------------------------------------------------------------
 // Calendar archive (/calendar/, layouts/page/calendar.html)
 // ---------------------------------------------------------------------------
@@ -1669,6 +1670,7 @@ a.search__result {
     font-weight: $font-weight-bold;
     text-decoration: none;
     transition: all $transition-fast;
+
     // Lifts the count badge, which overhangs the cell, above the plain days
     // around it. Every cell is position:relative, so without this the later
     // sibling in DOM order would paint over the badge.

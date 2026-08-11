@@ -11,6 +11,14 @@
 {{ define "main" }}
 {{ $posts := where site.RegularPages "Type" "posts" }}
 {{ $years := $posts.GroupByDate "2006" }}
+
+{{/* Endpoints for the date range must come off an explicitly date-sorted copy.
+     The default page order is weight-first (206 of these posts carry a `weight`
+     for series ordering), so indexing $posts directly reports whichever series
+     part happens to sort first, not the newest post. ByDate is ascending. */}}
+{{ $byDate := $posts.ByDate }}
+{{ $oldest := index (first 1 $byDate) 0 }}
+{{ $newest := index (last 1 $byDate) 0 }}
 {{ $monthNames := slice "January" "February" "March" "April" "May" "June" "July" "August" "September" "October" "November" "December" }}
 {{ $weekdayNames := slice "Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" }}
 
@@ -27,7 +35,7 @@
         <p class="page-header__description">{{ .Description }}</p>
         <p class="page-header__meta">
             {{ len $posts }} posts ·
-            {{ (index (last 1 $posts) 0).Date.Format "Jan 2006" }} – {{ (index (first 1 $posts) 0).Date.Format "Jan 2006" }} ·
+            {{ $oldest.Date.Format "Jan 2006" }} – {{ $newest.Date.Format "Jan 2006" }} ·
             <a href="{{ "posts-list/" | relURL }}">Table view</a>
         </p>
     </div>
