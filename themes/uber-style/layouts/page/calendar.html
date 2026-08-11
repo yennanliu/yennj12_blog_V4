@@ -1,0 +1,154 @@
+{{/* Browse-by-date archive.
+
+     Rendered entirely at build time and needs no JavaScript: every day that has
+     posts is an anchor link into the date-grouped list further down the page,
+     and both the highlight on arrival and the "back to calendar" link are CSS
+     `:target`.
+
+     Months with no posts are skipped rather than drawn empty; with a 2024-12
+     start and a mostly-2026 archive, 21 of 36 month grids would otherwise be
+     blank. */}}
+{{ define "main" }}
+{{ $posts := where site.RegularPages "Type" "posts" }}
+{{ $years := $posts.GroupByDate "2006" }}
+
+{{/* Endpoints for the date range must come off an explicitly date-sorted copy.
+     The default page order is weight-first (206 of these posts carry a `weight`
+     for series ordering), so indexing $posts directly reports whichever series
+     part happens to sort first, not the newest post. ByDate is ascending. */}}
+{{ $byDate := $posts.ByDate }}
+{{ $oldest := index (first 1 $byDate) 0 }}
+{{ $newest := index (last 1 $byDate) 0 }}
+{{ $monthNames := slice "January" "February" "March" "April" "May" "June" "July" "August" "September" "October" "November" "December" }}
+{{ $weekdayNames := slice "Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" }}
+
+{{/* Busiest single day, for the summary strip. */}}
+{{ $peakKey := "" }}
+{{ $peakCount := 0 }}
+{{ range $posts.GroupByDate "2006-01-02" }}
+  {{ if gt (len .Pages) $peakCount }}{{ $peakCount = len .Pages }}{{ $peakKey = .Key }}{{ end }}
+{{ end }}
+
+<div class="page-header">
+    <div class="container">
+        <h1>{{ .Title }}</h1>
+        <p class="page-header__description">{{ .Description }}</p>
+        <p class="page-header__meta">
+            {{ len $posts }} posts ·
+            {{ $oldest.Date.Format "Jan 2006" }} – {{ $newest.Date.Format "Jan 2006" }} ·
+            <a href="{{ "posts-list/" | relURL }}">Table view</a>
+        </p>
+    </div>
+</div>
+
+<div class="posts__section">
+    <div class="posts__container">
+
+        <nav class="cal-years" aria-label="Jump to year">
+            {{ range $years }}
+            <a href="#year-{{ .Key }}" class="cal-years__link">
+                {{ .Key }}<span class="cal-years__count">{{ len .Pages }}</span>
+            </a>
+            {{ end }}
+            {{ with $peakKey }}
+            <span class="cal-years__peak">Busiest day: <a href="#{{ . }}">{{ (time .).Format "Jan 2, 2006" }}</a> ({{ $peakCount }} posts)</span>
+            {{ end }}
+        </nav>
+
+        {{/* ---------------- calendars ---------------- */}}
+        {{ range $years }}
+        {{ $year := .Key }}
+        <section class="cal-year" id="year-{{ $year }}">
+            <h2 class="cal-year__title">
+                {{ $year }}<span class="cal-year__count">{{ len .Pages }} posts</span>
+            </h2>
+
+            <div class="cal-grid">
+                {{ range .Pages.GroupByDate "2006-01" }}
+                {{ $monthKey := .Key }}
+                {{ $first := time (printf "%s-01" $monthKey) }}
+
+                {{/* Go's Weekday has no numeric format verb, so match the name. */}}
+                {{ $offset := 0 }}
+                {{ range $i, $name := $weekdayNames }}
+                    {{ if eq $name (printf "%s" $first.Weekday) }}{{ $offset = $i }}{{ end }}
+                {{ end }}
+                {{ $daysInMonth := ($first.AddDate 0 1 -1).Day }}
+
+                {{ $dayMap := dict }}
+                {{ range .Pages.GroupByDate "2006-01-02" }}
+                    {{ $dayMap = merge $dayMap (dict .Key .Pages) }}
+                {{ end }}
+
+                <div class="cal-month">
+                    <h3 class="cal-month__title">
+                        {{ index $monthNames (sub (int ($first.Format "1")) 1) }}
+                        <span class="cal-month__count">{{ len .Pages }} posts</span>
+                    </h3>
+
+                    {{/* Not marked up as an ARIA grid: the day cells are plain
+                         links whose labels already carry the full date, which
+                         reads better than a 7-column grid whose only real
+                         content is the link. */}}
+                    <div class="cal-month__grid" aria-label="{{ $first.Format "January 2006" }}">
+                        <div class="cal-month__row cal-month__row--head" aria-hidden="true">
+                            {{ range $weekdayNames }}
+                            <abbr class="cal-month__wd" title="{{ . }}">{{ substr . 0 1 }}</abbr>
+                            {{ end }}
+                        </div>
+                        <div class="cal-month__row">
+                            {{ if gt $offset 0 }}{{ range seq $offset }}<span class="cal-cell cal-cell--pad" aria-hidden="true"></span>{{ end }}{{ end }}
+                            {{ range $day := seq 1 $daysInMonth }}
+                            {{ $key := printf "%s-%02d" $monthKey $day }}
+                            {{ $dayPosts := index $dayMap $key }}
+                            {{ if $dayPosts }}
+                            <a href="#{{ $key }}" class="cal-cell cal-cell--has"
+                               data-count="{{ len $dayPosts }}"
+                               aria-label="{{ len $dayPosts }} post{{ if ne (len $dayPosts) 1 }}s{{ end }} on {{ (time $key).Format "January 2, 2006" }}">
+                                <span class="cal-cell__num">{{ $day }}</span>
+                                <span class="cal-cell__dot" aria-hidden="true">{{ len $dayPosts }}</span>
+                            </a>
+                            {{ else }}
+                            <span class="cal-cell">
+                                <span class="cal-cell__num">{{ $day }}</span>
+                            </span>
+                            {{ end }}
+                            {{ end }}
+                        </div>
+                    </div>
+                </div>
+                {{ end }}
+            </div>
+        </section>
+        {{ end }}
+
+        {{/* ---------------- date-grouped post list ---------------- */}}
+        <section class="cal-list">
+            <h2 class="cal-list__heading">Every post by date</h2>
+            {{ range $posts.GroupByDate "2006-01-02" }}
+            <div class="cal-day" id="{{ .Key }}">
+                <h3 class="cal-day__date">
+                    <time datetime="{{ .Key }}">{{ (time .Key).Format "Monday, January 2, 2006" }}</time>
+                    <span class="cal-day__count">{{ len .Pages }} post{{ if ne (len .Pages) 1 }}s{{ end }}</span>
+                </h3>
+                <ul class="cal-day__posts">
+                    {{ range .Pages }}
+                    {{/* complement, not `where`: `where` needs a key and returns
+                         nothing when given a plain string slice. */}}
+                    {{ $cats := complement (slice "all") (.Params.categories | default slice) }}
+                    <li class="cal-day__post">
+                        <a href="{{ .RelPermalink }}" class="cal-day__link">{{ .Title }}</a>
+                        <span class="cal-day__meta">
+                            {{ with .Params.readTime }}{{ . }}{{ end }}
+                            {{ range $cats }}<span class="tag-posts__cat">{{ . }}</span>{{ end }}
+                        </span>
+                    </li>
+                    {{ end }}
+                </ul>
+                <a href="#year-{{ (time .Key).Format "2006" }}" class="cal-day__back">↑ Back to {{ (time .Key).Format "2006" }} calendar</a>
+            </div>
+            {{ end }}
+        </section>
+    </div>
+</div>
+{{ end }}
