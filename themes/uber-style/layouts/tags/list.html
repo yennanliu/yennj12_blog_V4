@@ -12,7 +12,9 @@
         {{ if .Pages }}
         <div class="tag-posts">
             {{ range $paginator.Pages }}
-            {{ $cats := where (.Params.categories | default slice) "ne" "all" }}
+            {{/* `where` needs a key to filter on, so it silently returns nothing
+                 for a plain string slice — complement actually drops "all". */}}
+            {{ $cats := complement (slice "all") (.Params.categories | default slice) }}
             <a href="{{ .RelPermalink }}" class="tag-posts__row">
                 <div class="tag-posts__part">
                     {{ if .Weight }}
