@@ -70,7 +70,10 @@
 <style>
 .share-component {
     position: fixed;
-    left: 2rem;
+    /* Sit just outside the reading column rather than glued to the viewport
+       edge, so the rail follows the column as --content-width grows. 5.5rem is
+       the rail's own width plus a gap; the max() keeps a 1rem minimum. */
+    left: max(1rem, calc((100vw - var(--content-width, 800px)) / 2 - 5.5rem));
     top: 50%;
     transform: translateY(-50%);
     z-index: 100;

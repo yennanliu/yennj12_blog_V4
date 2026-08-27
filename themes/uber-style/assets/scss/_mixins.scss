@@ -1,8 +1,17 @@
 // Container mixin
 @mixin container {
-  max-width: $container-max-width;
+  max-width: var(--container-width, #{$container-max-width});
   margin: 0 auto;
   padding: 0 $container-padding;
+}
+
+// Reading column: a centred block that widens with the viewport.
+// See the --content-width definition in _base.scss.
+@mixin content-column {
+  width: 100%;
+  max-width: var(--content-width, 860px);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 // Responsive breakpoints

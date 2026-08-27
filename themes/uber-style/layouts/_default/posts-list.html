@@ -636,6 +636,14 @@
     max-width: 400px;
 }
 
+/* The table follows --container-width, so give the title column the extra
+   room instead of leaving it on the right of the row. */
+@media (min-width: 1440px) {
+    .post-title-content {
+        max-width: 560px;
+    }
+}
+
 .post-link {
     color: var(--color-black);
     text-decoration: none;

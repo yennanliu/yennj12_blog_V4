@@ -91,6 +91,22 @@ Taxonomy templates: `categories/terms.html` renders the curated `/categories/` i
 `categories/list.html` a single category (newest-first), `tags/terms.html` the tag cloud and
 `tags/list.html` a single tag (weight-ordered, because tags back the numbered series).
 
+### Layout widths
+
+Every horizontal measure comes from two CSS custom properties defined at `:root` in
+`themes/uber-style/assets/scss/_base.scss`:
+
+- `--container-width` — outer shell (nav, footer, card grids, list pages), used by the
+  `container` mixin and by the inline `.container` rule in `index.html`.
+- `--content-width` — the reading column (article header/body, tag lists, pagination,
+  tags index), used by the `content-column` mixin.
+
+Both widen at 768px / 1025px / 1440px / 1800px so wide screens do not end up mostly
+whitespace; the `100vw - N` term inside each `clamp()` reserves the gutter that the fixed
+share rail in `share.html` occupies (the rail positions itself off `--content-width` too).
+Do not hard-code new `max-width: 800px` / `1200px` values in layouts — use the properties
+or the mixins so desktop and mobile stay in sync.
+
 ### Deployment
 
 Pushing to `main` triggers `.github/workflows/hugo-latest.yml`, which builds with Hugo Extended 0.124.1 and deploys to GitHub Pages. The live site is at `https://yennj12.js.org/yennj12_blog_V4`. The `baseURL` in `hugo.toml` must match the deployment URL or relative links will break.

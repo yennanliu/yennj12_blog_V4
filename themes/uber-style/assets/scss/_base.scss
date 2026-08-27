@@ -3,6 +3,54 @@
   box-sizing: border-box;
 }
 
+// ---------------------------------------------------------------------------
+// Responsive layout widths
+// ---------------------------------------------------------------------------
+// Two custom properties drive every horizontal measure on the site, so the
+// theme SCSS and the per-layout inline <style> blocks stay in agreement:
+//
+//   --container-width  outer shell (nav, footer, card grids, list pages)
+//   --content-width    the reading column of an article / list body
+//
+// They grow with the viewport instead of being pinned at 800px/1200px, which
+// is what left the wide-screen page with more whitespace than text. The
+// `100vw - N` term inside each clamp() reserves the gutter the fixed share
+// rail lives in, so the column can never grow under it; the lower bound keeps
+// pre-existing narrow-desktop behaviour unchanged.
+:root {
+  --container-width: #{$container-max-width};
+  --content-width: 860px;
+}
+
+// Tablet / small laptop: share rail is still inline (see share.html), so the
+// only constraint is readability.
+@media (min-width: #{$breakpoint-md}) {
+  :root {
+    --content-width: 900px;
+  }
+}
+
+// Share rail becomes a fixed sidebar at 1025px.
+@media (min-width: #{$breakpoint-lg + 1px}) {
+  :root {
+    --content-width: clamp(800px, 100vw - 260px, 1040px);
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --container-width: 1360px;
+    --content-width: clamp(800px, 100vw - 280px, 1180px);
+  }
+}
+
+@media (min-width: 1800px) {
+  :root {
+    --container-width: 1560px;
+    --content-width: clamp(800px, 100vw - 340px, 1320px);
+  }
+}
+
 // The UA rule for [hidden] is `display: none` at element specificity, so any
 // class that sets `display` beats it and the element stays on screen. Anything
 // toggled via the `hidden` attribute needs this to actually hide.
