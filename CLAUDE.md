@@ -91,6 +91,26 @@ Taxonomy templates: `categories/terms.html` renders the curated `/categories/` i
 `categories/list.html` a single category (newest-first), `tags/terms.html` the tag cloud and
 `tags/list.html` a single tag (weight-ordered, because tags back the numbered series).
 
+### Layout widths
+
+The shell width and the reading-column width come from two CSS custom properties defined
+at `:root` in `themes/uber-style/assets/scss/_base.scss`:
+
+- `--container-width` — outer shell (nav, footer, card grids, list pages), used by the
+  `container` mixin and by the inline `.container` rule in `index.html`.
+  Steps up at 1440px and 1800px.
+- `--content-width` — the reading column (article header/body, tag lists, pagination,
+  tags index), used by the `content-column` mixin. Steps up at 768px, 1025px, 1440px
+  and 1800px.
+
+Widening them is what keeps wide screens from being mostly whitespace; the `100vw - N`
+term inside each `clamp()` reserves the gutter that the fixed share rail in `share.html`
+occupies (the rail positions itself off `--content-width` too). Do not hard-code new
+`max-width: 800px` / `1200px` values for these two roles — use the properties or the
+mixins so desktop and mobile stay in sync. A few standalone blocks legitimately keep
+their own measure and are outside this scheme (e.g. `.hero__content`, and the narrow
+600–620px lead/description paragraphs).
+
 ### Deployment
 
 Pushing to `main` triggers `.github/workflows/hugo-latest.yml`, which builds with Hugo Extended 0.124.1 and deploys to GitHub Pages. The live site is at `https://yennj12.js.org/yennj12_blog_V4`. The `baseURL` in `hugo.toml` must match the deployment URL or relative links will break.

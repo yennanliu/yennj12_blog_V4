@@ -224,8 +224,10 @@
 
 <style>
 /* Article styling improvements */
+/* Width comes from --content-width (theme _base.scss) so the reading column
+   widens with the viewport instead of sitting inside 800px of whitespace. */
 .article {
-    max-width: 800px;
+    max-width: var(--content-width, 800px);
     margin: 0 auto;
     padding: 2rem 1rem;
 }

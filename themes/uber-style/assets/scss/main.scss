@@ -73,8 +73,8 @@
   }
   
   &__content {
-    max-width: 800px;
-    
+    @include content-column;
+
     > * + * {
       margin-top: $spacing-lg;
     }
@@ -482,7 +482,7 @@
 .article {
   &__header {
     @include container;
-    max-width: 800px;
+    max-width: var(--content-width);
     padding-top: $spacing-4xl;
     padding-bottom: $spacing-3xl;
     text-align: center;
@@ -503,7 +503,7 @@
   
   &__content {
     @include container;
-    max-width: 800px;
+    max-width: var(--content-width);
     padding-bottom: $spacing-5xl;
     
     // Improve content readability
@@ -980,8 +980,7 @@ mark {
 
 // Tag page: series list layout
 .tag-posts {
-  max-width: 860px;
-  margin: 0 auto;
+  @include content-column;
 
   &__row {
     display: flex;
@@ -1075,8 +1074,8 @@ mark {
 
 // Pagination
 .pagination {
-  max-width: 860px;
-  margin: $spacing-2xl auto 0;
+  @include content-column;
+  margin-top: $spacing-2xl;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1104,8 +1103,7 @@ mark {
 
 // Tags index page
 .tags-index {
-  max-width: 860px;
-  margin: 0 auto;
+  @include content-column;
   display: flex;
   flex-wrap: wrap;
   gap: $spacing-sm;
