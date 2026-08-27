@@ -6,12 +6,10 @@
 // ---------------------------------------------------------------------------
 // Responsive layout widths
 // ---------------------------------------------------------------------------
-// Two custom properties drive every horizontal measure on the site, so the
+// Two custom properties carry the shell and reading-column widths, so the
 // theme SCSS and the per-layout inline <style> blocks stay in agreement:
-//
 //   --container-width  outer shell (nav, footer, card grids, list pages)
 //   --content-width    the reading column of an article / list body
-//
 // They grow with the viewport instead of being pinned at 800px/1200px, which
 // is what left the wide-screen page with more whitespace than text. The
 // `100vw - N` term inside each clamp() reserves the gutter the fixed share

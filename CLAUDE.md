@@ -93,19 +93,23 @@ Taxonomy templates: `categories/terms.html` renders the curated `/categories/` i
 
 ### Layout widths
 
-Every horizontal measure comes from two CSS custom properties defined at `:root` in
-`themes/uber-style/assets/scss/_base.scss`:
+The shell width and the reading-column width come from two CSS custom properties defined
+at `:root` in `themes/uber-style/assets/scss/_base.scss`:
 
 - `--container-width` — outer shell (nav, footer, card grids, list pages), used by the
   `container` mixin and by the inline `.container` rule in `index.html`.
+  Steps up at 1440px and 1800px.
 - `--content-width` — the reading column (article header/body, tag lists, pagination,
-  tags index), used by the `content-column` mixin.
+  tags index), used by the `content-column` mixin. Steps up at 768px, 1025px, 1440px
+  and 1800px.
 
-Both widen at 768px / 1025px / 1440px / 1800px so wide screens do not end up mostly
-whitespace; the `100vw - N` term inside each `clamp()` reserves the gutter that the fixed
-share rail in `share.html` occupies (the rail positions itself off `--content-width` too).
-Do not hard-code new `max-width: 800px` / `1200px` values in layouts — use the properties
-or the mixins so desktop and mobile stay in sync.
+Widening them is what keeps wide screens from being mostly whitespace; the `100vw - N`
+term inside each `clamp()` reserves the gutter that the fixed share rail in `share.html`
+occupies (the rail positions itself off `--content-width` too). Do not hard-code new
+`max-width: 800px` / `1200px` values for these two roles — use the properties or the
+mixins so desktop and mobile stay in sync. A few standalone blocks legitimately keep
+their own measure and are outside this scheme (e.g. `.hero__content`, and the narrow
+600–620px lead/description paragraphs).
 
 ### Deployment
 
