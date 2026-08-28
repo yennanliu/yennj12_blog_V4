@@ -83,6 +83,46 @@ Adding a category means creating `content/categories/<slug>/_index.md` with a `t
 (ordering) and `description`. A term used by posts but lacking an `_index.md` has weight 0 and
 shows up under "Uncurated" on `/categories/` — that page is the drift alarm; it should stay empty.
 
+### Site metadata and social preview cards
+
+All `<head>` metadata is built in one place — `themes/uber-style/layouts/partials/head.html`.
+Title, description and image are each resolved once into a template variable and then reused by
+the `<title>`, the plain meta tags, Open Graph, the Twitter card and the JSON-LD block, so a page
+cannot advertise a different title to each crawler. Add new metadata by extending that resolution
+block, not by hand-writing a second copy of a value further down the file.
+
+Resolution order:
+
+- **Title** — `title` front matter, rendered as `<title>Post | Site</title>` and bare `Post` for
+  `og:title` (the site name is already in `og:site_name`).
+- **Description** — `description` front matter → `summary` front matter → `params.description` in
+  `hugo.toml`. Most existing posts only set `summary`, which is why the fallback matters.
+- **Image** — `image` front matter → `params.images` in `hugo.toml`
+  (`static/images/og-default.png`). `og:image:width`/`height` are only emitted for the site
+  default, since a post's own card has unknown dimensions. `imageAlt` overrides the alt text.
+
+A post opts into its own preview card with front matter:
+
+```yaml
+image: "images/posts/my-post-card.png"   # path under static/, or a full URL
+imageAlt: "What the card shows"
+```
+
+The default card is generated, not hand-drawn — regenerate it after any branding change so it
+stays in sync with `_variables.scss`:
+
+```bash
+python3 scripts/generate_og_image.py          # writes static/images/og-default.png
+python3 scripts/generate_og_image.py --help   # --headline/--accent/--subtitle/--footer/--out
+```
+
+It needs Pillow and resolves fonts from the macOS system directory with a Linux fallback. Cards
+are 1200×630 (the size every network crops from). Note that social networks cache aggressively by
+URL — keep the filename stable and re-scrape via the platform's debugger rather than renaming.
+
+Anything in `static/` must be referenced through `relURL`/`absURL`, never as a bare `/path`: the
+site is served from the `/yennj12_blog_V4/` sub-path, so a root-absolute href 404s in production.
+
 ### Theme layout flow
 
 `baseof.html` → `single.html` / `list.html` / `posts-list.html`. Partials in `themes/uber-style/layouts/partials/` are: `head.html`, `header.html`, `footer.html`, `scripts.html`, `share.html`.

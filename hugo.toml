@@ -8,7 +8,16 @@ paginate = 25
 [params]
   description = 'Engineering insights, architecture deep dives, and technical solutions'
   author = 'YennJ12 Engineering Team'
-  
+  twitter = '@yennj12'
+  # Open Graph wants the underscored form (en_US), not the BCP-47 languageCode.
+  ogLocale = 'en_US'
+
+  # Default social preview card, used as og:image / twitter:image for every page
+  # that does not set its own `image:` in front matter. Regenerate the file with
+  # `python3 scripts/generate_og_image.py` after a branding change.
+  images = ['images/og-default.png']
+  imageAlt = 'YennJ12 Engineering Blog — Engineering Excellence, Redefined'
+
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
