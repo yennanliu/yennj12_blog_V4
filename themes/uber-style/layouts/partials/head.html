@@ -2,61 +2,90 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-<title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
+{{/*
+  Shared metadata values, resolved once and reused by the <title>, the plain
+  meta tags, Open Graph, Twitter cards and the JSON-LD block below so that a
+  page can never advertise three different titles to three different crawlers.
+*/}}
+{{ $title := cond .IsHome .Site.Title .Title }}
+{{ $pageTitle := cond .IsHome .Site.Title (printf "%s | %s" .Title .Site.Title) }}
+{{ $description := "" }}
+{{ with .Description }}
+  {{ $description = . }}
+{{ else }}
+  {{ with .Summary }}
+    {{ $description = . | plainify | truncate 200 }}
+  {{ else }}
+    {{ $description = .Site.Params.description }}
+  {{ end }}
+{{ end }}
+{{ $description = $description | plainify | chomp }}
 
-<meta name="description" content="{{ if .Description }}{{ .Description }}{{ else if .Summary }}{{ .Summary | plainify | truncate 160 }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+{{/*
+  Social preview image. A post opts into its own card with `image:` in front
+  matter (a path under static/, or a full URL); everything else falls back to
+  the site card rendered by scripts/generate_og_image.py. Width/height are only
+  claimed for that default, because we know its dimensions and not a post's.
+*/}}
+{{ $defaultImages := .Site.Params.images | default (slice "images/og-default.png") }}
+{{ $defaultImage := index $defaultImages 0 }}
+{{ $image := .Params.image | default $defaultImage }}
+{{ $imageURL := $image | absURL }}
+{{ $isDefaultImage := eq $image $defaultImage }}
+{{ $imageAlt := .Params.imageAlt | default (cond $isDefaultImage .Site.Params.imageAlt $title) }}
+
+<title>{{ $pageTitle }}</title>
+
+<meta name="description" content="{{ $description }}">
 <meta name="author" content="{{ .Site.Params.author }}">
 <meta name="keywords" content="{{ if .Params.tags }}{{ delimit .Params.tags ", " }}{{ end }}{{ if .Params.categories }}{{ if .Params.tags }}, {{ end }}{{ delimit .Params.categories ", " }}{{ end }}">
-
-<!-- Article metadata -->
-{{ if .IsPage }}
-<meta name="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
-<meta name="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
-{{ with .Params.tags }}
-{{ range . }}
-<meta name="article:tag" content="{{ . }}">
-{{ end }}
-{{ end }}
-{{ with .Params.categories }}
-{{ range . }}
-<meta name="article:section" content="{{ . }}">
-{{ end }}
-{{ end }}
-{{ if .Params.readTime }}
-<meta name="article:reading_time" content="{{ .Params.readTime }}">
-{{ end }}
-{{ end }}
+<meta name="theme-color" content="#0a0a0c">
 
 <!-- SEO and robots -->
 <meta name="robots" content="index,follow">
 <meta name="googlebot" content="index,follow">
 
 <!-- Open Graph -->
-<meta property="og:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}">
-<meta property="og:description" content="{{ if .Description }}{{ .Description }}{{ else if .Summary }}{{ .Summary | plainify | truncate 160 }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:description" content="{{ $description }}">
 <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
 <meta property="og:url" content="{{ .Permalink }}">
 <meta property="og:site_name" content="{{ .Site.Title }}">
+<meta property="og:locale" content="{{ .Site.Params.ogLocale | default "en_US" }}">
+<meta property="og:image" content="{{ $imageURL }}">
+<meta property="og:image:secure_url" content="{{ $imageURL }}">
+<meta property="og:image:alt" content="{{ $imageAlt }}">
+{{ if $isDefaultImage }}
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+{{ end }}
+
+<!-- Article metadata (Open Graph `article` namespace) -->
 {{ if .IsPage }}
-<meta property="og:article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
-<meta property="og:article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
-{{ with .Params.authors }}
-{{ range . }}
-<meta property="og:article:author" content="{{ . }}">
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+<meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+{{ range .Params.authors }}
+<meta property="article:author" content="{{ . }}">
+{{ end }}
+{{ range .Params.categories }}
+<meta property="article:section" content="{{ . }}">
+{{ end }}
+{{ range .Params.tags }}
+<meta property="article:tag" content="{{ . }}">
+{{ end }}
+{{ with .Params.readTime }}
+<meta name="twitter:label1" content="Reading time">
+<meta name="twitter:data1" content="{{ . }}">
 {{ end }}
 {{ end }}
-{{ with .Params.tags }}
-{{ range . }}
-<meta property="og:article:tag" content="{{ . }}">
-{{ end }}
-{{ end }}
-{{ end }}
-<meta property="og:locale" content="{{ .Site.Language.Lang }}">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}">
-<meta name="twitter:description" content="{{ if .Description }}{{ .Description }}{{ else if .Summary }}{{ .Summary | plainify | truncate 160 }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+<meta name="twitter:title" content="{{ $title }}">
+<meta name="twitter:description" content="{{ $description }}">
+<meta name="twitter:image" content="{{ $imageURL }}">
+<meta name="twitter:image:alt" content="{{ $imageAlt }}">
 <meta name="twitter:site" content="{{ .Site.Params.twitter | default "@yennj12" }}">
 <meta name="twitter:creator" content="{{ .Site.Params.twitter | default "@yennj12" }}">
 
@@ -69,7 +98,7 @@
 {{ end }}
 
 <!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/x-icon" href="{{ "favicon.ico" | relURL }}">
 
 <!-- Styles -->
 {{ $scss := resources.Get "scss/main.scss" }}
@@ -77,29 +106,46 @@
 <link rel="stylesheet" href="{{ $css.RelPermalink }}">
 
 <!-- Dark Theme Code Block CSS -->
-<link rel="stylesheet" href="/css/code-dark-theme.css">
+<link rel="stylesheet" href="{{ "css/code-dark-theme.css" | relURL }}">
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<!-- JSON-LD Structured Data -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "{{ if .IsPage }}Article{{ else }}WebSite{{ end }}",
-  "name": "{{ .Site.Title }}",
-  "url": "{{ .Site.BaseURL }}",
-  "description": "{{ .Site.Params.description }}"
-  {{ if .IsPage }}
-  ,"headline": "{{ .Title }}",
-  "datePublished": "{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}",
-  "dateModified": "{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}",
-  "author": {
-    "@type": "Organization",
-    "name": "{{ .Site.Params.author }}"
-  }
+{{/*
+  JSON-LD. Every string goes through `jsonify` rather than being pasted between
+  literal quotes — post titles contain quotes, colons and CJK punctuation that
+  would otherwise produce invalid JSON and cost the page its rich result.
+*/}}
+{{ $publisher := dict
+  "@type" "Organization"
+  "name" .Site.Params.author
+  "url" .Site.BaseURL
+}}
+{{ $schema := dict
+  "@context" "https://schema.org"
+  "@type" (cond .IsPage "BlogPosting" "WebSite")
+  "url" .Permalink
+  "name" $title
+  "description" $description
+  "image" $imageURL
+  "publisher" $publisher
+}}
+{{ if .IsPage }}
+  {{ $authors := slice }}
+  {{ range .Params.authors }}
+    {{ $authors = $authors | append (dict "@type" "Person" "name" .) }}
   {{ end }}
-}
+  {{ $schema = merge $schema (dict
+    "headline" .Title
+    "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")
+    "dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z07:00")
+    "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink)
+    "author" (cond (gt (len $authors) 0) $authors (slice (dict "@type" "Organization" "name" .Site.Params.author)))
+    "keywords" (delimit (.Params.tags | default slice) ", ")
+  ) }}
+{{ end }}
+<script type="application/ld+json">
+{{ $schema | jsonify (dict "indent" "  ") | safeJS }}
 </script>
