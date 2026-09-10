@@ -1,0 +1,49 @@
+{{- /*
+  Link render hook: resolve root-absolute internal links against the site's
+  baseURL sub-path.
+
+  The site is served from https://yennj12.js.org/yennj12_blog_V4/, so a bare
+  `[text](/posts/slug/)` written in Markdown renders as
+  https://yennj12.js.org/posts/slug/ and 404s. Everything below turns any
+  root-absolute path into the real RelPermalink of the page it names, which
+  carries the sub-path in production and drops it under `hugo server`.
+
+  External links, protocol-relative links, mailto:, bare fragments and
+  already-relative links are passed through untouched.
+*/ -}}
+
+{{- $dest := .Destination -}}
+{{- $href := $dest -}}
+{{- $u := urls.Parse $dest -}}
+
+{{- if and $dest (eq $u.Scheme "") (eq $u.Host "") (hasPrefix $dest "/") -}}
+
+  {{- /* Path of the site's baseURL, e.g. "/yennj12_blog_V4" (empty on localhost). */ -}}
+  {{- $base := strings.TrimSuffix "/" (urls.Parse site.BaseURL).Path -}}
+  {{- $path := $u.Path -}}
+
+  {{- /* Tolerate a hand-written sub-path prefix so it is never doubled up. */ -}}
+  {{- if and $base (or (eq $path $base) (hasPrefix $path (printf "%s/" $base))) -}}
+    {{- $path = strings.TrimPrefix $base $path -}}
+    {{- if not $path -}}{{- $path = "/" -}}{{- end -}}
+  {{- end -}}
+
+  {{- /* Prefer the page's own permalink; fall back to the posts section for
+         bare slugs like `[text](/some-post-slug)`. */ -}}
+  {{- $page := site.GetPage $path -}}
+  {{- if not $page -}}
+    {{- $page = site.GetPage (path.Join "/posts" $path) -}}
+  {{- end -}}
+
+  {{- if $page -}}
+    {{- $href = $page.RelPermalink -}}
+  {{- else -}}
+    {{- $href = relURL (strings.TrimPrefix "/" $path) -}}
+  {{- end -}}
+
+  {{- with $u.RawQuery -}}{{- $href = printf "%s?%s" $href . -}}{{- end -}}
+  {{- with $u.Fragment -}}{{- $href = printf "%s#%s" $href . -}}{{- end -}}
+
+{{- end -}}
+
+<a href="{{ $href }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>

@@ -1160,7 +1160,7 @@ DaVinci Resolve（完全免費！）
 
 ## 延伸閱讀
 
-- [AI 深海/太空環境音串流實戰（一）：市場分析、科學原理與 AI 工具選擇](/ai-ocean-space-ambient-streaming-part1-foundation-zh)
-- [24/7 YouTube 串流賺錢策略完整分析](/youtube-24-7-streaming-money-strategy-zh)
+- [AI 深海/太空環境音串流實戰（一）：市場分析、科學原理與 AI 工具選擇](/posts/ai-ocean-space-ambient-streaming-part1-foundation-zh/)
+- [24/7 YouTube 串流賺錢策略完整分析](/posts/youtube-24-7-streaming-money-strategy-zh/)
 
 **標籤**: #Midjourney #Runway #視覺設計 #8K #AI生成 #深海 #太空 #動態視覺 #YouTube

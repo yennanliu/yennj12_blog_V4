@@ -1707,16 +1707,16 @@ Month 7-12: 規模化
 
 ## 🔄 系列文章完整導航
 
-1. **[市場分析、科學原理與 AI 工具選擇](/ai-ocean-space-ambient-streaming-part1-foundation-zh)**
-2. **[視覺製作：8K 深海/太空場景生成](/ai-ocean-space-ambient-streaming-part2-visual-zh)**
-3. **[技術實作：OBS 設定、串流上線與自動化](/ai-ocean-space-ambient-streaming-part3-technical-zh)**
+1. **[市場分析、科學原理與 AI 工具選擇](/posts/ai-ocean-space-ambient-streaming-part1-foundation-zh/)**
+2. **[視覺製作：8K 深海/太空場景生成](/posts/ai-ocean-space-ambient-streaming-part2-visual-zh/)**
+3. **[技術實作：OBS 設定、串流上線與自動化](/posts/ai-ocean-space-ambient-streaming-part3-technical-zh/)**
 4. **[當前完結篇] 內容策略：Shorts 導流、社群經營與變現** ✅
 
 ---
 
 ## 延伸閱讀
 
-- [24/7 YouTube 串流賺錢策略完整分析](/youtube-24-7-streaming-money-strategy-zh)
-- [ADHD 友善專注音樂頻道實作指南](/adhd-focus-music-streaming-implementation-guide-zh)
+- [24/7 YouTube 串流賺錢策略完整分析](/posts/youtube-24-7-streaming-money-strategy-zh/)
+- [ADHD 友善專注音樂頻道實作指南](/posts/adhd-focus-music-streaming-implementation-guide-zh/)
 
 **標籤**: #YouTube #Shorts #社群經營 #變現策略 #內容行銷 #被動收入 #創業指南

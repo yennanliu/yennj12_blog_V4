@@ -13,7 +13,7 @@
             <div class="author-card">
                 <a href="{{ .RelPermalink }}" class="author-card__link">
                     {{ with .Params.avatar }}
-                    <img src="{{ . }}" alt="{{ $.Title }}" class="author-card__avatar">
+                    <img src="{{ strings.TrimPrefix "/" . | relURL }}" alt="{{ $.Title }}" class="author-card__avatar">
                     {{ end }}
                     
                     <div class="author-card__info">

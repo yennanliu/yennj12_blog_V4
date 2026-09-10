@@ -931,7 +931,7 @@ Total: 537 minutes (8 hours 57 minutes)
 
 ## 延伸閱讀
 
-- [Synthwave 讀書會串流實戰（一）：市場分析與目標受眾](/synthwave-study-streaming-part1-market-culture-zh)
-- [AI 深海/太空環境音串流實戰（二）：音頻生成指南](/ai-ocean-space-ambient-streaming-part1-foundation-zh)
+- [Synthwave 讀書會串流實戰（一）：市場分析與目標受眾](/posts/synthwave-study-streaming-part1-market-culture-zh/)
+- [AI 深海/太空環境音串流實戰（二）：音頻生成指南](/posts/ai-ocean-space-ambient-streaming-part1-foundation-zh/)
 
 **標籤**: #Synthwave #AI音樂 #Suno #合成器 #音樂製作 #BPM #程式設計師音樂

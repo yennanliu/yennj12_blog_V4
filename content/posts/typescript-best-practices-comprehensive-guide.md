@@ -1101,8 +1101,8 @@ Remember: **TypeScript is not just about adding types—it's about designing bet
 ---
 
 **Related Posts:**
-- [Essential Design Patterns in Java: A Comprehensive Guide](/essential-design-patterns-java-comprehensive-guide)
-- [Java Concurrency Deep Dive: Runnable and Callable Patterns](/java-concurrency-deep-dive-runnable-callable-patterns-part2)
-- [Building Advanced MCP Servers with Claude Code - Part 2](/building-advanced-mcp-servers-claude-code-part2)
+- [Essential Design Patterns in Java: A Comprehensive Guide](/posts/essential-design-patterns-java-comprehensive-guide/)
+- [Java Concurrency Deep Dive: Runnable and Callable Patterns](/posts/java-concurrency-deep-dive-runnable-callable-patterns-part2/)
+- [Building Advanced MCP Servers with Claude Code - Part 2](/posts/building-advanced-mcp-servers-claude-code-part2/)
 
 **Tags:** #TypeScript #JavaScript #TypeSafety #DesignPatterns #BestPractices #SoftwareEngineering #WebDevelopment #FrontendDevelopment

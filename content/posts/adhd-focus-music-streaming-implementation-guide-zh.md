@@ -2482,8 +2482,8 @@ Day 7: 正式啟動！
 
 ## 延伸閱讀
 
-- [24/7 YouTube 串流賺錢策略完整分析](/youtube-24-7-streaming-money-strategy-zh)
-- [使用 AWS CDK 建構 24/7 YouTube 串流服務](/building-24-7-youtube-streaming-service-aws-cdk-ecs-fargate)
-- [AI 音樂生成基礎架構](/ai-music-generation-aws-cdk-infrastructure)
+- [24/7 YouTube 串流賺錢策略完整分析](/posts/youtube-24-7-streaming-money-strategy-zh/)
+- [使用 AWS CDK 建構 24/7 YouTube 串流服務](/posts/building-24-7-youtube-streaming-service-aws-cdk-ecs-fargate/)
+- [AI 音樂生成基礎架構](/posts/ai-music-generation-aws-cdk-infrastructure/)
 
 **標籤**: #ADHD #專注音樂 #YouTube直播 #實作指南 #雙耳節拍 #褐噪音 #創業教學 #被動收入 #內容創作

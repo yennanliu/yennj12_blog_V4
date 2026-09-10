@@ -104,7 +104,7 @@ CSP 自研 + 其他 █░░░░░░░░░░░░░░░░░░░
 
 **AMD 的角色**是「可信的第二供應商」:它的存在讓 CSP 有議價籌碼、有備援,ROCm 的開放路線也吸引想擺脫 CUDA 稅的客戶。**CSP 自研 ASIC**(Amazon Trainium、Alphabet TPU、Meta MTIA、Microsoft Maia)則多半委由 Broadcom / Marvell 協同設計、台積電代工,專為自家模型優化,在**推論**場景已具成本優勢(詳見 Part 13)。
 
-> 延伸:本站有 [NVIDIA (NVDA) 2026 10-K 深度解析](/yennj12_blog_V4/posts/nvda-2026-10k-deep-dive-zh/) 與 [AMD 2025 10-K 深度解析](/yennj12_blog_V4/posts/amd-2025-10k-deep-dive-zh/),可搭配本層結構圖,先看格局、再拆個股。
+> 延伸:本站有 [NVIDIA (NVDA) 2026 10-K 深度解析](/posts/nvda-2026-10k-deep-dive-zh/) 與 [AMD 2025 10-K 深度解析](/posts/amd-2025-10k-deep-dive-zh/),可搭配本層結構圖,先看格局、再拆個股。
 
 ---
 
@@ -297,35 +297,35 @@ CUDA 軟體鎖定        →   開放軟體堆疊追上            ROCm / Triton
 
 ### 📚 系列導覽:半導體產業鏈全景(上游 → 下游)
 
-> 總覽地圖:[industry-map - 半導體晶片產業鏈全景](/yennj12_blog_V4/posts/industry-map-semiconductor-value-chain-zh/)
+> 總覽地圖:[industry-map - 半導體晶片產業鏈全景](/posts/industry-map-semiconductor-value-chain-zh/)
 
 **上游 Upstream**
-- Part 1:[矽晶圓 / 基板](/yennj12_blog_V4/posts/industry-map-semiconductor-part1-silicon-wafer-zh/)
-- Part 2:[特用化學 / 光阻](/yennj12_blog_V4/posts/industry-map-semiconductor-part2-chemicals-photoresist-zh/)
-- Part 3:[EDA + IP](/yennj12_blog_V4/posts/industry-map-semiconductor-part3-eda-ip-zh/)
-- Part 4:[晶圓設備](/yennj12_blog_V4/posts/industry-map-semiconductor-part4-fab-equipment-zh/)
+- Part 1:[矽晶圓 / 基板](/posts/industry-map-semiconductor-part1-silicon-wafer-zh/)
+- Part 2:[特用化學 / 光阻](/posts/industry-map-semiconductor-part2-chemicals-photoresist-zh/)
+- Part 3:[EDA + IP](/posts/industry-map-semiconductor-part3-eda-ip-zh/)
+- Part 4:[晶圓設備](/posts/industry-map-semiconductor-part4-fab-equipment-zh/)
 
 **中游 Midstream**
-- Part 5:[晶圓代工](/yennj12_blog_V4/posts/industry-map-semiconductor-part5-foundry-zh/)
-- **Part 6:[IC 設計 — GPU/加速器](/yennj12_blog_V4/posts/industry-map-semiconductor-part6-gpu-design-zh/) ← 本篇**
-- Part 7:[IC 設計 — 其他](/yennj12_blog_V4/posts/industry-map-semiconductor-part7-ic-design-zh/)
-- Part 8:[記憶體](/yennj12_blog_V4/posts/industry-map-semiconductor-part8-memory-zh/)
-- Part 9:[IDM / 類比](/yennj12_blog_V4/posts/industry-map-semiconductor-part9-idm-analog-zh/)
-- Part 10:[封裝測試 OSAT](/yennj12_blog_V4/posts/industry-map-semiconductor-part10-osat-zh/)
+- Part 5:[晶圓代工](/posts/industry-map-semiconductor-part5-foundry-zh/)
+- **Part 6:[IC 設計 — GPU/加速器](/posts/industry-map-semiconductor-part6-gpu-design-zh/) ← 本篇**
+- Part 7:[IC 設計 — 其他](/posts/industry-map-semiconductor-part7-ic-design-zh/)
+- Part 8:[記憶體](/posts/industry-map-semiconductor-part8-memory-zh/)
+- Part 9:[IDM / 類比](/posts/industry-map-semiconductor-part9-idm-analog-zh/)
+- Part 10:[封裝測試 OSAT](/posts/industry-map-semiconductor-part10-osat-zh/)
 
 **下游 Downstream**
-- Part 11:[網通 / 互連](/yennj12_blog_V4/posts/industry-map-semiconductor-part11-networking-zh/)
-- Part 12:[系統 / 伺服器 OEM](/yennj12_blog_V4/posts/industry-map-semiconductor-part12-system-oem-zh/)
-- Part 13:[雲端 CSP](/yennj12_blog_V4/posts/industry-map-semiconductor-part13-cloud-csp-zh/)
-- Part 14:[終端需求](/yennj12_blog_V4/posts/industry-map-semiconductor-part14-end-demand-zh/)
+- Part 11:[網通 / 互連](/posts/industry-map-semiconductor-part11-networking-zh/)
+- Part 12:[系統 / 伺服器 OEM](/posts/industry-map-semiconductor-part12-system-oem-zh/)
+- Part 13:[雲端 CSP](/posts/industry-map-semiconductor-part13-cloud-csp-zh/)
+- Part 14:[終端需求](/posts/industry-map-semiconductor-part14-end-demand-zh/)
 
 ---
 
 ## 參考來源與方法(References)
 
 - 分析方法:InvestSkill `industry-map` skill(<https://github.com/yennanliu/InvestSkill>)——把產業畫成上游到下游的有向圖,定位咽喉點、利潤池與價值遷移。
-- 總覽地圖:[半導體晶片產業鏈全景](https://yennj12.js.org/yennj12_blog_V4/posts/industry-map-semiconductor-value-chain-zh/)。
-- 延伸個股拆解:[NVDA 2026 10-K 深度解析](/yennj12_blog_V4/posts/nvda-2026-10k-deep-dive-zh/)、[AMD 2025 10-K 深度解析](/yennj12_blog_V4/posts/amd-2025-10k-deep-dive-zh/)。
+- 總覽地圖:[半導體晶片產業鏈全景](/posts/industry-map-semiconductor-value-chain-zh/)。
+- 延伸個股拆解:[NVDA 2026 10-K 深度解析](/posts/nvda-2026-10k-deep-dive-zh/)、[AMD 2025 10-K 深度解析](/posts/amd-2025-10k-deep-dive-zh/)。
 - 本文市佔率 / 毛利率為公開產業常識的**概估值**(截至 2026 年初),用於說明各層相對地位,非即時報價。
 
 ---

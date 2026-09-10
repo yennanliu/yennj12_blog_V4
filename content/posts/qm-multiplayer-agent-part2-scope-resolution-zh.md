@@ -18,7 +18,7 @@ series: ["qm-deep-dive"]
 
 ---
 
-本篇是 [QM 深度解析系列](/yennj12_blog_V4/posts/qm-multiplayer-agent-part1-architecture-zh/)
+本篇是 [QM 深度解析系列](/posts/qm-multiplayer-agent-part1-architecture-zh/)
 的第二篇，主角是 `src/resolution/`（1,593 行）、`src/acl/`（354 行）
 與 `src/sessions/`（1,936 行）。
 
@@ -668,11 +668,11 @@ Tape 是後來才加的機制，舊 session 沒有完整的 tape。
 
 ## 十、系列導航
 
-- [Part 1：多人協作 Agent 平台的架構全景](/yennj12_blog_V4/posts/qm-multiplayer-agent-part1-architecture-zh/)
+- [Part 1：多人協作 Agent 平台的架構全景](/posts/qm-multiplayer-agent-part1-architecture-zh/)
 - **Part 2（本篇）：Scope 與 Resolution — 一次對話如何解析出身分、權限與工作區**
-- [Part 3：Harness 抽象 — 一套核心驅動四種 Agent 引擎](/yennj12_blog_V4/posts/qm-multiplayer-agent-part3-harness-abstraction-zh/)
-- [Part 4：安全模型 — 三種 Posture、命令政策與誠實的威脅模型](/yennj12_blog_V4/posts/qm-multiplayer-agent-part4-security-model-zh/)
-- [Part 5：Sandbox、Skills、Cron 與部署 — 讓 Agent 擁有一台持久的電腦](/yennj12_blog_V4/posts/qm-multiplayer-agent-part5-sandbox-skills-cron-zh/)
+- [Part 3：Harness 抽象 — 一套核心驅動四種 Agent 引擎](/posts/qm-multiplayer-agent-part3-harness-abstraction-zh/)
+- [Part 4：安全模型 — 三種 Posture、命令政策與誠實的威脅模型](/posts/qm-multiplayer-agent-part4-security-model-zh/)
+- [Part 5：Sandbox、Skills、Cron 與部署 — 讓 Agent 擁有一台持久的電腦](/posts/qm-multiplayer-agent-part5-sandbox-skills-cron-zh/)
 
 ---
 

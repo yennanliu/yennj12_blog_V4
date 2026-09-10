@@ -946,7 +946,7 @@ docs/refactoring-plan.md"
 ---
 
 **延伸閱讀：**
-- [Claude Code 最佳實踐指南](/claude-code-best-practices-zh)
-- [Claude Code 開發工作流程完整指南](/claude-code-development-workflow-zh)
+- [Claude Code 最佳實踐指南](/posts/claude-code-best-practices-zh/)
+- [Claude Code 開發工作流程完整指南](/posts/claude-code-development-workflow-zh/)
 
 **標籤**: #claude-code #context-window #對話管理 #效能優化 #AI開發

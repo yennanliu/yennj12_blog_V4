@@ -541,10 +541,10 @@ org 是**下限**（floor），下層 scope 只能選更嚴的。命令政策同
 | Part 4 | 安全模型 | 三種 posture、命令政策、內容篩檢、portal-only 動作、威脅模型 |
 | Part 5 | 持久化與擴充 | 三種沙箱後端、Skills 簽章與授權、Cron、Memory 策略、部署層 |
 
-- [Part 2：Scope 與 Resolution — 一次對話如何解析出身分、權限與工作區](/yennj12_blog_V4/posts/qm-multiplayer-agent-part2-scope-resolution-zh/)
-- [Part 3：Harness 抽象 — 一套核心驅動四種 Agent 引擎](/yennj12_blog_V4/posts/qm-multiplayer-agent-part3-harness-abstraction-zh/)
-- [Part 4：安全模型 — 三種 Posture、命令政策與誠實的威脅模型](/yennj12_blog_V4/posts/qm-multiplayer-agent-part4-security-model-zh/)
-- [Part 5：Sandbox、Skills、Cron 與部署 — 讓 Agent 擁有一台持久的電腦](/yennj12_blog_V4/posts/qm-multiplayer-agent-part5-sandbox-skills-cron-zh/)
+- [Part 2：Scope 與 Resolution — 一次對話如何解析出身分、權限與工作區](/posts/qm-multiplayer-agent-part2-scope-resolution-zh/)
+- [Part 3：Harness 抽象 — 一套核心驅動四種 Agent 引擎](/posts/qm-multiplayer-agent-part3-harness-abstraction-zh/)
+- [Part 4：安全模型 — 三種 Posture、命令政策與誠實的威脅模型](/posts/qm-multiplayer-agent-part4-security-model-zh/)
+- [Part 5：Sandbox、Skills、Cron 與部署 — 讓 Agent 擁有一台持久的電腦](/posts/qm-multiplayer-agent-part5-sandbox-skills-cron-zh/)
 
 ---
 

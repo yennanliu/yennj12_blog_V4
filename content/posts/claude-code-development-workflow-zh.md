@@ -2041,7 +2041,7 @@ app.use(compression({
 ---
 
 **延伸閱讀：**
-- [Claude Code 最佳實踐指南](/claude-code-best-practices-zh)
-- [深入理解 Claude Code Context Window](/claude-code-context-window-deep-dive-zh)
+- [Claude Code 最佳實踐指南](/posts/claude-code-best-practices-zh/)
+- [深入理解 Claude Code Context Window](/posts/claude-code-context-window-deep-dive-zh/)
 
 **標籤**: #claude-code #工作流程 #開發流程 #軟體開發 #最佳實踐 #敏捷開發

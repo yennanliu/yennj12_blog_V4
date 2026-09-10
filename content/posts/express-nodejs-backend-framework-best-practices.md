@@ -1684,8 +1684,8 @@ Express.js provides a solid foundation for building Node.js backend applications
 ---
 
 **Related Posts:**
-- [TypeScript Best Practices: A Comprehensive Guide to Type-Safe Development](/typescript-best-practices-comprehensive-guide)
-- [Building Production Kubernetes Platform with AWS EKS and CDK](/building-production-kubernetes-platform-aws-eks-cdk)
-- [Microservices Architecture Patterns](/microservices-architecture-patterns)
+- [TypeScript Best Practices: A Comprehensive Guide to Type-Safe Development](/posts/typescript-best-practices-comprehensive-guide/)
+- [Building Production Kubernetes Platform with AWS EKS and CDK](/posts/building-production-kubernetes-platform-aws-eks-cdk/)
+- [Microservices Architecture Patterns](/posts/microservices-architecture-patterns/)
 
 **Tags:** #Express #Node.js #Backend #RestAPI #JavaScript #TypeScript #WebDevelopment #BestPractices #Security #Performance

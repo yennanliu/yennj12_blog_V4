@@ -1517,8 +1517,8 @@ The complete implementation is available in the [CDK Playground repository](http
 ---
 
 **Related Posts:**
-- [Building Centralized Monitoring System with AWS CloudWatch and Grafana](/centralized-monitoring-system-aws-cloudwatch-grafana-cdk)
-- [Building Centralized Logging with OpenSearch and AWS CDK](/building-centralized-logging-opensearch-aws-cdk)
-- [Building Production Kubernetes Platform with AWS EKS and CDK](/building-production-kubernetes-platform-aws-eks-cdk)
+- [Building Centralized Monitoring System with AWS CloudWatch and Grafana](/posts/centralized-monitoring-system-aws-cloudwatch-grafana-cdk/)
+- [Building Centralized Logging with OpenSearch and AWS CDK](/posts/building-centralized-logging-opensearch-aws-cdk/)
+- [Building Production Kubernetes Platform with AWS EKS and CDK](/posts/building-production-kubernetes-platform-aws-eks-cdk/)
 
 **Tags:** #prometheus #grafana #aws #cdk #monitoring #observability #kubernetes #eks #ecs #fargate #metrics #alerting #federation

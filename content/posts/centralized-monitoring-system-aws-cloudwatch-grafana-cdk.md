@@ -1940,9 +1940,9 @@ The key to successful monitoring is:
 ---
 
 **Related Posts:**
-- [Centralized User Access Control with AWS Cognito and CDK](/centralized-user-access-control-aws-cognito-cdk)
-- [Deploying Hugging Face Models to AWS with CDK and SageMaker](/deploying-huggingface-models-aws-cdk-sagemaker)
-- [Building Production Kubernetes Platform with AWS EKS and CDK](/building-production-kubernetes-platform-aws-eks-cdk)
-- [Express.js Best Practices: Building Production-Ready Node.js Backend Applications](/express-nodejs-backend-framework-best-practices)
+- [Centralized User Access Control with AWS Cognito and CDK](/posts/centralized-user-access-control-aws-cognito-cdk/)
+- [Deploying Hugging Face Models to AWS with CDK and SageMaker](/posts/deploying-huggingface-models-aws-cdk-sagemaker/)
+- [Building Production Kubernetes Platform with AWS EKS and CDK](/posts/building-production-kubernetes-platform-aws-eks-cdk/)
+- [Express.js Best Practices: Building Production-Ready Node.js Backend Applications](/posts/express-nodejs-backend-framework-best-practices/)
 
 **Tags:** #AWS #CloudWatch #Grafana #Monitoring #Observability #CDK #TypeScript #Logging #Metrics #Alerting #DevOps #SRE #Infrastructure

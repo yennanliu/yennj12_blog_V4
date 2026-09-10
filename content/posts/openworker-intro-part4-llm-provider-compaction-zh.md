@@ -19,7 +19,7 @@ series: ["openworker-intro"]
 
 ---
 
-本篇是 [OpenWorker 深度解析系列](/yennj12_blog_V4/posts/openworker-intro-part1-architecture-overview-zh/)
+本篇是 [OpenWorker 深度解析系列](/posts/openworker-intro-part1-architecture-overview-zh/)
 的第四篇，處理 `coworker/providers/`（4,507 行）與 `coworker/compaction.py`（561 行）。
 
 ---
@@ -787,11 +787,11 @@ Gemini thought signature、OpenAI encrypted reasoning 這些 replay 鏈，
 
 ## 八、系列導航
 
-- [Part 1：架構全景 — 一個能交付成果的桌面 AI 同事](/yennj12_blog_V4/posts/openworker-intro-part1-architecture-overview-zh/)
-- [Part 2：TurnEngine — Agent 迴圈的完整解剖](/yennj12_blog_V4/posts/openworker-intro-part2-turnengine-deep-dive-zh/)
-- [Part 3：Harness — 權限模型、Inbox 與人機協作](/yennj12_blog_V4/posts/openworker-intro-part3-harness-permissions-inbox-zh/)
+- [Part 1：架構全景 — 一個能交付成果的桌面 AI 同事](/posts/openworker-intro-part1-architecture-overview-zh/)
+- [Part 2：TurnEngine — Agent 迴圈的完整解剖](/posts/openworker-intro-part2-turnengine-deep-dive-zh/)
+- [Part 3：Harness — 權限模型、Inbox 與人機協作](/posts/openworker-intro-part3-harness-permissions-inbox-zh/)
 - **Part 4（本篇）：LLM 層 — Provider 抽象、能力降級與 Context 自動壓縮**
-- [Part 5：能力擴充 — Tools、Skills、Personas、MCP 與排程](/yennj12_blog_V4/posts/openworker-intro-part5-tools-skills-mcp-automation-zh/)
+- [Part 5：能力擴充 — Tools、Skills、Personas、MCP 與排程](/posts/openworker-intro-part5-tools-skills-mcp-automation-zh/)
 
 ---
 
