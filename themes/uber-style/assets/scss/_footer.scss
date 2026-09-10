@@ -219,10 +219,10 @@
 // Back-to-top button
 // ---------------------------------------------------------------------------
 // Fixed bottom-right, revealed by .to-top--visible once the page has scrolled
-// (see initBackToTop). It is a real anchor to #main, so it still works as a
-// jump link if the script never runs — hence the visibility handling rather
-// than display:none, which would make it unreachable for keyboard users the
-// moment focus reached it.
+// (see initBackToTop). It is a real anchor to #main, and the hidden state is
+// scoped to html.js so that without JS — where nothing would ever add
+// --visible — the jump link is simply there. visibility rather than
+// display:none, so it is never a focusable invisible target.
 .to-top {
   position: fixed;
   right: $spacing-lg;
@@ -236,21 +236,27 @@
   background: var(--ink-900);
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: 0 10px 30px rgba(5, 5, 10, 0.35);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(12px) scale(0.9);
   transition: opacity $transition-normal, transform 0.3s var(--ease-spring),
               visibility 0s linear $duration-normal, box-shadow $transition-normal;
+
+  // Hidden only where a script is around to bring it back.
+  html.js & {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px) scale(0.9);
+  }
 
   &:hover {
     color: #ffffff;
     text-decoration: none;
     background: var(--gradient-accent);
     border-color: transparent;
-    box-shadow: 0 14px 36px rgba(11, 107, 255, 0.45);
+    box-shadow: var(--glow-accent-strong);
   }
 
-  &--visible {
+  // Matches the specificity of the html.js rule above, so initBackToTop can
+  // win it back.
+  html.js &--visible {
     opacity: 1;
     visibility: visible;
     transform: none;

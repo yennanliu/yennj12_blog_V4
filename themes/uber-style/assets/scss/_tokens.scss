@@ -45,17 +45,39 @@
   --accent: #0b6bff;
   --accent-cyan: #22d3ee;
   --accent-violet: #7c5cff;
-  --accent-soft: rgba(11, 107, 255, 0.12);
+
+  // Accent at fixed alphas. Every tint, hairline, ring and glow on the site
+  // composes out of these four rather than writing its own rgba(), so
+  // changing --accent above is a single-line change in practice.
+  --accent-soft: rgba(11, 107, 255, 0.12);      // spotlight / pill fills
+  --accent-faint: rgba(11, 107, 255, 0.06);     // section washes
+  --accent-line: rgba(11, 107, 255, 0.14);      // hairlines on tinted chips
+  --accent-edge: rgba(11, 107, 255, 0.3);       // borders on hover
+  --accent-select: rgba(11, 107, 255, 0.18);    // text selection
+  --accent-pulse: rgba(11, 107, 255, 0.55);     // the series banner's live dot
+  --accent-bloom: rgba(11, 107, 255, 0.16);     // soft glow behind a page title
 
   --gradient-accent: linear-gradient(120deg, var(--accent-cyan) 0%, var(--accent) 48%, var(--accent-violet) 100%);
   --gradient-accent-soft: linear-gradient(120deg, rgba(34, 211, 238, 0.16) 0%, rgba(11, 107, 255, 0.14) 50%, rgba(124, 92, 255, 0.16) 100%);
   --gradient-ink: linear-gradient(160deg, var(--ink-900) 0%, var(--ink-850) 55%, var(--ink-800) 100%);
+
+  // The three blooms .fx-panel::after paints. Held as tokens so a panel
+  // variant (see .fx-panel--mono) can recolour the light by redefining these
+  // rather than repeating the gradient stack.
+  --aurora-1: radial-gradient(38% 42% at 22% 30%, rgba(34, 211, 238, 0.22) 0%, transparent 70%);
+  --aurora-2: radial-gradient(34% 40% at 78% 22%, rgba(124, 92, 255, 0.26) 0%, transparent 70%);
+  --aurora-3: radial-gradient(46% 46% at 55% 88%, rgba(11, 107, 255, 0.20) 0%, transparent 72%);
 
   // --- Surfaces -----------------------------------------------------------
   --surface: var(--color-white);
   --surface-muted: var(--color-gray-50);
   --hairline: var(--color-gray-200);
   --hairline-strong: var(--color-gray-300);
+  // Accent wash that fades out to the right, for pulled-out prose
+  // (blockquotes) — a flat tint would read as a grey box.
+  --surface-quote: linear-gradient(90deg, rgba(11, 107, 255, 0.06), rgba(11, 107, 255, 0));
+  // Same idea across a full-width strip (the series banner).
+  --surface-strip: linear-gradient(90deg, rgba(11, 107, 255, 0.07), rgba(11, 107, 255, 0));
 
   // Frosted panel: used by the sticky header and the glass stat cards. The
   // blur radius is a token because Safari gets expensive past ~20px.
@@ -72,6 +94,14 @@
   --shadow-lift: 0 4px 8px rgba(15, 15, 20, 0.08), 0 30px 60px rgba(15, 15, 20, 0.16);
   --glow-accent: 0 0 0 1px rgba(11, 107, 255, 0.35), 0 10px 40px rgba(11, 107, 255, 0.25);
   --ring-accent: 0 0 0 3px rgba(11, 107, 255, 0.28);
+  --glow-accent-strong: 0 14px 36px rgba(11, 107, 255, 0.45);
+  --glow-accent-soft: 0 8px 20px rgba(11, 107, 255, 0.3);
+  // Dark block on a light page: a contact shadow plus a wide ambient one, so
+  // a code listing sits on the article instead of punching a hole in it.
+  --shadow-code: 0 1px 2px rgba(0, 0, 0, 0.1), 0 12px 30px rgba(13, 17, 23, 0.16);
+  // Bloom under the reading-progress bar, which is 3px tall and needs the
+  // glow to register at all.
+  --glow-progress: 0 0 12px rgba(11, 107, 255, 0.55);
 
   // --- Radii --------------------------------------------------------------
   --border-radius-sm: 0.5rem;

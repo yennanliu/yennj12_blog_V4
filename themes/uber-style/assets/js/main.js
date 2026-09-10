@@ -1,26 +1,42 @@
 // Main JavaScript for Uber Style theme
 document.addEventListener('DOMContentLoaded', function() {
-    // Primary navigation (drawer + dropdowns)
-    initNav();
-    
-    // Search functionality  
-    initSearch();
-    
-    // Smooth scrolling for anchor links
-    initSmoothScrolling();
-    
-    // Reading progress indicator
-    initReadingProgress();
+    // Every initialiser runs inside safeInit: they are independent, and one
+    // throwing must not skip the rest. That matters most for initReveal,
+    // which is what un-hides the scroll-reveal content.
+    safeInit(initReveal);
 
-    // Presentation layer (scroll state, reveals, spotlights, counters). All of
-    // it is decoration: each initialiser is a no-op when its markup hook is
-    // absent, and every one of them bails out under prefers-reduced-motion.
-    initHeaderScroll();
-    initReveal();
-    initSpotlight();
-    initCountUp();
-    initBackToTop();
+    // Primary navigation (drawer + dropdowns)
+    safeInit(initNav);
+
+    // Search functionality
+    safeInit(initSearch);
+
+    // Smooth scrolling for anchor links
+    safeInit(initSmoothScrolling);
+
+    // Reading progress indicator
+    safeInit(initReadingProgress);
+
+    // Presentation layer (scroll state, spotlights, counters, back to top).
+    // All of it is decoration: each initialiser is a no-op when its markup
+    // hook is absent, and every one bails out under prefers-reduced-motion.
+    safeInit(initHeaderScroll);
+    safeInit(initSpotlight);
+    safeInit(initCountUp);
+    safeInit(initBackToTop);
 });
+
+// Runs one initialiser, keeping its failure to itself. Reported rather than
+// swallowed, so a broken feature still shows up in the console.
+function safeInit(fn) {
+    try {
+        fn();
+    } catch (err) {
+        if (window.console && console.error) {
+            console.error('init failed: ' + fn.name, err);
+        }
+    }
+}
 
 // True when the visitor has asked the OS for less animation. Checked at call
 // time rather than cached, so a mid-session change to the setting is honoured.
@@ -375,7 +391,10 @@ function initSmoothScrolling() {
             if (targetElement) {
                 e.preventDefault();
                 targetElement.scrollIntoView({
-                    behavior: 'smooth',
+                    // CSS `scroll-behavior: auto !important` under
+                    // prefers-reduced-motion does not reach a scroll that
+                    // asks for smoothing explicitly, so check it here too.
+                    behavior: prefersReducedMotion() ? 'auto' : 'smooth',
                     block: 'start'
                 });
             }
@@ -492,18 +511,33 @@ function initBackToTop() {
 
 // ---------------------------------------------------------------------------
 // Scroll reveal.
-// Elements marked [data-reveal] start faded/offset in CSS and get .is-revealed
-// as they enter the viewport; --reveal-i (set by the layout, or derived from
-// DOM order here) staggers a grid so it arrives as a wave rather than a block.
+// Elements marked [data-reveal] start faded/offset and get .is-revealed as
+// they enter the viewport; --reveal-i (set by the layout, or derived from DOM
+// order here) staggers a grid so it arrives as a wave rather than a block.
 // Each element is unobserved once revealed — nothing re-animates on scroll-up.
+//
+// Contract with the CSS: elements are only hidden while <html> carries
+// `reveal-armed`, which head.html sets before first paint and takes back on a
+// 1.5s timer unless this function has added `reveal-ready`. So the class is
+// set at the *end* of each path here, once the reveal is genuinely handled —
+// if anything above throws, the failsafe un-hides the page instead.
 // ---------------------------------------------------------------------------
 function initReveal() {
+    const root = document.documentElement;
     const targets = document.querySelectorAll('[data-reveal]');
-    if (!targets.length) return;
+
+    // Nothing to reveal: disarm the hidden state and let the head failsafe go.
+    if (!targets.length) {
+        root.classList.remove('reveal-armed');
+        root.classList.add('reveal-ready');
+        return;
+    }
 
     // No observer, or the visitor wants no motion: show everything as-is.
     if (!('IntersectionObserver' in window) || prefersReducedMotion()) {
         targets.forEach(function (el) { el.classList.add('is-revealed'); });
+        root.classList.remove('reveal-armed');
+        root.classList.add('reveal-ready');
         return;
     }
 
@@ -543,6 +577,11 @@ function initReveal() {
 
     revealInView();
     window.addEventListener('load', revealInView);
+
+    // Setup succeeded: from here the observer owns the hidden state, so the
+    // head failsafe can stand down. Set last on purpose — if anything above
+    // had thrown, the failsafe would still un-hide the page.
+    root.classList.add('reveal-ready');
 }
 
 // ---------------------------------------------------------------------------

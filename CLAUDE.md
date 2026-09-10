@@ -146,7 +146,8 @@ token inside a layout `<style>` block** — add or change it in `_tokens.scss`.
 
 | class | effect |
 |---|---|
-| `fx-panel` | Dark "ink" band: gradient surface, masked grid texture, two drifting auroras. Used by the home hero, the CTA band and every `.page-header`. |
+| `fx-panel` | Dark "ink" band: gradient surface, masked grid texture, three drifting blooms held in `--aurora-1/2/3`. Used by the CTA band and every `.page-header`. |
+| `fx-panel--mono` | The same panel with the hue removed — redefines `--aurora-*` as white "stage lighting" and brightens the grid. The home hero uses it. |
 | `fx-hairline` | Hairline that fades out at both ends. |
 | `u-gradient-text` | Accent gradient clipped to the glyphs (with a solid-colour fallback). |
 | `u-shine` | Diagonal highlight that sweeps across on hover. |
@@ -158,20 +159,40 @@ Two mechanisms are shared between the CSS and `assets/js/main.js`:
 
 - **Scroll reveal** — mark an element `data-reveal` and, optionally, set `--reveal-i` inline to
   order the stagger. `initReveal()` reveals whatever is already on screen immediately and hands
-  the rest to an IntersectionObserver. Never rely on the observer alone for above-the-fold
-  content: `html:not(.js)` and the in-viewport pass exist because a hidden hero is the failure
-  mode.
+  the rest to an IntersectionObserver.
+
+  Hiding content from CSS is the dangerous half, so the hidden state is **opt-in and
+  self-cancelling**. `[data-reveal]` is only hidden while `html.reveal-armed` is set;
+  `head.html` arms it before first paint and starts a 1.5s timer that disarms it again unless
+  `initReveal()` has set `html.reveal-ready`. So a `main.js` that 404s, throws, or never runs
+  costs an animation rather than the content. Both reveal states are nested under
+  `html.reveal-armed` in `_effects.scss` so they carry equal specificity — a top-level
+  `[data-reveal].is-revealed` (0,2,0) loses to `html.reveal-armed [data-reveal]` (0,2,1) and
+  nothing ever appears. Every initialiser also runs through `safeInit()`, so one failure cannot
+  skip the reveal.
+
+  The same reasoning applies to anything else JS hides: scope it to a class the script itself
+  is responsible for (`.to-top` uses `html.js`), never to a bare selector.
 - **Counters** — `data-count-to="N"` on an element whose text is already `N`. `initCountUp()`
   animates up to it, so no-JS and reduced-motion readers see the real number.
 
 Everything decorative is behind `prefers-reduced-motion`: the media query at the bottom of
 `_effects.scss` and a `prefersReducedMotion()` check in each JS initialiser. When adding an
-effect, keep both halves honoured.
+effect, keep both halves honoured — and note that the CSS half cannot reach a scroll that asks
+for smoothing in script, so `scrollIntoView`/`scrollTo` calls need the JS check as well.
 
 The dark bands (`.top-banner`, `.header`, `.fx-panel`, `.footer`) all sit on the `--ink-*` ramp,
 and the accent is only ever cyan → blue → violet (`--gradient-accent`). Anything decorative that
 moves must be clipped by `overflow: hidden` on its own band — an unclipped sweep widens the
 document and gives every page a horizontal scrollbar.
+
+**No accent literals outside `_tokens.scss`.** Every tint, hairline, ring, glow and bloom that
+uses the accent composes from a named token (`--accent-soft`, `--accent-faint`, `--accent-line`,
+`--accent-edge`, `--accent-select`, `--accent-pulse`, `--accent-bloom`, `--glow-accent*`,
+`--glow-progress`, `--surface-quote`, `--aurora-*`). Writing a fresh `rgba(11, 107, 255, …)` in
+a component means changing `--accent` no longer changes that component — add the role to
+`_tokens.scss` instead. `grep -rn "rgba(11, 107, 255" themes/ | grep -v _tokens.scss` should
+stay empty.
 
 ### Theme layout flow
 

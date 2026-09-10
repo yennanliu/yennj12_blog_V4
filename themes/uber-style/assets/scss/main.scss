@@ -306,7 +306,7 @@
     font-weight: $font-weight-bold;
     color: $color-text-light;
     background: var(--gradient-accent-soft);
-    border: 1px solid rgba(11, 107, 255, 0.14);
+    border: 1px solid var(--accent-line);
     border-radius: var(--radius-pill);
     padding: 1px 10px;
     flex: none;
@@ -377,7 +377,7 @@
 .related-posts {
   padding: $spacing-4xl 0;
   background:
-    radial-gradient(60% 60% at 50% 0%, rgba(11, 107, 255, 0.05), transparent 70%),
+    radial-gradient(60% 60% at 50% 0%, var(--accent-faint), transparent 70%),
     $color-bg-light;
   border-top: 1px solid $color-border-light;
   
@@ -744,7 +744,7 @@
     background: var(--gradient-accent);
     transform: scaleX(0);
     transform-origin: 0 50%;
-    box-shadow: 0 0 12px rgba(11, 107, 255, 0.55);
+    box-shadow: var(--glow-progress);
 
     // The leading edge gets a brighter cap so the bar has a visible "head".
     &::after {
@@ -1286,7 +1286,7 @@ mark {
 // Series context banner (single post)
 .series-banner {
   background: var(--gradient-accent-soft), $color-bg-light;
-  border-bottom: 1px solid rgba(11, 107, 255, 0.12);
+  border-bottom: 1px solid var(--accent-soft);
   padding: $spacing-sm 0;
 
   &__link {
@@ -1317,7 +1317,7 @@ mark {
       margin-right: 6px;
       border-radius: 50%;
       background: var(--accent);
-      box-shadow: 0 0 0 0 rgba(11, 107, 255, 0.6);
+      box-shadow: 0 0 0 0 var(--accent-pulse);
       animation: series-pulse 2.4s ease-out infinite;
       vertical-align: middle;
     }
@@ -1340,9 +1340,9 @@ mark {
 }
 
 @keyframes series-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(11, 107, 255, 0.55); }
-  70%  { box-shadow: 0 0 0 7px rgba(11, 107, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(11, 107, 255, 0); }
+  0%   { box-shadow: 0 0 0 0 var(--accent-pulse); }
+  70%  { box-shadow: 0 0 0 7px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
 }
 
 // Prev / Next post navigation

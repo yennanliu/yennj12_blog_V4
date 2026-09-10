@@ -46,10 +46,7 @@
     left: -10%;
     width: 120%;
     height: 150%;
-    background:
-      radial-gradient(38% 42% at 22% 30%, rgba(34, 211, 238, 0.22) 0%, transparent 70%),
-      radial-gradient(34% 40% at 78% 22%, rgba(124, 92, 255, 0.26) 0%, transparent 70%),
-      radial-gradient(46% 46% at 55% 88%, rgba(11, 107, 255, 0.20) 0%, transparent 72%);
+    background: var(--aurora-1), var(--aurora-2), var(--aurora-3);
     filter: blur(24px);
     animation: fx-aurora-drift 26s var(--ease-smooth) infinite alternate;
     z-index: -3;
@@ -61,13 +58,16 @@
 // reads as studio lighting on a dark set rather than as coloured gas, which is
 // what keeps a black-and-white band from going flat.
 .fx-panel--mono {
+  // Key light centred above the headline, one fill off each shoulder. The
+  // fourth bloom (floor bounce) is added by the rule below, since the base
+  // panel only paints three.
+  --aurora-1: radial-gradient(46% 38% at 50% 8%, rgba(255, 255, 255, 0.16) 0%, transparent 72%);
+  --aurora-2: radial-gradient(38% 42% at 16% 30%, rgba(255, 255, 255, 0.11) 0%, transparent 70%);
+  --aurora-3: radial-gradient(34% 40% at 84% 24%, rgba(255, 255, 255, 0.09) 0%, transparent 70%);
+
   &::after {
     background:
-      // Key light, centred above the headline.
-      radial-gradient(46% 38% at 50% 8%, rgba(255, 255, 255, 0.16) 0%, transparent 72%),
-      // Fills, off each shoulder.
-      radial-gradient(38% 42% at 16% 30%, rgba(255, 255, 255, 0.11) 0%, transparent 70%),
-      radial-gradient(34% 40% at 84% 24%, rgba(255, 255, 255, 0.09) 0%, transparent 70%),
+      var(--aurora-1), var(--aurora-2), var(--aurora-3),
       // Floor bounce.
       radial-gradient(60% 46% at 55% 100%, rgba(255, 255, 255, 0.07) 0%, transparent 76%);
   }
@@ -199,27 +199,37 @@
 // initReveal() adds .is-revealed as each element enters the viewport. The
 // stagger comes from --reveal-i, which the layout sets per item (or the script
 // derives from DOM order), so a grid animates in as a wave.
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(18px);
-  transition:
-    opacity 0.7s var(--ease-out-expo),
-    transform 0.7s var(--ease-out-expo);
-  transition-delay: calc(var(--reveal-i, 0) * 60ms);
-  will-change: opacity, transform;
+//
+// The hidden state is deliberately *opt-in*, gated on `html.reveal-armed`:
+// marked-up content is visible unless something is actively arranging to
+// reveal it. head.html arms the class before first paint and disarms it on a
+// 1.5s timer unless initReveal() has set `reveal-ready`, so a script that
+// never loads or throws on the way costs an animation, not the content.
+// Both states are nested under the armed class so they carry equal
+// specificity. Written as `[data-reveal].is-revealed` at the top level, the
+// revealed state (0,2,0) loses to `html.reveal-armed [data-reveal]` (0,2,1)
+// and the content stays hidden however many classes the script adds.
+html.reveal-armed {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    will-change: opacity, transform;
+  }
 
-  &.is-revealed {
+  [data-reveal].is-revealed {
     opacity: 1;
     transform: none;
     will-change: auto;
   }
 }
 
-// Fallback: without JS nothing ever gets .is-revealed, so opt everything back
-// in. `.js` is set on <html> by the inline snippet in head.html.
-html:not(.js) [data-reveal] {
-  opacity: 1;
-  transform: none;
+// The transition is unconditional; it only has anything to animate while the
+// two states above are in play.
+[data-reveal] {
+  transition:
+    opacity 0.7s var(--ease-out-expo),
+    transform 0.7s var(--ease-out-expo);
+  transition-delay: calc(var(--reveal-i, 0) * 60ms);
 }
 
 // --- Animated counter -------------------------------------------------------
@@ -235,6 +245,7 @@ html:not(.js) [data-reveal] {
 @media (prefers-reduced-motion: reduce) {
   .fx-panel::after { animation: none; }
 
+  html.reveal-armed [data-reveal],
   [data-reveal] {
     opacity: 1 !important;
     transform: none !important;

@@ -147,7 +147,7 @@ pre {
   margin: 0 0 $spacing-lg 0;
   // Dark block on a white page: the ambient shadow is what stops it reading as
   // a hole punched through the article.
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 12px 30px rgba(13, 17, 23, 0.16);
+  box-shadow: var(--shadow-code);
 
   code {
     background: transparent;
@@ -165,7 +165,7 @@ blockquote {
   padding: $spacing-lg $spacing-xl;
   border-left: 3px solid transparent;
   border-image: var(--gradient-accent) 1;
-  background: linear-gradient(90deg, rgba(11, 107, 255, 0.06), rgba(11, 107, 255, 0));
+  background: var(--surface-quote);
   border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
   font-style: italic;
   color: $color-text-light;
@@ -225,7 +225,7 @@ th {
 // Selection and focus
 // ---------------------------------------------------------------------------
 ::selection {
-  background: rgba(11, 107, 255, 0.18);
+  background: var(--accent-select);
   color: $color-text;
 }
 
