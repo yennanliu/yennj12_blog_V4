@@ -59,13 +59,22 @@ FENCE = re.compile(r"^\s*(```+|~~~+)")
 
 
 def markdown_links(text: str):
-    """Yield (line_no, url) for Markdown links outside fenced code blocks."""
+    """Yield (line_no, url) for Markdown links outside fenced code blocks.
+
+    Fence matching follows CommonMark: a block opened with N markers closes
+    only on a run of the *same* character that is at least N long. Truncating
+    the delimiter would let an inner ``` close an outer ````, after which a
+    URL inside that code sample would be reported as a real link.
+    """
     fence = None
     for n, line in enumerate(text.split("\n"), 1):
         m = FENCE.match(line)
         if m:
-            token = m.group(1)[:3]
-            fence = None if fence == token else (fence or token)
+            token = m.group(1)
+            if fence is None:
+                fence = token
+            elif token[0] == fence[0] and len(token) >= len(fence):
+                fence = None
             continue
         if fence:
             continue
