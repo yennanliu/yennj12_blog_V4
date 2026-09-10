@@ -1,7 +1,27 @@
 .footer {
-  background: #000000;
+  position: relative;
+  background: var(--ink-950);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: $spacing-6xl;
+  overflow: hidden;
+
+  // Accent glow rising from the top edge, matching the hero's aurora at a
+  // fraction of the intensity so the page closes the way it opened.
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 240px;
+    background:
+      radial-gradient(50% 100% at 15% 0%, rgba(34, 211, 238, 0.09), transparent 70%),
+      radial-gradient(50% 100% at 80% 0%, rgba(124, 92, 255, 0.10), transparent 70%);
+    pointer-events: none;
+  }
+
+  // Content sits above the glow.
+  > * { position: relative; }
   
   &__content {
     @include container;
@@ -49,13 +69,26 @@
   &__link {
     font-size: $font-size-base;
     font-weight: $font-weight-normal;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.72);
     text-decoration: none;
     transition: color $transition-fast;
-    
+
     &:hover {
       color: #ffffff;
       text-decoration: none;
+    }
+  }
+
+  &__section-title {
+    // Small gradient tick above each column heading.
+    &::before {
+      content: '';
+      display: block;
+      width: 18px;
+      height: 2px;
+      margin-bottom: $spacing-sm;
+      border-radius: 2px;
+      background: var(--gradient-accent);
     }
   }
   
@@ -179,5 +212,62 @@
     &:hover {
       color: #ffffff;
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Back-to-top button
+// ---------------------------------------------------------------------------
+// Fixed bottom-right, revealed by .to-top--visible once the page has scrolled
+// (see initBackToTop). It is a real anchor to #main, and the hidden state is
+// scoped to html.js so that without JS — where nothing would ever add
+// --visible — the jump link is simply there. visibility rather than
+// display:none, so it is never a focusable invisible target.
+.to-top {
+  position: fixed;
+  right: $spacing-lg;
+  bottom: $spacing-lg;
+  z-index: $z-header - 1;
+  @include flex-center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: #ffffff;
+  background: var(--ink-900);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 30px rgba(5, 5, 10, 0.35);
+  transition: opacity $transition-normal, transform 0.3s var(--ease-spring),
+              visibility 0s linear $duration-normal, box-shadow $transition-normal;
+
+  // Hidden only where a script is around to bring it back.
+  html.js & {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px) scale(0.9);
+  }
+
+  &:hover {
+    color: #ffffff;
+    text-decoration: none;
+    background: var(--gradient-accent);
+    border-color: transparent;
+    box-shadow: var(--glow-accent-strong);
+  }
+
+  // Matches the specificity of the html.js rule above, so initBackToTop can
+  // win it back.
+  html.js &--visible {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity $transition-normal, transform 0.3s var(--ease-spring),
+                visibility 0s, box-shadow $transition-normal;
+  }
+
+  @include bp('md') {
+    right: $spacing-xl;
+    bottom: $spacing-xl;
+    width: 48px;
+    height: 48px;
   }
 }

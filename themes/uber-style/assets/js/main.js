@@ -1,17 +1,49 @@
 // Main JavaScript for Uber Style theme
 document.addEventListener('DOMContentLoaded', function() {
+    // Every initialiser runs inside safeInit: they are independent, and one
+    // throwing must not skip the rest. That matters most for initReveal,
+    // which is what un-hides the scroll-reveal content.
+    safeInit(initReveal);
+
     // Primary navigation (drawer + dropdowns)
-    initNav();
-    
-    // Search functionality  
-    initSearch();
-    
+    safeInit(initNav);
+
+    // Search functionality
+    safeInit(initSearch);
+
     // Smooth scrolling for anchor links
-    initSmoothScrolling();
-    
+    safeInit(initSmoothScrolling);
+
     // Reading progress indicator
-    initReadingProgress();
+    safeInit(initReadingProgress);
+
+    // Presentation layer (scroll state, spotlights, counters, back to top).
+    // All of it is decoration: each initialiser is a no-op when its markup
+    // hook is absent, and every one bails out under prefers-reduced-motion.
+    safeInit(initHeaderScroll);
+    safeInit(initSpotlight);
+    safeInit(initCountUp);
+    safeInit(initBackToTop);
 });
+
+// Runs one initialiser, keeping its failure to itself. Reported rather than
+// swallowed, so a broken feature still shows up in the console.
+function safeInit(fn) {
+    try {
+        fn();
+    } catch (err) {
+        if (window.console && console.error) {
+            console.error('init failed: ' + fn.name, err);
+        }
+    }
+}
+
+// True when the visitor has asked the OS for less animation. Checked at call
+// time rather than cached, so a mid-session change to the setting is honoured.
+function prefersReducedMotion() {
+    return window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
 
 // Primary navigation — drawer toggle (below lg) plus the dropdown disclosures,
 // which are shared by both layouts. CSS handles hover/focus opening on desktop;
@@ -359,7 +391,10 @@ function initSmoothScrolling() {
             if (targetElement) {
                 e.preventDefault();
                 targetElement.scrollIntoView({
-                    behavior: 'smooth',
+                    // CSS `scroll-behavior: auto !important` under
+                    // prefers-reduced-motion does not reach a scroll that
+                    // asks for smoothing explicitly, so check it here too.
+                    behavior: prefersReducedMotion() ? 'auto' : 'smooth',
                     block: 'start'
                 });
             }
@@ -379,23 +414,257 @@ function initReadingProgress() {
     document.body.appendChild(progressBar);
     
     const progressBarFill = progressBar.querySelector('.reading-progress__bar');
-    
+    let queued = false;
+
     function updateProgress() {
+        queued = false;
         const articleTop = article.offsetTop;
         const articleHeight = article.offsetHeight;
         const windowHeight = window.innerHeight;
         const scrollTop = window.pageYOffset;
-        
+
         const progress = Math.min(
             Math.max((scrollTop - articleTop + windowHeight) / articleHeight, 0),
             1
         );
-        
-        progressBarFill.style.width = (progress * 100) + '%';
+
+        // scaleX, not width: the bar is then a compositor-only update, so it
+        // keeps up with a fast scroll instead of laying out on every event.
+        progressBarFill.style.transform = 'scaleX(' + progress + ')';
     }
-    
-    window.addEventListener('scroll', updateProgress);
+
+    // Coalesce bursts of scroll events onto one frame.
+    function onScroll() {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(updateProgress);
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
     updateProgress(); // Initial call
+}
+
+// ---------------------------------------------------------------------------
+// Sticky header state.
+// Adds .header--scrolled once the page has moved, which tightens the bar and
+// gives it a shadow (see _header.scss). Threshold is deliberately small: the
+// point is to mark "not at the top" rather than to wait for a scroll distance.
+// ---------------------------------------------------------------------------
+function initHeaderScroll() {
+    const header = document.getElementById('siteHeader');
+    if (!header) return;
+
+    const THRESHOLD = 24;
+    let queued = false;
+
+    function apply() {
+        queued = false;
+        header.classList.toggle('header--scrolled', window.pageYOffset > THRESHOLD);
+    }
+
+    window.addEventListener('scroll', function () {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(apply);
+    }, { passive: true });
+
+    apply();
+}
+
+// ---------------------------------------------------------------------------
+// Back-to-top button.
+// Shown once the reader is a screen and a half down the page, which is far
+// enough that scrolling back by hand is a chore but not so early that the
+// button appears on a short page that never needed it.
+// ---------------------------------------------------------------------------
+function initBackToTop() {
+    const button = document.getElementById('toTop');
+    if (!button) return;
+
+    let queued = false;
+
+    function apply() {
+        queued = false;
+        const trigger = (window.innerHeight || 800) * 1.5;
+        button.classList.toggle('to-top--visible', window.pageYOffset > trigger);
+    }
+
+    window.addEventListener('scroll', function () {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(apply);
+    }, { passive: true });
+
+    // The href is a real #main jump for the no-JS case; with JS we animate,
+    // unless the visitor asked for less motion.
+    button.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: prefersReducedMotion() ? 'auto' : 'smooth'
+        });
+    });
+
+    apply();
+}
+
+// ---------------------------------------------------------------------------
+// Scroll reveal.
+// Elements marked [data-reveal] start faded/offset and get .is-revealed as
+// they enter the viewport; --reveal-i (set by the layout, or derived from DOM
+// order here) staggers a grid so it arrives as a wave rather than a block.
+// Each element is unobserved once revealed — nothing re-animates on scroll-up.
+//
+// Contract with the CSS: elements are only hidden while <html> carries
+// `reveal-armed`, which head.html sets before first paint and takes back on a
+// 1.5s timer unless this function has added `reveal-ready`. So the class is
+// set at the *end* of each path here, once the reveal is genuinely handled —
+// if anything above throws, the failsafe un-hides the page instead.
+// ---------------------------------------------------------------------------
+function initReveal() {
+    const root = document.documentElement;
+    const targets = document.querySelectorAll('[data-reveal]');
+
+    // Nothing to reveal: disarm the hidden state and let the head failsafe go.
+    if (!targets.length) {
+        root.classList.remove('reveal-armed');
+        root.classList.add('reveal-ready');
+        return;
+    }
+
+    // No observer, or the visitor wants no motion: show everything as-is.
+    if (!('IntersectionObserver' in window) || prefersReducedMotion()) {
+        targets.forEach(function (el) { el.classList.add('is-revealed'); });
+        root.classList.remove('reveal-armed');
+        root.classList.add('reveal-ready');
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-revealed');
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+
+    targets.forEach(function (el, i) {
+        // A layout can pin its own order; otherwise cap the stagger at 8 steps
+        // so a long list does not end up with a two-second tail.
+        if (!el.style.getPropertyValue('--reveal-i')) {
+            el.style.setProperty('--reveal-i', String(i % 8));
+        }
+        observer.observe(el);
+    });
+
+    // Anything already on screen is revealed directly, without waiting to be
+    // told. The observer is the mechanism for content further down the page;
+    // above the fold it is a single point of failure, and an environment that
+    // never delivers the callback (a prerenderer, a screenshot service, a
+    // paused background tab) would otherwise leave the hero blank.
+    function revealInView() {
+        const height = window.innerHeight || document.documentElement.clientHeight;
+        targets.forEach(function (el) {
+            if (el.classList.contains('is-revealed')) return;
+            const rect = el.getBoundingClientRect();
+            if (rect.top < height && rect.bottom > 0) {
+                el.classList.add('is-revealed');
+                observer.unobserve(el);
+            }
+        });
+    }
+
+    revealInView();
+    window.addEventListener('load', revealInView);
+
+    // Setup succeeded: from here the observer owns the hidden state, so the
+    // head failsafe can stand down. Set last on purpose — if anything above
+    // had thrown, the failsafe would still un-hide the page.
+    root.classList.add('reveal-ready');
+}
+
+// ---------------------------------------------------------------------------
+// Cursor spotlight.
+// Feeds pointer position into --mx/--my on .u-spotlight cards, which paint a
+// soft accent highlight under the cursor. Pointer-fine only: on a touch screen
+// there is no hover to follow, and the listener would just cost battery.
+// ---------------------------------------------------------------------------
+function initSpotlight() {
+    const cards = document.querySelectorAll('.u-spotlight');
+    if (!cards.length) return;
+    if (prefersReducedMotion()) return;
+    if (window.matchMedia && !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    cards.forEach(function (card) {
+        let queued = false;
+        let x = 0;
+        let y = 0;
+
+        function paint() {
+            queued = false;
+            card.style.setProperty('--mx', x + 'px');
+            card.style.setProperty('--my', y + 'px');
+        }
+
+        card.addEventListener('pointermove', function (e) {
+            // getBoundingClientRect per move is a read on an element that is
+            // already being composited; batching into rAF keeps it off the
+            // event's critical path.
+            const rect = card.getBoundingClientRect();
+            x = e.clientX - rect.left;
+            y = e.clientY - rect.top;
+            if (queued) return;
+            queued = true;
+            requestAnimationFrame(paint);
+        });
+
+        // Reset to the centre so the next hover starts from a neutral sheen.
+        card.addEventListener('pointerleave', function () {
+            card.style.removeProperty('--mx');
+            card.style.removeProperty('--my');
+        });
+    });
+}
+
+// ---------------------------------------------------------------------------
+// Count-up for the hero stats.
+// [data-count-to] already contains its final value in the markup, so a visitor
+// without JS (or with reduced motion) sees the real number and this only ever
+// replaces a correct value with the same correct value.
+// ---------------------------------------------------------------------------
+function initCountUp() {
+    const counters = document.querySelectorAll('[data-count-to]');
+    if (!counters.length) return;
+    if (prefersReducedMotion() || !('IntersectionObserver' in window)) return;
+
+    const DURATION = 1100;
+
+    function run(el) {
+        const target = parseInt(el.getAttribute('data-count-to'), 10);
+        if (!isFinite(target) || target <= 0) return;
+        const start = performance.now();
+
+        function step(now) {
+            const t = Math.min((now - start) / DURATION, 1);
+            // easeOutExpo, matching --ease-out-expo in the stylesheet.
+            const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+            el.textContent = String(Math.round(target * eased));
+            if (t < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+    }
+
+    const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            observer.unobserve(entry.target);
+            run(entry.target);
+        });
+    }, { threshold: 0.4 });
+
+    counters.forEach(function (el) { observer.observe(el); });
 }
 
 // Utility function to debounce events

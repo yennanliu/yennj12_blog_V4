@@ -35,7 +35,9 @@ This is a **Hugo static site** using a custom theme called `uber-style` (in `the
 - `content/categories/<slug>/_index.md` — Definition of each category (title, description, tagline,
   `weight` for ordering). See "Category taxonomy" below.
 - `themes/uber-style/` — Custom theme. Layouts live in `layouts/`, styles in `assets/scss/`.
-- `themes/uber-style/assets/scss/_variables.scss` — Design tokens (colors, typography, spacing).
+- `themes/uber-style/assets/scss/_variables.scss` — Compile-time SCSS variables (colors, typography, spacing).
+- `themes/uber-style/assets/scss/_tokens.scss` — Runtime design tokens (`:root` custom properties).
+- `themes/uber-style/assets/scss/_effects.scss` — Reusable visual effects (`fx-*` / `u-*`). See "Design system" below.
 - `static/` — Unprocessed assets (favicon, author avatars at `static/images/authors/`).
 - `scripts/generate_nvidia_blog.py` — Python script that fetches NVIDIA Developer Blog via RSS, translates to Traditional Chinese using GPT-4, and writes a new post. Requires `OPENAI_API_KEY` and `feedparser`/`requests` packages.
 - `.github/workflows/` — Three Hugo build/deploy workflows (`hugo-latest.yml` is the recommended one).
@@ -122,6 +124,75 @@ URL — keep the filename stable and re-scrape via the platform's debugger rathe
 
 Anything in `static/` must be referenced through `relURL`/`absURL`, never as a bare `/path`: the
 site is served from the `/yennj12_blog_V4/` sub-path, so a root-absolute href 404s in production.
+
+### Design system
+
+Two files carry the look, and they are the only place a colour, radius, shadow, easing or
+gradient should be defined:
+
+- `_variables.scss` — **compile-time** SCSS variables (`$color-accent`, `$spacing-lg`, `$breakpoint-md`).
+  Only SCSS can see these.
+- `_tokens.scss` — **runtime** `:root` custom properties (`--color-gray-*`, `--accent`,
+  `--gradient-accent`, `--shadow-hover`, `--ease-out-expo`, `--radius-pill`, the `--texture-*`
+  data URIs, `--font-size-*`). Loaded on every page, so the inline `<style>` blocks in
+  `index.html` / `posts-list.html` / `single.html` / `share.html` can use them too.
+
+Several layouts used to keep private copies of that grey ramp and type scale, which is how
+`--font-size-3xl` came to mean 2.5rem on one page and 3rem on another. **Do not re-declare a
+token inside a layout `<style>` block** — add or change it in `_tokens.scss`.
+
+`_effects.scss` holds the decoration as composable classes. `fx-*` paints a background layer,
+`u-*` modifies the element it sits on:
+
+| class | effect |
+|---|---|
+| `fx-panel` | Dark "ink" band: gradient surface, masked grid texture, three drifting blooms held in `--aurora-1/2/3`. Used by the CTA band and every `.page-header`. |
+| `fx-panel--mono` | The same panel with the hue removed — redefines `--aurora-*` as white "stage lighting" and brightens the grid. The home hero uses it. |
+| `fx-hairline` | Hairline that fades out at both ends. |
+| `u-gradient-text` | Accent gradient clipped to the glyphs (with a solid-colour fallback). |
+| `u-shine` | Diagonal highlight that sweeps across on hover. |
+| `u-spotlight` | Soft accent highlight that follows the pointer (needs `initSpotlight`). |
+| `u-rim` | Gradient border drawn as an inset ring, so hover shifts nothing. |
+| `u-tabular` | Tabular figures, for numbers that animate. |
+
+Two mechanisms are shared between the CSS and `assets/js/main.js`:
+
+- **Scroll reveal** — mark an element `data-reveal` and, optionally, set `--reveal-i` inline to
+  order the stagger. `initReveal()` reveals whatever is already on screen immediately and hands
+  the rest to an IntersectionObserver.
+
+  Hiding content from CSS is the dangerous half, so the hidden state is **opt-in and
+  self-cancelling**. `[data-reveal]` is only hidden while `html.reveal-armed` is set;
+  `head.html` arms it before first paint and starts a 1.5s timer that disarms it again unless
+  `initReveal()` has set `html.reveal-ready`. So a `main.js` that 404s, throws, or never runs
+  costs an animation rather than the content. Both reveal states are nested under
+  `html.reveal-armed` in `_effects.scss` so they carry equal specificity — a top-level
+  `[data-reveal].is-revealed` (0,2,0) loses to `html.reveal-armed [data-reveal]` (0,2,1) and
+  nothing ever appears. Every initialiser also runs through `safeInit()`, so one failure cannot
+  skip the reveal.
+
+  The same reasoning applies to anything else JS hides: scope it to a class the script itself
+  is responsible for (`.to-top` uses `html.js`), never to a bare selector.
+- **Counters** — `data-count-to="N"` on an element whose text is already `N`. `initCountUp()`
+  animates up to it, so no-JS and reduced-motion readers see the real number.
+
+Everything decorative is behind `prefers-reduced-motion`: the media query at the bottom of
+`_effects.scss` and a `prefersReducedMotion()` check in each JS initialiser. When adding an
+effect, keep both halves honoured — and note that the CSS half cannot reach a scroll that asks
+for smoothing in script, so `scrollIntoView`/`scrollTo` calls need the JS check as well.
+
+The dark bands (`.top-banner`, `.header`, `.fx-panel`, `.footer`) all sit on the `--ink-*` ramp,
+and the accent is only ever cyan → blue → violet (`--gradient-accent`). Anything decorative that
+moves must be clipped by `overflow: hidden` on its own band — an unclipped sweep widens the
+document and gives every page a horizontal scrollbar.
+
+**No accent literals outside `_tokens.scss`.** Every tint, hairline, ring, glow and bloom that
+uses the accent composes from a named token (`--accent-soft`, `--accent-faint`, `--accent-line`,
+`--accent-edge`, `--accent-select`, `--accent-pulse`, `--accent-bloom`, `--glow-accent*`,
+`--glow-progress`, `--surface-quote`, `--aurora-*`). Writing a fresh `rgba(11, 107, 255, …)` in
+a component means changing `--accent` no longer changes that component — add the role to
+`_tokens.scss` instead. `grep -rn "rgba(11, 107, 255" themes/ | grep -v _tokens.scss` should
+stay empty.
 
 ### Theme layout flow
 

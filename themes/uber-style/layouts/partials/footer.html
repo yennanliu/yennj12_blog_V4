@@ -91,3 +91,13 @@
         </div>
     </div>
 </footer>
+
+{{/* Back to top. Hidden until initBackToTop() (assets/js/main.js) sees enough
+     scroll; posts in this blog routinely run 600-900 lines, so the trip back
+     to the nav is long. A plain link to #main keeps it working without JS. */}}
+<a href="#main" class="to-top" id="toTop" aria-label="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</a>

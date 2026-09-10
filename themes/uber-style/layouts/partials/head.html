@@ -2,6 +2,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+{{/* Arms the scroll-reveal styles before first paint — [data-reveal] elements
+     are only hidden while `reveal-armed` is on <html> (see scss/_effects.scss),
+     so content is visible by default and nothing can strand it.
+
+     Inline and synchronous on purpose: deferring it would flash the unhidden
+     state. The timer is the failsafe — initReveal() in assets/js/main.js sets
+     `reveal-ready` once it has successfully taken over, and if that never
+     happens (main.js fails to load, an earlier initialiser throws, JS is off)
+     the hidden state is disarmed here and the page renders as plain content. */}}
+<script>
+  document.documentElement.classList.add('js', 'reveal-armed');
+  window.setTimeout(function () {
+    var root = document.documentElement;
+    if (!root.classList.contains('reveal-ready')) {
+      root.classList.remove('reveal-armed');
+    }
+  }, 1500);
+</script>
+
 {{/*
   Shared metadata values, resolved once and reused by the <title>, the plain
   meta tags, Open Graph, Twitter cards and the JSON-LD block below so that a
@@ -111,7 +130,7 @@
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 {{/*
   JSON-LD. Every string goes through `jsonify` rather than being pasted between
