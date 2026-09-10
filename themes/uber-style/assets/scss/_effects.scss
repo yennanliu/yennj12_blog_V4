@@ -1,0 +1,232 @@
+// ---------------------------------------------------------------------------
+// Reusable visual effects
+// ---------------------------------------------------------------------------
+// The "fancy" layer of the theme, kept as a handful of composable utilities so
+// each layout opts into an effect with one class instead of re-inventing a
+// gradient. Everything here is decoration: remove any class and the page still
+// reads correctly, which is also why the reduced-motion block at the bottom can
+// switch all of it off wholesale.
+//
+// Naming: `fx-*` paints something (a background layer), `u-*` modifies the
+// element it sits on.
+// ---------------------------------------------------------------------------
+
+// --- Dark ink panel ---------------------------------------------------------
+// The shared base for the hero and the CTA band: ink gradient, a grid texture,
+// and two slow-drifting accent "auroras". The layers are pseudo-elements on a
+// positioned wrapper so the panel needs no extra markup beyond one child div.
+.fx-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--gradient-ink);
+  color: var(--color-white);
+
+  // Grid + vignette. `mask-image` fades the grid out towards the edges so it
+  // never collides with the section boundary.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--texture-grid);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 35%, #000 25%, transparent 78%);
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 35%, #000 25%, transparent 78%);
+    z-index: -2;
+    pointer-events: none;
+  }
+
+  // Aurora. Two large, heavily blurred radial blooms in the accent hues; the
+  // drift is a 26s transform loop, slow enough to read as ambience rather than
+  // animation.
+  &::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: -10%;
+    width: 120%;
+    height: 150%;
+    background:
+      radial-gradient(38% 42% at 22% 30%, rgba(34, 211, 238, 0.22) 0%, transparent 70%),
+      radial-gradient(34% 40% at 78% 22%, rgba(124, 92, 255, 0.26) 0%, transparent 70%),
+      radial-gradient(46% 46% at 55% 88%, rgba(11, 107, 255, 0.20) 0%, transparent 72%);
+    filter: blur(24px);
+    animation: fx-aurora-drift 26s var(--ease-smooth) infinite alternate;
+    z-index: -3;
+    pointer-events: none;
+  }
+}
+
+@keyframes fx-aurora-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(-3%, 2%, 0) scale(1.08); }
+  100% { transform: translate3d(3%, -2%, 0) scale(1.04); }
+}
+
+// A hairline that fades in from both ends — used to separate stacked bands
+// without drawing a hard 1px line across the full width.
+.fx-hairline {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18) 20%,
+                                rgba(255, 255, 255, 0.18) 80%, transparent);
+  }
+}
+
+// --- Gradient text ----------------------------------------------------------
+// Clipping a gradient to glyphs. `color: transparent` is the fallback risk, so
+// a solid colour is declared first for engines without background-clip:text.
+.u-gradient-text {
+  color: var(--accent);
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+    -webkit-text-fill-color: currentColor;
+    background: none;
+  }
+}
+
+// --- Shine sweep ------------------------------------------------------------
+// A diagonal highlight that crosses a button on hover. Applied to buttons and
+// pills; the element must establish a stacking context (position: relative).
+.u-shine {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transform: skewX(-18deg);
+    transition: left 0.7s var(--ease-out-expo);
+    pointer-events: none;
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    left: 130%;
+  }
+}
+
+// --- Cursor spotlight -------------------------------------------------------
+// Cards track the pointer through --mx/--my (set by initSpotlight in main.js)
+// and paint a soft highlight under it. Both custom properties default to the
+// card centre, so the effect degrades to a static sheen with JS disabled.
+.u-spotlight {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle 380px at var(--mx, 50%) var(--my, 50%),
+                                var(--accent-soft), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-smooth);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &:hover::before { opacity: 1; }
+
+  // Content must out-stack the highlight.
+  > * { position: relative; z-index: 1; }
+}
+
+// --- Gradient rim -----------------------------------------------------------
+// A gradient border that appears on hover, drawn as an inset ring rather than a
+// real border so the card's geometry never shifts by a pixel.
+.u-rim {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--gradient-accent);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.35s var(--ease-smooth);
+    pointer-events: none;
+  }
+
+  &:hover::after,
+  &:focus-within::after { opacity: 1; }
+}
+
+// --- Scroll reveal ----------------------------------------------------------
+// initReveal() adds .is-revealed as each element enters the viewport. The
+// stagger comes from --reveal-i, which the layout sets per item (or the script
+// derives from DOM order), so a grid animates in as a wave.
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s var(--ease-out-expo),
+    transform 0.7s var(--ease-out-expo);
+  transition-delay: calc(var(--reveal-i, 0) * 60ms);
+  will-change: opacity, transform;
+
+  &.is-revealed {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+}
+
+// Fallback: without JS nothing ever gets .is-revealed, so opt everything back
+// in. `.js` is set on <html> by the inline snippet in head.html.
+html:not(.js) [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+// --- Animated counter -------------------------------------------------------
+// Tabular figures stop the width from jittering while the number counts up.
+.u-tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+// --- Reduced motion ---------------------------------------------------------
+// Everything above is ornament, so honour the preference by removing the
+// movement outright instead of shortening it.
+@media (prefers-reduced-motion: reduce) {
+  .fx-panel::after { animation: none; }
+
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .u-shine::after { display: none; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -238,34 +238,10 @@
 
 <style>
 /* CSS Variables for consistent theming */
-:root {
-    --color-black: #000000;
-    --color-white: #ffffff;
-    --color-gray-50: #fafafa;
-    --color-gray-100: #f5f5f5;
-    --color-gray-200: #e5e5e5;
-    --color-gray-300: #d4d4d4;
-    --color-gray-400: #a3a3a3;
-    --color-gray-500: #737373;
-    --color-gray-600: #525252;
-    --color-gray-700: #404040;
-    --color-gray-800: #262626;
-    --color-gray-900: #171717;
-
-    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
-    --border-radius-lg: 1rem;
-    --border-radius-md: 0.75rem;
-    --border-radius-sm: 0.5rem;
-    --transition-all: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --font-size-xs: 0.875rem;
-    --font-size-sm: 1rem;
-    --font-size-md: 1.125rem;
-    --font-size-lg: 1.25rem;
-    --font-size-xl: 1.5rem;
-    --font-size-2xl: 2rem;
-    --font-size-3xl: 3rem;
-}
+/* Colours, radii, shadows, easings and the type scale come from
+   scss/_tokens.scss (:root, on every page). This page used to keep its own
+   copy in which --font-size-3xl meant 3rem rather than 2.5rem, so the same
+   token named two different sizes depending on which page you were on. */
 
 /* Main Container */
 .posts-list {
@@ -293,16 +269,18 @@
     overflow: hidden;
 }
 
+/* Soft accent bloom behind the title instead of a grey disc. */
 .decoration-circle {
     position: absolute;
-    top: -2rem;
+    top: -3rem;
     left: 50%;
     transform: translateX(-50%);
-    width: 200px;
-    height: 200px;
-    background: var(--color-gray-200);
+    width: 340px;
+    height: 340px;
+    background: radial-gradient(circle, rgba(11, 107, 255, 0.16), transparent 65%);
     border-radius: 50%;
-    opacity: 0.3;
+    opacity: 0.9;
+    filter: blur(6px);
     animation: float 6s ease-in-out infinite;
 }
 
@@ -311,10 +289,9 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100px;
-    height: 3px;
-    background: var(--color-gray-700);
-    border-radius: 2px;
+    width: 220px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-gray-300), transparent);
 }
 
 @keyframes float {
@@ -328,18 +305,32 @@
     margin-bottom: 1.5rem;
 }
 
+/* The class was always called .title-gradient; now it is one. Ink → accent,
+   so the page title still reads as type rather than as decoration. */
 .title-gradient {
-    font-size: var(--font-size-3xl);
+    font-size: var(--font-size-4xl);
     font-weight: 800;
-    color: var(--color-black);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
     line-height: 1.1;
+    color: var(--color-black);
+    padding-bottom: 0.08em;
+}
+
+/* As in the hero: claim the gradient fill only where the clip works, or
+   text-fill-color: transparent would leave an invisible title. */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .title-gradient {
+        background: linear-gradient(105deg, var(--color-black) 0%, var(--color-gray-800) 40%, var(--accent) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 }
 
 .title-underline {
     width: 80px;
     height: 4px;
-    background: var(--color-gray-800);
+    background: var(--gradient-accent);
     margin: 1rem auto;
     border-radius: 2px;
     animation: pulse 2s ease-in-out infinite;
@@ -395,14 +386,20 @@
 
 .search-input, .filter-select {
     padding: 1rem 1rem 1rem 3rem;
-    border: 2px solid var(--color-gray-300);
-    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-gray-300);
+    border-radius: var(--radius-pill);
     font-size: var(--font-size-md);
     background: var(--color-white);
     color: var(--color-black);
     transition: var(--transition-all);
     box-shadow: var(--shadow-soft);
     font-weight: 500;
+}
+
+.search-input:focus, .filter-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: var(--ring-accent);
 }
 
 .search-input {

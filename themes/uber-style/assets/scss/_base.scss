@@ -135,16 +135,20 @@ code {
 }
 
 pre {
+  position: relative;
   font-family: $font-family-mono;
   font-size: $font-size-sm;
   background-color: #0d1117;
   color: #f0f6fc;
   border: 1px solid #30363d;
   padding: $spacing-lg;
-  border-radius: $border-radius-lg;
+  border-radius: var(--border-radius-md);
   overflow-x: auto;
   margin: 0 0 $spacing-lg 0;
-  
+  // Dark block on a white page: the ambient shadow is what stops it reading as
+  // a hole punched through the article.
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 12px 30px rgba(13, 17, 23, 0.16);
+
   code {
     background: transparent;
     border: none;
@@ -153,14 +157,20 @@ pre {
   }
 }
 
-// Blockquotes
+// Blockquotes. The rail is a gradient rather than a flat 4px accent, and the
+// tint fades out to the right so a long quote does not sit in a grey box.
 blockquote {
+  position: relative;
   margin: 0 0 $spacing-lg 0;
-  padding: $spacing-md $spacing-lg;
-  border-left: 4px solid $color-accent;
-  background-color: $color-bg-light;
+  padding: $spacing-lg $spacing-xl;
+  border-left: 3px solid transparent;
+  border-image: var(--gradient-accent) 1;
+  background: linear-gradient(90deg, rgba(11, 107, 255, 0.06), rgba(11, 107, 255, 0));
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
   font-style: italic;
   color: $color-text-light;
+
+  > *:last-child { margin-bottom: 0; }
 }
 
 // Images
@@ -209,4 +219,22 @@ th {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Selection and focus
+// ---------------------------------------------------------------------------
+::selection {
+  background: rgba(11, 107, 255, 0.18);
+  color: $color-text;
+}
+
+// One visible focus ring for keyboard users across the whole site. Scoped to
+// :focus-visible so a mouse click never draws it.
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-sm);
 }

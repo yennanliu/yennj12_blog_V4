@@ -1,8 +1,28 @@
 // Top Banner Styles
 .top-banner {
-  background: #1a1a1a;
+  position: relative;
+  // Required: the sheen below travels past the right edge, and without
+  // clipping it widens the document, giving every page a horizontal
+  // scrollbar.
+  overflow: hidden;
+  background: var(--ink-950);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   padding: 8px 0;
+
+  // A slow accent sheen travelling along the bottom edge — the one "this site
+  // is alive" cue that sits above the fold on every page.
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 45%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-cyan),
+                                var(--accent-violet), transparent);
+    opacity: 0.7;
+    animation: banner-sheen 9s linear infinite;
+  }
   
   .banner-link {
     display: inline-flex;
@@ -33,19 +53,65 @@
 }
 
 .header {
+  // Frosted rather than flat: the page scrolls *under* a translucent bar,
+  // which is what makes a sticky nav read as a layer instead of a lid. The
+  // opaque colour is declared first as the fallback for engines without
+  // backdrop-filter (and for the drawer, which must stay opaque).
   background: #000000;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
   z-index: $z-header;
-  
+  transition: background-color $transition-normal, box-shadow $transition-normal,
+              border-color $transition-normal;
+
+  // initHeaderScroll() adds this past ~24px of scroll: the bar frosts over,
+  // tightens up and gains a shadow, so it detaches from the content it now
+  // overlaps. Translucency is deliberately *not* applied at the top of the
+  // page — there is nothing behind the bar there but the page background, and
+  // 70%-alpha black over white just reads as flat charcoal.
+  &--scrolled {
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+
+    @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      background: rgba(5, 5, 10, 0.82);
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+      backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    }
+
+    .header__content {
+      @include bp('md') {
+        padding-top: $spacing-md;
+        padding-bottom: $spacing-md;
+      }
+    }
+
+    .header__tagline {
+      @include bp('md') {
+        // Folded away rather than unmounted, so the bar height eases instead
+        // of jumping when the tagline goes.
+        opacity: 0;
+        max-height: 0;
+        margin-top: 0;
+      }
+    }
+  }
+
+  // The drawer is a child of the header, so a translucent bar would show the
+  // scrolling page through the open menu. Go opaque while it is open.
+  body.nav-open & {
+    background: var(--ink-950);
+  }
+
   &__content {
     @include container;
     @include flex-between;
     padding-top: $spacing-lg;
     padding-bottom: $spacing-lg;
     min-height: $header-height;
-    
+    transition: padding $transition-normal;
+
     @include bp('md') {
       padding-top: $spacing-xl;
       padding-bottom: $spacing-xl;
@@ -74,7 +140,36 @@
     @include heading-3;
     margin: 0;
     color: #ffffff;
-    font-weight: $font-weight-bold;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(100deg, #ffffff 0%, #ffffff 55%, rgba(255, 255, 255, 0.6) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+      -webkit-text-fill-color: transparent;
+    }
+
+    // Trailing accent dot — the wordmark's only piece of colour. It needs
+    // text-fill-color reset because the gradient clip above zeroes it, and it
+    // is only drawn where the brand fits on one line: on a phone the wordmark
+    // wraps and the dot would sit alone on the second line.
+    &::after {
+      content: none;
+
+      @include bp('md') {
+        content: '';
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        margin-left: 6px;
+        border-radius: 50%;
+        background: var(--gradient-accent);
+        -webkit-text-fill-color: initial;
+        vertical-align: 0.15em;
+        box-shadow: 0 0 12px rgba(34, 211, 238, 0.7);
+      }
+    }
   }
   
   &__tagline {
@@ -84,6 +179,10 @@
     margin: $spacing-xs 0 0 0;
     @include body-small;
     color: rgba(255, 255, 255, 0.7);
+    overflow: hidden;
+    max-height: 3em;
+    transition: opacity $transition-normal, max-height $transition-normal,
+                margin-top $transition-normal;
 
     @include bp('sm') {
       display: block;
@@ -244,25 +343,37 @@
       border-radius: $border-radius-sm;
     }
 
+    // Gradient underline on every link, scaled up from 0. Hover and the active
+    // state drive the same rule, so the two can never drift apart visually.
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: $spacing-sm;
+      width: 18px;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--gradient-accent);
+      transform: scaleX(0);
+      transform-origin: 0 50%;
+      transition: transform 0.35s var(--ease-out-expo);
+    }
+
+    &:hover::after { transform: scaleX(1); }
+
     &--active {
       color: #ffffff;
 
-      &::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        bottom: $spacing-sm;
-        width: 18px;
-        height: 2px;
-        background: $color-accent;
-      }
+      &::after { transform: scaleX(1); }
     }
 
     @include bp('lg') {
       flex: none;
       padding: $spacing-sm 0;
 
-      &--active::after {
+      // On the desktop bar the rule spans the label; in the drawer it stays
+      // the 18px tick above, because those rows run the full width.
+      &::after {
         bottom: -2px;
         width: auto;
         right: 0;
@@ -319,8 +430,15 @@
       padding: $spacing-sm;
       background: #0a0a0a;
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: $border-radius-lg;
-      box-shadow: $shadow-xl;
+      border-radius: var(--border-radius-lg);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.04);
+      animation: nav-panel-in 0.24s var(--ease-out-expo) both;
+
+      @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        background: rgba(10, 10, 14, 0.9);
+        -webkit-backdrop-filter: blur(18px) saturate(160%);
+        backdrop-filter: blur(18px) saturate(160%);
+      }
 
       // Bridges the gap between trigger and panel so a diagonal mouse path
       // does not close the menu mid-travel.
@@ -361,11 +479,33 @@
     color: rgba(255, 255, 255, 0.75);
     transition: background-color $transition-fast, color $transition-fast;
 
+    position: relative;
+    overflow: hidden;
+    transition: background-color $transition-fast, color $transition-fast,
+                transform 0.25s var(--ease-smooth);
+
+    // 2px rail that grows down the left edge as the row highlights.
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 2px;
+      height: 0;
+      border-radius: 2px;
+      background: var(--gradient-accent);
+      transform: translateY(-50%);
+      transition: height 0.28s var(--ease-out-expo);
+    }
+
     &:hover {
       background: rgba(255, 255, 255, 0.08);
       color: #ffffff;
       text-decoration: none;
+      transform: translateX(3px);
     }
+
+    &:hover::before { height: 70%; }
 
     &:focus-visible {
       outline: 2px solid $color-accent;
@@ -373,8 +513,10 @@
     }
 
     &--active {
-      background: rgba($color-accent, 0.18);
+      background: var(--gradient-accent-soft);
       color: #ffffff;
+
+      &::before { height: 70%; }
     }
   }
 
@@ -394,7 +536,11 @@
   &__panel-count {
     font-family: $font-family-mono;
     font-size: $font-size-xs;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: var(--radius-pill);
+    padding: 1px 7px;
+    font-variant-numeric: tabular-nums;
   }
 
   &__panel-note {
@@ -453,11 +599,11 @@ body.nav-open {
     @include flex-center;
     width: 40px;
     height: 40px;
-    background: none;
-    border: none;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
     color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
-    border-radius: $border-radius-md;
+    border-radius: var(--radius-pill);
     transition: all $transition-fast;
     
     &:hover {
@@ -477,10 +623,15 @@ body.nav-open {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(5, 5, 10, 0.55);
     z-index: $z-search;
     opacity: 0;
     visibility: hidden;
+
+    @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      -webkit-backdrop-filter: blur(6px) saturate(120%);
+      backdrop-filter: blur(6px) saturate(120%);
+    }
     // `transition: all` also animated `visibility`, which kept the modal
     // unfocusable for the duration of the fade — autofocusing the search box
     // silently did nothing. Fade the opacity; switch visibility discretely
@@ -500,18 +651,37 @@ body.nav-open {
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
-    max-width: 600px;
+    max-width: 640px;
     background: $color-bg;
-    border-radius: $border-radius-xl;
-    box-shadow: $shadow-xl;
+    border: 1px solid $color-border;
+    border-radius: var(--border-radius-xl);
+    box-shadow: 0 30px 80px rgba(5, 5, 10, 0.45), var(--glow-accent);
     max-height: 80vh;
     overflow: hidden;
   }
-  
+
+  // The card springs in from slightly small/high. Scoped to --open so it does
+  // not replay while the overlay is fading out.
+  &__overlay--open &__modal {
+    animation: search-modal-in 0.28s var(--ease-out-expo) both;
+  }
+
   &__header {
     @include flex-between;
+    position: relative;
     padding: $spacing-lg;
-    border-bottom: 1px solid $color-border-light;
+
+    // Gradient hairline where the query meets its results.
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent), var(--accent-violet));
+      opacity: 0.45;
+    }
   }
   
   &__input {
@@ -556,4 +726,24 @@ body.nav-open {
     max-height: 400px;
     overflow-y: auto;
   }
+}
+
+// ---------------------------------------------------------------------------
+// Header animations
+// ---------------------------------------------------------------------------
+@keyframes banner-sheen {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(240%); }
+}
+
+@keyframes nav-panel-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+// The modal is centred with translateX(-50%), so every keyframe has to carry
+// that translate or the card would jump to the left edge mid-animation.
+@keyframes search-modal-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-12px) scale(0.98); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
 }

@@ -2,6 +2,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+{{/* Marks the document as scripted before first paint so the scroll-reveal
+     styles only ever hide content when there is JS around to un-hide it
+     (see the html:not(.js) rule in scss/_effects.scss). Inline and
+     synchronous on purpose: deferring it would flash the hidden state. */}}
+<script>document.documentElement.classList.add('js');</script>
+
 {{/*
   Shared metadata values, resolved once and reused by the <title>, the plain
   meta tags, Open Graph, Twitter cards and the JSON-LD block below so that a
@@ -111,7 +117,7 @@
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 {{/*
   JSON-LD. Every string goes through `jsonify` rather than being pasted between

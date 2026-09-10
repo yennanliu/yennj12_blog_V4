@@ -1,7 +1,12 @@
 // Import order matters - variables and mixins first
 @import 'variables';
 @import 'mixins';
+// Runtime design tokens (:root custom properties) must land before anything
+// that reads them, and before the layouts' inline <style> blocks that also do.
+@import 'tokens';
 @import 'base';
+// Composable decoration (gradient text, aurora panels, scroll reveal, …).
+@import 'effects';
 
 // Components
 @import 'header';
@@ -170,28 +175,56 @@
   }
 }
 
+// Page header for every list / taxonomy page (tags, categories, authors,
+// calendar). It reuses the .fx-panel ink-and-aurora treatment from the home
+// hero so a category page opens the same way the home page does, and so the
+// band flows out of the black sticky header instead of restarting the page on
+// grey. Markup is unchanged — the panel layers are pseudo-elements.
 .page-header {
-  background: $color-bg-light;
+  @extend .fx-panel;
   padding: $spacing-4xl 0 $spacing-3xl 0;
   text-align: center;
-  
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
   h1 {
     @include heading-2;
     margin-bottom: $spacing-md;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+
+    // Gradient rule under the title, sized to the text rather than the column.
+    &::after {
+      content: '';
+      display: block;
+      width: 72px;
+      height: 3px;
+      margin: $spacing-md auto 0;
+      border-radius: 2px;
+      background: var(--gradient-accent);
+    }
   }
-  
+
   &__description {
     @include body-large;
-    color: $color-text-light;
+    color: rgba(255, 255, 255, 0.66);
     margin: 0;
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+
+    a {
+      color: #ffffff;
+      text-decoration: underline;
+      text-decoration-color: rgba(255, 255, 255, 0.35);
+      text-underline-offset: 3px;
+
+      &:hover { text-decoration-color: var(--accent-cyan); }
+    }
   }
 
   &__lead {
     @include body-large;
-    color: $color-text;
+    color: #ffffff;
     font-weight: $font-weight-medium;
     margin: -#{$spacing-xs} auto $spacing-sm;
     max-width: 600px;
@@ -199,11 +232,11 @@
 
   &__meta {
     @include body-small;
-    color: $color-text-muted;
+    color: rgba(255, 255, 255, 0.5);
     margin: $spacing-md 0 0;
 
-    a { color: $color-text-light; }
-    a:hover { color: $color-accent; }
+    a { color: rgba(255, 255, 255, 0.78); }
+    a:hover { color: var(--accent-cyan); }
   }
 }
 
@@ -224,20 +257,33 @@
 
   &__card {
     @include card;
+    @extend .u-spotlight;
+    @extend .u-rim;
+    position: relative;
     display: flex;
     flex-direction: column;
     text-decoration: none;
     color: $color-text;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition-lift);
     // Grid items default to min-width:auto, so the nowrap recent-post titles
     // below would push the track wider than its 1fr share and overflow the row.
     min-width: 0;
 
     &:hover {
       text-decoration: none;
-      border-color: $color-accent;
+      border-color: transparent;
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
     }
 
-    &:hover .cat-index__cta { color: $color-accent; }
+    &:hover .cat-index__cta {
+      color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    &:hover .cat-index__name { color: var(--accent); }
   }
 
   &__top {
@@ -251,12 +297,18 @@
     @include heading-4;
     margin: 0;
     color: $color-text;
+    transition: color $transition-fast;
   }
 
   &__count {
     font-family: $font-family-mono;
     font-size: $font-size-sm;
-    color: $color-text-muted;
+    font-weight: $font-weight-bold;
+    color: $color-text-light;
+    background: var(--gradient-accent-soft);
+    border: 1px solid rgba(11, 107, 255, 0.14);
+    border-radius: var(--radius-pill);
+    padding: 1px 10px;
     flex: none;
   }
 
@@ -296,9 +348,9 @@
     margin-top: auto;
     padding-top: $spacing-md;
     font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
+    font-weight: $font-weight-semibold;
     color: $color-text-light;
-    transition: color $transition-fast;
+    transition: color $transition-fast, transform 0.3s var(--ease-spring);
   }
 
   &__loose {
@@ -324,7 +376,10 @@
 // Related posts section
 .related-posts {
   padding: $spacing-4xl 0;
-  background: $color-bg-light;
+  background:
+    radial-gradient(60% 60% at 50% 0%, rgba(11, 107, 255, 0.05), transparent 70%),
+    $color-bg-light;
+  border-top: 1px solid $color-border-light;
   
   h2 {
     @include heading-2;
@@ -333,26 +388,25 @@
   }
 }
 
-// Layout styles will be added here
+// Home hero. The dark surface, aurora and type colours come from .fx-panel
+// plus index.html's own <style> block — deliberately not set here, because a
+// background at this specificity used to paint straight over the panel.
 .hero {
-  background: $color-bg-light;
   padding: $spacing-4xl 0 $spacing-5xl 0;
-  
+
   &__content {
     @include container;
     text-align: center;
     max-width: 800px;
   }
-  
+
   &__title {
     @include heading-1;
     margin-bottom: $spacing-lg;
-    color: $color-text;
   }
-  
+
   &__subtitle {
     @include body-large;
-    color: $color-text-light;
     margin-bottom: $spacing-2xl;
   }
   
@@ -361,6 +415,18 @@
     padding: $spacing-md $spacing-xl;
     font-size: $font-size-base;
   }
+}
+
+// A dark .page-header carries a lot of vertical air already, so the list that
+// follows one starts closer than a free-standing section would — and has to
+// start with *some* gap, which the authors grid never had of its own.
+.page-header + .posts__section {
+  padding-top: $spacing-3xl;
+}
+
+.page-header + .authors-grid {
+  display: block;
+  padding-top: $spacing-3xl;
 }
 
 .posts {
@@ -406,16 +472,29 @@
 
 .post-card {
   @include card;
+  @extend .u-spotlight;
+  @extend .u-rim;
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
   text-decoration: none;
   color: inherit;
-  
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  transition: var(--transition-lift);
+
+  // Hover state: lift plus the gradient rim from .u-rim. The two decorative
+  // pseudo-elements are already spoken for — ::before by the spotlight
+  // highlight, ::after by the rim — so there is no third layer to add here.
   &:hover {
     text-decoration: none;
     color: inherit;
+    transform: translateY(-6px);
+    border-color: transparent;
+    box-shadow: var(--shadow-hover);
   }
+
   
   &__meta {
     display: flex;
@@ -466,14 +545,15 @@
     color: $color-text-light;
     font-size: $font-size-xs;
     font-weight: $font-weight-medium;
-    border-radius: $border-radius-sm;
+    border-radius: var(--radius-pill);
     text-decoration: none;
     transition: all $transition-fast;
-    
+
     &:hover {
-      background: $color-accent;
+      background: var(--gradient-accent);
       color: white;
       text-decoration: none;
+      transform: translateY(-1px);
     }
   }
 }
@@ -644,21 +724,39 @@
   }
 }
 
-// Reading progress bar
+// Reading progress bar.
+// The fill is transformed rather than resized: scaleX is compositor-only, so
+// the bar keeps up with fast scrolling instead of laying out on every frame.
 .reading-progress {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: $color-bg-light;
+  background: rgba(0, 0, 0, 0.06);
   z-index: $z-header + 1;
-  
+  pointer-events: none;
+
   &__bar {
+    position: relative;
     height: 100%;
-    background: $color-accent;
-    width: 0%;
-    transition: width 0.1s ease-out;
+    width: 100%;
+    background: var(--gradient-accent);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    box-shadow: 0 0 12px rgba(11, 107, 255, 0.55);
+
+    // The leading edge gets a brighter cap so the bar has a visible "head".
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 2px;
+      height: 100%;
+      background: #fff;
+      box-shadow: 0 0 10px 2px rgba(34, 211, 238, 0.8);
+    }
   }
 }
 
@@ -748,9 +846,22 @@
   }
 
   &__title {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     margin-bottom: $spacing-sm;
+
+    // The same accent tick the article headings use, so the search page reads
+    // as part of the site rather than as a bare form.
+    &::after {
+      content: '';
+      display: block;
+      width: 56px;
+      height: 3px;
+      margin-top: $spacing-sm;
+      border-radius: 2px;
+      background: var(--gradient-accent);
+    }
   }
 
   &__subtitle {
@@ -761,12 +872,20 @@
   &__bar {
     background: $color-bg-light;
     border: 1px solid $color-border;
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     padding: $spacing-md $spacing-lg;
     margin-bottom: $spacing-lg;
     display: flex;
     flex-direction: column;
     gap: $spacing-md;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+
+    // The whole bar responds to focus inside it, which is the affordance a
+    // borderless input cannot give on its own.
+    &:focus-within {
+      border-color: var(--accent);
+      box-shadow: var(--ring-accent);
+    }
   }
 
   &__input-wrap {
@@ -1083,15 +1202,20 @@ mark {
 
   &__btn {
     @include button-secondary;
+    @extend .u-shine;
     padding: $spacing-sm $spacing-lg;
     text-decoration: none;
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
+    border-radius: var(--radius-pill);
+    transition: var(--transition-lift), color $transition-fast;
 
     &:hover {
       color: $color-accent;
-      border-color: $color-accent;
+      border-color: transparent;
       text-decoration: none;
+      transform: translateY(-2px);
+      box-shadow: var(--glow-accent);
     }
   }
 
@@ -1122,9 +1246,12 @@ mark {
     transition: all $transition-fast;
 
     &:hover {
-      border-color: $color-accent;
+      border-color: transparent;
       color: $color-accent;
       text-decoration: none;
+      transform: translateY(-2px);
+      box-shadow: var(--glow-accent);
+      background: var(--gradient-accent-soft);
     }
   }
 
@@ -1141,6 +1268,7 @@ mark {
     border-radius: $border-radius-sm;
     min-width: 20px;
     text-align: center;
+    font-variant-numeric: tabular-nums;
   }
 }
 
@@ -1157,8 +1285,8 @@ mark {
 
 // Series context banner (single post)
 .series-banner {
-  background: $color-bg-light;
-  border-bottom: 1px solid $color-border-light;
+  background: var(--gradient-accent-soft), $color-bg-light;
+  border-bottom: 1px solid rgba(11, 107, 255, 0.12);
   padding: $spacing-sm 0;
 
   &__link {
@@ -1170,14 +1298,29 @@ mark {
     font-size: $font-size-sm;
 
     &:hover { color: $color-accent; text-decoration: none; }
+    &:hover .series-banner__part { transform: translateX(2px); }
   }
 
   &__label {
     font-weight: $font-weight-bold;
     text-transform: uppercase;
     font-size: $font-size-xs;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.09em;
     color: $color-text-muted;
+
+    // Pulsing dot: the one live-feeling detail on an otherwise static strip.
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 0 rgba(11, 107, 255, 0.6);
+      animation: series-pulse 2.4s ease-out infinite;
+      vertical-align: middle;
+    }
   }
 
   &__name {
@@ -1186,13 +1329,20 @@ mark {
   }
 
   &__part {
-    background: $color-accent;
+    background: var(--gradient-accent);
     color: white;
     font-size: $font-size-xs;
     font-weight: $font-weight-bold;
-    padding: 1px $spacing-xs;
-    border-radius: $border-radius-sm;
+    padding: 2px $spacing-sm;
+    border-radius: var(--radius-pill);
+    transition: transform 0.3s var(--ease-spring);
   }
+}
+
+@keyframes series-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(11, 107, 255, 0.55); }
+  70%  { box-shadow: 0 0 0 7px rgba(11, 107, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(11, 107, 255, 0); }
 }
 
 // Prev / Next post navigation
