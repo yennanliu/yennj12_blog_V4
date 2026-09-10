@@ -5,9 +5,11 @@
 {{ $tagCount := len .Site.Taxonomies.tags }}
 
 {{/* The hero is an .fx-panel (see scss/_effects.scss): ink gradient, masked
-     grid and two drifting auroras, all drawn by pseudo-elements. It flows out
-     of the black sticky header rather than restarting the page on white. */}}
-<section class="hero fx-panel">
+     grid and drifting blooms, all drawn by pseudo-elements. It flows out of
+     the black sticky header rather than restarting the page on white.
+     --mono keeps the band strictly black-and-white; the accent lives further
+     down the page. */}}
+<section class="hero fx-panel fx-panel--mono">
     <div class="container">
         <div class="hero__content">
             <p class="hero__eyebrow" data-reveal style="--reveal-i: 0">
@@ -16,7 +18,7 @@
             </p>
             <h1 class="hero__title">
                 <span class="hero__title-main" data-reveal style="--reveal-i: 1">Engineering Excellence</span>
-                <span class="hero__title-accent u-gradient-text" data-reveal style="--reveal-i: 2">Redefined</span>
+                <span class="hero__title-accent" data-reveal style="--reveal-i: 2">Redefined</span>
             </h1>
             <p class="hero__subtitle" data-reveal style="--reveal-i: 3">
                 Deep dives into architecture, scalable systems, and the technology that powers modern applications.
@@ -317,8 +319,8 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: var(--accent-cyan);
-    box-shadow: 0 0 10px var(--accent-cyan);
+    background: var(--color-white);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
     animation: hero-dot 2.6s ease-in-out infinite;
 }
 
@@ -338,17 +340,30 @@
     color: var(--color-white);
     letter-spacing: -0.03em;
     line-height: 1.05;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.15rem;
 }
 
-/* "Redefined" carries the gradient (see .u-gradient-text). Padding-bottom
-   stops background-clip:text from shearing the descenders. */
+/* "Redefined" is outlined rather than filled — the hero's one piece of
+   deliberate typographic contrast now that there is no colour to carry it.
+   The fill is only made transparent where the stroke is actually supported,
+   otherwise the word would vanish. */
 .hero__title-accent {
     display: block;
-    font-size: clamp(1.75rem, 4.5vw, var(--font-size-3xl));
+    margin-top: 0.15em;
+    font-size: clamp(1.85rem, 4.8vw, 3.15rem);
     font-weight: 300;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.07em;
+    line-height: 1.2;
+    color: rgba(255, 255, 255, 0.72);
     padding-bottom: 0.1em;
+}
+
+@supports ((-webkit-text-stroke: 1px #fff) or (text-stroke: 1px #fff)) {
+    .hero__title-accent {
+        color: transparent;
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
+        text-stroke: 1px rgba(255, 255, 255, 0.8);
+    }
 }
 
 .hero__subtitle {
@@ -384,7 +399,7 @@
 
 .hero__stat:hover {
     transform: translateY(-3px);
-    border-color: rgba(34, 211, 238, 0.35);
+    border-color: rgba(255, 255, 255, 0.32);
     box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
 }
 
@@ -394,14 +409,15 @@
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.02em;
-    color: var(--accent-cyan);
+    color: var(--color-white);
 }
 
-/* The gradient fill is only claimed where the clip is supported: setting
+/* White with a vertical falloff, so the figures read as lit rather than flat.
+   The gradient fill is only claimed where the clip is supported: setting
    text-fill-color: transparent without it would erase the number. */
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
     .hero__stat-number {
-        background: var(--gradient-accent);
+        background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.58) 100%);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -442,19 +458,23 @@
     border: 2px solid transparent;
 }
 
+/* Inverted button: white surface, ink label. The glow is white too, which is
+   what gives the black-and-white hero its one bright focal point. */
 .hero__cta--primary {
-    background: var(--gradient-accent);
-    background-size: 160% 100%;
-    color: var(--color-white);
-    box-shadow: 0 10px 30px rgba(11, 107, 255, 0.35);
+    background: var(--color-white);
+    color: var(--color-black);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.16);
 }
 
 .hero__cta--primary:hover {
-    /* The gradient is oversized so hover can slide it instead of cross-fading
-       to a second colour. */
-    background-position: 100% 0;
     transform: translateY(-2px);
-    box-shadow: 0 16px 40px rgba(11, 107, 255, 0.45);
+    box-shadow: 0 16px 44px rgba(255, 255, 255, 0.26);
+}
+
+/* .u-shine sweeps a white highlight, which is invisible on a white button —
+   darken the sweep for this one. */
+.hero__cta--primary.u-shine::after {
+    background: linear-gradient(100deg, transparent, rgba(0, 0, 0, 0.1), transparent);
 }
 
 .hero__cta--secondary {
@@ -1041,8 +1061,6 @@
 }
 
 .cta-section .hero__cta--primary {
-    background: var(--color-white);
-    color: var(--color-black);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 

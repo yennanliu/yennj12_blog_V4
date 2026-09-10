@@ -95,6 +95,9 @@
   // backgrounds cost no extra request. Both are neutral; tint them with an
   // overlaid gradient rather than editing the data URI.
   --texture-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M48 0H0v48' fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='1'/%3E%3C/svg%3E");
+  // Same tile at higher alpha, for .fx-panel--mono where no accent is left to
+  // carry the texture.
+  --texture-grid-bright: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M48 0H0v48' fill='none' stroke='rgba(255,255,255,0.10)' stroke-width='1'/%3E%3C/svg%3E");
   --texture-dots: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
   --texture-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
 
