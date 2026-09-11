@@ -43,6 +43,12 @@ jobs:
             --gc \
             --minify
 
+      # The site is served from a /yennj12_blog_V4/ sub-path, so any internal
+      # link written as a bare "/posts/..." resolves to the domain root and
+      # 404s. Fail the deploy rather than ship dead links.
+      - name: Check internal links carry the site sub-path
+        run: python3 scripts/check_links.py
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

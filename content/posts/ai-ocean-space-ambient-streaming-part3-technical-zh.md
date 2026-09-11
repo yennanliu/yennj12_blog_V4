@@ -1298,7 +1298,7 @@ YouTube 健康:
 
 ## 延伸閱讀
 
-- [AI 深海/太空環境音串流實戰（一）：市場分析、科學原理與 AI 工具選擇](/ai-ocean-space-ambient-streaming-part1-foundation-zh)
-- [AI 深海/太空環境音串流實戰（二）：8K 視覺製作與動態場景生成](/ai-ocean-space-ambient-streaming-part2-visual-zh)
+- [AI 深海/太空環境音串流實戰（一）：市場分析、科學原理與 AI 工具選擇](/posts/ai-ocean-space-ambient-streaming-part1-foundation-zh/)
+- [AI 深海/太空環境音串流實戰（二）：8K 視覺製作與動態場景生成](/posts/ai-ocean-space-ambient-streaming-part2-visual-zh/)
 
 **標籤**: #OBS #串流 #技術設定 #自動化 #YouTube直播 #監控系統 #24/7

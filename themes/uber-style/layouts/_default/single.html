@@ -20,7 +20,7 @@
 {{ if and $seriesTag (gt $seriesTotal 1) }}
 <div class="series-banner">
     <div class="container">
-        <a href="/tags/{{ $seriesTag | urlize }}/" class="series-banner__link">
+        <a href="{{ (printf "tags/%s/" ($seriesTag | urlize)) | relURL }}" class="series-banner__link">
             <span class="series-banner__label">Series</span>
             <span class="series-banner__name">{{ $seriesTag }}</span>
             <span class="series-banner__part">Part {{ .Weight }} of {{ $seriesTotal }}</span>
@@ -49,7 +49,11 @@
             <span>
                 {{ range $index, $author := .Params.authors }}
                     {{ if gt $index 0 }}, {{ end }}
-                    <a href="/authors/{{ $author }}">{{ humanize $author }}</a>
+                    {{ with site.GetPage (printf "/authors/%s" ($author | urlize)) }}
+                    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                    {{ else }}
+                    {{ humanize $author }}
+                    {{ end }}
                 {{ end }}
             </span>
             {{ else if .Params.author }}
@@ -65,7 +69,7 @@
         <div class="article__categories">
             {{ range .Params.categories }}
             {{ if ne . "all" }}
-            <a href="/categories/{{ . | urlize }}" class="article__category">{{ . }}</a>
+            <a href="{{ (printf "categories/%s/" (. | urlize)) | relURL }}" class="article__category">{{ . }}</a>
             {{ end }}
             {{ end }}
         </div>
@@ -74,7 +78,7 @@
         {{ if .Params.tags }}
         <div class="article__tags">
             {{ range .Params.tags }}
-            <a href="/tags/{{ . | urlize }}" class="article__tag">{{ . }}</a>
+            <a href="{{ (printf "tags/%s/" (. | urlize)) | relURL }}" class="article__tag">{{ . }}</a>
             {{ end }}
         </div>
         {{ end }}
@@ -158,7 +162,7 @@
     {{ if $authorPage }}
     <div class="author__bio">
         {{ with $authorPage.Params.avatar }}
-        <img src="{{ . }}" alt="{{ $authorPage.Title }}" class="author__avatar">
+        <img src="{{ strings.TrimPrefix "/" . | relURL }}" alt="{{ $authorPage.Title }}" class="author__avatar">
         {{ end }}
         <div class="author__info">
             <h4 class="author__name">{{ $authorPage.Title }}</h4>

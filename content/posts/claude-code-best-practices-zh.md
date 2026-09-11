@@ -1335,8 +1335,8 @@ src/
 
 ## 延伸閱讀
 
-- [深入理解 Claude Code Context Window](/claude-code-context-window-deep-dive-zh)
-- [Claude Code 開發工作流程完整指南](/claude-code-development-workflow-zh)
-- [深入理解 Claude Code 架構](/claude-code-architecture-explained-zh)
+- [深入理解 Claude Code Context Window](/posts/claude-code-context-window-deep-dive-zh/)
+- [Claude Code 開發工作流程完整指南](/posts/claude-code-development-workflow-zh/)
+- [深入理解 Claude Code 架構](/posts/claude-code-architecture-explained-zh/)
 
 **標籤**: #claude-code #最佳實踐 #AI開發 #提示工程 #開發效率 #程式設計

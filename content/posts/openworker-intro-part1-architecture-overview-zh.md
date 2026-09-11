@@ -481,10 +481,10 @@ Skills 在 session 開始時只注入「名稱 + 一行描述」的目錄，完�
 | Part 4 | LLM 層與 Context 壓縮 | Provider 抽象、Router、能力降級、compaction 演算法 |
 | Part 5 | 能力擴充體系 | Tools / Catalog / Skills / Personas / Memory / MCP / 排程 |
 
-- [OpenWorker 深度解析（二）：TurnEngine — Agent 迴圈的完整解剖](/yennj12_blog_V4/posts/openworker-intro-part2-turnengine-deep-dive-zh/)
-- [OpenWorker 深度解析（三）：Harness — 權限模型、Inbox 與人機協作](/yennj12_blog_V4/posts/openworker-intro-part3-harness-permissions-inbox-zh/)
-- [OpenWorker 深度解析（四）：LLM 層 — Provider 抽象與 Context 自動壓縮](/yennj12_blog_V4/posts/openworker-intro-part4-llm-provider-compaction-zh/)
-- [OpenWorker 深度解析（五）：能力擴充 — Tools、Skills、Personas、MCP 與排程](/yennj12_blog_V4/posts/openworker-intro-part5-tools-skills-mcp-automation-zh/)
+- [OpenWorker 深度解析（二）：TurnEngine — Agent 迴圈的完整解剖](/posts/openworker-intro-part2-turnengine-deep-dive-zh/)
+- [OpenWorker 深度解析（三）：Harness — 權限模型、Inbox 與人機協作](/posts/openworker-intro-part3-harness-permissions-inbox-zh/)
+- [OpenWorker 深度解析（四）：LLM 層 — Provider 抽象與 Context 自動壓縮](/posts/openworker-intro-part4-llm-provider-compaction-zh/)
+- [OpenWorker 深度解析（五）：能力擴充 — Tools、Skills、Personas、MCP 與排程](/posts/openworker-intro-part5-tools-skills-mcp-automation-zh/)
 
 ---
 

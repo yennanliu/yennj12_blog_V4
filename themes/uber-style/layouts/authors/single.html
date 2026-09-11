@@ -3,7 +3,7 @@
     <div class="container">
         <div class="author-profile__header">
             {{ with .Params.avatar }}
-            <img src="{{ . }}" alt="{{ $.Title }}" class="author-profile__avatar">
+            <img src="{{ strings.TrimPrefix "/" . | relURL }}" alt="{{ $.Title }}" class="author-profile__avatar">
             {{ end }}
             
             <div class="author-profile__info">

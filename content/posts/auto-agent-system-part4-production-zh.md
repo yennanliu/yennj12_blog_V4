@@ -84,7 +84,7 @@ Part 2 我們反覆強調:LLM 的「錯」不是當機,而是品質退化——H
 provider 無關     不管哪家 SDK 都一樣                各 Flow 要各自處理
 ```
 
-這一整套接法,也正是我在 [Langfuse 入門系列](/yennj12_blog_V4/posts/langfuse-intro-part1-concepts-zh/)談的「在對的地方埋 trace」的實例。
+這一整套接法,也正是我在 [Langfuse 入門系列](/posts/langfuse-intro-part1-concepts-zh/)談的「在對的地方埋 trace」的實例。
 
 ---
 

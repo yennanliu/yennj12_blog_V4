@@ -1615,9 +1615,9 @@ This guide provided a complete solution for deploying Hugging Face models using 
 ---
 
 **Related Posts:**
-- [Building Production Kubernetes Platform with AWS EKS and CDK](/building-production-kubernetes-platform-aws-eks-cdk)
-- [Building Serverless URL Shortener with AWS CDK](/building-serverless-url-shortener-aws-cdk)
-- [TypeScript Best Practices: A Comprehensive Guide to Type-Safe Development](/typescript-best-practices-comprehensive-guide)
-- [Express.js Best Practices: Building Production-Ready Node.js Backend Applications](/express-nodejs-backend-framework-best-practices)
+- [Building Production Kubernetes Platform with AWS EKS and CDK](/posts/building-production-kubernetes-platform-aws-eks-cdk/)
+- [Building Serverless URL Shortener with AWS CDK](/posts/building-serverless-url-shortener-aws-cdk/)
+- [TypeScript Best Practices: A Comprehensive Guide to Type-Safe Development](/posts/typescript-best-practices-comprehensive-guide/)
+- [Express.js Best Practices: Building Production-Ready Node.js Backend Applications](/posts/express-nodejs-backend-framework-best-practices/)
 
 **Tags:** #AWS #CDK #SageMaker #Lambda #HuggingFace #MachineLearning #MLOps #TypeScript #Python #InfrastructureAsCode #Serverless #AI

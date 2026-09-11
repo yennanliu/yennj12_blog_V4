@@ -315,27 +315,27 @@ AI 資料中心供電  →  電源管理需求↑     48V 供電、GPU 機櫃電
 
 ### 📚 系列導覽:半導體產業鏈全景（上游 → 下游）
 
-> 總覽地圖:[industry-map - 半導體晶片產業鏈全景](/yennj12_blog_V4/posts/industry-map-semiconductor-value-chain-zh/)
+> 總覽地圖:[industry-map - 半導體晶片產業鏈全景](/posts/industry-map-semiconductor-value-chain-zh/)
 
 **上游 Upstream**
-- Part 1:[矽晶圓 / 基板](/yennj12_blog_V4/posts/industry-map-semiconductor-part1-silicon-wafer-zh/)
-- Part 2:[特用化學 / 光阻](/yennj12_blog_V4/posts/industry-map-semiconductor-part2-chemicals-photoresist-zh/)
-- Part 3:[EDA + IP](/yennj12_blog_V4/posts/industry-map-semiconductor-part3-eda-ip-zh/)
-- Part 4:[晶圓設備](/yennj12_blog_V4/posts/industry-map-semiconductor-part4-fab-equipment-zh/)
+- Part 1:[矽晶圓 / 基板](/posts/industry-map-semiconductor-part1-silicon-wafer-zh/)
+- Part 2:[特用化學 / 光阻](/posts/industry-map-semiconductor-part2-chemicals-photoresist-zh/)
+- Part 3:[EDA + IP](/posts/industry-map-semiconductor-part3-eda-ip-zh/)
+- Part 4:[晶圓設備](/posts/industry-map-semiconductor-part4-fab-equipment-zh/)
 
 **中游 Midstream**
-- Part 5:[晶圓代工](/yennj12_blog_V4/posts/industry-map-semiconductor-part5-foundry-zh/)
-- Part 6:[IC 設計 — GPU/加速器](/yennj12_blog_V4/posts/industry-map-semiconductor-part6-gpu-design-zh/)
-- Part 7:[IC 設計 — 其他](/yennj12_blog_V4/posts/industry-map-semiconductor-part7-ic-design-zh/)
-- Part 8:[記憶體](/yennj12_blog_V4/posts/industry-map-semiconductor-part8-memory-zh/)
-- **Part 9:[IDM / 類比](/yennj12_blog_V4/posts/industry-map-semiconductor-part9-idm-analog-zh/)** ← 本篇
-- Part 10:[封裝測試 OSAT](/yennj12_blog_V4/posts/industry-map-semiconductor-part10-osat-zh/)
+- Part 5:[晶圓代工](/posts/industry-map-semiconductor-part5-foundry-zh/)
+- Part 6:[IC 設計 — GPU/加速器](/posts/industry-map-semiconductor-part6-gpu-design-zh/)
+- Part 7:[IC 設計 — 其他](/posts/industry-map-semiconductor-part7-ic-design-zh/)
+- Part 8:[記憶體](/posts/industry-map-semiconductor-part8-memory-zh/)
+- **Part 9:[IDM / 類比](/posts/industry-map-semiconductor-part9-idm-analog-zh/)** ← 本篇
+- Part 10:[封裝測試 OSAT](/posts/industry-map-semiconductor-part10-osat-zh/)
 
 **下游 Downstream**
-- Part 11:[網通 / 互連](/yennj12_blog_V4/posts/industry-map-semiconductor-part11-networking-zh/)
-- Part 12:[系統 / 伺服器 OEM](/yennj12_blog_V4/posts/industry-map-semiconductor-part12-system-oem-zh/)
-- Part 13:[雲端 CSP](/yennj12_blog_V4/posts/industry-map-semiconductor-part13-cloud-csp-zh/)
-- Part 14:[終端需求](/yennj12_blog_V4/posts/industry-map-semiconductor-part14-end-demand-zh/)
+- Part 11:[網通 / 互連](/posts/industry-map-semiconductor-part11-networking-zh/)
+- Part 12:[系統 / 伺服器 OEM](/posts/industry-map-semiconductor-part12-system-oem-zh/)
+- Part 13:[雲端 CSP](/posts/industry-map-semiconductor-part13-cloud-csp-zh/)
+- Part 14:[終端需求](/posts/industry-map-semiconductor-part14-end-demand-zh/)
 
 ---
 
@@ -343,6 +343,6 @@ AI 資料中心供電  →  電源管理需求↑     48V 供電、GPU 機櫃電
 
 - 分析方法:InvestSkill `industry-map` skill(<https://github.com/yennanliu/InvestSkill>)——把產業畫成上游到下游的有向圖,定位咽喉點、利潤池與價值遷移。
 - 本文的市佔率/毛利率為公開產業常識的**概估值**(截至 2026 年初),用於說明各層相對地位,非即時報價。
-- 總覽地圖:[半導體晶片產業鏈全景](https://yennj12.js.org/yennj12_blog_V4/posts/industry-map-semiconductor-value-chain-zh/)
+- 總覽地圖:[半導體晶片產業鏈全景](/posts/industry-map-semiconductor-value-chain-zh/)
 
 > 再次提醒:本文為產業結構教學與地圖,市佔/毛利為概估值,**不構成投資建議**。

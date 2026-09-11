@@ -18,7 +18,7 @@ series: ["openworker-intro"]
 
 ---
 
-本篇是 [OpenWorker 深度解析系列](/yennj12_blog_V4/posts/openworker-intro-part1-architecture-overview-zh/)
+本篇是 [OpenWorker 深度解析系列](/posts/openworker-intro-part1-architecture-overview-zh/)
 的第三篇。前一篇把 agent 迴圈拆完了，這一篇處理迴圈**外面**的東西
 —— 也就是 harness（外殼）。
 
@@ -773,11 +773,11 @@ if hidden or stripped:
 
 ## 十一、系列導航
 
-- [Part 1：架構全景 — 一個能交付成果的桌面 AI 同事](/yennj12_blog_V4/posts/openworker-intro-part1-architecture-overview-zh/)
-- [Part 2：TurnEngine — Agent 迴圈的完整解剖](/yennj12_blog_V4/posts/openworker-intro-part2-turnengine-deep-dive-zh/)
+- [Part 1：架構全景 — 一個能交付成果的桌面 AI 同事](/posts/openworker-intro-part1-architecture-overview-zh/)
+- [Part 2：TurnEngine — Agent 迴圈的完整解剖](/posts/openworker-intro-part2-turnengine-deep-dive-zh/)
 - **Part 3（本篇）：Harness — 權限模型、Inbox 與人機協作**
-- [Part 4：LLM 層 — Provider 抽象與 Context 自動壓縮](/yennj12_blog_V4/posts/openworker-intro-part4-llm-provider-compaction-zh/)
-- [Part 5：能力擴充 — Tools、Skills、Personas、MCP 與排程](/yennj12_blog_V4/posts/openworker-intro-part5-tools-skills-mcp-automation-zh/)
+- [Part 4：LLM 層 — Provider 抽象與 Context 自動壓縮](/posts/openworker-intro-part4-llm-provider-compaction-zh/)
+- [Part 5：能力擴充 — Tools、Skills、Personas、MCP 與排程](/posts/openworker-intro-part5-tools-skills-mcp-automation-zh/)
 
 ---
 

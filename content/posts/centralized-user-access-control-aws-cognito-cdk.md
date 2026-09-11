@@ -1843,9 +1843,9 @@ By using AWS CDK with TypeScript, you can create infrastructure as code that's m
 ---
 
 **Related Posts:**
-- [Deploying Hugging Face Models to AWS: A Complete Guide with CDK, SageMaker, and Lambda](/deploying-huggingface-models-aws-cdk-sagemaker)
-- [Building Production Kubernetes Platform with AWS EKS and CDK](/building-production-kubernetes-platform-aws-eks-cdk)
-- [Building Serverless URL Shortener with AWS CDK](/building-serverless-url-shortener-aws-cdk)
-- [TypeScript Best Practices: A Comprehensive Guide to Type-Safe Development](/typescript-best-practices-comprehensive-guide)
+- [Deploying Hugging Face Models to AWS: A Complete Guide with CDK, SageMaker, and Lambda](/posts/deploying-huggingface-models-aws-cdk-sagemaker/)
+- [Building Production Kubernetes Platform with AWS EKS and CDK](/posts/building-production-kubernetes-platform-aws-eks-cdk/)
+- [Building Serverless URL Shortener with AWS CDK](/posts/building-serverless-url-shortener-aws-cdk/)
+- [TypeScript Best Practices: A Comprehensive Guide to Type-Safe Development](/posts/typescript-best-practices-comprehensive-guide/)
 
 **Tags:** #AWS #Cognito #Authentication #Authorization #CDK #TypeScript #Security #MultiTenant #RBAC #IAM #IdentityManagement #Serverless

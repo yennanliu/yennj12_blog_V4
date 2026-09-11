@@ -951,8 +951,8 @@ AI 工具:
 
 ## 延伸閱讀
 
-- [24/7 YouTube 串流賺錢策略完整分析](/youtube-24-7-streaming-money-strategy-zh)
-- [ADHD 友善專注音樂頻道實作指南](/adhd-focus-music-streaming-implementation-guide-zh)
-- [使用 AWS CDK 建構 24/7 YouTube 串流服務](/building-24-7-youtube-streaming-service-aws-cdk-ecs-fargate)
+- [24/7 YouTube 串流賺錢策略完整分析](/posts/youtube-24-7-streaming-money-strategy-zh/)
+- [ADHD 友善專注音樂頻道實作指南](/posts/adhd-focus-music-streaming-implementation-guide-zh/)
+- [使用 AWS CDK 建構 24/7 YouTube 串流服務](/posts/building-24-7-youtube-streaming-service-aws-cdk-ecs-fargate/)
 
 **標籤**: #AI音樂 #環境音 #深海 #太空 #YouTube #Suno #Midjourney #被動收入

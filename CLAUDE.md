@@ -122,8 +122,37 @@ It needs Pillow and resolves fonts from the macOS system directory with a Linux 
 are 1200×630 (the size every network crops from). Note that social networks cache aggressively by
 URL — keep the filename stable and re-scrape via the platform's debugger rather than renaming.
 
-Anything in `static/` must be referenced through `relURL`/`absURL`, never as a bare `/path`: the
-site is served from the `/yennj12_blog_V4/` sub-path, so a root-absolute href 404s in production.
+### Internal links and the baseURL sub-path
+
+The site is served from `https://yennj12.js.org/yennj12_blog_V4/`, so anything that resolves from
+the domain root 404s in production. Three rules keep that from happening:
+
+- **In Markdown**, write internal links root-absolute and *without* the sub-path —
+  `[text](/posts/some-slug/)`, `[text](/tags/rag/)`. The link render hook at
+  `themes/uber-style/layouts/_default/_markup/render-link.html` resolves each one through
+  `site.GetPage` (falling back to `/posts/<slug>` for a bare slug, then to `relURL`), so the
+  same source renders as `/yennj12_blog_V4/posts/some-slug/` in production and `/posts/some-slug/`
+  under `hugo server`. **Never hand-write the `/yennj12_blog_V4/` prefix or a full
+  `https://yennj12.js.org/...` URL in content** — that is what breaks local preview and what
+  breaks again the day the sub-path changes.
+- **In templates**, build every internal href/src with `relURL`, and **pass a path with no
+  leading slash**. This is the trap that caused the bug: `relURL "/tags/rag/"` returns
+  `/tags/rag/` untouched, while `relURL "tags/rag/"` returns `/yennj12_blog_V4/tags/rag/`. The
+  same goes for `static/` assets and for front-matter values such as `avatar` that already start
+  with `/` — pipe them through `strings.TrimPrefix "/"` first. Prefer a page's own
+  `.RelPermalink` when you have the page.
+- **CI enforces it.** `scripts/check_links.py` reads `baseURL` out of `hugo.toml`, then fails on
+  a hard-coded baseURL anywhere in `content/` and on any root-absolute `href`/`src` in `public/`
+  that is missing the sub-path. `.github/workflows/hugo-latest.yml` runs it between the build and
+  the Pages upload. Run it locally the same way:
+
+```bash
+hugo --gc --minify && python3 scripts/check_links.py
+python3 scripts/check_links.py --content-only   # skips the build-output half
+```
+
+  It also *warns* about internal links whose target page does not exist. Those are a separate
+  content problem (a renamed or never-written post) and do not fail the build.
 
 ### Design system
 

@@ -746,7 +746,7 @@ Part 2 將深入探討:
 
 ## 延伸閱讀
 
-- [24/7 YouTube 串流賺錢策略完整分析](/youtube-24-7-streaming-money-strategy-zh)
-- [AI 深海/太空環境音串流實戰（一）：市場分析與科學原理](/ai-ocean-space-ambient-streaming-part1-foundation-zh)
+- [24/7 YouTube 串流賺錢策略完整分析](/posts/youtube-24-7-streaming-money-strategy-zh/)
+- [AI 深海/太空環境音串流實戰（一）：市場分析與科學原理](/posts/ai-ocean-space-ambient-streaming-part1-foundation-zh/)
 
 **標籤**: #Synthwave #復古合成器 #80年代 #賽博龐克 #程式設計師 #遊戲音樂 #YouTube #被動收入
