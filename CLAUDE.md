@@ -127,32 +127,42 @@ URL — keep the filename stable and re-scrape via the platform's debugger rathe
 The site is served from `https://yennj12.js.org/yennj12_blog_V4/`, so anything that resolves from
 the domain root 404s in production. Three rules keep that from happening:
 
-- **In Markdown**, write internal links root-absolute and *without* the sub-path —
-  `[text](/posts/some-slug/)`, `[text](/tags/rag/)`. The link render hook at
-  `themes/uber-style/layouts/_default/_markup/render-link.html` resolves each one through
-  `site.GetPage` (falling back to `/posts/<slug>` for a bare slug, then to `relURL`), so the
-  same source renders as `/yennj12_blog_V4/posts/some-slug/` in production and `/posts/some-slug/`
-  under `hugo server`. **Never hand-write the `/yennj12_blog_V4/` prefix or a full
-  `https://yennj12.js.org/...` URL in content** — that is what breaks local preview and what
-  breaks again the day the sub-path changes.
+- **In Markdown**, write internal links and images root-absolute and *without* the sub-path —
+  `[text](/posts/some-slug/)`, `[text](/tags/rag/)`, `![alt](/images/thing.png)`. The render
+  hooks in `themes/uber-style/layouts/_default/_markup/` resolve them: `render-link.html` goes
+  through `site.GetPage` (falling back to `/posts/<slug>` for a bare slug, then to `relURL`) and
+  `render-image.html` does the same minus the page lookup, since an image names a file under
+  `static/`. Either way the same source renders as `/yennj12_blog_V4/posts/some-slug/` in
+  production and `/posts/some-slug/` under `hugo server`. **Never hand-write the
+  `/yennj12_blog_V4/` prefix or a full `https://yennj12.js.org/...` URL in content** — that is
+  what breaks local preview and what breaks again the day the sub-path changes.
 - **In templates**, build every internal href/src with `relURL`, and **pass a path with no
   leading slash**. This is the trap that caused the bug: `relURL "/tags/rag/"` returns
-  `/tags/rag/` untouched, while `relURL "tags/rag/"` returns `/yennj12_blog_V4/tags/rag/`. The
-  same goes for `static/` assets and for front-matter values such as `avatar` that already start
-  with `/` — pipe them through `strings.TrimPrefix "/"` first. Prefer a page's own
+  `/tags/rag/` untouched, while `relURL "tags/rag/"` returns `/yennj12_blog_V4/tags/rag/`.
+  `absURL` behaves identically, which is why the `og:image` chain in `head.html` trims first.
+  The same goes for `static/` assets and for front-matter values such as `avatar` and `image`
+  that already start with `/` — pipe them through `strings.TrimPrefix "/"`. Prefer a page's own
   `.RelPermalink` when you have the page.
 - **CI enforces it.** `scripts/check_links.py` reads `baseURL` out of `hugo.toml`, then fails on
-  a hard-coded baseURL anywhere in `content/` and on any root-absolute `href`/`src` in `public/`
-  that is missing the sub-path. `.github/workflows/hugo-latest.yml` runs it between the build and
-  the Pages upload. Run it locally the same way:
+  a hard-coded baseURL anywhere in `content/`, on any root-absolute `href`/`src` in `public/`
+  that is missing the sub-path, and on self-referential metadata (`og:image`, `twitter:image`,
+  `og:url`, `rel=canonical`) that points at our own host without it. All three deploy workflows
+  run it between the build and the upload, and `link-check.yml` runs the same build and check on
+  every pull request against `main` — that is the copy that can still block a change, since the
+  deploy workflows only fire once it is merged. Add the check to any new workflow that builds the
+  site. Run it locally the same way:
 
 ```bash
 hugo --gc --minify && python3 scripts/check_links.py
 python3 scripts/check_links.py --content-only   # skips the build-output half
+python3 scripts/check_links.py --strict         # also fail on dead internal targets
 ```
 
-  It also *warns* about internal links whose target page does not exist. Those are a separate
-  content problem (a renamed or never-written post) and do not fail the build.
+  It also *warns* about internal links whose target page does not exist — 139 of those remain,
+  mostly series-nav entries for renamed or never-written posts, plus the missing
+  `static/images/authors/*.jpg` avatars. Those are a content problem, not a URL-shape problem,
+  so they do not fail the build; `--strict` promotes them to errors when you want to work
+  through the list.
 
 ### Design system
 

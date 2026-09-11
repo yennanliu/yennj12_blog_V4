@@ -12,8 +12,9 @@
             {{ range .Pages }}
             <div class="author-card">
                 <a href="{{ .RelPermalink }}" class="author-card__link">
+                    {{ $author := . }}
                     {{ with .Params.avatar }}
-                    <img src="{{ strings.TrimPrefix "/" . | relURL }}" alt="{{ $.Title }}" class="author-card__avatar">
+                    <img src="{{ strings.TrimPrefix "/" . | relURL }}" alt="{{ $author.Title }}" class="author-card__avatar">
                     {{ end }}
                     
                     <div class="author-card__info">

@@ -49,7 +49,8 @@
 {{ $defaultImages := .Site.Params.images | default (slice "images/og-default.png") }}
 {{ $defaultImage := index $defaultImages 0 }}
 {{ $image := .Params.image | default $defaultImage }}
-{{ $imageURL := $image | absURL }}
+{{/* absURL ignores the baseURL sub-path on a leading slash, so trim it first. */}}
+{{ $imageURL := strings.TrimPrefix "/" $image | absURL }}
 {{ $isDefaultImage := eq $image $defaultImage }}
 {{ $imageAlt := .Params.imageAlt | default (cond $isDefaultImage .Site.Params.imageAlt $title) }}
 

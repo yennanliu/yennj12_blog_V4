@@ -1,0 +1,50 @@
+# The sub-path gate, run where it can still block a change.
+#
+# hugo-latest.yml runs scripts/check_links.py too, but only on push to main —
+# by then the change is merged and the failure costs a red deploy rather than a
+# blocked review. This workflow runs the same build and the same check on the
+# pull request itself. It deliberately has no Pages permissions, no deploy job
+# and no "pages" concurrency group, so it cannot race a real deployment.
+name: Check internal links
+
+on:
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: link-check-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Same version hugo-latest.yml deploys with: the check reads built HTML,
+      # so a different Hugo could produce output this one never sees.
+      - name: Setup Hugo
+        run: |
+          HUGO_VERSION="0.124.1"
+          curl -fL --retry 5 --retry-delay 5 \
+            "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" \
+            -o /tmp/hugo.tar.gz
+          tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
+          sudo install /tmp/hugo /usr/local/bin/
+          hugo version
+
+      # --minify matters: it strips quotes off attribute values, and the
+      # metadata patterns in check_links.py have to cope with that shape.
+      - name: Build with Hugo
+        run: |
+          hugo \
+            --gc \
+            --minify
+
+      - name: Check internal links carry the site sub-path
+        run: python3 scripts/check_links.py
