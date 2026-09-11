@@ -11,15 +11,23 @@ dead while the real page lived at
 
     https://yennj12.js.org/yennj12_blog_V4/posts/aio-geo-part2-how-engines-work-zh/
 
-Two checks run, and each is an error:
+Three checks run, and each is an error:
 
   1. content/  — no hard-coded baseURL (the sub-path or the full domain) in a
-     Markdown link. Write "/posts/slug/" and let the link render hook
-     (themes/uber-style/layouts/_default/_markup/render-link.html) resolve it.
+     Markdown link. Write "/posts/slug/" and let the render hooks in
+     themes/uber-style/layouts/_default/_markup/ resolve it.
   2. public/   — every root-absolute href/src in the built site must sit under
      the baseURL path. This catches templates that forget relURL, and the
      relURL leading-slash trap: `relURL "/tags/x/"` returns "/tags/x/"
      unchanged, only `relURL "tags/x/"` prepends the sub-path.
+  3. public/   — self-referential metadata (og:image, og:url, twitter:image,
+     rel=canonical) goes through absURL, which has the same leading-slash trap
+     and never appears as an href/src, so check 2 cannot see it.
+
+All three are sub-path rules, so all three switch off when the configured
+baseURL has no sub-path — otherwise a correct root-served site would fail every
+line. Note that the patterns must tolerate unquoted attribute values: CI builds
+with `hugo --minify`, which strips the quotes.
 
 Dead internal targets (links to pages that were never written) are reported as
 warnings; they are a content problem, not a URL-shape problem, and do not fail
@@ -57,26 +65,41 @@ BASE_PATH = "/" + _BASE.path.strip("/")          # "/yennj12_blog_V4"
 HOST = _BASE.netloc                              # "yennj12.js.org"
 
 # A baseURL with no sub-path ("https://example.org/") leaves BASE_PATH as "/",
-# which would make every root-absolute URL in the build look wrong. There is
-# nothing to check in that case, so the sub-path rules switch themselves off.
+# which would make every root-absolute URL in the build look wrong and every
+# link to our own host look hard-coded. There is nothing to check in that case,
+# so the sub-path rules switch themselves off in both halves of the run.
 HAS_SUBPATH = BASE_PATH != "/"
 
 MD_LINK = re.compile(r"\]\(([^)\s]+)")
 ATTR = re.compile(r"""(?:href|src)=(?:"([^"]*)"|'([^']*)'|([^\s>]+))""", re.I)
 FENCE = re.compile(r"^\s*(```+|~~~+)")
 
+# Attribute value, quoted or not. `hugo --minify` drops the quotes whenever the
+# value has no character that needs them, so a pattern that insists on quotes
+# silently matches nothing in exactly the build CI checks.
+_VALUE = r"""(?:"(?P<dq>[^"]*)"|'(?P<sq>[^']*)'|(?P<uq>[^\s>]+))"""
+
 # Self-referential metadata: these are built from front matter through absURL,
 # which silently drops the sub-path when the value starts with "/". They are
 # not href/src, so ATTR never sees them.
+#
+# The lookahead after the property name keeps `og:image` from also matching the
+# `og:image:width` / `:height` / `:alt` / `:type` tags that sit beside it — the
+# label would then be wrong in the error message.
 META = re.compile(
     r"""<meta[^>]*?(?:property|name)=["']?"""
-    r"""(og:image(?::secure_url)?|twitter:image|og:url)["']?[^>]*?"""
-    r"""content=["']([^"']*)["']""",
+    r"""(?P<label>og:image(?::secure_url)?|twitter:image|og:url)(?=["'\s>])[^>]*?"""
+    r"""content=""" + _VALUE,
     re.I,
 )
 CANONICAL = re.compile(
-    r"""<link[^>]*?rel=["']?canonical["']?[^>]*?href=["']([^"']*)["']""", re.I
+    r"""<link[^>]*?rel=["']?canonical["']?(?=[\s>])[^>]*?href=""" + _VALUE, re.I
 )
+
+
+def _attr_value(match: re.Match) -> str:
+    """The quoted or unquoted value captured by _VALUE."""
+    return match.group("dq") or match.group("sq") or match.group("uq") or ""
 
 
 def markdown_links(text: str):
@@ -105,6 +128,12 @@ def markdown_links(text: str):
 
 def check_content() -> list[str]:
     errors = []
+    # With a root baseURL every test below collapses into something true of
+    # correct links: BASE_PATH is "/", so "hard-coded prefix" means "starts
+    # with a slash" and "hard-coded host" means "any absolute link to our own
+    # domain", including the sibling projects served beside us.
+    if not HAS_SUBPATH:
+        return errors
     for path in sorted(CONTENT.rglob("*.md")):
         text = path.read_text(encoding="utf-8")
         for line_no, url in markdown_links(text):
@@ -152,8 +181,8 @@ def check_public() -> tuple[list[str], Counter]:
         if not HAS_SUBPATH:
             continue
 
-        metadata = [(m.group(1), m.group(2)) for m in META.finditer(text)]
-        metadata += [("canonical", m.group(1)) for m in CANONICAL.finditer(text)]
+        metadata = [(m.group("label"), _attr_value(m)) for m in META.finditer(text)]
+        metadata += [("canonical", _attr_value(m)) for m in CANONICAL.finditer(text)]
         for label, url in metadata:
             split = urlsplit(url)
             # Only our own host is ours to judge: the same domain also serves
