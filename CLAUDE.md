@@ -147,7 +147,10 @@ the domain root 404s in production. Three rules keep that from happening:
   a hard-coded baseURL anywhere in `content/`, on any root-absolute `href`/`src` in `public/`
   that is missing the sub-path, and on self-referential metadata (`og:image`, `twitter:image`,
   `og:url`, `rel=canonical`) that points at our own host without it. All three deploy workflows
-  run it between the build and the upload. Run it locally the same way:
+  run it between the build and the upload, and `link-check.yml` runs the same build and check on
+  every pull request against `main` — that is the copy that can still block a change, since the
+  deploy workflows only fire once it is merged. Add the check to any new workflow that builds the
+  site. Run it locally the same way:
 
 ```bash
 hugo --gc --minify && python3 scripts/check_links.py
