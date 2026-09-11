@@ -65,7 +65,12 @@ jobs:
           hugo \
             --gc \
             --minify
-      
+
+      # Same gate as hugo-latest.yml: this workflow can be dispatched by hand
+      # and would otherwise ship links that drop the /yennj12_blog_V4/ sub-path.
+      - name: Check internal links carry the site sub-path
+        run: python3 scripts/check_links.py
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

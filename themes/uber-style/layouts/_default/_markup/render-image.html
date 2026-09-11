@@ -1,0 +1,29 @@
+{{- /*
+  Image render hook: the companion to render-link.html.
+
+  A Markdown image written as `![alt](/images/thing.png)` points at the domain
+  root, so it 404s on a site served from a sub-path — and, since the CI link
+  check now fails on exactly that shape, it would also break the deploy with an
+  error a Markdown author cannot act on. Resolve it the same way links are
+  resolved instead.
+
+  External, protocol-relative and already-relative sources pass through
+  untouched. There is no site.GetPage step here: an image names a file under
+  static/, not a page.
+*/ -}}
+
+{{- $src := .Destination -}}
+{{- $u := urls.Parse $src -}}
+
+{{- if and $src (eq $u.Scheme "") (eq $u.Host "") (hasPrefix $src "/") -}}
+  {{- $base := strings.TrimSuffix "/" (urls.Parse site.BaseURL).Path -}}
+  {{- $path := $u.Path -}}
+  {{- if and $base (or (eq $path $base) (hasPrefix $path (printf "%s/" $base))) -}}
+    {{- $path = strings.TrimPrefix $base $path -}}
+  {{- end -}}
+  {{- $src = relURL (strings.TrimPrefix "/" $path) -}}
+  {{- with $u.RawQuery -}}{{- $src = printf "%s?%s" $src . -}}{{- end -}}
+  {{- with $u.Fragment -}}{{- $src = printf "%s#%s" $src . -}}{{- end -}}
+{{- end -}}
+
+<img src="{{ $src }}" alt="{{ .PlainText }}"{{ with .Title }} title="{{ . }}"{{ end }}>

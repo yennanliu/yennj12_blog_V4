@@ -25,7 +25,10 @@ Dead internal targets (links to pages that were never written) are reported as
 warnings; they are a content problem, not a URL-shape problem, and do not fail
 the build.
 
-Usage:  python3 scripts/check_links.py [--content-only]
+Usage:  python3 scripts/check_links.py [--content-only] [--strict]
+
+  --content-only   skip the built-output half (no `hugo` run needed)
+  --strict         also fail on dead internal targets, not just warn
 """
 
 from __future__ import annotations
@@ -53,9 +56,27 @@ _BASE = urlsplit(_base_url())
 BASE_PATH = "/" + _BASE.path.strip("/")          # "/yennj12_blog_V4"
 HOST = _BASE.netloc                              # "yennj12.js.org"
 
+# A baseURL with no sub-path ("https://example.org/") leaves BASE_PATH as "/",
+# which would make every root-absolute URL in the build look wrong. There is
+# nothing to check in that case, so the sub-path rules switch themselves off.
+HAS_SUBPATH = BASE_PATH != "/"
+
 MD_LINK = re.compile(r"\]\(([^)\s]+)")
 ATTR = re.compile(r"""(?:href|src)=(?:"([^"]*)"|'([^']*)'|([^\s>]+))""", re.I)
 FENCE = re.compile(r"^\s*(```+|~~~+)")
+
+# Self-referential metadata: these are built from front matter through absURL,
+# which silently drops the sub-path when the value starts with "/". They are
+# not href/src, so ATTR never sees them.
+META = re.compile(
+    r"""<meta[^>]*?(?:property|name)=["']?"""
+    r"""(og:image(?::secure_url)?|twitter:image|og:url)["']?[^>]*?"""
+    r"""content=["']([^"']*)["']""",
+    re.I,
+)
+CANONICAL = re.compile(
+    r"""<link[^>]*?rel=["']?canonical["']?[^>]*?href=["']([^"']*)["']""", re.I
+)
 
 
 def markdown_links(text: str):
@@ -108,9 +129,15 @@ def check_public() -> tuple[list[str], Counter]:
 
     for path in PUBLIC.rglob("*.html"):
         text = path.read_text(encoding="utf-8", errors="replace")
+
         for match in ATTR.finditer(text):
             url = match.group(1) or match.group(2) or match.group(3) or ""
             if not url.startswith("/") or url.startswith("//"):
+                continue
+            if not HAS_SUBPATH:
+                target = url.split("#")[0].split("?")[0]
+                if target and not _exists(target):
+                    dead[target] += 1
                 continue
             if url == BASE_PATH or url.startswith(BASE_PATH + "/"):
                 target = url[len(BASE_PATH):].split("#")[0].split("?")[0]
@@ -121,6 +148,33 @@ def check_public() -> tuple[list[str], Counter]:
                 f"{path.relative_to(ROOT)}: {url!r} is missing the {BASE_PATH} "
                 f"prefix — use relURL with a path that has no leading slash"
             )
+
+        if not HAS_SUBPATH:
+            continue
+
+        metadata = [(m.group(1), m.group(2)) for m in META.finditer(text)]
+        metadata += [("canonical", m.group(1)) for m in CANONICAL.finditer(text)]
+        for label, url in metadata:
+            split = urlsplit(url)
+            # Only our own host is ours to judge: the same domain also serves
+            # sibling GitHub Pages projects (InvestSkill, finance_data, ...)
+            # under their own sub-paths, and pointing a card at one of those is
+            # a legitimate choice.
+            if split.netloc != HOST:
+                continue
+            if split.path == BASE_PATH or split.path.startswith(BASE_PATH + "/"):
+                continue
+            # What separates the absURL trap from a deliberate sibling link is
+            # whether this very path exists inside *our* build. If it does, the
+            # sub-path was dropped off one of our own files.
+            if not _exists(split.path):
+                continue
+            errors.append(
+                f"{path.relative_to(ROOT)}: {label} is {url!r}, which is missing "
+                f"the {BASE_PATH} prefix — absURL drops the sub-path when its "
+                f"argument starts with a slash, so trim it first"
+            )
+
     return errors, dead
 
 
@@ -134,6 +188,7 @@ def _exists(target: str) -> bool:
 
 def main() -> int:
     content_only = "--content-only" in sys.argv
+    strict = "--strict" in sys.argv
 
     errors = check_content()
     dead: Counter = Counter()
@@ -143,12 +198,18 @@ def main() -> int:
 
     if dead:
         total = sum(dead.values())
+        label = "error" if strict else "warning"
         print(
-            f"warning: {len(dead)} internal target(s) do not exist "
-            f"({total} link(s)); showing 15:"
+            f"{label}: {len(dead)} internal target(s) do not exist "
+            f"({total} link(s)):"
         )
-        for target, count in dead.most_common(15):
-            print(f"  warning:  {count:4d}x  {target}")
+        for target, count in dead.most_common():
+            print(f"  {label}:  {count:4d}x  {target}")
+        if strict:
+            errors += [
+                f"dead internal target: {target} ({count} link(s))"
+                for target, count in dead.most_common()
+            ]
 
     if errors:
         print(f"\nerror: {len(errors)} internal link(s) missing the site sub-path:")
