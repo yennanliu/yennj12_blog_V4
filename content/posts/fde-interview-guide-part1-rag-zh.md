@@ -3,16 +3,15 @@ title: "FDE 面試準備指南（一）：RAG 完全解析"
 date: 2026-05-30T10:00:00+08:00
 draft: false
 weight: 1
-description: "以 Google AI 工程師兼面試官的視角，解析 FDE 面試中 RAG 最高頻考題，包含核心架構、Chunk 策略、幻覺改善、Hybrid Search 與實戰建議"
+description: "從面試官的視角，解析 FDE 面試中 RAG 最高頻考題，包含核心架構、Chunk 策略、幻覺改善、Hybrid Search 與實戰建議"
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "RAG", "LLM", "Vector DB", "Interview", "Google"]
 authors: ["yen"]
 readTime: "12 min"
 ---
 
-> 我在 Google 做 AI 工程，也是面試官。  
 > 這是一份寫給準備 FDE 面試的人看的系列。  
-> 不是教科書，是我站在白板前問過你才懂的那種。
+> 不是教科書，而是從面試官的角度，拆解白板前真正會被追問的那些題目。
 
 ---
 

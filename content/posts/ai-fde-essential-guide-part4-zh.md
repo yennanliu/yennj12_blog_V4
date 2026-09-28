@@ -1846,7 +1846,3 @@ async def setup_cost_optimization():
 4. **成本最佳化**：動態資源分配、預算控制與智能成本建議
 
 下一篇將完成系列最終篇，專注於客戶協作與問題解決實務，包含需求分析、技術溝通與專案交付管理。
-
-<function_calls>
-<invoke name="TodoWrite">
-<parameter name="todos">[{"content": "Plan 5-part AI FDE blog series structure and topics", "status": "completed", "activeForm": "Planning 5-part AI FDE blog series structure and topics"}, {"content": "Create Part 1: AI FDE \u57fa\u790e\u6838\u5fc3\u6982\u5ff5\u8207\u6280\u8853\u68e7", "status": "completed", "activeForm": "Creating Part 1: AI FDE \u57fa\u790e\u6838\u5fc3\u6982\u5ff5\u8207\u6280\u8853\u68e7"}, {"content": "Create Part 2: \u591a\u667a\u6167\u9ad4\u7cfb\u7d71\u8207\u6846\u67b6\u5be6\u6230", "status": "completed", "activeForm": "Creating Part 2: \u591a\u667a\u6167\u9ad4\u7cfb\u7d71\u8207\u6846\u67b6\u5be6\u6230"}, {"content": "Create Part 3: \u4f01\u696d\u7d1a AI \u6574\u5408\u8207\u90e8\u7f72\u7b56\u7565", "status": "completed", "activeForm": "Creating Part 3: \u4f01\u696d\u7d1a AI \u6574\u5408\u8207\u90e8\u7f72\u7b56\u7565"}, {"content": "Create Part 4: \u751f\u7522\u74b0\u5883 AI \u7cfb\u7d71\u76e3\u63a7\u8207\u6700\u4f73\u5316", "status": "completed", "activeForm": "Creating Part 4: \u751f\u7522\u74b0\u5883 AI \u7cfb\u7d71\u76e3\u63a7\u8207\u6700\u4f73\u5316"}, {"content": "Create Part 5: \u5ba2\u6236\u5354\u4f5c\u8207\u554f\u984c\u89e3\u6c7a\u5be6\u52d9", "status": "in_progress", "activeForm": "Creating Part 5: \u5ba2\u6236\u5354\u4f5c\u8207\u554f\u984c\u89e3\u6c7a\u5be6\u52d9"}]
