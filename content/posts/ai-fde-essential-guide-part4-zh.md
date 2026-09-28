@@ -7,7 +7,7 @@ description: "深入探討生產環境 AI 系統的全方位監控策略、效�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Monitoring", "Optimization", "MLOps", "Performance", "Cost Management", "Production", "cheatsheet"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "29 min"
 ---
 
 ## 前言

@@ -5,9 +5,9 @@ draft: false
 weight: 35
 description: "以系統設計視角拆解 Agentic AI 系統的可觀測性：為什麼 Log 不夠、Span 樹的結構設計、OpenTelemetry 與 Cloud Trace 的整合模式、Sampling 策略的 Trade-off，以及一條 Trace 應該回答哪五個診斷問題"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Observability", "Tracing", "OpenTelemetry", "Cloud Trace", "Vertex AI", "Agent", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Observability", "Tracing", "OpenTelemetry", "Cloud Trace", "Vertex AI", "Agent", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "13 min"
 ---
 
 > 面試官問「P95 延遲突然升高，你怎麼辦？」  
@@ -317,6 +317,6 @@ PII 處理       記錄 Prompt 內容         只記錄 token 數/長度  只記
 
 ---
 
-**系列導覽：**  
-← [（三十四）RKK Mock 情境題庫](../fde-interview-guide-part34-mock-scenarios-zh/)  
-← [（三十六）生產級 Eval Pipeline 設計](../fde-interview-guide-part36-eval-pipeline-zh/)
+**系列導航**
+
+← [Part 34：RKK 實戰演練——六個端對端 Mock 情境題與模範答案](/posts/fde-interview-guide-part34-mock-scenarios-zh/) | [Part 36：RKK 實戰——生產級 AI Evaluation Pipeline：從黃金資料集到 CI/CD 品質閘門](/posts/fde-interview-guide-part36-eval-pipeline-zh/) →

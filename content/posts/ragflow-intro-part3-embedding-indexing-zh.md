@@ -7,7 +7,7 @@ description: "RAGFlow 原始碼導讀系列第三篇：拆解混合向量（0.1 
 categories: ["all", "ai", "engineering"]
 tags: ["RAGFlow", "RAG", "AI", "Embedding", "Elasticsearch", "Vector Database", "Infinity", "繁體中文"]
 authors: ["yen"]
-readTime: "25 min"
+readTime: "18 min"
 ---
 
 > *大多數人處理 RAG 的儲存，是 `collection.add(documents=chunks, embeddings=vecs)`，然後就不再想這件事。*

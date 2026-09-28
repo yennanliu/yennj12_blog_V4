@@ -7,7 +7,7 @@ description: "vLLM 原始碼導讀系列第四篇：拆解 TP／PP／DP／EP 四
 categories: ["all", "ai", "engineering", "infrastructure"]
 tags: ["vLLM", "Distributed Inference", "Tensor Parallelism", "Quantization", "FP8", "CUDA Graph", "torch.compile", "繁體中文"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "18 min"
 ---
 
 > *大多數人遇到「模型放不下」的反應，是把 `--tensor-parallel-size` 開到卡數，跑起來就當解決了。*

@@ -5,7 +5,7 @@ draft: false
 weight: 33
 description: "以 Google RKK 面試官的第一人稱視角，完整拆解 FDE RKK 面試的時間結構、五個評分維度、四個面試階段、「雇用」和「強力雇用」的實際差距，以及最常見的七個失敗模式"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "RKK", "Interview", "Google", "Playbook", "Scoring", "System Design"]
+tags: ["AI", "FDE", "RKK", "Interview", "Cloud", "Playbook", "Scoring", "System Design"]
 authors: ["yen"]
 readTime: "16 min"
 ---
@@ -432,3 +432,9 @@ CTO 聽不懂 Faithfulness。
 **RKK 面試測的是一件事：**  
 **你能不能在不確定的情況下，做出有依據的判斷，並且用讓客戶聽懂的語言說清楚。**  
 **知識是基礎，但判斷力才是 FDE 的核心。**
+
+---
+
+**系列導航**
+
+← [Part 32：RKK 實戰——Vertex AI 產品棧全解析：Agent Builder、Vertex AI Search、Gemini API 與部署架構](/posts/fde-interview-guide-part32-vertex-ai-stack-zh/) | [Part 34：RKK 實戰演練——六個端對端 Mock 情境題與模範答案](/posts/fde-interview-guide-part34-mock-scenarios-zh/) →

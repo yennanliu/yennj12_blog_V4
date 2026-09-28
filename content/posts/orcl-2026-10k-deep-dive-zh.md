@@ -4,9 +4,9 @@ date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 Oracle FY2026 年報做機構級深度拆解:五年財務軌跡、雲端/OCI 事業拆解、爆增至 $6,380 億的 RPO 訂單、$557 億資本支出與 −$237 億自由現金流、$1,295 億債務與負的有形股東權益、Ampere 一次性利得、情境分析、競爭格局、風險矩陣與投資訊號。"
 categories: ["all", "finance"]
-tags: ["ORCL", "Oracle", "10-K", "SEC", "財報分析", "價值投資", "美股", "雲端", "資料庫", "OCI", "AI", "InvestSkill", "investing"]
+tags: ["ORCL", "Oracle", "10-K", "SEC", "財報分析", "價值投資", "美股", "雲端", "資料庫", "AI", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "18 min"
 ---
 
 > 大部分人看 Oracle 的 2026 年報,第一眼看到「營收 +17%、淨利 +37%、雲端 +39%」就下結論:AI 雲端轉型成功,買進。

@@ -7,7 +7,7 @@ description: "從零拆解 Andrew Ng 團隊的開源專案 OpenWorker：它為�
 categories: ["all", "ai", "engineering"]
 tags: ["OpenWorker", "AI Agent", "Agent Harness", "LLM", "Python", "開源專案解析", "繁體中文"]
 authors: ["yen"]
-readTime: "24 min"
+readTime: "15 min"
 series: ["openworker-intro"]
 ---
 

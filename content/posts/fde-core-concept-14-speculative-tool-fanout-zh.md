@@ -5,7 +5,7 @@ draft: false
 weight: 14
 description: "深入剖析 Agent 並行 15 個工具呼叫時如何以投機雙發（Hedged Request）壓制 P99 尾部延遲、用硬截止時間搭配優雅降級回傳部分結果，將並行等待的長尾從約 3–5 秒壓到 1.5 秒以內。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Performance", "FanOut", "SpeculativeExecution"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Performance", "Fan-Out", "SpeculativeExecution"]
 authors: ["yen"]
 readTime: "18 min"
 ---

@@ -7,7 +7,7 @@ description: "深入探討企業級 AI 系統整合策略，包含雲端平台�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Cloud Deployment", "GCP", "AWS", "Azure", "RAG", "Data Pipeline", "Security", "cheatsheet"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "23 min"
 ---
 
 ## 前言

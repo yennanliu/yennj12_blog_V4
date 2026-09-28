@@ -6,7 +6,7 @@ description: "Master webhooks with comprehensive comparisons to HTTP calls and p
 categories: ["all", "engineering", "architecture"]
 tags: ["Webhooks", "Event-Driven Architecture", "Java", "Spring Boot", "API Integration", "Real-Time Systems", "Stripe", "GitHub", "Shopify", "HTTP", "REST API", "Integration"]
 authors: ["yen"]
-readTime: "55 min"
+readTime: "32 min"
 ---
 
 ## 🎯 Introduction

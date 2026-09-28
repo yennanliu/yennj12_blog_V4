@@ -6,7 +6,7 @@ description: "用 10k-digest 方法對 Meta Platforms FY2025 年報做機構級�
 categories: ["all", "finance"]
 tags: ["META", "Meta Platforms", "10-K", "SEC", "財報分析", "價值投資", "美股", "AI", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "32 min"
+readTime: "18 min"
 ---
 
 > 大部分人看 Meta 的 2025 年報,第一眼看到「淨利年減 3%」就皺眉:成長股怎麼倒退了?

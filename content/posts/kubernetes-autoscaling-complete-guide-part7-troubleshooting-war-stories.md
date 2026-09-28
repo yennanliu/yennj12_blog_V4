@@ -5,10 +5,10 @@ draft: false
 weight: 7
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "Troubleshooting", "Debugging", "Production", "Incidents", "War Stories", "Performance", "Autoscaling", "SRE", "devops"]
+tags: ["Kubernetes", "K8S", "Troubleshooting", "Debugging", "Production", "Incidents", "War Stories", "Performance", "Autoscaling", "SRE", "DevOps"]
 summary: "Part 7 of the Kubernetes Autoscaling series: Real-world production incidents, debugging workflows, common failure scenarios, and hard-learned lessons from operating autoscaling at scale. Battle-tested troubleshooting guides and postmortem analysis."
 description: "Part 7 of the Kubernetes Autoscaling series: Real-world production incidents, debugging workflows, common failure scenarios, and hard-learned lessons from operating autoscaling at scale. Battle-tested troubleshooting guides and postmortem analysis."
-readTime: "45 min"
+readTime: "26 min"
 ---
 
 ## Series Overview

@@ -7,7 +7,7 @@ description: "一家 3,000 人製造業集團的六語系官網，跑在 AWS Clo
 categories: ["all", "ai", "engineering", "business"]
 tags: ["GEO", "AIO", "企業官網", "AWS", "CloudFront", "WAF", "多語系", "hreflang", "案例研究", "繁體中文", "SEO", "Case Study"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "13 min"
 ---
 
 > 大企業做 GEO 的難點從來不是「不知道怎麼做」。

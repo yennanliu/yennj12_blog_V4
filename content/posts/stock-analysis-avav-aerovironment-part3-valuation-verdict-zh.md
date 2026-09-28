@@ -4,9 +4,9 @@ date: 2026-06-27T15:00:00+08:00
 draft: false
 description: "AeroVironment（NASDAQ: AVAV）三部曲完整選股分析（下）：DCF 三情境機率加權、EV/Revenue 與本益比相對估值、可比國防股分析、足球場估值匯總、安全邊際、資本配置與股本稀釋,最終給出目標價區間與綜合投資裁決訊號——一檔崩跌 66% 後、財報在即的墜落天使,究竟貴還是便宜？"
 categories: ["all", "finance"]
-tags: ["Stock Analysis", "AVAV", "AeroVironment", "DCF", "Valuation", "Football Field", "Price Target", "Defense", "Drone", "InvestSkill", "繁體中文", "investment"]
+tags: ["Stock Analysis", "AVAV", "AeroVironment", "DCF", "Valuation", "Football Field", "Price Target", "Defense", "Drone", "InvestSkill", "繁體中文", "Investment"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "15 min"
 ---
 
 > 多數人估值 AVAV 只會說「分析師喊 $305,現價 $142,上漲一倍,買!」
@@ -26,8 +26,8 @@ readTime: "23 min"
 
 本篇為 **AeroVironment（AVAV）三部曲分析**的第三部（完結）：
 
-- （上）基本面與產業競爭力
-- （中）技術面、籌碼面與市場情緒
+- [（上）基本面與產業競爭力](/posts/stock-analysis-avav-aerovironment-part1-fundamentals-zh/)
+- [（中）技術面、籌碼面與市場情緒](/posts/stock-analysis-avav-aerovironment-part2-technical-sentiment-zh/)
 - **（下）估值模型與投資裁決** ← 你正在這裡
 
 ---
@@ -471,8 +471,8 @@ DCF       現價       本系列合理        分析師低   分析師中   分�
 
 ### 系列導覽
 
-- （上）[基本面與產業競爭力](../stock-analysis-avav-aerovironment-part1-fundamentals-zh/) — 雙部門模式、三表、巡飛彈護城河
-- （中）[技術面、籌碼面與市場情緒](../stock-analysis-avav-aerovironment-part2-technical-sentiment-zh/) — 技術型態、機構持股、空頭、總經
+- （上）[基本面與產業競爭力](/posts/stock-analysis-avav-aerovironment-part1-fundamentals-zh/) — 雙部門模式、三表、巡飛彈護城河
+- （中）[技術面、籌碼面與市場情緒](/posts/stock-analysis-avav-aerovironment-part2-technical-sentiment-zh/) — 技術型態、機構持股、空頭、總經
 - **（下）估值模型與投資裁決** ← 你正在這裡
 
 ---

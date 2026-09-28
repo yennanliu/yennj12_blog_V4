@@ -6,7 +6,7 @@ description: "用純 AWS 原生服務打造一套 Serverless RAG 問答系統:Be
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "RAG", "OpenSearch Serverless", "Lambda", "LLM", "AI Engineering", "Serverless"]
 authors: ["yen"]
-readTime: "24 min"
+readTime: "15 min"
 ---
 
 > 大部分人做企業內部問答機器人:租一台 GPU、裝 LangChain、自己接一個 Pinecone、再寫一堆膠水程式碼,三個月後發現光是「文件更新後要重新 embedding」這件事就沒人想維護。
@@ -548,8 +548,16 @@ RAG 是所有 AI 系統的起點,也是最能展現「AWS 原生」威力的地�
 
 ## 系列導覽
 
+**基礎篇**
 - **Part 1(本篇)**:Serverless RAG 智慧客服知識庫
-- **Part 2**:智慧文件處理(IDP)管線 —— Textract + Comprehend + Bedrock + Step Functions
-- **Part 3**:即時個人化推薦系統 —— Kinesis + Feature Store + SageMaker Endpoint
-- **Part 4**:自主 AI Agent 工具呼叫系統 —— Bedrock Agents + Lambda Action Groups + Guardrails
-- **Part 5**:生產化 MLOps 與可觀測性 —— 部署策略、模型日誌、成本治理、CDK CI/CD
+- [Part 2:智慧文件處理(IDP)管線](/posts/ai-system-on-native-aws-part2-intelligent-document-processing-zh/)
+- [Part 3:即時個人化推薦系統](/posts/ai-system-on-native-aws-part3-realtime-recommendation-zh/)
+- [Part 4:自主 AI Agent 工具呼叫系統](/posts/ai-system-on-native-aws-part4-agentic-ai-with-tools-zh/)
+- [Part 5:生產化 MLOps 與可觀測性](/posts/ai-system-on-native-aws-part5-production-mlops-observability-zh/)
+
+**進階篇**
+- [Part 6:企業級多租戶 RAG 平台](/posts/ai-system-on-native-aws-part6-enterprise-multi-tenant-rag-zh/)
+- [Part 7:基礎模型客製化與模型治理](/posts/ai-system-on-native-aws-part7-foundation-model-customization-governance-zh/)
+- [Part 8:即時串流 ML 與詐欺偵測](/posts/ai-system-on-native-aws-part8-realtime-streaming-fraud-detection-zh/)
+- [Part 9:企業 AI 安全、合規與資料治理](/posts/ai-system-on-native-aws-part9-security-compliance-data-governance-zh/)
+- [Part 10:企業 AI 平台工程 —— 落地區、LLM Gateway 與 FinOps](/posts/ai-system-on-native-aws-part10-enterprise-ai-platform-engineering-zh/)

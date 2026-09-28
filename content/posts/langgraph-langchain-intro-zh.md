@@ -7,7 +7,7 @@ categories: ["all", "ai"]
 tags: ["LangChain", "LangGraph", "AI", "Agent", "工作流", "RAG", "介紹"]
 summary: "全面介紹 LangChain 和 LangGraph 的核心概念、架構和實戰應用，涵蓋從簡單的 Chain 到複雜的多 Agent 工作流，幫助開發者快速掌握現代 AI 應用開發框架。"
 description: "全面介紹 LangChain 和 LangGraph 的核心概念、架構和實戰應用，涵蓋從簡單的 Chain 到複雜的多 Agent 工作流，幫助開發者快速掌握現代 AI 應用開發框架。"
-readTime: "50 min"
+readTime: "16 min"
 ---
 
 在 AI 應用開發中，LangChain 和 LangGraph 是兩個最流行的框架：LangChain 提供組件和工具，而 LangGraph 提供編排能力。對於想要構建生產級 AI 應用的開發者來說，理解這兩個框架的區別與協作方式至關重要。本文深入講解它們的核心概念、架構和實戰應用。

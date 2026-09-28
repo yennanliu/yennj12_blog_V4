@@ -6,6 +6,7 @@ tags: ["Spring Boot", "Java", "程式碼載入", "類別載入器", "編譯", "�
 categories: ["all", "engineering"]
 authors: ["yen"]
 description: "深入探討 Spring Boot 應用程式的程式碼載入機制，從 Java 原始碼編譯、類別載入、到 Spring Bean 物件實例化的完整流程分析。"
+readTime: "21 min"
 ---
 
 ## 前言

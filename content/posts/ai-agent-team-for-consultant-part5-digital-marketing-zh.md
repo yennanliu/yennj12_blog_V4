@@ -7,7 +7,7 @@ description: "實戰案例：一家 8 人數位行銷公司如何用 AI Agent �
 categories: ["all", "ai", "business"]
 tags: ["AI Agent", "數位行銷", "LangGraph", "Claude", "內容行銷", "廣告文案", "Multi-Agent", "繁體中文", "實戰案例", "Agent", "Case Study", "Marketing"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "19 min"
 ---
 
 ## 情境設定

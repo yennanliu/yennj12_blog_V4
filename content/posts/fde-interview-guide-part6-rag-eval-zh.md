@@ -5,7 +5,7 @@ draft: false
 weight: 6
 description: "從面試官的視角，深度拆解 RAG 系統的四大進階主題：檢索失敗的原因與修復、Grounding 策略、RAG 評估指標設計，以及生產環境中的成本控制"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "RAG", "Grounding", "Evaluation", "RAGAS", "Cost Control", "Interview", "Google"]
+tags: ["AI", "FDE", "RAG", "Grounding", "Evaluation", "RAGAS", "Cost Control", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "14 min"
 ---

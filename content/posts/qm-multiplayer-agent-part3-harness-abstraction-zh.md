@@ -7,7 +7,7 @@ description: "拆解 QM 如何讓 Pi、OpenCode、Codex、Claude Code 四種完�
 categories: ["all", "ai", "engineering"]
 tags: ["QM", "AI Agent", "Agent Harness", "Abstraction", "TypeScript", "LLM", "繁體中文"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "18 min"
 series: ["qm-deep-dive"]
 ---
 

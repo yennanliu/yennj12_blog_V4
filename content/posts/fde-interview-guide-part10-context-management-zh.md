@@ -5,7 +5,7 @@ draft: false
 weight: 10
 description: "以系統設計視角拆解 AI Agent 的 Context Management：核心問題是什麼、有哪些策略、為什麼選這個、trade-off 怎麼算——含完整架構圖與面試答題框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Context Management", "LLM", "Context Window", "Memory", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Context Management", "LLM", "Context Window", "Memory", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "16 min"
 ---
@@ -355,6 +355,6 @@ E → Edge      你的策略在什麼情況下會失效？
 
 ---
 
-**系列導覽：**  
-← [（九）LLM 核心知識](../fde-interview-guide-part9-llm-core-zh/)  
-→ [（十一）RKK 實戰：Agent 線上除錯與故障排除](../fde-interview-guide-part11-agent-debugging-zh/)
+**系列導航**
+
+← [Part 9：LLM 核心知識——Token、Prompt Engineering 與 Embedding](/posts/fde-interview-guide-part9-llm-core-zh/) | [Part 11：RKK 實戰——AI Agent 線上除錯與故障排除](/posts/fde-interview-guide-part11-agent-debugging-zh/) →

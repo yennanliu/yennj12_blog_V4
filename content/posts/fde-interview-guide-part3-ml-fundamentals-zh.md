@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "從面試官的視角，整理 FDE 面試中仍然高頻的傳統 ML / AI 基礎知識，包含 Transformer、Embedding、評估指標與 Fine-tuning 的工程視角"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Machine Learning", "Transformer", "Embedding", "Evaluation", "Fine-tuning", "Interview", "Google"]
+tags: ["AI", "FDE", "Machine Learning", "Transformer", "Embedding", "Evaluation", "Fine-tuning", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "13 min"
 ---

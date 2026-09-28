@@ -7,7 +7,7 @@ description: "深入剖析生產環境中 LLM 系統面臨的 Prompt Injection �
 categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Security", "Guardrails", "AI-Safety"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "10 min"
 ---
 
 **核心定義：Prompt Injection 是攻擊者透過精心設計的輸入操控 LLM 執行非預期指令；防禦的本質不是「告訴模型不要做」，而是在結構層面讓惡意指令從一開始就無法被執行。**

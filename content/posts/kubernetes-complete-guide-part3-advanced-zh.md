@@ -7,7 +7,7 @@ description: "深入探討 Kubernetes 進階主題，包含自動擴展、RBAC �
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "HPA", "RBAC", "Helm", "監控", "Prometheus", "Grafana", "CI/CD", "生產部署", "最佳實踐", "DevOps"]
 authors: ["yen"]
-readTime: "75 min"
+readTime: "30 min"
 ---
 
 ## 🎯 前言

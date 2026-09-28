@@ -4,9 +4,9 @@ date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 NVIDIA FY2026 年報做機構級深度拆解:五年財務軌跡、Compute & Networking 與 Graphics 事業體、資料中心營收爆炸、毛利率逆風、極端客戶集中、中國/H20 出口管制、$95.2B 採購承諾、循環融資疑雲、DuPont/ROIC、Rule of 40、情境分析、風險矩陣與投資訊號。"
 categories: ["all", "finance"]
-tags: ["NVDA", "NVIDIA", "10-K", "SEC", "財報分析", "價值投資", "美股", "半導體", "AI", "GPU", "資料中心", "InvestSkill", "investing"]
+tags: ["NVDA", "10-K", "SEC", "財報分析", "價值投資", "美股", "半導體", "AI", "GPU", "資料中心", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "18 min"
 ---
 
 > 大部分人看 NVIDIA 的 2026 年報,第一眼看到「營收 +65%、淨利 $1,200 億」就直接得出結論:史上最強成長股,買就對了。

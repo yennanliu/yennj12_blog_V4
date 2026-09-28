@@ -7,7 +7,7 @@ description: "深入剖析一個真實 Spring Boot 購物車系統如何從「�
 categories: ["all", "engineering", "architecture"]
 tags: ["Spring Boot", "Java", "High Concurrency", "Redis", "HikariCP", "Virtual Threads", "Backend", "繁體中文"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "17 min"
 ---
 
 ## 前言

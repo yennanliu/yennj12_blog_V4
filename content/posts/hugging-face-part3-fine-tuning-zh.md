@@ -7,7 +7,7 @@ description: "什麼時候才該微調？從資料準備、LoRA/QLoRA 原理、T
 categories: ["all", "ai", "engineering"]
 tags: ["Hugging Face", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "TRL", "LLM", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "19 min"
 series: ["hugging-face"]
 ---
 

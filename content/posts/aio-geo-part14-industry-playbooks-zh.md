@@ -7,7 +7,7 @@ description: "同一套方法在不同產業的效果差三倍以上。本篇給
 categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "產業分析", "B2B", "電商", "醫療", "金融", "顧問", "繁體中文", "Marketing"]
 authors: ["yen"]
-readTime: "22 min"
+readTime: "13 min"
 ---
 
 > 大多數人的做法：一套 checklist 打天下，然後困惑為什麼在律師事務所有效、在醫美診所無效。

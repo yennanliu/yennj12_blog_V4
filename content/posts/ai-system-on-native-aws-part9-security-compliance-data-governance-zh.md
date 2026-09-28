@@ -6,7 +6,7 @@ description: "當 AI 系統處理的是病歷、金流、個資,而且要通過�
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Security", "Compliance", "Data Governance", "PrivateLink", "KMS", "Lake Formation", "Enterprise"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "13 min"
 ---
 
 > 大部分團隊做 AI 的資安是「上線後補」:先把系統做出來,等法遵來問「資料會不會流到外面」「病歷有沒有加密」「誰存取過這些資料」時,才發現整套架構要重來。
@@ -363,12 +363,18 @@ new config.ManagedRule(this, 'S3Encrypted', {
 
 ---
 
-## 系列導覽(進階篇)
+## 系列導覽
 
-- **Part 6**:企業級多租戶 RAG 平台
-- **Part 7**:基礎模型客製化與模型治理
-- **Part 8**:即時串流 ML 與詐欺偵測
+**基礎篇**
+- [Part 1:Serverless RAG 智慧客服知識庫](/posts/ai-system-on-native-aws-part1-serverless-rag-chatbot-zh/)
+- [Part 2:智慧文件處理(IDP)管線](/posts/ai-system-on-native-aws-part2-intelligent-document-processing-zh/)
+- [Part 3:即時個人化推薦系統](/posts/ai-system-on-native-aws-part3-realtime-recommendation-zh/)
+- [Part 4:自主 AI Agent 工具呼叫系統](/posts/ai-system-on-native-aws-part4-agentic-ai-with-tools-zh/)
+- [Part 5:生產化 MLOps 與可觀測性](/posts/ai-system-on-native-aws-part5-production-mlops-observability-zh/)
+
+**進階篇**
+- [Part 6:企業級多租戶 RAG 平台](/posts/ai-system-on-native-aws-part6-enterprise-multi-tenant-rag-zh/)
+- [Part 7:基礎模型客製化與模型治理](/posts/ai-system-on-native-aws-part7-foundation-model-customization-governance-zh/)
+- [Part 8:即時串流 ML 與詐欺偵測](/posts/ai-system-on-native-aws-part8-realtime-streaming-fraud-detection-zh/)
 - **Part 9(本篇)**:企業 AI 安全、合規與資料治理
-- **Part 10**:企業 AI 平台工程 —— 落地區、LLM Gateway 與 FinOps
-
-> 基礎篇回顧:Part 1 RAG 問答 · Part 2 IDP 管線 · Part 3 即時推薦 · Part 4 自主 Agent · Part 5 MLOps 與可觀測性
+- [Part 10:企業 AI 平台工程 —— 落地區、LLM Gateway 與 FinOps](/posts/ai-system-on-native-aws-part10-enterprise-ai-platform-engineering-zh/)

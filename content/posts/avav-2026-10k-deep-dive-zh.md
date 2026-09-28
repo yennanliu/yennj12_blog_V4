@@ -6,7 +6,7 @@ description: "用 10k-digest 方法對 AeroVironment FY2026 年報做機構級�
 categories: ["all", "finance"]
 tags: ["AVAV", "AeroVironment", "10-K", "SEC", "財報分析", "價值投資", "美股", "國防", "無人機", "UAS", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "18 min"
 ---
 
 > 大部分人看 AeroVironment 的 2026 年報,第一眼看到「營收暴增 141% 破 20 億美元」就興奮:國防無人機股起飛了。

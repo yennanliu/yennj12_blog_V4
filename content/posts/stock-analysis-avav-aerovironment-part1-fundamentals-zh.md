@@ -4,9 +4,9 @@ date: 2026-06-27T13:00:00+08:00
 draft: false
 description: "AeroVironment（NASDAQ: AVAV）三部曲完整選股分析（上）：從無人機 / 巡飛彈（Switchblade）核心特許經營權、收購 BlueHalo 後的雙部門結構、損益表 / 資產負債表 / 現金流三表、Q3 FY2026 財報落空與 SCAR 訂單減記風險，到國防無人機產業五力與護城河，逐項拆解這家從 $417 腰斬至 $142 的國防無人機龍頭。"
 categories: ["all", "finance"]
-tags: ["Stock Analysis", "AVAV", "AeroVironment", "Drone", "Loitering Munition", "Switchblade", "Defense", "BlueHalo", "Fundamental Analysis", "InvestSkill", "繁體中文", "investment"]
+tags: ["Stock Analysis", "AVAV", "AeroVironment", "Drone", "Loitering Munition", "Switchblade", "Defense", "BlueHalo", "Fundamental Analysis", "InvestSkill", "繁體中文", "Investment"]
 authors: ["yen"]
-readTime: "22 min"
+readTime: "15 min"
 ---
 
 > 多數人看到 AVAV 從 $417.86 崩到 $142，直覺就是「國防泡沫破了，別接刀」。
@@ -27,8 +27,8 @@ readTime: "22 min"
 本篇為 **AeroVironment（AVAV）三部曲分析**的第一部：
 
 - **（上）基本面與產業競爭力** ← 你正在這裡
-- （中）技術面、籌碼面與市場情緒
-- （下）估值模型與投資裁決
+- [（中）技術面、籌碼面與市場情緒](/posts/stock-analysis-avav-aerovironment-part2-technical-sentiment-zh/)
+- [（下）估值模型與投資裁決](/posts/stock-analysis-avav-aerovironment-part3-valuation-verdict-zh/)
 
 ---
 
@@ -484,8 +484,8 @@ AVAV 護城河評分（5 分制）
 ### 系列導覽
 
 - **（上）基本面與產業競爭力** ← 你正在這裡
-- （中）技術面、籌碼面與市場情緒 — 技術型態、機構持股、空頭興趣、總經
-- （下）估值模型與投資裁決 — DCF、相對估值、足球場、目標價與最終裁決
+- [（中）技術面、籌碼面與市場情緒](/posts/stock-analysis-avav-aerovironment-part2-technical-sentiment-zh/) — 技術型態、機構持股、空頭興趣、總經
+- [（下）估值模型與投資裁決](/posts/stock-analysis-avav-aerovironment-part3-valuation-verdict-zh/) — DCF、相對估值、足球場、目標價與最終裁決
 
 ---
 

@@ -5,7 +5,7 @@ draft: false
 weight: 25
 description: "以系統設計視角拆解 Generator-Evaluator 雙節點架構：為什麼 LLM 需要自我檢查機制、Reflexion Pattern 的設計原理、如何防止反思迴圈變成無限循環，以及收斂保證的工程實踐"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Self-Reflection", "Hallucination", "LangGraph", "Reflexion", "Generator-Evaluator", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Self-Reflection", "Hallucination", "LangGraph", "Reflexion", "Generator-Evaluator", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
 ---
@@ -315,6 +315,6 @@ Self-Reflection 的成本：
 
 ---
 
-**系列導覽：**  
-← [（二十四）RKK 實戰：混合模型路由與語意路由器設計](../fde-interview-guide-part24-hybrid-model-routing-zh/)  
-← [系列首篇：（一）RAG 完全攻略](../fde-interview-guide-part1-rag-zh/)
+**系列導航**
+
+← [Part 24：RKK 實戰——混合模型路由與語意路由器設計](/posts/fde-interview-guide-part24-hybrid-model-routing-zh/) | [Part 26：顧問實戰——「我們現在用 OpenAI，為什麼要換 Vertex AI？」](/posts/fde-interview-guide-part26-competitive-positioning-zh/) →

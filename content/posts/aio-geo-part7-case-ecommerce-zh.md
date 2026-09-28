@@ -7,7 +7,7 @@ description: "一家台灣戶外用品電商，12,000 個 SKU、跑在 Vercel + 
 categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "電商", "Shopify", "Next.js", "Product Schema", "SKU", "案例研究", "繁體中文", "SEO", "Case Study", "E-commerce"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "13 min"
 ---
 
 > 電商 GEO 的核心矛盾：

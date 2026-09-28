@@ -7,7 +7,7 @@ description: "為什麼純向量 RAG 在多跳問題上失敗？GraphRAG 如何�
 categories: ["all", "ai", "engineering"]
 tags: ["Knowledge Graph", "知識圖譜", "GraphRAG", "LLM", "RAG", "Neo4j", "LangChain"]
 authors: ["yen"]
-readTime: "25 min"
+readTime: "11 min"
 series: ["knowledge-graph"]
 ---
 

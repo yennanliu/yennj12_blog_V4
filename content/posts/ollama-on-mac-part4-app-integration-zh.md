@@ -6,7 +6,7 @@ description: "把本機 Ollama 模型接進真實應用的完整實戰:官方 Py
 categories: ["all", "ai", "engineering"]
 tags: ["Ollama", "LLM", "Python", "OpenAI API", "LangChain", "Open WebUI", "RAG", "Embeddings", "AI Engineering"]
 authors: ["yen"]
-readTime: "24 min"
+readTime: "18 min"
 ---
 
 > 很多人以為要用本地模型,就得把整個 app 打掉重寫、換掉所有 SDK。

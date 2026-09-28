@@ -7,7 +7,7 @@ description: "端對端構建生產級 AI Agent 產品：從架構設計到上�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Agent", "LLM Engineering", "Production", "Capstone", "ReAct", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "22 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -50,9 +50,13 @@ series: ["ai-eng-from-scratch"]
 
 ## 二、三個演進階段（Sprint 1 / Sprint 2–3 / Sprint 4）
 
-### ╔══════════════════════════════════════╗
-### ║  Phase 1：Sprint 1 / POC / < 1K sessions/day  ║
-### ╚══════════════════════════════════════╝
+### Phase 1：Sprint 1 / POC / < 1K sessions/day
+
+```
+╔══════════════════════════════════════╗
+║  Phase 1：Sprint 1 / POC / < 1K sessions/day  ║
+╚══════════════════════════════════════╝
+```
 
 **目標**：讓 Agent 能跑起來，能走完一個退款流程端對端。
 
@@ -102,9 +106,13 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-### ╔══════════════════════════════════════╗
-### ║  Phase 2：Sprint 2–3 / MVP / 1K–20K sessions/day  ║
-### ╚══════════════════════════════════════╝
+### Phase 2：Sprint 2–3 / MVP / 1K–20K sessions/day
+
+```
+╔══════════════════════════════════════╗
+║  Phase 2：Sprint 2–3 / MVP / 1K–20K sessions/day  ║
+╚══════════════════════════════════════╝
+```
 
 **目標**：生產安全，讓客服主管敢讓真實客戶使用。
 
@@ -163,9 +171,13 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-### ╔══════════════════════════════════════╗
-### ║  Phase 3：Sprint 4 / Scale / 20K–100K sessions/day  ║
-### ╚══════════════════════════════════════╝
+### Phase 3：Sprint 4 / Scale / 20K–100K sessions/day
+
+```
+╔══════════════════════════════════════╗
+║  Phase 3：Sprint 4 / Scale / 20K–100K sessions/day  ║
+╚══════════════════════════════════════╝
+```
 
 **目標**：企業級，支援雙 11 峰值 80K sessions/day，成本可預期。
 

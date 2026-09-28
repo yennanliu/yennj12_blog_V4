@@ -7,7 +7,7 @@ description: "動手建知識圖譜：命名實體辨識（NER）、實體消歧
 categories: ["all", "ai", "engineering"]
 tags: ["Knowledge Graph", "知識圖譜", "Neo4j", "Cypher", "NER", "spaCy", "Graph Database"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "11 min"
 series: ["knowledge-graph"]
 ---
 

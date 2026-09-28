@@ -593,6 +593,6 @@ PII 外洩的損失     依事故規模              技術上大幅降低      
 
 ---
 
-**系列導覽：**  
-← [（三十九）從 10,000 到百萬用戶：AI 系統橫向擴展架構](../fde-interview-guide-part39-scalability-zh/)  
-→ [（四十一）分散式 AI 系統的故障排查：結構化診斷框架](../fde-interview-guide-part41-troubleshooting-zh/)
+**系列導航**
+
+← [Part 39：RKK 實戰——從 10,000 到百萬用戶：AI 系統的橫向擴展架構設計](/posts/fde-interview-guide-part39-scalability-zh/) | [Part 41：RKK 實戰——分散式 AI 系統的故障排查：結構化診斷框架與五種常見失效模式](/posts/fde-interview-guide-part41-troubleshooting-zh/) →

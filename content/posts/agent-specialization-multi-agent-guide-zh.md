@@ -4,10 +4,10 @@ date: 2026-03-12T22:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "claude-code", "multi-agent", "agent-specialization", "token-optimization", "system-design", "API", "agent-orchestration", "development-tools"]
+tags: ["AI", "Claude Code", "Multi-Agent", "agent-specialization", "token-optimization", "System Design", "API", "agent-orchestration", "Development Tools"]
 summary: "深入探索 Agent 專責化策略：從單一通用 Agent 到專業分工的專家團隊，涵蓋職責劃分、System Prompt 精簡、工具最小化配置、模型差異化選擇等完整實作，幫助你大幅降低 System Prompt 的 Token 消耗並提升輸出品質。"
 description: "深入探索 Agent 專責化策略：從單一通用 Agent 到專業分工的專家團隊，涵蓋職責劃分、System Prompt 精簡、工具最小化配置、模型差異化選擇等完整實作，幫助你大幅降低 System Prompt 的 Token 消耗並提升輸出品質。"
-readTime: "35 min"
+readTime: "24 min"
 ---
 
 在《多 Agent 系統的 Token 用量調優指南》中，我們介紹了 **Agent 專責化** 作為降低 System Prompt Token 消耗的核心策略。本文將深入實作層面，探討如何將臃腫的「全能 Agent」拆分為精準的「專家團隊」，讓每個 Agent 只專注於單一職責，從而大幅減少每次 API 呼叫的固定成本。

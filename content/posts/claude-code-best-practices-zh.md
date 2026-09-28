@@ -4,10 +4,10 @@ date: 2026-01-17T12:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "claude-code", "最佳實踐", "開發效率", "提示工程", "工作流程", "生產力", "development-tools"]
+tags: ["AI", "Claude Code", "最佳實踐", "開發效率", "提示工程", "工作流程", "生產力", "Development Tools"]
 summary: "完整的 Claude Code 最佳實踐指南：從基礎使用到進階技巧，涵蓋提示工程、檔案管理、錯誤處理與團隊協作，幫助開發者充分發揮 AI 輔助開發的潛力。"
 description: "完整的 Claude Code 最佳實踐指南：從基礎使用到進階技巧，涵蓋提示工程、檔案管理、錯誤處理與團隊協作，幫助開發者充分發揮 AI 輔助開發的潛力。"
-readTime: "18 min"
+readTime: "24 min"
 ---
 
 Claude Code 作為 Anthropic 官方推出的 AI 驅動開發工具，正在改變軟體開發的工作方式。然而，要充分發揮其潛力，需要掌握正確的使用方法和最佳實踐。本文彙整了 20 個實用技巧，幫助開發者更有效地使用 Claude Code。

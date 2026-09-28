@@ -7,7 +7,7 @@ description: "端到端實戰：用 LLM 把純文字文件自動抽成三元組�
 categories: ["all", "ai", "engineering"]
 tags: ["Knowledge Graph", "知識圖譜", "GraphRAG", "LLM", "Neo4j", "LangChain", "Project"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "11 min"
 series: ["knowledge-graph"]
 ---
 

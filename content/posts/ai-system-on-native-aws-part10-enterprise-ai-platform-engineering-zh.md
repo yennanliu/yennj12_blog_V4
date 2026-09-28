@@ -6,7 +6,7 @@ description: "系列終章。當一個企業有幾十個團隊、上百個 AI �
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Platform Engineering", "LLM Gateway", "FinOps", "Control Tower", "Service Catalog", "Enterprise", "AI Engineering"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "12 min"
 ---
 
 > 一個團隊接 Bedrock,叫專案。五十個團隊各自接 Bedrock,叫混亂:每個團隊重新踩一次合規的坑、各自把 API key 寫死在 Lambda、成本一整包分不清誰花的、某個團隊的失控迴圈把整個帳號的 Bedrock 配額吃光、資安團隊要追五十套不同的架構。
@@ -351,15 +351,15 @@ P10 平台 讓組織可持續用 AI      Gateway+Control Tower+Catalog  集中�
 ## 系列導覽
 
 **基礎篇**
-- Part 1:Serverless RAG 智慧客服知識庫
-- Part 2:智慧文件處理(IDP)管線
-- Part 3:即時個人化推薦系統
-- Part 4:自主 AI Agent 工具呼叫系統
-- Part 5:生產化 MLOps 與可觀測性
+- [Part 1:Serverless RAG 智慧客服知識庫](/posts/ai-system-on-native-aws-part1-serverless-rag-chatbot-zh/)
+- [Part 2:智慧文件處理(IDP)管線](/posts/ai-system-on-native-aws-part2-intelligent-document-processing-zh/)
+- [Part 3:即時個人化推薦系統](/posts/ai-system-on-native-aws-part3-realtime-recommendation-zh/)
+- [Part 4:自主 AI Agent 工具呼叫系統](/posts/ai-system-on-native-aws-part4-agentic-ai-with-tools-zh/)
+- [Part 5:生產化 MLOps 與可觀測性](/posts/ai-system-on-native-aws-part5-production-mlops-observability-zh/)
 
 **進階篇**
-- Part 6:企業級多租戶 RAG 平台
-- Part 7:基礎模型客製化與模型治理
-- Part 8:即時串流 ML 與詐欺偵測
-- Part 9:企業 AI 安全、合規與資料治理
+- [Part 6:企業級多租戶 RAG 平台](/posts/ai-system-on-native-aws-part6-enterprise-multi-tenant-rag-zh/)
+- [Part 7:基礎模型客製化與模型治理](/posts/ai-system-on-native-aws-part7-foundation-model-customization-governance-zh/)
+- [Part 8:即時串流 ML 與詐欺偵測](/posts/ai-system-on-native-aws-part8-realtime-streaming-fraud-detection-zh/)
+- [Part 9:企業 AI 安全、合規與資料治理](/posts/ai-system-on-native-aws-part9-security-compliance-data-governance-zh/)
 - **Part 10(本篇)**:企業 AI 平台工程 —— 落地區、LLM Gateway 與 FinOps

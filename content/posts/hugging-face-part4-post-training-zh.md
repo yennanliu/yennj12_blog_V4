@@ -7,7 +7,7 @@ description: "後訓練不只是再微調一次。完整解析 DPO / ORPO / KTO 
 categories: ["all", "ai", "engineering"]
 tags: ["Hugging Face", "Post-training", "DPO", "ORPO", "GRPO", "RLHF", "TRL", "LLM", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "21 min"
 series: ["hugging-face"]
 ---
 

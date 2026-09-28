@@ -5,7 +5,7 @@ draft: false
 weight: 1
 authors: ["yen"]
 categories: ["all", "ai", "business", "creative"]
-tags: ["AI音樂", "環境音", "深海", "太空", "YouTube", "24/7直播", "Midjourney", "Runway", "streaming"]
+tags: ["AI音樂", "環境音", "深海", "太空", "YouTube", "24/7直播", "Midjourney", "Runway", "Streaming"]
 summary: "系列第一篇：深度分析深海/太空環境音市場機會、聲音設計的科學原理，以及如何使用 AI 工具生成高品質音頻內容。從零開始建立你的沉浸式環境音頻道。"
 description: "系列第一篇：深度分析深海/太空環境音市場機會、聲音設計的科學原理，以及如何使用 AI 工具生成高品質音頻內容。從零開始建立你的沉浸式環境音頻道。"
 readTime: "22 min"

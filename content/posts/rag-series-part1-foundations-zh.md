@@ -7,7 +7,7 @@ description: "從零開始理解 RAG（Retrieval-Augmented Generation）：為�
 categories: ["all", "ai", "engineering"]
 tags: ["RAG", "LLM", "Vector Database", "Embeddings", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "11 min"
 ---
 
 ## 前言

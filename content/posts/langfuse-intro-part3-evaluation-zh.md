@@ -6,7 +6,7 @@ description: "LLM 應用最難的問題:你怎麼知道它『答得好不好』?
 categories: ["all", "ai", "engineering"]
 tags: ["Langfuse", "LLM", "Evaluation", "LLM-as-a-Judge", "Dataset", "Score", "Testing", "LLMOps", "AI Engineering"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "11 min"
 ---
 
 > 寫傳統程式,你有單元測試:斷言 `add(2,3) == 5`,綠燈就是對。

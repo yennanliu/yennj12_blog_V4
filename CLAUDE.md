@@ -39,7 +39,7 @@ This is a **Hugo static site** using a custom theme called `uber-style` (in `the
 - `themes/uber-style/assets/scss/_tokens.scss` — Runtime design tokens (`:root` custom properties).
 - `themes/uber-style/assets/scss/_effects.scss` — Reusable visual effects (`fx-*` / `u-*`). See "Design system" below.
 - `static/` — Unprocessed assets (favicon, author avatars at `static/images/authors/`).
-- `scripts/generate_nvidia_blog.py` — Python script that fetches NVIDIA Developer Blog via RSS, translates to Traditional Chinese using GPT-4, and writes a new post. Requires `OPENAI_API_KEY` and `feedparser`/`requests` packages.
+- `scripts/generate_nvidia_blog.py` — Python script that fetches NVIDIA Developer Blog via RSS, translates to Traditional Chinese using GPT-4, and writes a new post. Requires `OPENAI_API_KEY` and `feedparser`/`requests` packages. Its daily workflow was removed because the output was fabricated rather than translated; any post it generates must be reviewed by hand before publishing.
 - `.github/workflows/` — Three Hugo build/deploy workflows (`hugo-latest.yml` is the recommended one).
 
 ### Post front matter
@@ -158,11 +158,10 @@ python3 scripts/check_links.py --content-only   # skips the build-output half
 python3 scripts/check_links.py --strict         # also fail on dead internal targets
 ```
 
-  It also *warns* about internal links whose target page does not exist — 139 of those remain,
-  mostly series-nav entries for renamed or never-written posts, plus the missing
-  `static/images/authors/*.jpg` avatars. Those are a content problem, not a URL-shape problem,
-  so they do not fail the build; `--strict` promotes them to errors when you want to work
-  through the list.
+  It also *warns* about internal links whose target page does not exist. None remain today, so
+  keep it that way: a series-nav entry for a post that is not written yet should be plain text,
+  not a link to a guessed slug. Those warnings are a content problem, not a URL-shape problem,
+  so they do not fail the build; `--strict` promotes them to errors.
 
 ### Design system
 

@@ -4,10 +4,10 @@ date: 2026-04-11T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["Hermes Agent", "AI Agent", "自動化", "安裝指南", "NousResearch", "agent"]
+tags: ["Hermes Agent", "AI Agent", "自動化", "安裝指南", "NousResearch", "Agent"]
 summary: "詳細介紹 Hermes Agent，一個具有自我學習和改進能力的 AI 系統。涵蓋核心功能、安裝步驟、配置方式和實際應用，幫助你快速上手這個強大的自主 AI 系統。"
 description: "詳細介紹 Hermes Agent，一個具有自我學習和改進能力的 AI 系統。涵蓋核心功能、安裝步驟、配置方式和實際應用，幫助你快速上手這個強大的自主 AI 系統。"
-readTime: "35 min"
+readTime: "14 min"
 ---
 
 Hermes Agent 是由 Nous Research 開發的革新性 AI 系統，其獨特之處在於**內置學習循環**——它從經驗中創建技能、在使用中改進技能、並持久化存儲知識。這不是單純的聊天機器人，而是一個真正自主改進的智能體系統。

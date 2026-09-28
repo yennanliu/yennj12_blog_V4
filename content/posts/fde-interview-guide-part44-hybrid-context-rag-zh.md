@@ -5,7 +5,7 @@ draft: false
 weight: 44
 description: "深度拆解長文本 LLM（200 萬 Token 上下文）與傳統 RAG 的動態混合架構：為什麼超大 Context Window 仍需 RAG、如何設計智能上下文管理器（Dynamic Hybrid Router）、Vertex AI Context Caching Registry 快取策略、成本矩陣（$2.50 vs $0.001）、降級策略、RRF 融合機制，以及 Staff 級 FDE 面試的完整答題框架"
 categories: ["all", "ai", "engineering"]
-tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "LLM", "VertexAI", "ContextCaching", "VectorSearch", "SystemDesign"]
+tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "LLM", "Vertex AI", "ContextCaching", "Vector Search", "System Design"]
 authors: ["yen"]
 readTime: "26 min"
 ---
@@ -828,6 +828,6 @@ ROI：($17.8M - $3.6M) / $3.6M ≈ 394%（≈ 400% 提升）
 
 ---
 
-**系列導覽：**  
-← [（四十二）FDE 顧問技能：Discovery 框架與 POC 範圍定義](../fde-interview-guide-part42-consulting-discovery-zh/)  
-→ [（四十五）下一篇：即將推出](../fde-interview-guide-part45-zh/)
+**系列導航**
+
+← [Part 43：跨國電商百萬級購物車 Agent 的分散式動態權限與狀態回復](/posts/fde-interview-guide-part43-async-cart-agent-zh/) | [Part 45：Agent 工具鏈的間接提示詞注入防禦設計](/posts/fde-interview-guide-part45-prompt-injection-defense-zh/) →

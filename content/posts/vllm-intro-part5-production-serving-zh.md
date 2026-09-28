@@ -4,10 +4,10 @@ date: 2026-09-11T13:00:00+08:00
 draft: false
 weight: 5
 description: "vLLM 原始碼導讀系列最終篇：拆解 OpenAI 相容 API 的完整面、Multi-LoRA 多租戶服務、結構化輸出的取樣層約束、Prometheus 指標全表與症狀診斷鏈、P/D 分離與 KV Connector 的實際配置，以及一套不會騙自己的 benchmark 方法。"
-categories: ["all", "ai", "engineering", "infrastructure", "architecture"]
+categories: ["all", "ai", "engineering", "infrastructure"]
 tags: ["vLLM", "Production", "LoRA", "Structured Output", "Observability", "Prometheus", "Kubernetes", "繁體中文"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "21 min"
 ---
 
 > *大多數人上線 LLM 服務的方式，是把 `vllm serve` 包進 Dockerfile，接上 LB，看到 200 就宣布完成。*

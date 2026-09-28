@@ -4,9 +4,9 @@ date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 Rocket Lab Corporation FY2025 年報做機構級深度拆解:五年營收軌跡、發射服務 vs 太空系統兩大分部、毛利率爬升曲線、現金燒錢與跑道、Neutron 開發風險與資本支出、$10 億 ATM 稀釋、累計虧損、國防訂單成長、情境分析、競爭格局、風險矩陣與投資訊號。"
 categories: ["all", "finance"]
-tags: ["RKLB", "Rocket Lab", "10-K", "SEC", "財報分析", "價值投資", "美股", "太空", "火箭", "衛星", "國防", "InvestSkill", "investing"]
+tags: ["RKLB", "Rocket Lab", "10-K", "SEC", "財報分析", "價值投資", "美股", "太空", "火箭", "國防", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "18 min"
 ---
 
 > 大部分人看 Rocket Lab 的 2025 年報,第一眼看到「營收 +38%、突破 6 億美元」就興奮:小火箭公司要起飛了。

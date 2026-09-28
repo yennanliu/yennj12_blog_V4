@@ -5,7 +5,7 @@ draft: false
 weight: 15
 description: "以系統設計視角拆解 AI Agent 的規模化挑戰：為什麼 LLM 系統的擴展和傳統 Web 不同、三層 Cache 各解決什麼問題、Stateful Agent 怎麼做水平擴展——含完整架構圖與成本估算框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Scale", "Cache", "KV Cache", "Semantic Cache", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Scale", "Cache", "KV Cache", "Semantic Cache", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "16 min"
 ---
@@ -386,6 +386,6 @@ CAPE 框架：Capacity → Architecture → Performance → Edge Cases
 
 ---
 
-**系列導覽：**  
-← [（十四）RKK 實戰：AI Agent Memory 架構設計](../fde-interview-guide-part14-memory-architecture-zh/)  
-← [系列首篇：（一）RAG 完全攻略](../fde-interview-guide-part1-rag-zh/)
+**系列導航**
+
+← [Part 14：RKK 實戰——AI Agent Memory 架構設計](/posts/fde-interview-guide-part14-memory-architecture-zh/) | [Part 16：RKK 實戰——Multi-Agent 狀態管理與死鎖排除](/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh/) →

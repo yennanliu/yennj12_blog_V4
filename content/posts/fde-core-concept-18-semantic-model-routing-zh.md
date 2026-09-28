@@ -5,7 +5,7 @@ draft: false
 weight: 18
 description: "深入解析如何以 Shannon 熵值即時偵測模型不確定性，動態將查詢路由至最便宜的可行模型，實現隱私保護與 74% 成本節省的生產架構。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "ModelRouting", "CostOptimization", "EdgeAI"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Model Routing", "Cost Optimization", "EdgeAI"]
 authors: ["yen"]
 readTime: "18 min"
 ---

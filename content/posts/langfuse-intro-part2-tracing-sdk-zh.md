@@ -6,7 +6,7 @@ description: "概念懂了,該動手了。本篇示範用 Langfuse Python SDK �
 categories: ["all", "ai", "engineering"]
 tags: ["Langfuse", "LLM", "Observability", "Tracing", "Python", "SDK", "OpenAI", "LangChain", "LLMOps"]
 authors: ["yen"]
-readTime: "15 min"
+readTime: "10 min"
 ---
 
 > 可觀測性最大的阻力,從來不是「值不值得」,而是「要改多少程式碼」。

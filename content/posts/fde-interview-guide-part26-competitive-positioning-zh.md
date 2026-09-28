@@ -5,7 +5,7 @@ draft: false
 weight: 26
 description: "以 Google FDE 顧問視角拆解競品定位對話：如何回應客戶的 OpenAI / AWS 比較、用場景驅動而非規格比較的說服框架、Vertex AI 的差異化優勢在哪裡，以及如何避免常見的定位陷阱"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Consultant", "Vertex AI", "GCP", "Competitive", "Interview", "Google", "RKK"]
+tags: ["AI", "FDE", "Consultant", "Vertex AI", "GCP", "Competitive", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "15 min"
 ---
@@ -283,3 +283,9 @@ AI 新手客戶         不知從哪裡開始        Vertex AI Agent Builder
 
 這道題的答案永遠不是規格表。  
 是：**先聽懂客戶的問題，再用他的語言說清楚 Google 能解決什麼。**
+
+---
+
+**系列導航**
+
+← [Part 25：RKK 實戰——Self-Reflection 與幻覺校正迴圈設計](/posts/fde-interview-guide-part25-self-reflection-loop-zh/) | [Part 27：顧問實戰——如何在 45 分鐘內把模糊需求變成 POC 計畫](/posts/fde-interview-guide-part27-poc-scoping-zh/) →

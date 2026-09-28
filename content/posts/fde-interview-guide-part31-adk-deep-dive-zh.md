@@ -5,7 +5,7 @@ draft: false
 weight: 31
 description: "以系統設計視角深度拆解 Google Agent Development Kit（ADK）：四種 Agent 類型的選擇邏輯、Tool 宣告系統的設計原理、Multi-Agent 的狀態共享機制，以及 ADK 在 Vertex AI 上的部署模式與 LangGraph 的根本差異"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "ADK", "Agent", "Google", "Vertex AI", "Multi-Agent", "Tool", "System Design", "RKK", "Interview"]
+tags: ["AI", "FDE", "ADK", "Agent", "Cloud", "Vertex AI", "Multi-Agent", "Tool", "System Design", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "18 min"
 ---
@@ -469,3 +469,9 @@ ADK Agent → Container → Cloud Run
 
 **ADK 的設計哲學是：讓你聚焦在「這個 Agent 應該做什麼」，而不是「這個 Agent 的執行流程怎麼寫」。**  
 **理解這個哲學，是說清楚 ADK vs LangGraph 選擇依據的關鍵。**
+
+---
+
+**系列導航**
+
+← [Part 30：顧問實戰——Constraint-First 架構設計：VPC 限制下的 GCP AI 系統](/posts/fde-interview-guide-part30-constraint-driven-architecture-zh/) | [Part 32：RKK 實戰——Vertex AI 產品棧全解析：Agent Builder、Vertex AI Search、Gemini API 與部署架構](/posts/fde-interview-guide-part32-vertex-ai-stack-zh/) →

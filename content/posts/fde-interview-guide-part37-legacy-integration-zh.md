@@ -5,9 +5,9 @@ draft: false
 weight: 37
 description: "以系統設計視角拆解 FDE 最常遇到的現場問題：如何把 ADK Agent 接上 SAP、Oracle DB、Mainframe CSV 等 Legacy 資料孤島；API 橋接層的選型邏輯；安全邊界連接工程（Private Service Connect、VPC-SC、CMEK）；以及每種整合模式對系統效能、穩定性、成本和風險的影響"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Integration", "Legacy", "API", "GCP", "VPC", "Security", "Enterprise", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Integration", "Legacy", "API", "GCP", "VPC", "Security", "Enterprise", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
-readTime: "19 min"
+readTime: "14 min"
 ---
 
 > Demo 時 Agent 很漂亮。  
@@ -344,6 +344,6 @@ VPC-SC vs IAM vs CMEK：選哪個，為什麼
 
 ---
 
-**系列導覽：**  
-← [（三十六）生產級 Eval Pipeline 設計](../fde-interview-guide-part36-eval-pipeline-zh/)  
-→ [（三十八）從 POC 到 Production：生產化清單](../fde-interview-guide-part38-prototype-to-production-zh/)
+**系列導航**
+
+← [Part 36：RKK 實戰——生產級 AI Evaluation Pipeline：從黃金資料集到 CI/CD 品質閘門](/posts/fde-interview-guide-part36-eval-pipeline-zh/) | [Part 38：RKK 實戰——從 POC 到 Production：AI 系統的五個生產化差距與 Rollback 設計](/posts/fde-interview-guide-part38-prototype-to-production-zh/) →

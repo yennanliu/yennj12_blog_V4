@@ -6,7 +6,7 @@ description: "用 industry-map 方法把半導體產業畫成一張有向圖:從
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "TSMC", "NVDA", "ASML", "晶片", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "13 min"
 ---
 
 > 大部分人分析半導體,習慣盯著一檔股票:NVIDIA 財報多好、台積電良率多高。
@@ -27,6 +27,28 @@ readTime: "28 min"
 - **價值遷移論點**:AI 算力的稀缺性正從「GPU 本身」往兩個方向外溢——**往上游**流向 HBM 記憶體、先進封裝(CoWoS)、電力與散熱;**往下游**流向能把算力變現的**推論(inference)與軟體服務**。未來 1–3 年,誰握住「新稀缺」(先進封裝產能、HBM、電力),誰就接棒下一段利潤。
 
 ---
+
+### 📚 系列導覽:14 篇分層深拆（上游 → 下游）
+
+**上游 Upstream**
+- Part 1:[矽晶圓 / 基板](/posts/industry-map-semiconductor-part1-silicon-wafer-zh/)
+- Part 2:[特用化學 / 光阻](/posts/industry-map-semiconductor-part2-chemicals-photoresist-zh/)
+- Part 3:[EDA + IP](/posts/industry-map-semiconductor-part3-eda-ip-zh/)
+- Part 4:[晶圓設備](/posts/industry-map-semiconductor-part4-fab-equipment-zh/)
+
+**中游 Midstream**
+- Part 5:[晶圓代工](/posts/industry-map-semiconductor-part5-foundry-zh/)
+- Part 6:[IC 設計 — GPU/加速器](/posts/industry-map-semiconductor-part6-gpu-design-zh/)
+- Part 7:[IC 設計 — 其他](/posts/industry-map-semiconductor-part7-ic-design-zh/)
+- Part 8:[記憶體](/posts/industry-map-semiconductor-part8-memory-zh/)
+- Part 9:[IDM / 類比](/posts/industry-map-semiconductor-part9-idm-analog-zh/)
+- Part 10:[封裝測試 OSAT](/posts/industry-map-semiconductor-part10-osat-zh/)
+
+**下游 Downstream**
+- Part 11:[網通 / 互連](/posts/industry-map-semiconductor-part11-networking-zh/)
+- Part 12:[系統 / 伺服器 OEM](/posts/industry-map-semiconductor-part12-system-oem-zh/)
+- Part 13:[雲端 CSP](/posts/industry-map-semiconductor-part13-cloud-csp-zh/)
+- Part 14:[終端需求](/posts/industry-map-semiconductor-part14-end-demand-zh/)
 
 ## 二、產業鏈全景圖(The Chain Map)
 

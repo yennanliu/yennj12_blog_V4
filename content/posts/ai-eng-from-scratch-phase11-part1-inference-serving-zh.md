@@ -7,7 +7,7 @@ description: "深入解析 LLM 生產推論：vLLM PagedAttention、連續批次
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "LLM", "Inference", "vLLM", "Quantization", "Serving", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "17 min"
 series: ["ai-eng-from-scratch"]
 ---
 

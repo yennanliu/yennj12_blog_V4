@@ -7,7 +7,7 @@ description: "從零理解知識圖譜：實體、關係、三元組、本體（
 categories: ["all", "ai", "engineering"]
 tags: ["Knowledge Graph", "知識圖譜", "RDF", "SPARQL", "Ontology", "Semantic Web", "Graph Database"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "11 min"
 series: ["knowledge-graph"]
 ---
 

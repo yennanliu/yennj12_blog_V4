@@ -3,8 +3,8 @@ title: "Building Production Kubernetes Platform on AWS EKS"
 date: 2025-08-30T15:19:09+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "engineering", "architecture"]
-tags: ["AI", "kubernetes", "eks", "aws", "cdk", "microservices", "kafka", "monitoring", "observability"]
+categories: ["all", "engineering", "architecture", "infrastructure"]
+tags: ["Kubernetes", "EKS", "AWS", "CDK", "Microservices", "kafka", "Monitoring", "Observability"]
 summary: "Deep dive into architecting a comprehensive Kubernetes platform on AWS EKS with integrated data processing, monitoring, and observability using infrastructure as code."
 description: "Deep dive into architecting a comprehensive Kubernetes platform on AWS EKS with integrated data processing, monitoring, and observability using infrastructure as code."
 readTime: "22 min"

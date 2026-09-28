@@ -5,7 +5,7 @@ draft: false
 weight: 18
 description: "以系統設計視角拆解企業級 Agent 的三層記憶體設計：Working Memory 成本控制、Semantic Long-term Memory 的異步壓縮流程、Profile Memory 的結構化提取——以及每個設計決策背後的成本與延遲 trade-off"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Memory", "Cost Optimization", "Context Cache", "LLM", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Memory", "Cost Optimization", "Context Cache", "LLM", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "16 min"
 ---
@@ -298,6 +298,6 @@ TTFT 改善（示意估算，非實測）：
 
 ---
 
-**系列導覽：**  
-← [（十七）RKK 實戰：MCP 伺服器、Tool-Calling 安全與 OAuth 授權](../fde-interview-guide-part17-mcp-tool-oauth-zh/)  
-→ [（十九）RKK 實戰：Multi-Agent 的統計評估與細粒度追蹤](../fde-interview-guide-part19-multiagent-eval-tracing-zh/)
+**系列導航**
+
+← [Part 17：RKK 實戰——MCP 伺服器、Tool-Calling 安全與 OAuth 授權](/posts/fde-interview-guide-part17-mcp-tool-oauth-zh/) | [Part 19：RKK 實戰——Multi-Agent 系統的統計評估與細粒度追蹤](/posts/fde-interview-guide-part19-multiagent-eval-tracing-zh/) →

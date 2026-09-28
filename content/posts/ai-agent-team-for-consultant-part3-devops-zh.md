@@ -7,7 +7,7 @@ description: "AI 顧問 Agent 團隊上線後怎麼辦？本文從 DevOps/SRE �
 categories: ["all", "ai", "infrastructure"]
 tags: ["AI Agent", "DevOps", "SRE", "LangSmith", "監控", "部署", "評估", "繁體中文", "Agent"]
 authors: ["yen"]
-readTime: "25 min"
+readTime: "15 min"
 ---
 
 ## 前言

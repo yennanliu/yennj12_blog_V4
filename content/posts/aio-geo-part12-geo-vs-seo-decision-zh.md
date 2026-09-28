@@ -7,7 +7,7 @@ description: "Google 官方說「這就是 SEO」——這句話對，也不對�
 categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "SEO", "決策框架", "顧問", "預算配置", "繁體中文"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "12 min"
 ---
 
 > 「GEO 不就是 SEO 換個名字嗎？」

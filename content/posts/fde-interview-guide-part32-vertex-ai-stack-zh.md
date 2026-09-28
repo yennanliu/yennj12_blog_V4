@@ -5,7 +5,7 @@ draft: false
 weight: 32
 description: "以 Google FDE 視角完整拆解 Vertex AI AI 產品棧：何時選 Agent Builder vs 自建、Vertex AI Search 和 DIY RAG 的根本差異、Gemini API 四個關鍵特性（system instruction、tool use、grounding、context caching），以及企業 AI 系統的 GCP 部署架構"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Vertex AI", "Gemini", "Agent Builder", "GCP", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Vertex AI", "Gemini", "Agent Builder", "GCP", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "19 min"
 ---
@@ -539,3 +539,9 @@ A：Vertex AI 提供 Supervised Fine-Tuning（SFT）服務，
 
 **Google FDE 的核心價值不是說「Google 的東西最好」，**  
 **而是說「在你的場景下，Google 的哪個選項給你最好的 ROI，以及為什麼。」**
+
+---
+
+**系列導航**
+
+← [Part 31：RKK 實戰——Google ADK 深度設計：Agent 類型、Tool 宣告與 Multi-Agent 協調](/posts/fde-interview-guide-part31-adk-deep-dive-zh/) | [Part 33：RKK 面試解剖——面試官怎麼看你、怎麼評分、什麼叫做強力雇用](/posts/fde-interview-guide-part33-rkk-anatomy-zh/) →

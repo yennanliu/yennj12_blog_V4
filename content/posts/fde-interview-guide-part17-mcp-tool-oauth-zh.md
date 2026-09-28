@@ -5,7 +5,7 @@ draft: false
 weight: 17
 description: "以系統設計視角拆解 MCP（Model Context Protocol）的安全邊界：Agent 的工具授權架構、Human-in-the-loop OAuth 流程、Tool Input Validation 防禦層，以及如何防止 Tool Injection 攻擊"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "MCP", "OAuth", "Tool-Calling", "Security", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "MCP", "OAuth", "Tool Calling", "Security", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
 ---
@@ -295,6 +295,6 @@ GCP 組件對應：
 
 ---
 
-**系列導覽：**  
-← [（十六）RKK 實戰：Multi-Agent 狀態管理與死鎖排除](../fde-interview-guide-part16-multiagent-state-deadlock-zh/)  
-→ [（十八）RKK 實戰：Agent 記憶體架構與 Context 成本調優](../fde-interview-guide-part18-memory-cost-tuning-zh/)
+**系列導航**
+
+← [Part 16：RKK 實戰——Multi-Agent 狀態管理與死鎖排除](/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh/) | [Part 18：RKK 實戰——三層記憶體架構與 LLM 成本調優](/posts/fde-interview-guide-part18-memory-cost-tuning-zh/) →

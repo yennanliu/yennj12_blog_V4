@@ -4,9 +4,9 @@ date: 2026-06-27T11:00:00+08:00
 draft: false
 description: "Planet Labs（NYSE: PL）三部曲完整選股分析（下）：DCF 三情境機率加權、P/S 與 EV/Revenue 相對估值、可比公司分析、足球場估值匯總、安全邊際、資本配置與股本稀釋，最終給出目標價區間與綜合投資裁決訊號。"
 categories: ["all", "finance"]
-tags: ["Stock Analysis", "PL", "Planet Labs", "DCF", "Valuation", "Football Field", "Price Target", "Investment Thesis", "Satellite", "InvestSkill", "繁體中文", "investment"]
+tags: ["Stock Analysis", "PL", "Planet Labs", "DCF", "Valuation", "Football Field", "Price Target", "Investment Thesis", "Satellite", "InvestSkill", "繁體中文", "Investment"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "15 min"
 ---
 
 > 多數人估值 PL 只會丟一句「市銷率 20 倍，太貴」。
@@ -25,8 +25,8 @@ readTime: "23 min"
 
 本篇為 **Planet Labs（PL）三部曲分析**的第三部（完結）：
 
-- （上）基本面與產業競爭力
-- （中）技術面、籌碼面與市場情緒
+- [（上）基本面與產業競爭力](/posts/stock-analysis-pl-planet-labs-part1-fundamentals-zh/)
+- [（中）技術面、籌碼面與市場情緒](/posts/stock-analysis-pl-planet-labs-part2-technical-sentiment-zh/)
 - **（下）估值模型與投資裁決** ← 你正在這裡
 
 ---
@@ -472,8 +472,8 @@ DCF       本系列     現價       分析師均     分析師高
 
 ### 系列導覽
 
-- （上）[基本面與產業競爭力](../stock-analysis-pl-planet-labs-part1-fundamentals-zh/) — 商業模式、三表、成長、護城河
-- （中）[技術面、籌碼面與市場情緒](../stock-analysis-pl-planet-labs-part2-technical-sentiment-zh/) — 技術型態、機構持股、空頭、總經
+- （上）[基本面與產業競爭力](/posts/stock-analysis-pl-planet-labs-part1-fundamentals-zh/) — 商業模式、三表、成長、護城河
+- （中）[技術面、籌碼面與市場情緒](/posts/stock-analysis-pl-planet-labs-part2-technical-sentiment-zh/) — 技術型態、機構持股、空頭、總經
 - **（下）估值模型與投資裁決** ← 你正在這裡
 
 ---

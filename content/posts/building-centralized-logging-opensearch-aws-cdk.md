@@ -3,8 +3,8 @@ title: "Building Centralized Logging with OpenSearch and AWS CDK"
 date: 2024-12-15T14:30:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "engineering", "architecture"]
-tags: ["AI", "opensearch", "aws", "cdk", "kubernetes", "logging", "kinesis", "observability", "cloudwatch"]
+categories: ["all", "engineering", "architecture", "infrastructure"]
+tags: ["opensearch", "AWS", "CDK", "Kubernetes", "Logging", "Kinesis", "Observability", "CloudWatch"]
 summary: "Deep dive into architecting a production-ready centralized logging solution using OpenSearch, Kinesis Data Firehose, and AWS CDK for comprehensive Kubernetes cluster observability."
 description: "Learn how to build a scalable centralized logging platform using OpenSearch, Kinesis Data Firehose, and AWS CDK to collect, process, and analyze logs from Kubernetes clusters and containerized applications."
 readTime: "16 min"

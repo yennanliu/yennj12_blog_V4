@@ -5,7 +5,7 @@ draft: false
 weight: 13
 description: "以系統設計視角拆解 AI Agent 的安全架構：Prompt Injection 的兩類攻擊、為什麼 Agent 比純 LLM 危險 10 倍、五層防禦架構怎麼設計、OAuth 授權怎麼落地——含完整攻防架構圖"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Security", "Prompt Injection", "LLM", "Defense", "OAuth", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Security", "Prompt Injection", "LLM", "Defense", "OAuth", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "15 min"
 ---
@@ -346,6 +346,6 @@ Agent 要執行「刪除」「發送」「修改」類操作時
 
 ---
 
-**系列導覽：**  
-← [（十二）RKK 實戰：Agent 統計評估與品質量化](../fde-interview-guide-part12-agent-evaluation-zh/)  
-→ [（十四）RKK 實戰：AI Agent Memory 架構設計](../fde-interview-guide-part14-memory-architecture-zh/)
+**系列導航**
+
+← [Part 12：RKK 實戰——AI Agent 統計評估與品質量化](/posts/fde-interview-guide-part12-agent-evaluation-zh/) | [Part 14：RKK 實戰——AI Agent Memory 架構設計](/posts/fde-interview-guide-part14-memory-architecture-zh/) →

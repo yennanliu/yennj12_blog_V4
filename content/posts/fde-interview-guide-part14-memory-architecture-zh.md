@@ -5,7 +5,7 @@ draft: false
 weight: 14
 description: "以系統設計視角拆解 AI Agent 的 Memory 架構：為什麼需要四種記憶、每種記憶解決什麼問題、怎麼組合、以及記憶帶來的工程挑戰——含完整架構圖與選型決策框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Memory", "Architecture", "Vector Database", "LangGraph", "RAG", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Memory", "Architecture", "Vector Database", "LangGraph", "RAG", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "15 min"
 ---
@@ -367,6 +367,6 @@ Precision vs Recall 的 trade-off：
 
 ---
 
-**系列導覽：**  
-← [（十三）RKK 實戰：Prompt Injection 攻防與 Agent 安全](../fde-interview-guide-part13-prompt-injection-zh/)  
-→ [（十五）RKK 實戰：Agent 規模化與 Cache 策略](../fde-interview-guide-part15-scale-cache-zh/)
+**系列導航**
+
+← [Part 13：RKK 實戰——Prompt Injection 攻防與 Agent 安全](/posts/fde-interview-guide-part13-prompt-injection-zh/) | [Part 15：RKK 實戰——AI Agent 規模化與 Cache 策略](/posts/fde-interview-guide-part15-scale-cache-zh/) →

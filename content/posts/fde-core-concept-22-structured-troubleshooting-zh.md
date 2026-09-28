@@ -7,7 +7,7 @@ description: "系統化分層排錯方法論：從用戶症狀出發，逐層消
 categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Troubleshooting", "Observability", "SRE"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "13 min"
 ---
 
 **核心定義：Structured Troubleshooting 是一種「永不猜測、逐層消除」的診斷哲學——從用戶可見的症狀出發，沿著系統堆疊自上而下，在每一層用可量測的指標排除假說，直到根因被隔離為止。**

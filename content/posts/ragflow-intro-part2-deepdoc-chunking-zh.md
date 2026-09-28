@@ -7,7 +7,7 @@ description: "RAGFlow 原始碼導讀系列第二篇：拆解 DeepDoc 的 OCR／
 categories: ["all", "ai", "engineering"]
 tags: ["RAGFlow", "RAG", "AI", "DeepDoc", "OCR", "Chunking", "Document Parsing", "繁體中文"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "17 min"
 ---
 
 > *大多數人處理 RAG 的文件解析，是 `PyPDF2.extract_text()` 加一個 `RecursiveCharacterTextSplitter(512, 50)`，然後把精力全部投在 prompt 上。*

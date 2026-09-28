@@ -5,7 +5,7 @@ draft: false
 weight: 24
 description: "以系統設計視角拆解 Hybrid Model Routing 架構：Semantic Router 的設計原理、小模型 vs 大模型的路由決策框架、如何用 Eval Pipeline 確保路由器不會犧牲整體品質，以及 Gemma 與 Gemini 的混合部署策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Model Routing", "Semantic Router", "Gemma", "Gemini", "Cost Optimization", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Model Routing", "Semantic Router", "Gemma", "Gemini", "Cost Optimization", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
 ---
@@ -294,6 +294,6 @@ GKE 部署考量：
 
 ---
 
-**系列導覽：**  
-← [（二十三）RKK 實戰：多租戶 Agent 的限流、Fair-Share 與 Token 預算控制](../fde-interview-guide-part23-ratelimit-fairshare-zh/)  
-→ [（二十五）RKK 實戰：Self-Reflection 與幻覺校正迴圈設計](../fde-interview-guide-part25-self-reflection-loop-zh/)
+**系列導航**
+
+← [Part 23：RKK 實戰——多租戶 Agent 的限流、Fair-Share 與 Token 預算控制](/posts/fde-interview-guide-part23-ratelimit-fairshare-zh/) | [Part 25：RKK 實戰——Self-Reflection 與幻覺校正迴圈設計](/posts/fde-interview-guide-part25-self-reflection-loop-zh/) →

@@ -7,7 +7,7 @@ description: "拆解 OpenWorker 如何同時支援 OpenAI、Anthropic、Gemini�
 categories: ["all", "ai", "engineering"]
 tags: ["OpenWorker", "LLM", "Provider Abstraction", "Context Window", "Prompt Caching", "Token", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "19 min"
 series: ["openworker-intro"]
 ---
 

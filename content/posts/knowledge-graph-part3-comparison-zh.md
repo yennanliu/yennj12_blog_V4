@@ -7,7 +7,7 @@ description: "知識圖譜 vs 關聯式資料庫 vs 向量資料庫 vs 文件資
 categories: ["all", "ai", "engineering"]
 tags: ["Knowledge Graph", "知識圖譜", "Vector Database", "Graph Database", "RDBMS", "Database", "Architecture"]
 authors: ["yen"]
-readTime: "22 min"
+readTime: "11 min"
 series: ["knowledge-graph"]
 ---
 

@@ -7,7 +7,7 @@ description: "RAG 系列終章：如何用 RAGAS 框架量化評估 RAG 品質�
 categories: ["all", "ai", "engineering"]
 tags: ["RAG", "RAGAS", "GraphRAG", "Agentic RAG", "LangGraph", "Evaluation", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "35 min"
+readTime: "15 min"
 ---
 
 ## 前言

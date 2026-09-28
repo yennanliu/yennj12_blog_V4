@@ -7,7 +7,7 @@ description: "RAG 系統的評估遠不只是看回答品質，還要驗證檢�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "RAG", "LLM", "RAGAS", "Faithfulness", "Hallucination", "Evaluation", "繁體中文"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "13 min"
 ---
 
 ## 前言：RAG 帶來了新的評估挑戰

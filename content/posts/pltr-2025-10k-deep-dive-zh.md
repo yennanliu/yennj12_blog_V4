@@ -4,9 +4,9 @@ date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 Palantir Technologies FY2025 年報做機構級深度拆解:五年從虧損到獲利的轉折、政府 vs 商業事業體、美國商業爆發、Rule of 40 破百、GAAP 獲利轉正、股權激勵與稀釋、近乎零的有效稅率、客戶集中度、估值極貴的張力與投資訊號。"
 categories: ["all", "finance"]
-tags: ["PLTR", "Palantir", "10-K", "SEC", "財報分析", "價值投資", "美股", "AI", "數據分析", "AIP", "SaaS", "InvestSkill", "investing"]
+tags: ["PLTR", "Palantir", "10-K", "SEC", "財報分析", "價值投資", "美股", "AI", "數據分析", "SaaS", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "18 min"
 ---
 
 > 大部分人看 Palantir 的 2025 年報,第一眼看到「營收 +56%、淨利 +249%」就直接喊買:成長股王當之無愧。

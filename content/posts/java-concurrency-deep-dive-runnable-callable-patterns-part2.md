@@ -7,7 +7,7 @@ description: "Deep dive into Java concurrency fundamentals: Runnable and Callabl
 categories: ["all", "ai", "engineering", "architecture"]
 tags: ["Java", "Concurrency", "Threading", "Runnable", "Callable", "Synchronization", "Memory Model", "Thread Safety", "AI"]
 authors: ["yen"]
-readTime: "40 min"
+readTime: "25 min"
 ---
 
 ## 🎯 Introduction

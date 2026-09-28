@@ -5,7 +5,7 @@ draft: false
 weight: 21
 description: "以系統設計視角拆解需要執行 30~60 分鐘的 Agent 任務：為什麼不能讓用戶等 HTTP Response、解耦架構的設計原理、Checkpoint 斷點續傳機制，以及 GCP 上的具體落地方案"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Async", "Long-Running", "Checkpoint", "Cloud Pub/Sub", "GKE", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Async", "Long-Running", "Checkpoint", "Cloud Pub/Sub", "GKE", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
 ---
@@ -319,6 +319,6 @@ GKE 的彈性擴縮架構：
 
 ---
 
-**系列導覽：**  
-← [（二十）RKK 實戰：間接 Prompt Injection 與 Dual-LLM 防禦架構](../fde-interview-guide-part20-indirect-prompt-injection-zh/)  
-→ [（二十二）RKK 實戰：動態並行 Tool-Calling 與依賴解析引擎](../fde-interview-guide-part22-parallel-tool-calling-zh/)
+**系列導航**
+
+← [Part 20：RKK 實戰——間接 Prompt Injection 與 Dual-LLM 防禦架構](/posts/fde-interview-guide-part20-indirect-prompt-injection-zh/) | [Part 22：RKK 實戰——動態並行 Tool-Calling 與依賴解析引擎](/posts/fde-interview-guide-part22-parallel-tool-calling-zh/) →

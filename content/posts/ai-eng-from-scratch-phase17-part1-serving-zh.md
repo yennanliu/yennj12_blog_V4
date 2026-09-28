@@ -7,7 +7,7 @@ description: "深入解析 AI 推論服務工程：模型服務器選型（Trito
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Infrastructure", "Serving", "Triton", "GPU", "Kubernetes", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "18 min"
 series: ["ai-eng-from-scratch"]
 ---
 

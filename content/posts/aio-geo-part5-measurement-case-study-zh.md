@@ -7,7 +7,7 @@ description: "GEO 的最後一哩：設計 prompt set、用 Python 建置多引�
 categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "監測", "Analytics", "Python", "GA4", "ROI", "案例研究", "繁體中文", "SEO", "Case Study"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "19 min"
 ---
 
 > 大多數人的做法：改完網站，等三個月，然後憑感覺說「好像有效」。

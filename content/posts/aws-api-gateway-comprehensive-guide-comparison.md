@@ -6,7 +6,7 @@ description: "Master AWS API Gateway with comprehensive comparisons to load bala
 categories: ["all", "engineering", "architecture", "infrastructure"]
 tags: ["AWS API Gateway", "Load Balancer", "Microservices", "Java", "Spring Boot", "AWS Lambda", "REST API", "System Design", "Cloud Architecture", "Serverless", "AWS"]
 authors: ["yen"]
-readTime: "60 min"
+readTime: "30 min"
 ---
 
 ## 🎯 Introduction

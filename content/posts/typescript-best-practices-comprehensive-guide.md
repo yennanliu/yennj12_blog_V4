@@ -3,10 +3,10 @@ title: "TypeScript Best Practices: A Comprehensive Guide to Type-Safe Developmen
 date: 2025-11-30T10:00:00Z
 draft: false
 description: "Master TypeScript development with comprehensive best practices covering configuration, type system, design patterns, code style, and advanced techniques. Learn to write type-safe, maintainable, and scalable TypeScript applications."
-categories: ["all", "ai", "engineering"]
-tags: ["TypeScript", "JavaScript", "Type Safety", "Design Patterns", "Code Quality", "Best Practices", "Software Architecture", "AI", "Frontend"]
+categories: ["all", "engineering"]
+tags: ["TypeScript", "JavaScript", "Type Safety", "Design Patterns", "Code Quality", "Best Practices", "Software Architecture", "Frontend"]
 authors: ["yen"]
-readTime: "45 min"
+readTime: "21 min"
 ---
 
 ## 🎯 Introduction

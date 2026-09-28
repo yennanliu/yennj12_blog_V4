@@ -7,7 +7,7 @@ description: "深入探討 Kubernetes 核心資源對象，包含 Pod、Deployme
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "kubectl", "Pod", "Deployment", "Service", "Ingress", "Volume", "實務操作", "YAML", "DevOps"]
 authors: ["yen"]
-readTime: "70 min"
+readTime: "28 min"
 ---
 
 ## 🎯 前言

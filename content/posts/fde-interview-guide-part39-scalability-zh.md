@@ -5,7 +5,7 @@ draft: false
 weight: 39
 description: "以系統設計視角拆解 AI 系統從內部試點到百萬外部用戶的擴展挑戰：三個演進階段的完整架構圖、無狀態服務設計、非同步佇列、語意快取、三層速率限制、Auto-scaling 策略，以及每個關鍵技術選型的 Why X not Y 決策邏輯"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Scalability", "Architecture", "Cache", "Queue", "RateLimit", "AutoScaling", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Scalability", "Architecture", "Cache", "Queue", "RateLimit", "Autoscaling", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "25 min"
 ---
@@ -719,6 +719,6 @@ Phase 3 架構投入的 ROI 計算（示意估算）：
 
 ---
 
-**系列導覽：**  
-← [（三十八）從 POC 到 Production：生產化清單](../fde-interview-guide-part38-prototype-to-production-zh/)  
-→ [（四十）AI 系統的 PII 保護：資料脫敏與合規稽核](../fde-interview-guide-part40-pii-security-zh/)
+**系列導航**
+
+← [Part 38：RKK 實戰——從 POC 到 Production：AI 系統的五個生產化差距與 Rollback 設計](/posts/fde-interview-guide-part38-prototype-to-production-zh/) | [Part 40：RKK 實戰——AI 系統的 PII 保護：假名化設計、最小存取原則與合規稽核](/posts/fde-interview-guide-part40-pii-security-zh/) →

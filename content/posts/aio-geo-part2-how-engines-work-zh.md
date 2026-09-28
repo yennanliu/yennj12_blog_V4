@@ -7,7 +7,7 @@ description: "拆解生成式引擎的檢索管線：AI crawler 名單與行為�
 categories: ["all", "ai", "engineering", "business"]
 tags: ["GEO", "AIO", "RAG", "Chunking", "Reranking", "Crawler", "Embedding", "繁體中文", "SEO"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "16 min"
 ---
 
 > 大多數人的做法：抄一份 GEO checklist，逐項打勾，然後不知道為什麼沒效果。

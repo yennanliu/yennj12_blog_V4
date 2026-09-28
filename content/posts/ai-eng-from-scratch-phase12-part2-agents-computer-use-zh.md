@@ -7,7 +7,7 @@ description: "深入解析多模態 Agent 架構：OCR+VLM 文件理解、電腦
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Multimodal", "Agent", "Computer Use", "VLM", "Document AI", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "18 min"
 series: ["ai-eng-from-scratch"]
 ---
 

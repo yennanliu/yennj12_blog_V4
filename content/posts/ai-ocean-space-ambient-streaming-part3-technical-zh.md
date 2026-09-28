@@ -5,10 +5,10 @@ draft: false
 weight: 3
 authors: ["yen"]
 categories: ["all", "business", "creative"]
-tags: ["OBS", "串流", "技術設定", "自動化", "監控", "YouTube直播", "24/7", "streaming"]
+tags: ["OBS", "串流", "技術設定", "自動化", "監控", "YouTube直播", "24/7", "Streaming"]
 summary: "系列第三篇：完整的 OBS Studio 設定指南、YouTube 串流配置、自動化腳本開發，以及 24/7 穩定運行的監控系統。從技術小白到專業串流者的完整路徑。"
 description: "系列第三篇：完整的 OBS Studio 設定指南、YouTube 串流配置、自動化腳本開發，以及 24/7 穩定運行的監控系統。從技術小白到專業串流者的完整路徑。"
-readTime: "32 min"
+readTime: "23 min"
 ---
 
 在前兩篇中，我們掌握了音頻生成和視覺製作。本篇將進入技術實作階段：如何將所有素材整合到 OBS Studio，設定最佳串流參數，建立自動化系統，並確保 24/7 穩定運行。

@@ -7,7 +7,7 @@ description: "深入解析 LLM 微調策略：LoRA/QLoRA 低秩分解原理、SF
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "LLM", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "SFT", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "18 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -507,8 +507,11 @@ QLoRA 不是免費的午餐：
 ---
 
 **系列索引：**
-- Phase 1–3：基礎建設（環境、資料管線、特徵工程）
-- Phase 4–6：模型訓練（傳統 ML、深度學習、評估框架）
-- Phase 7–9：部署工程（服務化、監控、A/B 測試）
-- Phase 10：LLM 工程（Prompt 工程、RAG、**微調** ← 目前）
-- Phase 11：LLM 推理優化（即將推出）
+
+- Phase 1–3：數學基礎、傳統機器學習、深度學習核心
+- Phase 4–6：電腦視覺、NLP、語音
+- Phase 7–9：Transformer、生成模型、強化學習
+- **Phase 10（本階段）：從頭構建 LLM**（Tokenization → 預訓練 → **微調**）
+- Phase 11：LLM 推論工程、RAG 與評估
+- Phase 12–16：多模態、MCP 與工作流程編排、Agent 系統、長時程自主系統、多 Agent 協調
+- Phase 17–19：推論服務與可觀測性、AI 安全與治理、Capstone

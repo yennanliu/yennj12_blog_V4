@@ -7,7 +7,7 @@ description: "Mem0 原始碼導讀系列第二篇：逐行拆解 _add_to_vector_
 categories: ["all", "ai", "engineering"]
 tags: ["Mem0", "AI Agent", "Memory", "LLM", "Prompt Engineering", "spaCy", "繁體中文"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "17 min"
 ---
 
 > *大多數人設計「讓 LLM 自己管理記憶」的方式，是給它一組工具——新增、更新、刪除——然後相信它會做對的事。*
