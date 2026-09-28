@@ -316,7 +316,7 @@ CDK 專案用 CDK Pipelines 最順;但如果團隊的 CI 標準已是 GitHub Act
 
 ---
 
-## 七、系列總結:五個系統,一套心法
+## 七、基礎篇總結:五個系統,一套心法
 
 走完五篇,我們蓋了五個 AWS 原生 AI 系統。最後用一張總表把它們放在一起看:
 
@@ -347,9 +347,9 @@ P5 MLOps 生產化            CloudWatch + X-Ray +           可觀測+部署+  
 
 3. **MLOps 不是上線後才補的,是從第一天就 code 進 stack 的。** 可觀測性、部署策略、成本標籤、CI/CD,全部用 CDK 描述、全部版本控制。「能跑」跟「敢上線」的距離,就是這一整套非功能設計。
 
-而 CDK(CloudFormation)是貫穿這一切的線:五個系統、每一個資源、每一條權限、每一個告警、每一個成本標籤,都是同一種語言寫出來的、可版本控制、可 review、可一鍵重建的程式碼。這,就是「AI System on Native AWS」的全貌。
+而 CDK(CloudFormation)是貫穿這一切的線:五個系統、每一個資源、每一條權限、每一個告警、每一個成本標籤,都是同一種語言寫出來的、可版本控制、可 review、可一鍵重建的程式碼。這,就是「AI System on Native AWS」基礎篇的全貌。
 
-感謝一路讀到這裡。願你的下一個 AI 系統,從 demo 到上線,都走得穩。
+基礎篇到這裡告一段落。進階篇從 [Part 6:企業級多租戶 RAG 平台](/posts/ai-system-on-native-aws-part6-enterprise-multi-tenant-rag-zh/) 開始,把這五個系統推向多租戶、模型治理、即時風控、資安合規與平台工程。
 
 ---
 
