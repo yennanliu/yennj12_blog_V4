@@ -372,12 +372,18 @@ OPA/Rego(自架)    生態強、跨雲                        要自己 host 與
 
 ---
 
-## 系列導覽(進階篇)
+## 系列導覽
 
+**基礎篇**
+- [Part 1:Serverless RAG 智慧客服知識庫](/posts/ai-system-on-native-aws-part1-serverless-rag-chatbot-zh/)
+- [Part 2:智慧文件處理(IDP)管線](/posts/ai-system-on-native-aws-part2-intelligent-document-processing-zh/)
+- [Part 3:即時個人化推薦系統](/posts/ai-system-on-native-aws-part3-realtime-recommendation-zh/)
+- [Part 4:自主 AI Agent 工具呼叫系統](/posts/ai-system-on-native-aws-part4-agentic-ai-with-tools-zh/)
+- [Part 5:生產化 MLOps 與可觀測性](/posts/ai-system-on-native-aws-part5-production-mlops-observability-zh/)
+
+**進階篇**
 - **Part 6(本篇)**:企業級多租戶 RAG 平台
-- **Part 7**:基礎模型客製化與模型治理
-- **Part 8**:即時串流 ML 與詐欺偵測
-- **Part 9**:企業 AI 安全、合規與資料治理
-- **Part 10**:企業 AI 平台工程 —— 落地區、LLM Gateway 與 FinOps
-
-> 基礎篇回顧:Part 1 RAG 問答 · Part 2 IDP 管線 · Part 3 即時推薦 · Part 4 自主 Agent · Part 5 MLOps 與可觀測性
+- [Part 7:基礎模型客製化與模型治理](/posts/ai-system-on-native-aws-part7-foundation-model-customization-governance-zh/)
+- [Part 8:即時串流 ML 與詐欺偵測](/posts/ai-system-on-native-aws-part8-realtime-streaming-fraud-detection-zh/)
+- [Part 9:企業 AI 安全、合規與資料治理](/posts/ai-system-on-native-aws-part9-security-compliance-data-governance-zh/)
+- [Part 10:企業 AI 平台工程 —— 落地區、LLM Gateway 與 FinOps](/posts/ai-system-on-native-aws-part10-enterprise-ai-platform-engineering-zh/)

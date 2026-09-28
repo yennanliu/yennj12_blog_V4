@@ -635,6 +635,6 @@ Embed. Model       版本綁定機制，CI 檢查               靠人記得
 
 ---
 
-**系列導覽：**  
-← [（四十）AI 系統的 PII 保護：資料脫敏與合規稽核](../fde-interview-guide-part40-pii-security-zh/)  
-→ [（四十二）顧問技能：從客戶對話挖掘真實需求到 POC 範圍定義](../fde-interview-guide-part42-consulting-discovery-zh/)
+**系列導航**
+
+← [Part 40：RKK 實戰——AI 系統的 PII 保護：假名化設計、最小存取原則與合規稽核](/posts/fde-interview-guide-part40-pii-security-zh/) | [Part 42：RKK 實戰——顧問技能：從「要 AI」到 POC 範圍定義的 Discovery 框架](/posts/fde-interview-guide-part42-consulting-discovery-zh/) →

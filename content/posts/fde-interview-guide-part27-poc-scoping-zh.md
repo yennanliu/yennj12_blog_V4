@@ -299,3 +299,9 @@ In Scope、Out of Scope、Success Criteria 和雙方需要投入的資源。
 
 **Scoping 不是在限制客戶的想像力。**  
 **是在讓三週後的 Demo 能夠成功——那才是建立長期信任關係的基礎。**
+
+---
+
+**系列導航**
+
+← [Part 26：顧問實戰——「我們現在用 OpenAI，為什麼要換 Vertex AI？」](/posts/fde-interview-guide-part26-competitive-positioning-zh/) | [Part 28：顧問實戰——生產事故診斷與客戶溝通語言](/posts/fde-interview-guide-part28-incident-communication-zh/) →

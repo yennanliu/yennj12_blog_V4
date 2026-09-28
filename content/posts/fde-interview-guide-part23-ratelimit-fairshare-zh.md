@@ -299,6 +299,6 @@ Noisy Neighbor 的攻擊場景：
 
 ---
 
-**系列導覽：**  
-← [（二十二）RKK 實戰：動態並行 Tool-Calling 與依賴解析引擎](../fde-interview-guide-part22-parallel-tool-calling-zh/)  
-→ [（二十四）RKK 實戰：混合模型路由與語意路由器設計](../fde-interview-guide-part24-hybrid-model-routing-zh/)
+**系列導航**
+
+← [Part 22：RKK 實戰——動態並行 Tool-Calling 與依賴解析引擎](/posts/fde-interview-guide-part22-parallel-tool-calling-zh/) | [Part 24：RKK 實戰——混合模型路由與語意路由器設計](/posts/fde-interview-guide-part24-hybrid-model-routing-zh/) →

@@ -340,3 +340,9 @@ ROI：154,000 / 46,000 = 335%（年化）
 **成本估算不是財務分析師的工作。**  
 **它是 FDE 幫助客戶做決策的工具。**  
 **會算，才能推進。**
+
+---
+
+**系列導航**
+
+← [Part 28：顧問實戰——生產事故診斷與客戶溝通語言](/posts/fde-interview-guide-part28-incident-communication-zh/) | [Part 30：顧問實戰——Constraint-First 架構設計：VPC 限制下的 GCP AI 系統](/posts/fde-interview-guide-part30-constraint-driven-architecture-zh/) →

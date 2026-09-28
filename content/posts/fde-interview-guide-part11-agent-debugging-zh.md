@@ -338,6 +338,6 @@ DARK 框架：Diagnose → Ask → Root Cause → Kill it
 
 ---
 
-**系列導覽：**  
-← [（十）RKK 實戰：AI Agent 的 Context Management](../fde-interview-guide-part10-context-management-zh/)  
-→ [（十二）RKK 實戰：Agent 統計評估與品質量化](../fde-interview-guide-part12-agent-evaluation-zh/)
+**系列導航**
+
+← [Part 10：RKK 實戰——AI Agent 的 Context Management](/posts/fde-interview-guide-part10-context-management-zh/) | [Part 12：RKK 實戰——AI Agent 統計評估與品質量化](/posts/fde-interview-guide-part12-agent-evaluation-zh/) →

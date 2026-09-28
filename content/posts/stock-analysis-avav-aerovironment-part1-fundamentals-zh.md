@@ -27,8 +27,8 @@ readTime: "22 min"
 本篇為 **AeroVironment（AVAV）三部曲分析**的第一部：
 
 - **（上）基本面與產業競爭力** ← 你正在這裡
-- （中）技術面、籌碼面與市場情緒
-- （下）估值模型與投資裁決
+- [（中）技術面、籌碼面與市場情緒](/posts/stock-analysis-avav-aerovironment-part2-technical-sentiment-zh/)
+- [（下）估值模型與投資裁決](/posts/stock-analysis-avav-aerovironment-part3-valuation-verdict-zh/)
 
 ---
 
@@ -484,8 +484,8 @@ AVAV 護城河評分（5 分制）
 ### 系列導覽
 
 - **（上）基本面與產業競爭力** ← 你正在這裡
-- （中）技術面、籌碼面與市場情緒 — 技術型態、機構持股、空頭興趣、總經
-- （下）估值模型與投資裁決 — DCF、相對估值、足球場、目標價與最終裁決
+- [（中）技術面、籌碼面與市場情緒](/posts/stock-analysis-avav-aerovironment-part2-technical-sentiment-zh/) — 技術型態、機構持股、空頭興趣、總經
+- [（下）估值模型與投資裁決](/posts/stock-analysis-avav-aerovironment-part3-valuation-verdict-zh/) — DCF、相對估值、足球場、目標價與最終裁決
 
 ---
 

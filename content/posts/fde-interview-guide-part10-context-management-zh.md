@@ -355,6 +355,6 @@ E → Edge      你的策略在什麼情況下會失效？
 
 ---
 
-**系列導覽：**  
-← [（九）LLM 核心知識](../fde-interview-guide-part9-llm-core-zh/)  
-→ [（十一）RKK 實戰：Agent 線上除錯與故障排除](../fde-interview-guide-part11-agent-debugging-zh/)
+**系列導航**
+
+← [Part 9：LLM 核心知識——Token、Prompt Engineering 與 Embedding](/posts/fde-interview-guide-part9-llm-core-zh/) | [Part 11：RKK 實戰——AI Agent 線上除錯與故障排除](/posts/fde-interview-guide-part11-agent-debugging-zh/) →

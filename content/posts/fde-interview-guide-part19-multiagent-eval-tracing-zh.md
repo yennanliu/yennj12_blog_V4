@@ -335,6 +335,6 @@ Step 5：Verify
 
 ---
 
-**系列導覽：**  
-← [（十八）RKK 實戰：三層記憶體架構與 LLM 成本調優](../fde-interview-guide-part18-memory-cost-tuning-zh/)  
-→ [（二十）RKK 實戰：間接 Prompt Injection 與 Dual-LLM 防禦架構](../fde-interview-guide-part20-indirect-prompt-injection-zh/)
+**系列導航**
+
+← [Part 18：RKK 實戰——三層記憶體架構與 LLM 成本調優](/posts/fde-interview-guide-part18-memory-cost-tuning-zh/) | [Part 20：RKK 實戰——間接 Prompt Injection 與 Dual-LLM 防禦架構](/posts/fde-interview-guide-part20-indirect-prompt-injection-zh/) →

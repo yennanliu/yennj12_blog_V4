@@ -310,11 +310,11 @@ Playwright   對方沒有公開 API;有登入、        HTTP 直打:要逆向工
 
 ### 系列導覽
 
-- Part 1:系統總覽、架構、資料流
-- Part 2:Harness 引擎——多模型容錯、自我修正、LLM 評審、成本追蹤
+- [Part 1](/posts/auto-agent-system-part1-overview-zh/):系統總覽、架構、資料流
+- [Part 2](/posts/auto-agent-system-part2-harness-engine-zh/):Harness 引擎——多模型容錯、自我修正、LLM 評審、成本追蹤
 - **Part 3(本篇)**:自動化任務實戰——Shopee、Google Maps、Tasker、利潤健檢
-- Part 4:生產化之路——Langfuse、Docker、AWS、權限
-- Part 5:前端體驗與 Pipeline 編排
+- [Part 4](/posts/auto-agent-system-part4-production-zh/):生產化之路——Langfuse、Docker、AWS、權限
+- [Part 5](/posts/auto-agent-system-part5-frontend-pipeline-zh/):前端體驗與 Pipeline 編排
 
 > 對應的 PR:[#2](https://github.com/yennanliu/agent_auto_system/pull/2)/[#4](https://github.com/yennanliu/agent_auto_system/pull/4)/[#5](https://github.com/yennanliu/agent_auto_system/pull/5) Shopee、[#20](https://github.com/yennanliu/agent_auto_system/pull/20) Maps 名單、[#14](https://github.com/yennanliu/agent_auto_system/pull/14)/[#16](https://github.com/yennanliu/agent_auto_system/pull/16)/[#18](https://github.com/yennanliu/agent_auto_system/pull/18) Tasker、[#7](https://github.com/yennanliu/agent_auto_system/pull/7)/[#8](https://github.com/yennanliu/agent_auto_system/pull/8) 利潤健檢
 > 專案原始碼:[github.com/yennanliu/agent_auto_system](https://github.com/yennanliu/agent_auto_system)

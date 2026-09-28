@@ -350,7 +350,7 @@ ai_gen_report/market_news/nvda/market_news_2026-06-30_gemini.md
 
 ## 六、第五層:建置與部署
 
-報告 commit 進 repo 後,由 MkDocs 建置成靜態站台部署到 GitHub Pages。這一層本身也經過大量效能優化(搜尋索引、導覽、部署 debounce),那是另一篇的主題——詳見 [《把站台從 3.1GB 砍到 503MB:finance_data 部署效能調校全紀錄》](../mkdocs-site-size-deploy-perf-tuning-zh/)。
+報告 commit 進 repo 後,由 MkDocs 建置成靜態站台部署到 GitHub Pages。這一層本身也經過大量效能優化(搜尋索引、導覽、部署 debounce),那是另一篇的主題——詳見 [《把站台從 3.1GB 砍到 503MB:finance_data 部署效能調校全紀錄》](/posts/mkdocs-site-size-deploy-perf-tuning-zh/)。
 
 簡言之:內容由 ~42 個每日任務寫入,但**部署改由每晚一次 cron 統一觸發**(而非每次 commit 都部署),`build_docs.py` 負責把 Markdown 報告整理、prerender、套搜尋排除、建導覽,交給 MkDocs 產出站台。
 
@@ -413,5 +413,5 @@ generate_analysis.py TSLA --analysis-type fundamental-analysis --provider gemini
 
 - Repo: [yennanliu/finance_data](https://github.com/yennanliu/finance_data)
 - 線上站台:[yennanliu.github.io/finance_data](https://yennanliu.github.io/finance_data)
-- 相關文章:[把站台從 3.1GB 砍到 503MB:finance_data 部署效能調校全紀錄](../mkdocs-site-size-deploy-perf-tuning-zh/)
+- 相關文章:[把站台從 3.1GB 砍到 503MB:finance_data 部署效能調校全紀錄](/posts/mkdocs-site-size-deploy-perf-tuning-zh/)
 - [yfinance](https://github.com/ranaroussi/yfinance)、[MkDocs Material](https://squidfunk.github.io/mkdocs-material/)

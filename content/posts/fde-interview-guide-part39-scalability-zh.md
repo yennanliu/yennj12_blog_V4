@@ -719,6 +719,6 @@ Phase 3 架構投入的 ROI 計算（示意估算）：
 
 ---
 
-**系列導覽：**  
-← [（三十八）從 POC 到 Production：生產化清單](../fde-interview-guide-part38-prototype-to-production-zh/)  
-→ [（四十）AI 系統的 PII 保護：資料脫敏與合規稽核](../fde-interview-guide-part40-pii-security-zh/)
+**系列導航**
+
+← [Part 38：RKK 實戰——從 POC 到 Production：AI 系統的五個生產化差距與 Rollback 設計](/posts/fde-interview-guide-part38-prototype-to-production-zh/) | [Part 40：RKK 實戰——AI 系統的 PII 保護：假名化設計、最小存取原則與合規稽核](/posts/fde-interview-guide-part40-pii-security-zh/) →

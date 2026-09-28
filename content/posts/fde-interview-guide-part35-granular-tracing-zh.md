@@ -317,6 +317,6 @@ PII 處理       記錄 Prompt 內容         只記錄 token 數/長度  只記
 
 ---
 
-**系列導覽：**  
-← [（三十四）RKK Mock 情境題庫](../fde-interview-guide-part34-mock-scenarios-zh/)  
-← [（三十六）生產級 Eval Pipeline 設計](../fde-interview-guide-part36-eval-pipeline-zh/)
+**系列導航**
+
+← [Part 34：RKK 實戰演練——六個端對端 Mock 情境題與模範答案](/posts/fde-interview-guide-part34-mock-scenarios-zh/) | [Part 36：RKK 實戰——生產級 AI Evaluation Pipeline：從黃金資料集到 CI/CD 品質閘門](/posts/fde-interview-guide-part36-eval-pipeline-zh/) →

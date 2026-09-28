@@ -294,6 +294,6 @@ GKE 部署考量：
 
 ---
 
-**系列導覽：**  
-← [（二十三）RKK 實戰：多租戶 Agent 的限流、Fair-Share 與 Token 預算控制](../fde-interview-guide-part23-ratelimit-fairshare-zh/)  
-→ [（二十五）RKK 實戰：Self-Reflection 與幻覺校正迴圈設計](../fde-interview-guide-part25-self-reflection-loop-zh/)
+**系列導航**
+
+← [Part 23：RKK 實戰——多租戶 Agent 的限流、Fair-Share 與 Token 預算控制](/posts/fde-interview-guide-part23-ratelimit-fairshare-zh/) | [Part 25：RKK 實戰——Self-Reflection 與幻覺校正迴圈設計](/posts/fde-interview-guide-part25-self-reflection-loop-zh/) →

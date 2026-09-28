@@ -338,6 +338,6 @@ Eval Pipeline：測試集 → Agent Run → Auto Metrics + LLM Judge
 
 ---
 
-**系列導覽：**  
-← [（十一）RKK 實戰：Agent 線上除錯與故障排除](../fde-interview-guide-part11-agent-debugging-zh/)  
-→ [（十三）RKK 實戰：Prompt Injection 攻防與 Agent 安全](../fde-interview-guide-part13-prompt-injection-zh/)
+**系列導航**
+
+← [Part 11：RKK 實戰——AI Agent 線上除錯與故障排除](/posts/fde-interview-guide-part11-agent-debugging-zh/) | [Part 13：RKK 實戰——Prompt Injection 攻防與 Agent 安全](/posts/fde-interview-guide-part13-prompt-injection-zh/) →

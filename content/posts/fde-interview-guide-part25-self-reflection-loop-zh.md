@@ -315,6 +315,6 @@ Self-Reflection 的成本：
 
 ---
 
-**系列導覽：**  
-← [（二十四）RKK 實戰：混合模型路由與語意路由器設計](../fde-interview-guide-part24-hybrid-model-routing-zh/)  
-← [系列首篇：（一）RAG 完全攻略](../fde-interview-guide-part1-rag-zh/)
+**系列導航**
+
+← [Part 24：RKK 實戰——混合模型路由與語意路由器設計](/posts/fde-interview-guide-part24-hybrid-model-routing-zh/) | [Part 26：顧問實戰——「我們現在用 OpenAI，為什麼要換 Vertex AI？」](/posts/fde-interview-guide-part26-competitive-positioning-zh/) →

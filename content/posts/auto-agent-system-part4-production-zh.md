@@ -277,11 +277,11 @@ Fargate 的容器本身是無狀態的,但這個應用有三種資料要留住:
 
 ### 系列導覽
 
-- Part 1:系統總覽、架構、資料流
-- Part 2:Harness 引擎——多模型容錯、自我修正、LLM 評審、成本追蹤
-- Part 3:自動化任務實戰——Shopee、Google Maps、Tasker、利潤健檢
+- [Part 1](/posts/auto-agent-system-part1-overview-zh/):系統總覽、架構、資料流
+- [Part 2](/posts/auto-agent-system-part2-harness-engine-zh/):Harness 引擎——多模型容錯、自我修正、LLM 評審、成本追蹤
+- [Part 3](/posts/auto-agent-system-part3-automations-zh/):自動化任務實戰——Shopee、Google Maps、Tasker、利潤健檢
 - **Part 4(本篇)**:生產化之路——Langfuse、Docker、AWS、權限
-- Part 5:前端體驗與 Pipeline 編排
+- [Part 5](/posts/auto-agent-system-part5-frontend-pipeline-zh/):前端體驗與 Pipeline 編排
 
 > 對應的 PR:[#19 Langfuse](https://github.com/yennanliu/agent_auto_system/pull/19)、[#9 Docker 瘦身](https://github.com/yennanliu/agent_auto_system/pull/9)、[#10 AWS 部署設計](https://github.com/yennanliu/agent_auto_system/pull/10)、[#11 Auth 設計](https://github.com/yennanliu/agent_auto_system/pull/11)
 > 專案原始碼:[github.com/yennanliu/agent_auto_system](https://github.com/yennanliu/agent_auto_system)

@@ -309,3 +309,9 @@ FDE 的職責是讓客戶知道你在掌控局面，
 
 **事故的本質不是失敗，是信任的考驗。**  
 **處理好了，是 FDE 最快建立客戶信任的機會。**
+
+---
+
+**系列導航**
+
+← [Part 27：顧問實戰——如何在 45 分鐘內把模糊需求變成 POC 計畫](/posts/fde-interview-guide-part27-poc-scoping-zh/) | [Part 29：顧問實戰——AI 系統 TCO 估算與 ROI 說服框架](/posts/fde-interview-guide-part29-tco-roi-zh/) →

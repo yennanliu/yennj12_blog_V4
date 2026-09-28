@@ -247,10 +247,10 @@ pipeline 讓 11 個任務不再是 11 個孤島,而是**可以自由組合的積
 
 ### 系列導覽
 
-- Part 1:系統總覽、架構、資料流
-- Part 2:Harness 引擎——多模型容錯、自我修正、LLM 評審、成本追蹤
-- Part 3:自動化任務實戰——Shopee、Google Maps、Tasker、利潤健檢
-- Part 4:生產化之路——Langfuse、Docker、AWS、權限
+- [Part 1](/posts/auto-agent-system-part1-overview-zh/):系統總覽、架構、資料流
+- [Part 2](/posts/auto-agent-system-part2-harness-engine-zh/):Harness 引擎——多模型容錯、自我修正、LLM 評審、成本追蹤
+- [Part 3](/posts/auto-agent-system-part3-automations-zh/):自動化任務實戰——Shopee、Google Maps、Tasker、利潤健檢
+- [Part 4](/posts/auto-agent-system-part4-production-zh/):生產化之路——Langfuse、Docker、AWS、權限
 - **Part 5(本篇)**:前端體驗與 Pipeline 編排
 
 > 對應的 PR:[#6 landing page](https://github.com/yennanliu/agent_auto_system/pull/6)、[#15 Waymo 主題](https://github.com/yennanliu/agent_auto_system/pull/15)

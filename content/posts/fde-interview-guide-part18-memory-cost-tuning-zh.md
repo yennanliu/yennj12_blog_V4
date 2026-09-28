@@ -298,6 +298,6 @@ TTFT 改善（示意估算，非實測）：
 
 ---
 
-**系列導覽：**  
-← [（十七）RKK 實戰：MCP 伺服器、Tool-Calling 安全與 OAuth 授權](../fde-interview-guide-part17-mcp-tool-oauth-zh/)  
-→ [（十九）RKK 實戰：Multi-Agent 的統計評估與細粒度追蹤](../fde-interview-guide-part19-multiagent-eval-tracing-zh/)
+**系列導航**
+
+← [Part 17：RKK 實戰——MCP 伺服器、Tool-Calling 安全與 OAuth 授權](/posts/fde-interview-guide-part17-mcp-tool-oauth-zh/) | [Part 19：RKK 實戰——Multi-Agent 系統的統計評估與細粒度追蹤](/posts/fde-interview-guide-part19-multiagent-eval-tracing-zh/) →

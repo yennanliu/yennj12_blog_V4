@@ -469,3 +469,9 @@ ADK Agent → Container → Cloud Run
 
 **ADK 的設計哲學是：讓你聚焦在「這個 Agent 應該做什麼」，而不是「這個 Agent 的執行流程怎麼寫」。**  
 **理解這個哲學，是說清楚 ADK vs LangGraph 選擇依據的關鍵。**
+
+---
+
+**系列導航**
+
+← [Part 30：顧問實戰——Constraint-First 架構設計：VPC 限制下的 GCP AI 系統](/posts/fde-interview-guide-part30-constraint-driven-architecture-zh/) | [Part 32：RKK 實戰——Vertex AI 產品棧全解析：Agent Builder、Vertex AI Search、Gemini API 與部署架構](/posts/fde-interview-guide-part32-vertex-ai-stack-zh/) →

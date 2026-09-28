@@ -25,9 +25,9 @@ readTime: "21 min"
 
 本篇為 **AeroVironment（AVAV）三部曲分析**的第二部：
 
-- （上）基本面與產業競爭力
+- [（上）基本面與產業競爭力](/posts/stock-analysis-avav-aerovironment-part1-fundamentals-zh/)
 - **（中）技術面、籌碼面與市場情緒** ← 你正在這裡
-- （下）估值模型與投資裁決
+- [（下）估值模型與投資裁決](/posts/stock-analysis-avav-aerovironment-part3-valuation-verdict-zh/)
 
 ---
 
@@ -413,9 +413,9 @@ SCD 衰退 + SCAR 減記               核心 AS +50% 仍強勁
 
 ### 系列導覽
 
-- （上）基本面與產業競爭力 — 雙部門模式、三表、巡飛彈護城河
+- [（上）基本面與產業競爭力](/posts/stock-analysis-avav-aerovironment-part1-fundamentals-zh/) — 雙部門模式、三表、巡飛彈護城河
 - **（中）技術面、籌碼面與市場情緒** ← 你正在這裡
-- （下）估值模型與投資裁決 — DCF、相對估值、足球場、目標價與最終裁決
+- [（下）估值模型與投資裁決](/posts/stock-analysis-avav-aerovironment-part3-valuation-verdict-zh/) — DCF、相對估值、足球場、目標價與最終裁決
 
 ---
 

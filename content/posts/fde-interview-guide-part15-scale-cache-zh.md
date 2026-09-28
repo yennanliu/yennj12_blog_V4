@@ -386,6 +386,6 @@ CAPE 框架：Capacity → Architecture → Performance → Edge Cases
 
 ---
 
-**系列導覽：**  
-← [（十四）RKK 實戰：AI Agent Memory 架構設計](../fde-interview-guide-part14-memory-architecture-zh/)  
-← [系列首篇：（一）RAG 完全攻略](../fde-interview-guide-part1-rag-zh/)
+**系列導航**
+
+← [Part 14：RKK 實戰——AI Agent Memory 架構設計](/posts/fde-interview-guide-part14-memory-architecture-zh/) | [Part 16：RKK 實戰——Multi-Agent 狀態管理與死鎖排除](/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh/) →

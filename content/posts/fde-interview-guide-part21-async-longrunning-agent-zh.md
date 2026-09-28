@@ -319,6 +319,6 @@ GKE 的彈性擴縮架構：
 
 ---
 
-**系列導覽：**  
-← [（二十）RKK 實戰：間接 Prompt Injection 與 Dual-LLM 防禦架構](../fde-interview-guide-part20-indirect-prompt-injection-zh/)  
-→ [（二十二）RKK 實戰：動態並行 Tool-Calling 與依賴解析引擎](../fde-interview-guide-part22-parallel-tool-calling-zh/)
+**系列導航**
+
+← [Part 20：RKK 實戰——間接 Prompt Injection 與 Dual-LLM 防禦架構](/posts/fde-interview-guide-part20-indirect-prompt-injection-zh/) | [Part 22：RKK 實戰——動態並行 Tool-Calling 與依賴解析引擎](/posts/fde-interview-guide-part22-parallel-tool-calling-zh/) →

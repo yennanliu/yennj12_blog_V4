@@ -28,6 +28,28 @@ readTime: "28 min"
 
 ---
 
+### 📚 系列導覽:14 篇分層深拆（上游 → 下游）
+
+**上游 Upstream**
+- Part 1:[矽晶圓 / 基板](/posts/industry-map-semiconductor-part1-silicon-wafer-zh/)
+- Part 2:[特用化學 / 光阻](/posts/industry-map-semiconductor-part2-chemicals-photoresist-zh/)
+- Part 3:[EDA + IP](/posts/industry-map-semiconductor-part3-eda-ip-zh/)
+- Part 4:[晶圓設備](/posts/industry-map-semiconductor-part4-fab-equipment-zh/)
+
+**中游 Midstream**
+- Part 5:[晶圓代工](/posts/industry-map-semiconductor-part5-foundry-zh/)
+- Part 6:[IC 設計 — GPU/加速器](/posts/industry-map-semiconductor-part6-gpu-design-zh/)
+- Part 7:[IC 設計 — 其他](/posts/industry-map-semiconductor-part7-ic-design-zh/)
+- Part 8:[記憶體](/posts/industry-map-semiconductor-part8-memory-zh/)
+- Part 9:[IDM / 類比](/posts/industry-map-semiconductor-part9-idm-analog-zh/)
+- Part 10:[封裝測試 OSAT](/posts/industry-map-semiconductor-part10-osat-zh/)
+
+**下游 Downstream**
+- Part 11:[網通 / 互連](/posts/industry-map-semiconductor-part11-networking-zh/)
+- Part 12:[系統 / 伺服器 OEM](/posts/industry-map-semiconductor-part12-system-oem-zh/)
+- Part 13:[雲端 CSP](/posts/industry-map-semiconductor-part13-cloud-csp-zh/)
+- Part 14:[終端需求](/posts/industry-map-semiconductor-part14-end-demand-zh/)
+
 ## 二、產業鏈全景圖(The Chain Map)
 
 這是一張有向圖:節點是生產層,箭頭代表「供應商 → 買方」的流向。◄ 標記的是咽喉點(收費站)。

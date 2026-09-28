@@ -301,6 +301,6 @@ LLM 可能輸出：
 
 ---
 
-**系列導覽：**  
-← [（二十一）RKK 實戰：長任務 Agent 的異步分散式架構](../fde-interview-guide-part21-async-longrunning-agent-zh/)  
-→ [（二十三）RKK 實戰：多租戶 Agent 的限流、Fair-Share 與 Token 預算控制](../fde-interview-guide-part23-ratelimit-fairshare-zh/)
+**系列導航**
+
+← [Part 21：RKK 實戰——長任務 Agent 的異步分散式架構](/posts/fde-interview-guide-part21-async-longrunning-agent-zh/) | [Part 23：RKK 實戰——多租戶 Agent 的限流、Fair-Share 與 Token 預算控制](/posts/fde-interview-guide-part23-ratelimit-fairshare-zh/) →

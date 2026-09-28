@@ -828,6 +828,6 @@ ROI：($17.8M - $3.6M) / $3.6M ≈ 394%（≈ 400% 提升）
 
 ---
 
-**系列導覽：**  
-← [（四十二）FDE 顧問技能：Discovery 框架與 POC 範圍定義](../fde-interview-guide-part42-consulting-discovery-zh/)  
-→ [（四十五）下一篇：即將推出](../fde-interview-guide-part45-zh/)
+**系列導航**
+
+← [Part 43：跨國電商百萬級購物車 Agent 的分散式動態權限與狀態回復](/posts/fde-interview-guide-part43-async-cart-agent-zh/) | [Part 45：Agent 工具鏈的間接提示詞注入防禦設計](/posts/fde-interview-guide-part45-prompt-injection-defense-zh/) →

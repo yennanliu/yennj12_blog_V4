@@ -326,6 +326,6 @@ Rollback 時間 < 5 分鐘（環境變數切換）    30-60 分鐘（改代碼�
 
 ---
 
-**系列導覽：**  
-← [（三十七）企業 AI 的連接組織：Legacy 系統整合](../fde-interview-guide-part37-legacy-integration-zh/)  
-← [（三十三）RKK 面試解剖：面試官怎麼評分](../fde-interview-guide-part33-rkk-anatomy-zh/)
+**系列導航**
+
+← [Part 37：RKK 實戰——企業 AI 的「連接組織」：Legacy 系統整合、API 橋接與安全邊界設計](/posts/fde-interview-guide-part37-legacy-integration-zh/) | [Part 39：RKK 實戰——從 10,000 到百萬用戶：AI 系統的橫向擴展架構設計](/posts/fde-interview-guide-part39-scalability-zh/) →

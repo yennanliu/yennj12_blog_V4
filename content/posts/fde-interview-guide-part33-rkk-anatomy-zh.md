@@ -432,3 +432,9 @@ CTO 聽不懂 Faithfulness。
 **RKK 面試測的是一件事：**  
 **你能不能在不確定的情況下，做出有依據的判斷，並且用讓客戶聽懂的語言說清楚。**  
 **知識是基礎，但判斷力才是 FDE 的核心。**
+
+---
+
+**系列導航**
+
+← [Part 32：RKK 實戰——Vertex AI 產品棧全解析：Agent Builder、Vertex AI Search、Gemini API 與部署架構](/posts/fde-interview-guide-part32-vertex-ai-stack-zh/) | [Part 34：RKK 實戰演練——六個端對端 Mock 情境題與模範答案](/posts/fde-interview-guide-part34-mock-scenarios-zh/) →

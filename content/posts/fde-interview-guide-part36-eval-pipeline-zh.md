@@ -324,6 +324,6 @@ CI 報告格式（讓工程師看到的不只是 PASS/FAIL）：
 
 ---
 
-**系列導覽：**  
-← [（三十五）Granular Tracing 與可觀測性設計](../fde-interview-guide-part35-granular-tracing-zh/)  
-→ [（三十七）企業 AI 的連接組織：Legacy 系統整合](../fde-interview-guide-part37-legacy-integration-zh/)
+**系列導航**
+
+← [Part 35：RKK 實戰——生產級可觀測性設計：Granular Tracing、Span 樹與 Cloud Trace 整合](/posts/fde-interview-guide-part35-granular-tracing-zh/) | [Part 37：RKK 實戰——企業 AI 的「連接組織」：Legacy 系統整合、API 橋接與安全邊界設計](/posts/fde-interview-guide-part37-legacy-integration-zh/) →

@@ -289,6 +289,6 @@ Layer 5：Audit Logging     攻擊發生後可以追蹤和告警      事後才�
 
 ---
 
-**系列導覽：**  
-← [（十九）RKK 實戰：Multi-Agent 系統的統計評估與細粒度追蹤](../fde-interview-guide-part19-multiagent-eval-tracing-zh/)  
-→ [（二十一）RKK 實戰：長任務 Agent 的異步分散式架構](../fde-interview-guide-part21-async-longrunning-agent-zh/)
+**系列導航**
+
+← [Part 19：RKK 實戰——Multi-Agent 系統的統計評估與細粒度追蹤](/posts/fde-interview-guide-part19-multiagent-eval-tracing-zh/) | [Part 21：RKK 實戰——長任務 Agent 的異步分散式架構](/posts/fde-interview-guide-part21-async-longrunning-agent-zh/) →

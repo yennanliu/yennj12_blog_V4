@@ -344,6 +344,6 @@ VPC-SC vs IAM vs CMEK：選哪個，為什麼
 
 ---
 
-**系列導覽：**  
-← [（三十六）生產級 Eval Pipeline 設計](../fde-interview-guide-part36-eval-pipeline-zh/)  
-→ [（三十八）從 POC 到 Production：生產化清單](../fde-interview-guide-part38-prototype-to-production-zh/)
+**系列導航**
+
+← [Part 36：RKK 實戰——生產級 AI Evaluation Pipeline：從黃金資料集到 CI/CD 品質閘門](/posts/fde-interview-guide-part36-eval-pipeline-zh/) | [Part 38：RKK 實戰——從 POC 到 Production：AI 系統的五個生產化差距與 Rollback 設計](/posts/fde-interview-guide-part38-prototype-to-production-zh/) →

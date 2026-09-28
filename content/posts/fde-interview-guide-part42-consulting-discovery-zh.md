@@ -603,6 +603,6 @@ FDE 差異化         客戶感覺「你真正了解我們」       客戶感覺
 
 ---
 
-**系列導覽：**  
-← [（四十一）分散式 AI 系統的故障排查：結構化診斷框架](../fde-interview-guide-part41-troubleshooting-zh/)  
-← [（三十三）RKK 面試解剖：面試官怎麼評分](../fde-interview-guide-part33-rkk-anatomy-zh/)
+**系列導航**
+
+← [Part 41：RKK 實戰——分散式 AI 系統的故障排查：結構化診斷框架與五種常見失效模式](/posts/fde-interview-guide-part41-troubleshooting-zh/) | [Part 43：跨國電商百萬級購物車 Agent 的分散式動態權限與狀態回復](/posts/fde-interview-guide-part43-async-cart-agent-zh/) →

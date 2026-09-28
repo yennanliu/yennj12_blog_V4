@@ -451,3 +451,9 @@ Internal Copilot：
 **FDE 的核心不是把架構圖畫得滿，**  
 **而是說清楚每個設計決策背後的 trade-off，**  
 **以及你是在什麼場景條件下做了那個選擇。**
+
+---
+
+**系列導航**
+
+← [Part 3：你不能忽略的 ML 基礎](/posts/fde-interview-guide-part3-ml-fundamentals-zh/) | [Part 5：RAG 深度技術——Chunking、Embedding、向量資料庫與混合搜尋](/posts/fde-interview-guide-part5-rag-deep-dive-zh/) →

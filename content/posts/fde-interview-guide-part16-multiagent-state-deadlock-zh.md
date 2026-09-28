@@ -337,6 +337,6 @@ LangGraph Graph 結構設計：
 
 ---
 
-**系列導覽：**  
-← [（十五）RKK 實戰：Agent 規模化與 Cache 策略](../fde-interview-guide-part15-scale-cache-zh/)  
-→ [（十七）RKK 實戰：MCP 與 Tool-Calling 安全隔離](../fde-interview-guide-part17-mcp-tool-oauth-zh/)
+**系列導航**
+
+← [Part 15：RKK 實戰——AI Agent 規模化與 Cache 策略](/posts/fde-interview-guide-part15-scale-cache-zh/) | [Part 17：RKK 實戰——MCP 伺服器、Tool-Calling 安全與 OAuth 授權](/posts/fde-interview-guide-part17-mcp-tool-oauth-zh/) →

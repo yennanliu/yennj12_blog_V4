@@ -346,6 +346,6 @@ Agent 要執行「刪除」「發送」「修改」類操作時
 
 ---
 
-**系列導覽：**  
-← [（十二）RKK 實戰：Agent 統計評估與品質量化](../fde-interview-guide-part12-agent-evaluation-zh/)  
-→ [（十四）RKK 實戰：AI Agent Memory 架構設計](../fde-interview-guide-part14-memory-architecture-zh/)
+**系列導航**
+
+← [Part 12：RKK 實戰——AI Agent 統計評估與品質量化](/posts/fde-interview-guide-part12-agent-evaluation-zh/) | [Part 14：RKK 實戰——AI Agent Memory 架構設計](/posts/fde-interview-guide-part14-memory-architecture-zh/) →
