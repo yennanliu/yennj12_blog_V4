@@ -5,7 +5,7 @@ draft: false
 weight: 33
 description: "以 Google RKK 面試官的第一人稱視角，完整拆解 FDE RKK 面試的時間結構、五個評分維度、四個面試階段、「雇用」和「強力雇用」的實際差距，以及最常見的七個失敗模式"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "RKK", "Interview", "Google", "Playbook", "Scoring", "System Design"]
+tags: ["AI", "FDE", "RKK", "Interview", "Cloud", "Playbook", "Scoring", "System Design"]
 authors: ["yen"]
 readTime: "16 min"
 ---

@@ -5,7 +5,7 @@ draft: false
 weight: 10
 description: "以系統設計視角拆解 AI Agent 的 Context Management：核心問題是什麼、有哪些策略、為什麼選這個、trade-off 怎麼算——含完整架構圖與面試答題框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Context Management", "LLM", "Context Window", "Memory", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Context Management", "LLM", "Context Window", "Memory", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "16 min"
 ---

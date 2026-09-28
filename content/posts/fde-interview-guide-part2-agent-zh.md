@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "從面試官的視角，解析 FDE 面試中 Agent 系統設計考題，包含 ReAct 架構、Multi-Agent 判斷邏輯、失控防禦設計、MCP 協定與 Google ADK 定位"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "LangGraph", "CrewAI", "ADK", "MCP", "ReAct", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "LangGraph", "CrewAI", "ADK", "MCP", "ReAct", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "14 min"
 ---

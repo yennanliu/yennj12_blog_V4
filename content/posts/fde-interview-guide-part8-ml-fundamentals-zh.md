@@ -5,7 +5,7 @@ draft: false
 weight: 8
 description: "從面試官的視角，系統整理 FDE 面試不能缺的 ML 基礎：Supervised Learning、評估指標、Overfitting 處理，以及從 MLP 到 Transformer 的 Deep Learning 核心概念"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Machine Learning", "Deep Learning", "Transformer", "XGBoost", "Neural Network", "Interview", "Google"]
+tags: ["AI", "FDE", "Machine Learning", "Deep Learning", "Transformer", "XGBoost", "Neural Network", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "18 min"
 ---

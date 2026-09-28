@@ -5,7 +5,7 @@ draft: false
 weight: 19
 description: "以系統設計視角拆解 Multi-Agent 系統的 Observability 架構：為什麼多 Agent 的評估比 RAG 複雜一個量級、Granular Tracing 的設計原理、Trajectory Evaluation 方法，以及如何找出是哪個 Agent 拖累了整體表現"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Evaluation", "Tracing", "Observability", "LangSmith", "OpenTelemetry", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Evaluation", "Tracing", "Observability", "LangSmith", "OpenTelemetry", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "16 min"
 ---

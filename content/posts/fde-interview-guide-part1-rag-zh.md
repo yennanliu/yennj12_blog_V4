@@ -5,7 +5,7 @@ draft: false
 weight: 1
 description: "從面試官的視角，解析 FDE 面試中 RAG 最高頻考題，包含核心架構、Chunk 策略、幻覺改善、Hybrid Search 與實戰建議"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "RAG", "LLM", "Vector DB", "Interview", "Google"]
+tags: ["AI", "FDE", "RAG", "LLM", "Vector DB", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "12 min"
 ---

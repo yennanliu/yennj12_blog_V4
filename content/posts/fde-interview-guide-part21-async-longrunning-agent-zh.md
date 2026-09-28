@@ -5,7 +5,7 @@ draft: false
 weight: 21
 description: "以系統設計視角拆解需要執行 30~60 分鐘的 Agent 任務：為什麼不能讓用戶等 HTTP Response、解耦架構的設計原理、Checkpoint 斷點續傳機制，以及 GCP 上的具體落地方案"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Async", "Long-Running", "Checkpoint", "Cloud Pub/Sub", "GKE", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Async", "Long-Running", "Checkpoint", "Cloud Pub/Sub", "GKE", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
 ---

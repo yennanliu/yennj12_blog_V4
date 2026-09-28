@@ -5,7 +5,7 @@ draft: false
 weight: 31
 description: "以系統設計視角深度拆解 Google Agent Development Kit（ADK）：四種 Agent 類型的選擇邏輯、Tool 宣告系統的設計原理、Multi-Agent 的狀態共享機制，以及 ADK 在 Vertex AI 上的部署模式與 LangGraph 的根本差異"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "ADK", "Agent", "Google", "Vertex AI", "Multi-Agent", "Tool", "System Design", "RKK", "Interview"]
+tags: ["AI", "FDE", "ADK", "Agent", "Cloud", "Vertex AI", "Multi-Agent", "Tool", "System Design", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "18 min"
 ---

@@ -5,7 +5,7 @@ draft: false
 weight: 20
 description: "以系統設計視角拆解間接 Prompt Injection（Indirect Prompt Injection）的攻擊原理與 Dual-LLM 防禦模式：為什麼權限隔離比 Pattern Matching 更根本、Trust Level 分層設計、以及零信任 AI 架構的工程實踐"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Security", "Prompt Injection", "Dual-LLM", "Zero-Trust", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Security", "Prompt Injection", "Dual-LLM", "Zero-Trust", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "15 min"
 ---

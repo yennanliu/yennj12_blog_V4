@@ -5,7 +5,7 @@ draft: false
 weight: 11
 description: "以系統設計視角拆解 AI Agent 的 Troubleshooting：為什麼 Agent 難 debug、觀測性架構怎麼設計、五大故障模式怎麼追蹤——含完整架構圖與 Google Doc 模擬情境應答框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Debugging", "Troubleshooting", "Observability", "Tracing", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Debugging", "Troubleshooting", "Observability", "Tracing", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
 ---

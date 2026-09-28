@@ -5,7 +5,7 @@ draft: false
 weight: 17
 description: "以系統設計視角拆解 MCP（Model Context Protocol）的安全邊界：Agent 的工具授權架構、Human-in-the-loop OAuth 流程、Tool Input Validation 防禦層，以及如何防止 Tool Injection 攻擊"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "MCP", "OAuth", "Tool Calling", "Security", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "MCP", "OAuth", "Tool Calling", "Security", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
 ---

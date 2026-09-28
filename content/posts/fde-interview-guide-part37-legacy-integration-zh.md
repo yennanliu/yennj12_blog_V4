@@ -5,7 +5,7 @@ draft: false
 weight: 37
 description: "以系統設計視角拆解 FDE 最常遇到的現場問題：如何把 ADK Agent 接上 SAP、Oracle DB、Mainframe CSV 等 Legacy 資料孤島；API 橋接層的選型邏輯；安全邊界連接工程（Private Service Connect、VPC-SC、CMEK）；以及每種整合模式對系統效能、穩定性、成本和風險的影響"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Integration", "Legacy", "API", "GCP", "VPC", "Security", "Enterprise", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Integration", "Legacy", "API", "GCP", "VPC", "Security", "Enterprise", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "14 min"
 ---

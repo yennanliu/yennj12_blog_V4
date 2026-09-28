@@ -5,7 +5,7 @@ draft: false
 weight: 35
 description: "以系統設計視角拆解 Agentic AI 系統的可觀測性：為什麼 Log 不夠、Span 樹的結構設計、OpenTelemetry 與 Cloud Trace 的整合模式、Sampling 策略的 Trade-off，以及一條 Trace 應該回答哪五個診斷問題"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Observability", "Tracing", "OpenTelemetry", "Cloud Trace", "Vertex AI", "Agent", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Observability", "Tracing", "OpenTelemetry", "Cloud Trace", "Vertex AI", "Agent", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "13 min"
 ---

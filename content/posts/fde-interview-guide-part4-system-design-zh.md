@@ -5,7 +5,7 @@ draft: false
 weight: 4
 description: "從面試官的視角，完整拆解兩道 FDE 高頻系統設計題：企業知識庫 Chatbot 與 Internal AI Copilot，含 Auth、RBAC、Cache、NL2SQL 的設計決策與 trade-off"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "System Design", "RAG", "RBAC", "Cache", "NL2SQL", "BigQuery", "Interview", "Google"]
+tags: ["AI", "FDE", "System Design", "RAG", "RBAC", "Cache", "NL2SQL", "BigQuery", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "16 min"
 ---

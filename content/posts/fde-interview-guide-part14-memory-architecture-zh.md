@@ -5,7 +5,7 @@ draft: false
 weight: 14
 description: "以系統設計視角拆解 AI Agent 的 Memory 架構：為什麼需要四種記憶、每種記憶解決什麼問題、怎麼組合、以及記憶帶來的工程挑戰——含完整架構圖與選型決策框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Memory", "Architecture", "Vector Database", "LangGraph", "RAG", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Memory", "Architecture", "Vector Database", "LangGraph", "RAG", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "15 min"
 ---

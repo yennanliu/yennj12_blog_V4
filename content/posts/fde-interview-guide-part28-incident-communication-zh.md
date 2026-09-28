@@ -5,7 +5,7 @@ draft: false
 weight: 28
 description: "以 Google FDE 顧問視角拆解 AI 系統生產事故的處理全流程：P95 延遲異常的診斷思路、不停機排查策略、如何在技術細節與客戶語言之間切換，以及事故後的信任重建框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Consultant", "Incident", "Debugging", "Observability", "GCP", "Vertex AI", "Interview", "Google", "RKK"]
+tags: ["AI", "FDE", "Consultant", "Incident", "Debugging", "Observability", "GCP", "Vertex AI", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "16 min"
 ---
