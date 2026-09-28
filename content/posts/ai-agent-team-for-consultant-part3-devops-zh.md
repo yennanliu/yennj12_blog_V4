@@ -64,7 +64,7 @@ GOLDEN_CASES = [
 
 用另一個 LLM 來評審輸出品質：
 
-```python
+````python
 # evaluation/judge.py
 from anthropic import Anthropic
 
@@ -131,7 +131,7 @@ def run_evaluation(test_cases: list) -> dict:
         "avg_score": avg_score,
         "results": results
     }
-```
+````
 
 ### 1.4 效能基準（Benchmark）
 
