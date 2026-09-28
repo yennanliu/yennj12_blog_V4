@@ -4,7 +4,7 @@ date: 2026-01-24T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["AWS", "CDK", "Bitcoin", "Trading", "Machine Learning", "Bedrock", "HuggingFace", "Lambda", "EventBridge", "DynamoDB", "SageMaker"]
+tags: ["AWS", "CDK", "Bitcoin", "Trading", "Machine Learning", "Bedrock", "Hugging Face", "Lambda", "EventBridge", "DynamoDB", "SageMaker"]
 summary: "Build a production-ready automated Bitcoin trading system using AWS CDK that integrates ML models from Bedrock and HuggingFace for price prediction and executes trades based on real-time market events."
 description: "Learn how to architect and deploy an intelligent cryptocurrency trading system on AWS using CDK, with historical price analysis, ML-powered predictions from AWS Bedrock and HuggingFace, and event-driven trade execution."
 readTime: "18 min"
@@ -403,6 +403,8 @@ export class MLPredictionConstruct extends Construct {
       environment: {
         PRICE_TABLE: props.priceTableName,
         ENABLED_MODELS: JSON.stringify(props.enabledModels),
+        // Claude 3 Sonnet (20240229) is retired on Bedrock; replace with a current
+        // Claude model ID (or inference profile) listed in your Bedrock console
         BEDROCK_MODEL_ID: 'anthropic.claude-3-sonnet-20240229-v1:0',
       },
     });
@@ -590,7 +592,12 @@ def predict_with_huggingface(data: pd.DataFrame) -> Dict:
         return None
 
 def predict_with_custom_model(data: pd.DataFrame) -> Dict:
-    """Use custom LSTM/GRU model for price prediction"""
+    """Placeholder for a custom LSTM/GRU model.
+
+    NOTE: this is NOT an ML model. It is an SMA-20/50 crossover plus momentum
+    heuristic with a hard-coded confidence, and it has not been backtested.
+    Swap in a trained, backtested model before relying on it.
+    """
 
     # Simple moving average + momentum-based prediction
     prices = data['price'].values

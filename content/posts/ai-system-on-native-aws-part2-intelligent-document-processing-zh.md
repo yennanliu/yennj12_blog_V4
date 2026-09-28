@@ -6,7 +6,7 @@ description: "當你的『知識』不是乾淨的 Markdown,而是幾百萬張�
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Textract", "Comprehend", "Bedrock", "Step Functions", "IDP", "Serverless", "AI Engineering"]
 authors: ["yen"]
-readTime: "25 min"
+readTime: "13 min"
 ---
 
 > 大部分人處理「一堆掃描的 PDF」:先找個 OCR 套件,發現表格全亂掉;再寫一堆正則去抓欄位,換一家供應商的發票格式就全爆;最後放棄,回去用人工 key-in。
@@ -239,7 +239,9 @@ ${JSON.stringify({ textractSummary, entities }).slice(0, 15000)}
 只輸出 JSON。`;
 
   const res = await bedrock.send(new InvokeModelCommand({
-    modelId: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
+    // 模型 ID 不寫死:由 CDK 從 SSM 參數(例如 /idp/bedrock/model-id)注入環境變數。
+    // 參數值請填 Bedrock console 上目前可用的 Claude inference profile ID(us. / global. 前綴)。
+    modelId: process.env.MODEL_ID!,
     contentType: 'application/json',
     body: JSON.stringify({
       anthropic_version: 'bedrock-2023-05-31',
@@ -252,6 +254,8 @@ ${JSON.stringify({ textractSummary, entities }).slice(0, 15000)}
   return json;   // { ...結構化欄位, confidence: 0.xx }
 };
 ```
+
+> **上線前務必修正的兩處**:`.slice(0, 15000)` 會**無聲截斷**長文件,至少要記錄截斷事件或改成分段處理;`JSON.parse(body.content[0].text)` 假設模型只回傳純 JSON,模型一加上說明文字或 code fence 就會拋錯。production 建議改用 **Converse API 搭配 tool / JSON schema** 取得結構化輸出。另外,LLM 自評的 `confidence` 校準很差,不宜單獨當作複核閘門——應該與 Textract 的逐欄位信心分數、以及規則驗證(schema 檢查、`totalAmount == Σ lineItems.amount`)一起判斷。
 
 ### 4.5 Step Functions 狀態機:把流程串起來
 
@@ -350,6 +354,8 @@ Textract    表格/表單結構原生輸出,免訓練         成本敏感、只
 
 用 Comprehend 做「便宜的粗抽」、用 Bedrock 做「貴但聰明的細修」,是成本與能力的最佳分工。全部丟給 LLM 會貴且慢;全部靠 Comprehend 又處理不了語意正規化。
 
+**另一個選項:Bedrock Data Automation(BDA)**——AWS 自家的託管 IDP 服務,把分類、抽取、正規化包成一個 API(2025 年新服務,細節請見官方文件)。翻盤條件:文件類型標準、不需要逐步客製或人工分支時,BDA 可以取代本篇 Textract + Comprehend + Bedrock 的自組管線;需要細部控制每一步、或已有 Comprehend 自訂模型時,自組仍較有彈性。
+
 ### 5.3 Step Functions vs 自寫 SQS/Lambda 編排
 
 ```
@@ -373,14 +379,16 @@ Textract    表格/表單結構原生輸出,免訓練         成本敏感、只
 
 以「每月 50 萬頁,平均每份 5 頁 = 10 萬份文件」估算(概略):
 
+> us-east-1 公開定價概估(撰文時),未計免費額度,實際以帳單為準。
+
 | 項目 | 用量 | 概略月費 |
 |------|------|---------|
 | Textract(Tables+Forms) | 50 萬頁 × ~$0.065/頁 | **~$32,500**(成本大戶) |
-| Comprehend(實體偵測) | 50 萬份單位 | ~$500–1,000 |
+| Comprehend(實體偵測) | 以 100 字元為 1 單位計費;50 萬頁 × 每頁 ~3K 字元 ≈ 1,500 萬單位 | ~$1,000–1,500 |
 | Bedrock 正規化(Claude) | 10 萬次 × ~3K token | ~$300–600 |
-| Step Functions | 10 萬次執行 × ~6 transitions | ~$150 |
+| Step Functions | 10 萬次執行 × ~6 transitions = 60 萬次(Standard) | ~$15 |
 | Lambda / DynamoDB / S3 | 一般用量 | ~$100 |
-| **合計** | | **~$33,500 / 月** |
+| **合計** | | **~$34,000 / 月** |
 
 **成本洞察**:IDP 的成本幾乎完全被 **Textract 的每頁費用**主宰,而且是**變動成本**(跟頁數線性相關)。這帶來兩個很實際的優化方向:
 
@@ -420,8 +428,16 @@ Textract    表格/表單結構原生輸出,免訓練         成本敏感、只
 
 ## 系列導覽
 
-- **Part 1**:Serverless RAG 智慧客服知識庫
+**基礎篇**
+- [Part 1:Serverless RAG 智慧客服知識庫](/posts/ai-system-on-native-aws-part1-serverless-rag-chatbot-zh/)
 - **Part 2(本篇)**:智慧文件處理(IDP)管線
-- **Part 3**:即時個人化推薦系統 —— Kinesis + Feature Store + SageMaker Endpoint
-- **Part 4**:自主 AI Agent 工具呼叫系統 —— Bedrock Agents + Lambda Action Groups + Guardrails
-- **Part 5**:生產化 MLOps 與可觀測性 —— 部署策略、模型日誌、成本治理、CDK CI/CD
+- [Part 3:即時個人化推薦系統](/posts/ai-system-on-native-aws-part3-realtime-recommendation-zh/)
+- [Part 4:自主 AI Agent 工具呼叫系統](/posts/ai-system-on-native-aws-part4-agentic-ai-with-tools-zh/)
+- [Part 5:生產化 MLOps 與可觀測性](/posts/ai-system-on-native-aws-part5-production-mlops-observability-zh/)
+
+**進階篇**
+- [Part 6:企業級多租戶 RAG 平台](/posts/ai-system-on-native-aws-part6-enterprise-multi-tenant-rag-zh/)
+- [Part 7:基礎模型客製化與模型治理](/posts/ai-system-on-native-aws-part7-foundation-model-customization-governance-zh/)
+- [Part 8:即時串流 ML 與詐欺偵測](/posts/ai-system-on-native-aws-part8-realtime-streaming-fraud-detection-zh/)
+- [Part 9:企業 AI 安全、合規與資料治理](/posts/ai-system-on-native-aws-part9-security-compliance-data-governance-zh/)
+- [Part 10:企業 AI 平台工程 —— 落地區、LLM Gateway 與 FinOps](/posts/ai-system-on-native-aws-part10-enterprise-ai-platform-engineering-zh/)

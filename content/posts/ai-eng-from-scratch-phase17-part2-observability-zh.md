@@ -5,7 +5,7 @@ draft: false
 weight: 37
 description: "深入解析 AI 系統可觀測性工程：LLM 追蹤（Traces/Spans）、提示版本管理、模型效能漂移偵測、成本歸因分析與 AI 告警策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Infrastructure", "Observability", "Monitoring", "LLM", "Tracing", "Production", "RKK", "Interview"]
+tags: ["AI", "Infrastructure", "Observability", "Monitoring", "LLM", "Tracing", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,9 +18,9 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
-**面試官問：**「你們的 RAG 問答系統上線後，客服主管反應『最近答案怪怪的』，但 p99 延遲和錯誤率都正常。你身為 SRE/AI 工程師，會怎麼設計可觀測性系統來定位這類問題？請說明你的 Traces 設計、漂移偵測機制，以及如何在成本和覆蓋率之間取得平衡。」
+**技術主管問：**「你們的 RAG 問答系統上線後，客服主管反應『最近答案怪怪的』，但 p99 延遲和錯誤率都正常。你身為 SRE/AI 工程師，會怎麼設計可觀測性系統來定位這類問題？請說明你的 Traces 設計、漂移偵測機制，以及如何在成本和覆蓋率之間取得平衡。」
 
 ---
 
@@ -46,15 +46,19 @@ series: ["ai-eng-from-scratch"]
 | 漂移型態 | 無（確定性系統） | 概念漂移、分佈漂移、模型版本漂移 |
 | 告警閾值 | 靜態（> 500ms alert） | 動態（品質分數 7 日移動平均下降 > 5%） |
 
-面試官問的「答案怪怪的」就是典型的**語意品質退化**。系統層面一切正常，但輸出品質已悄悄崩潰。沒有 AI-native 可觀測性，這種問題的 MTTR 往往超過 3 天。
+開頭提到的「答案怪怪的」就是典型的**語意品質退化**。系統層面一切正常，但輸出品質已悄悄崩潰。沒有 AI-native 可觀測性，這種問題的 MTTR 往往超過 3 天。
 
 ---
 
 ## 二、三個演進階段（POC / MVP / Scale）
 
-### ╔══════════════════════════════════════╗
-### ║  Phase 1：POC（< 10K 用戶）          ║
-### ╚══════════════════════════════════════╝
+### Phase 1：POC（< 10K 用戶）
+
+```
+╔══════════════════════════════════════╗
+║  Phase 1：POC（< 10K 用戶）          ║
+╚══════════════════════════════════════╝
+```
 
 **核心假設**：先讓系統跑起來，可觀測性夠用就好。
 
@@ -88,9 +92,13 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-### ╔══════════════════════════════════════╗
-### ║  Phase 2：MVP（10K–200K 用戶）       ║
-### ╚══════════════════════════════════════╝
+### Phase 2：MVP（10K–200K 用戶）
+
+```
+╔══════════════════════════════════════╗
+║  Phase 2：MVP（10K–200K 用戶）       ║
+╚══════════════════════════════════════╝
+```
 
 **核心假設**：開始有足夠流量讓統計指標有意義，需要主動監控而非被動翻 log。
 
@@ -134,9 +142,13 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-### ╔══════════════════════════════════════╗
-### ║  Phase 3：Scale（200K–1M+ 用戶）    ║
-### ╚══════════════════════════════════════╝
+### Phase 3：Scale（200K–1M+ 用戶）
+
+```
+╔══════════════════════════════════════╗
+║  Phase 3：Scale（200K–1M+ 用戶）    ║
+╚══════════════════════════════════════╝
+```
 
 **核心假設**：規模夠大，每個百分點的品質退化都影響數千用戶和數萬美元成本。
 
@@ -210,16 +222,19 @@ Trace: user_request_abc123
 │   │   ├── attr: context_tokens=1840
 │   │   └── attr: system_tokens=256
 │   │
-│   └── Span: llm_completion [890ms]
-│       ├── attr: model=claude-3-5-sonnet
-│       ├── attr: input_tokens=2096, output_tokens=312
-│       ├── attr: cost_usd=0.00847
-│       ├── attr: finish_reason=stop
-│       ├── attr: temperature=0.3
-│       └── Span: tool_call:search_web [340ms]
-│           ├── attr: tool_name=search_web
-│           ├── attr: tool_input={"query": "..."}
-│           └── attr: tool_output_tokens=580
+│   ├── Span: chat claude-sonnet-4-5 [890ms]   ← LLM 呼叫
+│   │   ├── attr: gen_ai.system=anthropic
+│   │   ├── attr: gen_ai.request.model=claude-sonnet-4-5
+│   │   ├── attr: gen_ai.usage.input_tokens=2096
+│   │   ├── attr: gen_ai.usage.output_tokens=312
+│   │   ├── attr: gen_ai.request.temperature=0.3
+│   │   ├── attr: gen_ai.response.finish_reasons=["tool_calls"]
+│   │   └── attr: cost_usd=0.00847（自訂屬性）
+│   │
+│   └── Span: execute_tool search_web [340ms]  ← 模型回傳後才執行，
+│       ├── attr: gen_ai.tool.name=search_web       是 LLM Span 的兄弟節點
+│       ├── attr: tool_input={"query": "..."}
+│       └── attr: tool_output_tokens=580
 ```
 
 **關鍵設計決策：Span 屬性的標準化**
@@ -228,14 +243,17 @@ Trace: user_request_abc123
 
 ```python
 # 非明顯實作：用 context manager 確保屬性一致性
+from contextlib import contextmanager
 from opentelemetry import trace
-from opentelemetry.semconv.ai import SpanAttributes  # AI 語意慣例
 
+# 使用 OpenTelemetry 官方 GenAI 語意慣例（gen_ai.*）的屬性名稱；
+# opentelemetry.semconv.ai 是第三方 OpenLLMetry 套件，不是官方規範。
 @contextmanager
 def llm_span(tracer, model: str, prompt_version: str):
-    with tracer.start_as_current_span("llm_completion") as span:
-        span.set_attribute(SpanAttributes.LLM_SYSTEM, "anthropic")
-        span.set_attribute(SpanAttributes.LLM_REQUEST_MODEL, model)
+    with tracer.start_as_current_span(f"chat {model}") as span:
+        span.set_attribute("gen_ai.operation.name", "chat")
+        span.set_attribute("gen_ai.system", "anthropic")
+        span.set_attribute("gen_ai.request.model", model)
         span.set_attribute("ai.prompt.version", prompt_version)
         span.set_attribute("ai.prompt.hash", compute_hash(prompt_version))
         try:
@@ -262,7 +280,7 @@ def llm_span(tracer, model: str, prompt_version: str):
 ```
 症狀：CSAT 下降，但 Traces 顯示 latency p99=920ms（正常）
 ↓
-查 Spans：llm_completion 的 finish_reason 分佈
+查 Spans：LLM Span 的 gen_ai.response.finish_reasons 分佈
 → 發現 finish_reason=length 佔比從 2% 升到 18%（截斷！）
 ↓
 查 prompt_construction Span：context_tokens 從平均 1800 增到 2900
@@ -424,8 +442,8 @@ AI 系統的成本結構跟傳統服務完全不同——**同一個功能，不
 │  chat_assistant: $0.0062/req × 80K = $496/day   │
 ├─────────────────────────────────────────────────┤
 │  Level 1：模型層（model_id）                     │
-│  claude-3-5-sonnet: 68% of total cost           │
-│  claude-3-haiku: 28% of total cost              │
+│  claude-sonnet-4-5: 68% of total cost           │
+│  claude-haiku-4-5: 28% of total cost            │
 │  embedding model: 4% of total cost              │
 └─────────────────────────────────────────────────┘
 ```
@@ -599,9 +617,9 @@ THEN: send_pagerduty_alert(severity="high")
 
 ## 十、系列導航
 
-← [Phase 17 Part 1：AI 系統部署策略 — 從 Shadow Mode 到 Canary Release](/posts/ai-eng-from-scratch-phase17-part1-deployment-zh/)
+← [Phase 17 Part 1：AI 推論服務架構 — 從單機到全球部署](/posts/ai-eng-from-scratch-phase17-part1-serving-zh/)
 
-→ [Phase 17 Part 3：AI 系統成本工程 — Token 優化與快取架構](/posts/ai-eng-from-scratch-phase17-part3-cost-engineering-zh/)
+→ [Phase 17 Part 3：AI 成本優化與規模化 — 把每美元壓榨到極限](/posts/ai-eng-from-scratch-phase17-part3-cost-scale-zh/)
 
 ---
 

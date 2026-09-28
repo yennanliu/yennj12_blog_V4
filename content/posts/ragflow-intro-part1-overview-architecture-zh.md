@@ -7,7 +7,7 @@ description: "RAGFlow 原始碼導讀系列第一篇：用一張全景圖與兩�
 categories: ["all", "ai", "engineering"]
 tags: ["RAGFlow", "RAG", "AI", "Architecture", "Open Source", "Elasticsearch", "Vector Database", "繁體中文"]
 authors: ["yen"]
-readTime: "24 min"
+readTime: "17 min"
 ---
 
 > *大多數人讀 RAG 開源專案的方式，是打開 README，跑 `docker compose up`，上傳一份 PDF，看到答案出來就說「我懂了」。*
@@ -620,7 +620,7 @@ ragflow/
 - **Part 4 — Decode 與檢索**：查詢編譯器如何把一句人話變成加權布林查詢、ES 與 Infinity 兩種融合路徑的差異、rerank 三部曲、GraphRAG 與 RAPTOR 的成本與時機、引用對齊演算法。
 - **Part 5 — 系統與程式碼結構**：進程拓撲、服務分層、Task Executor 的 13 種任務型別、Agent canvas 與 ingestion pipeline 兩套 DAG 引擎、以及正在進行的 Go 遷移。
 
-→ [RAGFlow Intro Part 2 — 資料進場 — DeepDoc 解析、Chunking 策略與 14 種模板](../ragflow-intro-part2-deepdoc-chunking-zh)
+→ [RAGFlow Intro Part 2 — 資料進場 — DeepDoc 解析、Chunking 策略與 14 種模板](/posts/ragflow-intro-part2-deepdoc-chunking-zh/)
 
 ---
 

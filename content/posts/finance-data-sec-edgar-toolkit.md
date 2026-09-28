@@ -14,7 +14,7 @@ readTime: "10 min"
 
 Every serious investor, quant developer, or financial analyst eventually faces the same problem: **getting clean, structured financial data is surprisingly hard**.
 
-While paid services like Bloomberg Terminal or Refinitiv cost thousands of dollars per year, the SEC's EDGAR database is completely free and contains the authoritative source of truth for all US public company filings — annual reports (10-K), quarterly reports (10-Q), and institutional holdings (13-F). The catch? Navigating EDGAR manually is tedious, and automating it means dealing with ticker-to-CIK conversion, pagination, rate limits, and messy HTML responses.
+While paid services like Bloomberg Terminal or Refinitiv cost thousands of dollars per year, the SEC's EDGAR database is completely free and contains the authoritative source of truth for all US public company filings — annual reports (10-K), quarterly reports (10-Q), and institutional holdings (13F). The catch? Navigating EDGAR manually is tedious, and automating it means dealing with ticker-to-CIK conversion, pagination, rate limits, and messy HTML responses.
 
 **[finance_data](https://github.com/yennanliu/finance_data)** solves this by wrapping all that complexity into a clean, minimal Python toolkit.
 
@@ -167,7 +167,7 @@ Build clean datasets for factor research, academic studies, or machine learning 
 | Cost | Free | Free (limited) | $2,000+/month |
 | Coverage | All SEC filers | US + some global | Global |
 | Historical depth | Full history | ~5 years | Full history |
-| Filing types | 10-K, 10-Q, 13-F, 8-K, etc. | Summary only | Full |
+| Filing types | 10-K, 10-Q, 13F, 8-K, etc. | Summary only | Full |
 | Raw source | Yes (official) | Derived | Derived |
 | API stability | High (government) | Variable | High |
 
@@ -194,7 +194,7 @@ EDGAR is the **primary source** — every financial data provider ultimately der
 
 ## Conclusion
 
-`finance_data` fills a practical gap in the open-source financial tooling ecosystem: a simple, zero-dependency script that gets you from a list of tickers to local SEC filings in under a minute.
+`finance_data` fills a practical gap in the open-source financial tooling ecosystem: a simple, single-dependency script (just `requests`) that gets you from a list of tickers to local SEC filings in under a minute.
 
 Whether you're a developer building a financial application, a quant researcher analyzing fundamentals, or an investor doing your own due diligence, having direct programmatic access to SEC filings is a powerful capability — and now it takes just two commands to set up.
 

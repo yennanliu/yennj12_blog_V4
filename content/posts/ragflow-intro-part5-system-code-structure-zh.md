@@ -7,7 +7,7 @@ description: "RAGFlow 原始碼導讀系列最終篇：拆解進程拓撲與水�
 categories: ["all", "ai", "engineering", "architecture"]
 tags: ["RAGFlow", "RAG", "AI", "System Design", "Redis Stream", "Go", "Architecture", "繁體中文"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "21 min"
 ---
 
 > *大多數人讀開源專案的原始碼，是從 README 跳到 `main()`，看幾個函式，然後說「架構我懂了」。*
@@ -19,7 +19,7 @@ readTime: "27 min"
 
 ## 前言
 
-[Part 1](../ragflow-intro-part1-overview-architecture-zh) 到 [Part 4](../ragflow-intro-part4-retrieval-rerank-zh) 拆完了資料的完整生命週期。本篇回到工程層：**這些邏輯是怎麼被組織成一個能跑、能擴、能維護的系統的。**
+[Part 1](/posts/ragflow-intro-part1-overview-architecture-zh/) 到 [Part 4](/posts/ragflow-intro-part4-retrieval-rerank-zh/) 拆完了資料的完整生命週期。本篇回到工程層：**這些邏輯是怎麼被組織成一個能跑、能擴、能維護的系統的。**
 
 要處理的問題：
 
@@ -873,13 +873,13 @@ vs 多份 compose            × 3 種 metadata DB × CPU/GPU      但 N×M×2 �
 
 ### 系列全篇
 
-- [Part 1 — 全景架構 — 從一份 PDF 到一句帶引用的答案](../ragflow-intro-part1-overview-architecture-zh)
-- [Part 2 — 資料進場 — DeepDoc 解析、Chunking 策略與 14 種模板](../ragflow-intro-part2-deepdoc-chunking-zh)
-- [Part 3 — Encode 與 Save — 向量化、索引 Schema 與雙引擎抽象](../ragflow-intro-part3-embedding-indexing-zh)
-- [Part 4 — Decode 與檢索 — 混合搜尋、Rerank、GraphRAG/RAPTOR 與引用](../ragflow-intro-part4-retrieval-rerank-zh)
+- [Part 1 — 全景架構 — 從一份 PDF 到一句帶引用的答案](/posts/ragflow-intro-part1-overview-architecture-zh/)
+- [Part 2 — 資料進場 — DeepDoc 解析、Chunking 策略與 14 種模板](/posts/ragflow-intro-part2-deepdoc-chunking-zh/)
+- [Part 3 — Encode 與 Save — 向量化、索引 Schema 與雙引擎抽象](/posts/ragflow-intro-part3-embedding-indexing-zh/)
+- [Part 4 — Decode 與檢索 — 混合搜尋、Rerank、GraphRAG/RAPTOR 與引用](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
 - **Part 5（本篇）— 系統與程式碼結構 — 服務分層、Task Executor 與 Go 遷移**
 
-← [Part 4 — Decode 與檢索 — 混合搜尋、Rerank、GraphRAG/RAPTOR 與引用](../ragflow-intro-part4-retrieval-rerank-zh)
+← [Part 4 — Decode 與檢索 — 混合搜尋、Rerank、GraphRAG/RAPTOR 與引用](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
 
 ---
 

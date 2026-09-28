@@ -638,11 +638,11 @@ ollama run deepseek-v3:cloud "解釋 MoE 架構的優缺點"
 
 ## 系列導覽
 
-- Part 1 — [安裝與第一個本地模型](../ollama-on-mac-part1-installation-zh/)
+- Part 1 — [安裝與第一個本地模型](/posts/ollama-on-mac-part1-installation-zh/)
 - **Part 2 — 公開模型全覽與選型指南(本篇)**
-- Part 3 — [REST API 與自訂 Modelfile](../ollama-on-mac-part3-api-modelfile-zh/)
-- Part 4 — [與應用整合](../ollama-on-mac-part4-app-integration-zh/)
-- Part 5 — [工具呼叫、多模型服務與進階實踐](../ollama-on-mac-part5-advanced-zh/)
+- Part 3 — [REST API 與自訂 Modelfile](/posts/ollama-on-mac-part3-api-modelfile-zh/)
+- Part 4 — [與應用整合](/posts/ollama-on-mac-part4-app-integration-zh/)
+- Part 5 — [工具呼叫、多模型服務與進階實踐](/posts/ollama-on-mac-part5-advanced-zh/)
 
 ## 參考連結
 

@@ -6,7 +6,7 @@ description: "深入 agent_auto_system 的心臟——Harness 引擎。從第一
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "LLM", "Harness", "Reliability", "Retry", "LLM-as-Judge", "AI Engineering", "Fallback"]
 authors: ["yen"]
-readTime: "22 min"
+readTime: "12 min"
 ---
 
 > Demo 版的 AI:`json.loads(resp.content)`——今天能跑。
@@ -49,7 +49,7 @@ src/automation/harness/
 
 於是你的 `json.loads()` 直接噴 `JSONDecodeError`——因為字串開頭是 ```` ```json ````,不是 `{`。
 
-這個問題的惡劣之處在於:**它是機率性的**。同一個 prompt,gpt-4o 可能十次有八次乖乖回純 JSON,兩次包上 code fence;換個模型比例又不一樣。你在開發時測十次都正常,上線第 50 次就爆給你看。
+這個問題的惡劣之處在於:**它是機率性的**。同一個 prompt,gpt-4o 可能十次有八次乖乖回純 JSON,兩次包上 code fence(筆者開發時的粗略觀察,非統計數據);換個模型比例又不一樣。你在開發時測十次都正常,上線第 50 次就爆給你看。
 
 這個專案的第一個 PR 就是修這個。核心邏輯是一個容錯的解析器:
 
@@ -337,11 +337,11 @@ executor.run(job):
 
 ### 系列導覽
 
-- Part 1:系統總覽、架構、資料流
+- [Part 1](/posts/auto-agent-system-part1-overview-zh/):系統總覽、架構、資料流
 - **Part 2(本篇)**:Harness 引擎——多模型容錯、自我修正、LLM 評審、成本追蹤
-- Part 3:自動化任務實戰——Shopee、Google Maps、Tasker
-- Part 4:生產化之路——Langfuse、Docker、AWS、權限
-- Part 5:前端體驗與 Pipeline 編排
+- [Part 3](/posts/auto-agent-system-part3-automations-zh/):自動化任務實戰——Shopee、Google Maps、Tasker
+- [Part 4](/posts/auto-agent-system-part4-production-zh/):生產化之路——Langfuse、Docker、AWS、權限
+- [Part 5](/posts/auto-agent-system-part5-frontend-pipeline-zh/):前端體驗與 Pipeline 編排
 
 > 對應的 PR:[#1 markdown JSON parse](https://github.com/yennanliu/agent_auto_system/pull/1)、[#3 retry + fallback](https://github.com/yennanliu/agent_auto_system/pull/3)
 > 專案原始碼:[github.com/yennanliu/agent_auto_system](https://github.com/yennanliu/agent_auto_system)

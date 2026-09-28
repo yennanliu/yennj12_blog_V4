@@ -7,7 +7,7 @@ description: "RAGFlow 原始碼導讀系列第二篇：拆解 DeepDoc 的 OCR／
 categories: ["all", "ai", "engineering"]
 tags: ["RAGFlow", "RAG", "AI", "DeepDoc", "OCR", "Chunking", "Document Parsing", "繁體中文"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "17 min"
 ---
 
 > *大多數人處理 RAG 的文件解析，是 `PyPDF2.extract_text()` 加一個 `RecursiveCharacterTextSplitter(512, 50)`，然後把精力全部投在 prompt 上。*
@@ -19,7 +19,7 @@ readTime: "26 min"
 
 ## 前言
 
-[Part 1](../ragflow-intro-part1-overview-architecture-zh) 畫完了 RAGFlow 的全景圖。本篇下鑽到 ingestion 路徑的前半段——**從一個二進位檔案，到一組準備好被編碼的 chunk**。
+[Part 1](/posts/ragflow-intro-part1-overview-architecture-zh/) 畫完了 RAGFlow 的全景圖。本篇下鑽到 ingestion 路徑的前半段——**從一個二進位檔案，到一組準備好被編碼的 chunk**。
 
 這一段對應兩個目錄：
 
@@ -600,7 +600,7 @@ vs 預設全開            呼叫；使用者應該明確選擇付這筆錢     
 
 - **Part 3 — Encode 與 Save**：為什麼向量是 `0.1 × 檔名 + 0.9 × 內容`、有 `questions` 時為什麼改編碼問句、後綴驅動的動態 mapping 全表、以及那個把 TF 壓成 `min(freq,1)` 的自訂相似度為什麼存在。
 
-← [Part 1 — 全景架構 — 從一份 PDF 到一句帶引用的答案](../ragflow-intro-part1-overview-architecture-zh) | [Part 3 — Encode 與 Save — 向量化、索引 Schema 與雙引擎抽象 →](../ragflow-intro-part3-embedding-indexing-zh)
+← [Part 1 — 全景架構 — 從一份 PDF 到一句帶引用的答案](/posts/ragflow-intro-part1-overview-architecture-zh/) | [Part 3 — Encode 與 Save — 向量化、索引 Schema 與雙引擎抽象 →](/posts/ragflow-intro-part3-embedding-indexing-zh/)
 
 ---
 

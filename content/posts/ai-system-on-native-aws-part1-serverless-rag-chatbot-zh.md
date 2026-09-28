@@ -6,7 +6,7 @@ description: "用純 AWS 原生服務打造一套 Serverless RAG 問答系統:Be
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "RAG", "OpenSearch Serverless", "Lambda", "LLM", "AI Engineering", "Serverless"]
 authors: ["yen"]
-readTime: "24 min"
+readTime: "15 min"
 ---
 
 > 大部分人做企業內部問答機器人:租一台 GPU、裝 LangChain、自己接一個 Pinecone、再寫一堆膠水程式碼,三個月後發現光是「文件更新後要重新 embedding」這件事就沒人想維護。
@@ -20,7 +20,7 @@ readTime: "24 min"
 
 「在雲上做 AI」有兩條路。一條是把 AWS 當成一台大型的 Linux 機房:自己開 EC2、自己裝 vLLM、自己管 Kubernetes、自己接開源向量庫。另一條是**用 AWS 原生的 managed AI 服務**(Bedrock、SageMaker、Textract、Comprehend、Personalize…),把「模型 host、擴縮、容錯」全部外包給雲廠商,你只寫「把這些服務接起來」的黏合邏輯。
 
-這個系列走的是第二條路。原因很簡單:**對 90% 的團隊來說,自己 host 模型不是核心競爭力,而是負債**。我們會用五篇,各自完整拆解一個最常見的 AWS 原生 AI 系統,每一篇都包含:**情境與痛點 → 系統目的 → 系統設計與架構 → CDK(CloudFormation)實作 → 技術選型考量 → 成本 → 延伸與坑**。
+這個系列走的是第二條路。原因很簡單:**對 90% 的團隊來說,自己 host 模型不是核心競爭力,而是負債**。我們會先用五篇基礎篇(Part 1–5,後續再以 Part 6–10 進階篇延伸),各自完整拆解一個最常見的 AWS 原生 AI 系統,每一篇都包含:**情境與痛點 → 系統目的 → 系統設計與架構 → CDK(CloudFormation)實作 → 技術選型考量 → 成本 → 延伸與坑**。
 
 - **Part 1(本篇)**:Serverless RAG 智慧客服知識庫 —— Bedrock Knowledge Bases + OpenSearch Serverless
 - **Part 2**:智慧文件處理(IDP)管線 —— Textract + Comprehend + Bedrock + Step Functions
@@ -450,7 +450,7 @@ RAG 系統每一個元件都有替代方案。以下是幾個關鍵決策,以及
 控制權               中等(切塊策略有限選項)              完全掌握每一步
 ```
 
-**翻盤條件**:當你需要 (1) 語意切塊 / 版面感知切塊等 KB 不支援的策略、(2) 檢索後自訂 rerank / 多階段檢索、(3) 跨多個異質資料源做複雜 join——這時自建管線(可搭 Lambda + 開源套件)才划算。但對 8 成場景,KB 的預設就夠好。
+**翻盤條件**:語意切塊、階層式切塊、自訂 Lambda 切塊、FM 解析、hybrid search 與 Rerank 現在 KB 都已支援,不再是自建的理由。真正需要自建的是 KB 做不到的事:(1) 跨多個異質資料源做複雜 join、(2) 自訂的多階段 retriever(例如多路召回後再自己融合、依業務規則重排)——這時自建管線(可搭 Lambda + 開源套件)才划算。但對 8 成場景,KB 的預設就夠好。
 
 ### 5.2 向量庫:OpenSearch Serverless vs Aurora pgvector vs Pinecone
 
@@ -458,16 +458,17 @@ RAG 系統每一個元件都有替代方案。以下是幾個關鍵決策,以及
 選擇                    優勢                          代價 / 翻盤條件
 ──────────────────────────────────────────────────────────────────────
 OpenSearch Serverless   Bedrock KB 原生支援,免管節點     最低 OCU 有固定成本(見成本節)
+S3 Vectors             以 S3 計價,幾乎無固定成本          查詢延遲較高、功能較少(2025 年新服務,細節請見官方文件)
 Aurora pgvector         已有 Postgres,省一套系統          需自己管實例、擴縮
 Pinecone(第三方)      向量檢索體驗最佳                  資料出 AWS 帳號,法遵可能不允許
 ```
 
 **翻盤條件**:資料量小、已經在用 Aurora、且流量低到不想付 OpenSearch 的最低月費 → 選 Aurora pgvector(Bedrock KB 也支援)。資料主權沒問題、追求極致檢索體驗 → 才考慮 Pinecone。
 
-### 5.3 生成模型:Claude vs Titan vs Llama(都在 Bedrock 上)
+### 5.3 生成模型:Claude vs Nova vs Llama(都在 Bedrock 上)
 
-- **Claude(Anthropic)**:遵循指令、拒絕幻覺、引用邏輯最穩,是 RAG 生成的預設首選。
-- **Titan Text**:AWS 自家,便宜,適合簡單摘要,複雜推理稍弱。
+- **Claude(Anthropic)**:遵循指令、依據提供的片段作答與引用的表現穩定,是 RAG 生成的常見預設首選(幻覺仍需靠 prompt 與 Guardrails 控制)。
+- **Amazon Nova(Micro / Lite)**:AWS 自家,便宜,適合簡單摘要,複雜推理稍弱。(舊的 Titan Text 已由 Nova 取代。)
 - **Llama(Meta)**:開源權重、可自行微調,若你要 fine-tune 或有特殊授權需求時考慮。
 
 RAG 的瓶頸通常不在生成而在檢索品質,所以生成模型先用 Claude 求穩,之後再依成本壓力往下調。
@@ -504,15 +505,15 @@ Serverless 的美好是「零流量近乎零成本」,但 RAG 有一個容易被
 |------|------|---------|
 | OpenSearch Serverless | 最低 2 OCU(檢索)+ 索引,約 $0.24/OCU·hr | **~$350**(固定成本大戶) |
 | Bedrock 嵌入(Titan v2) | 首次 5 GB ≈ 數百萬 token,增量少 | ~$5 一次性 + 少量 |
-| Bedrock 生成(Claude) | 10 萬次 × 平均 2K in / 400 out token | ~$60–200(視模型等級) |
+| Bedrock 生成(Claude) | 10 萬次 × 平均 2K in / 400 out token | ~$300–1,200(Haiku 級 ~ Sonnet 級;Nova Lite 可低至 ~$20) |
 | Lambda | 10 萬次呼叫、每次 <1s | < $1 |
 | API Gateway | 10 萬次請求 | ~$0.35 |
 | S3 儲存 | 5 GB | ~$0.12 |
-| **合計** | | **~$420–560 / 月** |
+| **合計** | | **~$660–1,560 / 月** |
 
-**成本洞察**:這套系統的成本結構是「一大塊固定 + 一小塊變動」。固定成本幾乎全來自 OpenSearch Serverless 的最低 OCU。這帶來一個重要的架構結論——
+**成本洞察**:這套系統的成本結構是「一大塊固定 + 一塊隨模型等級變動」。固定成本幾乎全來自 OpenSearch Serverless 的最低 OCU。這帶來一個重要的架構結論——
 
-- **流量很低(< 1 萬次/月)時**:OpenSearch 的固定月費會讓「每次問答的均攤成本」高得離譜。此時改用 **Aurora Serverless v2 + pgvector**(可縮到很低)或甚至把向量存進 DynamoDB 自己算相似度,反而划算。
+- **流量很低(< 1 萬次/月)時**:OpenSearch 的固定月費會讓「每次問答的均攤成本」高得離譜。此時改用 **Aurora Serverless v2 + pgvector**(可縮到很低)或 **S3 Vectors**(2025 年新服務,細節請見官方文件)反而划算;若仍要用 OpenSearch Serverless,開發/測試環境可關閉備援,以 0.5 OCU 起跳。
 - **流量中高時**:固定成本被攤平,OpenSearch Serverless 的免維運優勢就贏了。
 
 這正是第五節「向量庫翻盤條件」的成本版註解。
@@ -532,7 +533,7 @@ Serverless 的美好是「零流量近乎零成本」,但 RAG 有一個容易被
 **最容易踩的三個坑:**
 
 1. **忘了 aoss data access policy**:IAM 對了、KB 還是連不進向量庫——因為 OpenSearch Serverless 有獨立的一套資料存取權限。
-2. **模型要先在 Bedrock console 開啟存取**:Bedrock 的 foundation model 預設是「未啟用」,要先在 Model access 頁面申請開通,CDK 才 invoke 得到。
+2. **模型存取不一定是開箱即用**:AWS 在 2025 年簡化了 model access,多數 serverless 模型已預設可用,但 Anthropic 模型首次使用仍需填寫使用情境表單;組織層級的 SCP / IAM 也可能擋住。部署前先在 console 確認一次,CDK 才 invoke 得到。
 3. **ingestion job 不會自動跑**:上傳文件到 S3 後,除非設定自動同步,否則要手動 `start-ingestion-job`,不然向量庫是空的。
 
 ---
@@ -547,8 +548,16 @@ RAG 是所有 AI 系統的起點,也是最能展現「AWS 原生」威力的地�
 
 ## 系列導覽
 
+**基礎篇**
 - **Part 1(本篇)**:Serverless RAG 智慧客服知識庫
-- **Part 2**:智慧文件處理(IDP)管線 —— Textract + Comprehend + Bedrock + Step Functions
-- **Part 3**:即時個人化推薦系統 —— Kinesis + Feature Store + SageMaker Endpoint
-- **Part 4**:自主 AI Agent 工具呼叫系統 —— Bedrock Agents + Lambda Action Groups + Guardrails
-- **Part 5**:生產化 MLOps 與可觀測性 —— 部署策略、模型日誌、成本治理、CDK CI/CD
+- [Part 2:智慧文件處理(IDP)管線](/posts/ai-system-on-native-aws-part2-intelligent-document-processing-zh/)
+- [Part 3:即時個人化推薦系統](/posts/ai-system-on-native-aws-part3-realtime-recommendation-zh/)
+- [Part 4:自主 AI Agent 工具呼叫系統](/posts/ai-system-on-native-aws-part4-agentic-ai-with-tools-zh/)
+- [Part 5:生產化 MLOps 與可觀測性](/posts/ai-system-on-native-aws-part5-production-mlops-observability-zh/)
+
+**進階篇**
+- [Part 6:企業級多租戶 RAG 平台](/posts/ai-system-on-native-aws-part6-enterprise-multi-tenant-rag-zh/)
+- [Part 7:基礎模型客製化與模型治理](/posts/ai-system-on-native-aws-part7-foundation-model-customization-governance-zh/)
+- [Part 8:即時串流 ML 與詐欺偵測](/posts/ai-system-on-native-aws-part8-realtime-streaming-fraud-detection-zh/)
+- [Part 9:企業 AI 安全、合規與資料治理](/posts/ai-system-on-native-aws-part9-security-compliance-data-governance-zh/)
+- [Part 10:企業 AI 平台工程 —— 落地區、LLM Gateway 與 FinOps](/posts/ai-system-on-native-aws-part10-enterprise-ai-platform-engineering-zh/)

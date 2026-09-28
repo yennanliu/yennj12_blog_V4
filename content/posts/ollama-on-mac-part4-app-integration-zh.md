@@ -6,7 +6,7 @@ description: "把本機 Ollama 模型接進真實應用的完整實戰:官方 Py
 categories: ["all", "ai", "engineering"]
 tags: ["Ollama", "LLM", "Python", "OpenAI API", "LangChain", "Open WebUI", "RAG", "Embeddings", "AI Engineering"]
 authors: ["yen"]
-readTime: "24 min"
+readTime: "18 min"
 ---
 
 > 很多人以為要用本地模型,就得把整個 app 打掉重寫、換掉所有 SDK。
@@ -649,11 +649,11 @@ Part 5 我們進入進階實踐:**工具呼叫(tool/function calling)、多模�
 
 ## 系列導覽
 
-- Part 1 — [安裝與第一個本地模型](../ollama-on-mac-part1-installation-zh/)
-- Part 2 — [公開模型全覽與選型指南](../ollama-on-mac-part2-public-models-zh/)
-- Part 3 — [REST API 與自訂 Modelfile](../ollama-on-mac-part3-api-modelfile-zh/)
+- Part 1 — [安裝與第一個本地模型](/posts/ollama-on-mac-part1-installation-zh/)
+- Part 2 — [公開模型全覽與選型指南](/posts/ollama-on-mac-part2-public-models-zh/)
+- Part 3 — [REST API 與自訂 Modelfile](/posts/ollama-on-mac-part3-api-modelfile-zh/)
 - **Part 4 — 與應用整合(本篇)**
-- Part 5 — [工具呼叫、多模型服務與進階實踐](../ollama-on-mac-part5-advanced-zh/)
+- Part 5 — [工具呼叫、多模型服務與進階實踐](/posts/ollama-on-mac-part5-advanced-zh/)
 
 ## 參考連結
 

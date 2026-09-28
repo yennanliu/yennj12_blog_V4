@@ -4,10 +4,10 @@ date: 2026-09-11T13:00:00+08:00
 draft: false
 weight: 5
 description: "vLLM 原始碼導讀系列最終篇：拆解 OpenAI 相容 API 的完整面、Multi-LoRA 多租戶服務、結構化輸出的取樣層約束、Prometheus 指標全表與症狀診斷鏈、P/D 分離與 KV Connector 的實際配置，以及一套不會騙自己的 benchmark 方法。"
-categories: ["all", "ai", "engineering", "infrastructure", "architecture"]
+categories: ["all", "ai", "engineering", "infrastructure"]
 tags: ["vLLM", "Production", "LoRA", "Structured Output", "Observability", "Prometheus", "Kubernetes", "繁體中文"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "21 min"
 ---
 
 > *大多數人上線 LLM 服務的方式，是把 `vllm serve` 包進 Dockerfile，接上 LB，看到 200 就宣布完成。*
@@ -18,7 +18,7 @@ readTime: "28 min"
 
 ## 前言
 
-前四篇拆完了引擎：[記憶體](../vllm-intro-part2-paged-attention-kv-cache-zh)、[排程](../vllm-intro-part3-scheduler-continuous-batching-zh)、[平行化與量化](../vllm-intro-part4-distributed-quantization-zh)。這一篇處理最後一段路——**把引擎變成服務**。
+前四篇拆完了引擎：[全景架構](/posts/vllm-intro-part1-architecture-overview-zh/)、[記憶體](/posts/vllm-intro-part2-paged-attention-kv-cache-zh/)、[排程](/posts/vllm-intro-part3-scheduler-continuous-batching-zh/)、[平行化與量化](/posts/vllm-intro-part4-distributed-quantization-zh/)。這一篇處理最後一段路——**把引擎變成服務**。
 
 這段路上有五件事：對外的 API 面要長什麼樣、一個模型怎麼服務多個租戶、怎麼保證輸出格式可被程式解析、怎麼知道系統現在的狀態、以及怎麼在成本與 SLO 之間找到那個點。
 
@@ -56,9 +56,13 @@ readTime: "28 min"
 
 ## 二、三個演進階段
 
-### ╔═══════════════════════════════════════════════════╗
-### ║  Phase 1：單機 Docker —— 能對外服務                ║
-### ╚═══════════════════════════════════════════════════╝
+### Phase 1：單機 Docker —— 能對外服務
+
+```
+╔═══════════════════════════════════════════════════╗
+║  Phase 1：單機 Docker —— 能對外服務                ║
+╚═══════════════════════════════════════════════════╝
+```
 
 ```
 ┌─────────────┐        ┌─────────────────────────────┐
@@ -92,9 +96,13 @@ docker run --gpus all -p 8000:8000 \
 - **可接受的捷徑**：無備援、無指標、金鑰用環境變數、沒有限流。
 - **還沒解決什麼**：一切生產問題。
 
-### ╔═══════════════════════════════════════════════════╗
-### ║  Phase 2：K8s + 可觀測性 —— 可被驗收               ║
-### ╚═══════════════════════════════════════════════════╝
+### Phase 2：K8s + 可觀測性 —— 可被驗收
+
+```
+╔═══════════════════════════════════════════════════╗
+║  Phase 2：K8s + 可觀測性 —— 可被驗收               ║
+╚═══════════════════════════════════════════════════╝
+```
 
 ```
                 ┌────────────────────────────────────────┐
@@ -136,9 +144,13 @@ docker run --gpus all -p 8000:8000 \
 - **解決了什麼**：高可用、可觀測、可下 SLO。
 - **還沒解決什麼**：前綴快取跨 pod 不共享；prefill 與 decode 共用資源導致尾延遲難壓；擴容粒度粗。
 
-### ╔═══════════════════════════════════════════════════╗
-### ║  Phase 3：P/D 分離 + 智慧路由 —— SLO 可分別達成    ║
-### ╚═══════════════════════════════════════════════════╝
+### Phase 3：P/D 分離 + 智慧路由 —— SLO 可分別達成
+
+```
+╔═══════════════════════════════════════════════════╗
+║  Phase 3：P/D 分離 + 智慧路由 —— SLO 可分別達成    ║
+╚═══════════════════════════════════════════════════╝
+```
 
 ```
         ┌─────────────────────────────────────────────────┐
@@ -789,14 +801,14 @@ Part 5  服務：API 面、多租戶、結構化輸出、可觀測性、P/D 分�
 2. **量測你自己的流量。** 本系列所有數字都是量級估算。真正有意義的數字只有一組——你用自己的 trace、自己的模型、自己的硬體跑出來的那組。
 3. **關注模型架構而不只是引擎。** GQA 把 KV cache 除以 5、MLA 再除一個量級、MoE 讓等效參數量和計算量脫鉤。**這些架構層的改動對推論成本的影響，大於任何引擎優化。** 選模型的時候把推論成本當成一個選型維度，比事後調參有效得多。
 
-← [Part 4 — 分散式推論、量化與編譯優化 — 讓模型放得下也跑得快](../vllm-intro-part4-distributed-quantization-zh)
+← [Part 4 — 分散式推論、量化與編譯優化 — 讓模型放得下也跑得快](/posts/vllm-intro-part4-distributed-quantization-zh/)
 
 系列全部文章：
 
-- [Part 1 — 全景架構 — 從一次 model.generate() 到一個推論引擎](../vllm-intro-part1-architecture-overview-zh)
-- [Part 2 — PagedAttention 與 KV Cache — 把作業系統的分頁搬進 GPU](../vllm-intro-part2-paged-attention-kv-cache-zh)
-- [Part 3 — 連續批次與排程器 — 決定誰在這一輪前進一格](../vllm-intro-part3-scheduler-continuous-batching-zh)
-- [Part 4 — 分散式推論、量化與編譯優化 — 讓模型放得下也跑得快](../vllm-intro-part4-distributed-quantization-zh)
+- [Part 1 — 全景架構 — 從一次 model.generate() 到一個推論引擎](/posts/vllm-intro-part1-architecture-overview-zh/)
+- [Part 2 — PagedAttention 與 KV Cache — 把作業系統的分頁搬進 GPU](/posts/vllm-intro-part2-paged-attention-kv-cache-zh/)
+- [Part 3 — 連續批次與排程器 — 決定誰在這一輪前進一格](/posts/vllm-intro-part3-scheduler-continuous-batching-zh/)
+- [Part 4 — 分散式推論、量化與編譯優化 — 讓模型放得下也跑得快](/posts/vllm-intro-part4-distributed-quantization-zh/)
 - **Part 5（本篇）— 生產部署與服務化 — 從 vllm serve 到一份可被驗收的 SLO**
 
 ---

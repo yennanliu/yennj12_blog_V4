@@ -4,8 +4,9 @@ date: 2025-09-29T08:35:54+08:00
 draft: false
 tags: ["AWS", "VPC", "Networking", "Cloud Architecture", "Enterprise", "DevOps", "Java", "Cloud Computing"]
 categories: ["all", "infrastructure"]
-author: "Yen-Nan Liu"
+authors: ["yen"]
 description: "Comprehensive guide to AWS VPC types, enterprise network design patterns, VPC peering, and Java implementations for production-ready cloud networking."
+readTime: "16 min"
 ---
 
 ## Introduction
@@ -683,9 +684,10 @@ AWS VPC provides the foundation for secure, scalable cloud networking. Key takea
 
 ### When to Use VPC Peering
 - Cross-region connectivity requirements
-- Multi-account architectures
+- Multi-account architectures with a small number of VPCs (peering is non-transitive, so a full mesh grows as n(n-1)/2 connections; beyond a handful of VPCs use Transit Gateway)
 - Secure service-to-service communication
-- Hybrid cloud integration scenarios
+
+Peering does not connect on-premises networks: hybrid cloud integration needs Site-to-Site VPN or Direct Connect (typically attached to a Transit Gateway).
 
 ### Enterprise Considerations
 - Use Transit Gateway for complex multi-VPC architectures

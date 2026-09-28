@@ -4,8 +4,9 @@ date: 2026-01-17T13:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "claude-code", "context-window", "對話管理", "效能優化", "最佳實踐", "development-tools"]
+tags: ["AI", "Claude Code", "Context Window", "對話管理", "效能優化", "最佳實踐", "Development Tools"]
 summary: "深度解析 Claude Code 的 Context Window 機制：從底層原理到實戰策略，學習如何有效管理對話上下文、優化 token 使用，並避免常見陷阱，讓 AI 輔助開發更高效。"
+description: "深度解析 Claude Code 的 Context Window 機制：從底層原理到實戰策略，學習如何有效管理對話上下文、優化 token 使用，並避免常見陷阱，讓 AI 輔助開發更高效。"
 readTime: "22 min"
 ---
 
@@ -79,9 +80,11 @@ function hello() { return "world"; } = 約 10 tokens
 
 | 模型 | Context Window | 輸出限制 | 適用情境 |
 |------|---------------|---------|---------|
-| **Claude Sonnet 4.5** | 200,000 tokens | 8,192 tokens | 一般開發任務（預設） |
-| **Claude Opus 4.5** | 200,000 tokens | 16,384 tokens | 複雜任務、需要長篇輸出 |
-| **Claude Haiku 3.5** | 200,000 tokens | 8,192 tokens | 簡單快速任務、成本優化 |
+| **Claude Sonnet 4.5** | 200,000 tokens（撰文時） | 依模型而定 | 一般開發任務（預設） |
+| **Claude Opus 4.5** | 200,000 tokens（撰文時） | 依模型而定 | 複雜任務、需要長篇輸出 |
+| **Claude Haiku 4.5** | 200,000 tokens | 依模型而定 | 簡單快速任務、成本優化 |
+
+> 規格會隨模型更新而變動（較新的模型有些已提供 1M tokens 的 context），實際數字請以 Anthropic 官方文件為準。在 Claude Code 中輸入 `/context`，可以直接看到目前 session 的容量與各部分的使用量。
 
 **實際可用空間分配：**
 
@@ -233,12 +236,12 @@ function hello() { return "world"; } = 約 10 tokens
 
 ### 自動摘要機制
 
-當 context 接近上限時，Claude Code 會自動觸發**摘要機制**：
+當 context 接近上限時，Claude Code 會自動執行 **auto-compact**：把先前的對話濃縮成摘要後繼續。確切的觸發時機與保留哪些內容由 Claude Code 內部決定，並會隨版本調整，下圖只是概念示意。你也可以主動控制：用 `/context` 檢查使用量、用 `/compact [要保留的重點]` 手動壓縮、切換到不相關的任務時用 `/clear` 清空對話。
 
 ```
 ┌───────────────────────────────────────────────────────┐
-│ Context 使用率: 85% (170K / 200K tokens)             │
-│ ⚠️ 觸發自動摘要                                       │
+│ Context 接近上限                                     │
+│ ⚠️ 觸發 auto-compact                                  │
 └───────────────────────────────────────────────────────┘
                        │
                        ▼
@@ -246,7 +249,7 @@ function hello() { return "world"; } = 約 10 tokens
 │ 摘要處理流程                                           │
 │                                                       │
 │ 1. 識別可摘要的內容                                   │
-│    ├─ 舊的對話輪次（保留最近 10 輪）                  │
+│    ├─ 較早的對話輪次                                  │
 │    ├─ 已讀取但不再需要的檔案內容                      │
 │    └─ 長篇的工具輸出                                  │
 │                                                       │
@@ -604,11 +607,10 @@ Step 4 (General Agent): 執行重構
 
 ### 如何知道 Context 使用狀況？
 
-Claude Code 會在 CLI 中顯示 context 使用資訊：
+在 Claude Code 中輸入 `/context`，會列出目前 context 的總容量、已使用量，以及系統提示、工具定義、記憶檔（CLAUDE.md）、對話訊息各佔多少。以下以一個假設的數字為例：
 
-```bash
-# 每次對話後會顯示
-Token usage: 45230/200000; 154770 remaining
+```text
+假設已使用 45,230 / 200,000 tokens
 
 解讀：
 • 已使用: 45,230 tokens (22.6%)
@@ -618,7 +620,7 @@ Token usage: 45230/200000; 154770 remaining
 【安全閾值】
 綠色 (< 50%): 安全，可以繼續
 黃色 (50-80%): 注意，考慮優化
-紅色 (> 80%): 警告，即將觸發摘要
+紅色 (> 80%): 警告，可能很快觸發 auto-compact，建議先主動 /compact 或 /clear
 ```
 
 ### Context 健康檢查清單

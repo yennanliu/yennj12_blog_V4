@@ -1,5 +1,7 @@
 # NVIDIA Blog Post Automation
 
+> ⚠️ **已停用（2026-09）**：`.github/workflows/nvidia-blog-daily.yml` 已刪除。這個流程產出的文章並非原文翻譯，而是含虛構程式碼、並掛名真實 NVIDIA 作者的摘要，已於 PR #13 移除。`scripts/generate_nvidia_blog.py` 僅保留作參考；若要重新啟用，產出必須逐篇人工審閱後才能發布。
+
 自動從 NVIDIA 開發者博客生成繁體中文技術文章的 GitHub Action。
 
 ## 功能特性

@@ -6,7 +6,7 @@ description: "推薦系統是最經典、商業價值最直接的 AI 系統。�
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "SageMaker", "Kinesis", "Feature Store", "Recommendation", "DynamoDB", "MLOps", "AI Engineering"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "13 min"
 ---
 
 > 大部分人做推薦系統:離線跑個協同過濾,把結果算好塞進一張表,前端去查。上線第一天很香,第三天發現使用者剛剛看過、剛剛買過的東西還一直被推——因為推薦是「昨天算好的」,而使用者是「此刻在變的」。
@@ -263,13 +263,17 @@ const target = new applicationautoscaling.ScalableTarget(this, 'EpScaling', {
   serviceNamespace: applicationautoscaling.ServiceNamespace.SAGEMAKER,
   resourceId: `endpoint/${endpoint.attrEndpointName}/variant/v1`,
   scalableDimension: 'sagemaker:variant:DesiredInstanceCount',
-  minCapacity: 2, maxCapacity: 20,
+  minCapacity: 2, maxCapacity: 30,
 });
 target.scaleToTrackMetric('InvocationScaling', {
   predefinedMetric: applicationautoscaling.PredefinedMetric.SAGEMAKER_VARIANT_INVOCATIONS_PER_INSTANCE,
-  targetValue: 750,
+  // 注意:InvocationsPerInstance 是「每分鐘」指標。24,000/分 ≈ 400 req/s/台,
+  // 尖峰 1 萬 QPS ≈ 25 台(maxCapacity 30 留餘裕)。單台能扛多少要以壓測為準。
+  targetValue: 24000,
 });
 ```
+
+> `SAGEMAKER_VARIANT_INVOCATIONS_PER_INSTANCE` 以**每分鐘**計算:若把 `targetValue` 設成 750,每台只承接約 12.5 req/s,1 萬 QPS 要約 800 台。所以目標值必須由「尖峰 QPS ÷ 單台壓測吞吐」反推,再搭配 `maxCapacity`。
 
 > A/B 測試就靠這裡:在 `productionVariants` 放兩個 variant(v1 / v2),用 `initialVariantWeight` 分流量(如 90/10),SageMaker 幫你把請求按權重分配。要回滾就把權重調回去,秒級生效,不用重新部署。
 
@@ -363,14 +367,16 @@ export const handler = async (event: any) => {
 
 以「日活 100 萬、尖峰 1 萬 QPS」估算(概略):
 
+> us-east-1 公開定價概估(撰文時),未計免費額度,實際以帳單為準;單台吞吐假設約 400 req/s,需以壓測校正。
+
 | 項目 | 用量 | 概略月費 |
 |------|------|---------|
-| SageMaker Endpoint | ml.c6i.xlarge × 平均 6 台(2–20 自動擴縮) | **~$1,500–2,000**(常駐大戶) |
+| SageMaker Endpoint | ml.c6i.xlarge × 平均 6 台(2–30 自動擴縮) | **~$1,500–2,000**(常駐大戶) |
 | Kinesis On-Demand | 每日數千萬事件 | ~$300–600 |
 | Feature Store 線上讀寫 | 高頻讀寫 | ~$400–800 |
 | DynamoDB | 召回查詢高併發 | ~$500–1,000 |
-| Lambda / API Gateway | 高 QPS | ~$500 |
-| **合計** | | **~$3,200–4,900 / 月** |
+| Lambda / API Gateway | 假設每人每日 ~20 次請求 ≈ 每月 6 億次;HTTP API ~$600 + Lambda ~$300–400(若用 REST API,單價約 3.5 倍,可達 ~$2,000 以上) | ~$900–1,000 |
+| **合計** | | **~$3,600–5,400 / 月** |
 
 **成本洞察**:推薦系統的成本結構跟前兩篇又不同——**它是「常駐運算主導」**(SageMaker Endpoint 與 DynamoDB 容量)。因為要求 P99 < 100ms,你不能像 RAG 那樣「零流量零成本」,必須養著常駐機器。優化方向:
 
@@ -395,7 +401,7 @@ export const handler = async (event: any) => {
 
 1. **Training-serving skew**:離線訓練用 pandas 算特徵、線上用 Lambda 算特徵,兩套邏輯不知不覺就分岔了。**唯一解是共用同一份特徵定義**(Feature Store 的意義),或至少共用同一份特徵計算程式碼。
 2. **冷啟動沒 fallback**:新用戶查不到特徵,Lambda 直接報錯或回空清單。一定要有規則式 fallback 分支。
-3. **Endpoint 冷啟動/擴縮跟不上**:尖峰來得比擴縮快,前幾分鐘延遲爆高。用 provisioned capacity 或 predictive scaling 預熱。
+3. **Endpoint 冷啟動/擴縮跟不上**:尖峰來得比擴縮快,前幾分鐘延遲爆高。用 provisioned capacity 或 predictive scaling 預熱。編排 Lambda 本身也在 P99 < 100ms 的路徑上,冷啟動可能就吃掉數百 ms,要搭配 provisioned concurrency。
 4. **候選集過期**:召回候選表如果是離線算的,商品下架了還在推。要設 TTL 並定期刷新。
 5. **A/B 測試沒有護欄**:新模型 variant 分了 10% 流量卻默默變差。一定要接 CloudWatch alarm 監控每個 variant 的線上指標,劣化自動調回權重。
 
@@ -411,8 +417,16 @@ export const handler = async (event: any) => {
 
 ## 系列導覽
 
-- **Part 1**:Serverless RAG 智慧客服知識庫
-- **Part 2**:智慧文件處理(IDP)管線
+**基礎篇**
+- [Part 1:Serverless RAG 智慧客服知識庫](/posts/ai-system-on-native-aws-part1-serverless-rag-chatbot-zh/)
+- [Part 2:智慧文件處理(IDP)管線](/posts/ai-system-on-native-aws-part2-intelligent-document-processing-zh/)
 - **Part 3(本篇)**:即時個人化推薦系統
-- **Part 4**:自主 AI Agent 工具呼叫系統 —— Bedrock Agents + Lambda Action Groups + Guardrails
-- **Part 5**:生產化 MLOps 與可觀測性 —— 部署策略、模型日誌、成本治理、CDK CI/CD
+- [Part 4:自主 AI Agent 工具呼叫系統](/posts/ai-system-on-native-aws-part4-agentic-ai-with-tools-zh/)
+- [Part 5:生產化 MLOps 與可觀測性](/posts/ai-system-on-native-aws-part5-production-mlops-observability-zh/)
+
+**進階篇**
+- [Part 6:企業級多租戶 RAG 平台](/posts/ai-system-on-native-aws-part6-enterprise-multi-tenant-rag-zh/)
+- [Part 7:基礎模型客製化與模型治理](/posts/ai-system-on-native-aws-part7-foundation-model-customization-governance-zh/)
+- [Part 8:即時串流 ML 與詐欺偵測](/posts/ai-system-on-native-aws-part8-realtime-streaming-fraud-detection-zh/)
+- [Part 9:企業 AI 安全、合規與資料治理](/posts/ai-system-on-native-aws-part9-security-compliance-data-governance-zh/)
+- [Part 10:企業 AI 平台工程 —— 落地區、LLM Gateway 與 FinOps](/posts/ai-system-on-native-aws-part10-enterprise-ai-platform-engineering-zh/)

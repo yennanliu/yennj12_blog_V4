@@ -5,7 +5,7 @@ draft: false
 weight: 23
 description: "深入解析 RAG 架構設計：向量資料庫選型、Hybrid Search、Re-ranking、Chunking 策略，以及 LLM 評估框架：RAGAS/G-Eval/LLM-as-Judge"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "RAG", "Vector Database", "Evaluation", "LLM Engineering", "RKK", "Interview"]
+tags: ["AI", "LLM", "RAG", "Vector Database", "Evaluation", "LLM Engineering", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你們公司的法律文件問答系統上線三個月，客服每週回報大約 15% 的回答「聽起來合理但內容有誤」。CTO 要你在四週內把幻覺率降到 5% 以下，且 P95 延遲不能超過 2 秒。請說明你會怎麼診斷現況、選擇改進方向，以及如何證明改善確實發生了。
 
@@ -511,6 +511,8 @@ if p95_latency > 2000ms:
 | 客服轉人工率 | 38% | 14% | **−63%** |
 | 每月維護工時 | 20h（人工抽查）| 8h（自動化 + 偶發告警）| −60% |
 
+> 以上為示意估算，非實測數據。
+
 **重要 Trade-off**：Advanced RAG 的延遲比 Naive RAG 高（因為 Re-ranking），需要確保 P95 在 SLA 內（本案例 2 秒）。如果延遲預算緊張，可考慮跳過 Re-ranking，用 Hybrid Search + 好的 Chunking 也能達到 Faithfulness 0.82。
 
 ---
@@ -656,10 +658,13 @@ Embedding 模型的選擇直接影響召回品質和成本結構。
 | E5-large-v2 | 1,024 | 良 | $0（自部署）| 是 | 英文，低成本 |
 | Cohere embed-v3 | 1,024 | 優 | $0.0001/1K token | 否 | 多語言，含壓縮模式 |
 
+> 此表為 2024 年的模型與價格快照：Cohere 已推出 embed-v4，Qwen3-Embedding 等新一代開源模型也已進入 MTEB 前段。選型前請以當前 MTEB 排行與官方定價為準。
+
 **自部署 BGE-M3 成本估算**（中等規模）：  
 - 1 台 A10G GPU（4 vCPU, 24GB VRAM）：~$1.5/hr（AWS g5.xlarge）  
 - 日均 200K 次 Embedding 查詢：~$36/day vs text-embedding-3-small $4/day  
-- 建議：< 500K queries/day 用閉源 API 更划算；超過後自部署開始有優勢
+- 換算：API 每次約 $0.00002（$4 ÷ 200K），自部署是約 $36/day 的固定成本，損益平衡點約在 $36 ÷ $0.00002 ≈ 1.8M queries/day
+- 建議：< 約 1.8M queries/day 用閉源 API 更划算；超過後自部署才開始有成本優勢（隱私或資料落地要求則不受此門檻限制）
 
 ### Embedding 維度壓縮（Matryoshka Representation Learning）
 
@@ -700,17 +705,13 @@ OpenAI text-embedding-3 系列支援 MRL，可將 1,536 維向量壓縮為 256 �
 
 ---
 
-*本文為「AI 工程從零開始」系列第 23 篇。*
-
----
-
 ## 系列導航
 
-← [Phase 11 Part 1：LLM Fine-tuning 與 PEFT 技術全解析](/posts/ai-eng-from-scratch-phase11-part1-llm-finetune-zh/)
+← [Phase 11 Part 1：LLM 推論工程 — 從實驗到每秒千次請求](/posts/ai-eng-from-scratch-phase11-part1-inference-serving-zh/)
 
-→ [Phase 12 Part 1：AI 系統可觀測性與生產監控](/posts/ai-eng-from-scratch-phase12-part1-observability-zh/)
+→ [Phase 12 Part 1：Vision Transformer 與多模態融合架構](/posts/ai-eng-from-scratch-phase12-part1-vit-fusion-zh/)
 
 ---
 
-*本文為「AI 工程從零開始」系列第 23 篇。系列涵蓋從基礎 ML 工程到 LLM 生產落地的完整路徑，適合準備 Staff / Senior AI 工程師面試的讀者。*
+*本文為「AI 工程從零開始」系列第 23 篇。系列涵蓋從基礎 ML 工程到 LLM 生產落地的完整路徑，適合想系統性建立 AI 工程能力的工程師。*
 

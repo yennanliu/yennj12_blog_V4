@@ -5,7 +5,7 @@ draft: false
 weight: 11
 description: "深入剖析如何以非同步訊息傳遞取代同步 HTTP 請求，防止 LLM 推論延遲（2–30 秒）耗盡 Web Server 連線池，支撐 50,000+ 並發用戶，改善幅度達 250 倍。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Architecture", "PubSub", "AsyncDesign"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Architecture", "Pub/Sub", "AsyncDesign"]
 authors: ["yen"]
 readTime: "18 min"
 ---
@@ -445,7 +445,7 @@ BigQuery 分析每日費用：
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-10-caching-strategies-zh/) | [後一篇](/posts/fde-interview-core-topic-12-vector-search-embedding-pipeline-zh/) →
+← [前一篇](/posts/fde-core-concept-10-cmek-byok-envelope-zh/) | [後一篇](/posts/fde-core-concept-12-backpressure-fair-share-zh/) →
 
 ---
 

@@ -6,7 +6,7 @@ description: "當 AI 不只是回答,而要主動規劃、呼叫工具、串起�
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Bedrock Agents", "AI Agent", "Guardrails", "Lambda", "LLM", "Tool Use", "AI Engineering"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "14 min"
 ---
 
 > 大部分人以為 AI Agent 就是「prompt 寫得很長的 chatbot」。真正的差別在於:chatbot 只會產生文字,agent 會產生**動作**——它會決定去查資料庫、去呼叫 API、去發一封信,而且是它自己排出先後順序、看了中間結果再決定下一步。
@@ -252,20 +252,35 @@ const guardrail = new bedrock.CfnGuardrail(this, 'AgentGuardrail', {
 // lib/agent.ts 片段
 import * as bedrock from 'aws-cdk-lib/aws-bedrock';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
+
+// 模型 ID 不寫死,從 SSM 參數讀取(做法見 Part 5 §3.3)。
+// 參數值請填 Bedrock console 上目前可用的 Claude inference profile ID(us. / global. 前綴)。
+const modelId = ssm.StringParameter.valueForStringParameter(this, '/agent/bedrock/model-id');
 
 const agentRole = new iam.Role(this, 'AgentRole', {
   assumedBy: new iam.ServicePrincipal('bedrock.amazonaws.com'),
 });
-// 只允許呼叫指定的生成模型
+// 只允許呼叫指定的 inference profile,以及它背後路由到的 Claude foundation model。
+// 只寫單一 foundation-model ARN 的話,透過 inference profile 的呼叫會被拒絕。
 agentRole.addToPolicy(new iam.PolicyStatement({
-  actions: ['bedrock:InvokeModel'],
-  resources: [`arn:aws:bedrock:${this.region}::foundation-model/anthropic.claude-3-5-sonnet-20241022-v2:0`],
+  actions: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream', 'bedrock:GetInferenceProfile'],
+  resources: [
+    `arn:aws:bedrock:${this.region}:${this.account}:inference-profile/${modelId}`,
+    // 跨區 profile 會把請求送到其他區域,所以 foundation model 的區域用 *
+    'arn:aws:bedrock:*::foundation-model/anthropic.claude-*',
+  ],
 }));
+
+// Guardrail 要釘住編號版本;DRAFT 會隨任何 console 修改即時生效,不適合 production
+const guardrailVersion = new bedrock.CfnGuardrailVersion(this, 'GuardrailV1', {
+  guardrailIdentifier: guardrail.attrGuardrailId,
+});
 
 const agent = new bedrock.CfnAgent(this, 'SupportAgent', {
   agentName: 'support-ops-agent',
   agentResourceRoleArn: agentRole.roleArn,
-  foundationModel: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
+  foundationModel: modelId,
   instruction: `你是客服維運助理。你可以查訂單、查公司政策、提交退款申請、草擬信件。
 規則:
 - 退款、發信等會影響客戶的動作,一律「提交申請」而非直接執行,並告知需人工核准。
@@ -273,7 +288,7 @@ const agent = new bedrock.CfnAgent(this, 'SupportAgent', {
 - 不確定訂單編號時,先向使用者確認,不要猜。`,
   guardrailConfiguration: {
     guardrailIdentifier: guardrail.attrGuardrailId,
-    guardrailVersion: 'DRAFT',
+    guardrailVersion: guardrailVersion.attrVersion,   // 不用 'DRAFT'
   },
   actionGroups: [
     {
@@ -351,6 +366,8 @@ ReAct 迴圈         託管,不用自己維護狀態             自己寫,完�
 
 **翻盤條件**:當你的 agent 需要**非常複雜的控制流**(條件分支、平行子任務、明確的狀態機),或要跨多家模型、要極致客製規劃邏輯 → 自建 LangGraph 跑在 Lambda/Fargate 上更合適。Bedrock Agents 適合「工具明確、流程線性到中等複雜」的多數業務 agent。
 
+**第三個選項:Bedrock AgentCore**——AWS 提供的 agent 託管層(Runtime、Gateway/MCP 工具、Memory、Identity),讓你用自己的框架(Strands Agents、LangGraph 等)寫 agent,再交給 AgentCore 託管與治理(2025 年新服務,細節請見官方文件)。翻盤條件:想保留框架自由度、又不想自己維運 Fargate 與 session/記憶體層時,AgentCore 會比自建或 Bedrock Agents 更合適。
+
 ### 5.2 Bedrock Agents vs 直接用 Converse API 的 tool use
 
 Bedrock 的 `Converse` API 本身就支援 tool use(你給工具定義,模型回「我要呼叫這個工具」,你執行後把結果餵回去)。差別在**誰維護迴圈**:
@@ -380,14 +397,16 @@ Guardrails 是一道**跟 prompt 無關的獨立防線**——就算 prompt 被�
 
 以「每月 10 萬次 agent 對話,平均每次 4 輪 ReAct 迴圈」估算(概略):
 
+> us-east-1 公開定價概估(撰文時),實際以帳單為準。
+
 | 項目 | 用量 | 概略月費 |
 |------|------|---------|
-| Bedrock 生成(Claude,規劃迴圈) | 10 萬 × 4 輪 × ~3K token | **~$800–2,000**(成本大戶) |
+| Bedrock 生成(Claude,規劃迴圈) | 10 萬 × 4 輪 × ~3K token ≈ 12 億 token | **~$1,200–4,000**(成本大戶;Haiku 級 ~ Sonnet 級) |
 | Knowledge Base 檢索 | 內含在對話中 | 見 Part 1(OpenSearch 固定成本) |
 | Guardrails | 10 萬 × 4 次評估 | ~$100–200 |
 | 工具 Lambda | 一般用量 | < $50 |
 | API Gateway / DynamoDB | 一般用量 | ~$50 |
-| **合計(不含 KB 固定成本)** | | **~$1,000–2,300 / 月** |
+| **合計(不含 KB 固定成本)** | | **~$1,400–4,300 / 月** |
 
 **成本洞察**:Agent 的成本主導項是 **LLM 的 token,而且被「ReAct 迴圈的輪數」放大**。每多一輪思考,就是一次完整的 LLM 呼叫(而且 context 越來越長)。優化方向:
 
@@ -429,8 +448,16 @@ Agent 是 AI 系統能力的一次質變:從「產生文字」到「產生動作
 
 ## 系列導覽
 
-- **Part 1**:Serverless RAG 智慧客服知識庫
-- **Part 2**:智慧文件處理(IDP)管線
-- **Part 3**:即時個人化推薦系統
+**基礎篇**
+- [Part 1:Serverless RAG 智慧客服知識庫](/posts/ai-system-on-native-aws-part1-serverless-rag-chatbot-zh/)
+- [Part 2:智慧文件處理(IDP)管線](/posts/ai-system-on-native-aws-part2-intelligent-document-processing-zh/)
+- [Part 3:即時個人化推薦系統](/posts/ai-system-on-native-aws-part3-realtime-recommendation-zh/)
 - **Part 4(本篇)**:自主 AI Agent 工具呼叫系統
-- **Part 5**:生產化 MLOps 與可觀測性 —— 部署策略、模型日誌、成本治理、CDK CI/CD
+- [Part 5:生產化 MLOps 與可觀測性](/posts/ai-system-on-native-aws-part5-production-mlops-observability-zh/)
+
+**進階篇**
+- [Part 6:企業級多租戶 RAG 平台](/posts/ai-system-on-native-aws-part6-enterprise-multi-tenant-rag-zh/)
+- [Part 7:基礎模型客製化與模型治理](/posts/ai-system-on-native-aws-part7-foundation-model-customization-governance-zh/)
+- [Part 8:即時串流 ML 與詐欺偵測](/posts/ai-system-on-native-aws-part8-realtime-streaming-fraud-detection-zh/)
+- [Part 9:企業 AI 安全、合規與資料治理](/posts/ai-system-on-native-aws-part9-security-compliance-data-governance-zh/)
+- [Part 10:企業 AI 平台工程 —— 落地區、LLM Gateway 與 FinOps](/posts/ai-system-on-native-aws-part10-enterprise-ai-platform-engineering-zh/)

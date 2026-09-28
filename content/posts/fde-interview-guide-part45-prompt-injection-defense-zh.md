@@ -7,7 +7,7 @@ description: "深度解析間接提示詞注入（Indirect Prompt Injection）�
 categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "Security", "LLM", "Agent", "Prompt Injection", "Vertex AI", "Cloud Run"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "21 min"
 ---
 
 > 大多數工程師聽到「提示詞注入」，第一反應是寫更好的 System Prompt 告訴模型不要聽惡意指令。
@@ -632,4 +632,4 @@ spec:
 
 **系列導航**
 
-← [Part 44：Agent 記憶體架構與長期上下文管理](/posts/fde-interview-guide-part44-agent-memory-architecture-zh/) | [Part 46：RAG 系統的安全邊界與資料隔離設計](/posts/fde-interview-guide-part46-rag-security-boundary-zh/) →
+← [Part 44：RKK 實戰——長文本 LLM 與 RAG 動態混合路由架構設計](/posts/fde-interview-guide-part44-hybrid-context-rag-zh/) | [Part 46：高規格金融業的數據無痕化與自主密鑰管理（BYOK / CMEK in GenAI）](/posts/fde-interview-guide-part46-byok-cmek-zh/) →

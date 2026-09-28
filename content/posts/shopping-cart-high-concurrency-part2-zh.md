@@ -6,8 +6,8 @@ weight: 2
 description: "高並發購物車系列第二篇：深入剖析 Redisson 分散式鎖如何防止超賣與重複下單、AbstractRoutingDataSource + LazyConnectionDataSourceProxy 的讀寫分離路由設計細節（含 @Transactional 的坑），以及 Nginx + MySQL 主從複製的 Docker HA 生產架構。"
 categories: ["all", "engineering", "architecture"]
 tags: ["Spring Boot", "Java", "Redisson", "Distributed Lock", "Read Replica", "Docker", "Nginx", "High Concurrency", "Backend", "繁體中文"]
-authors: ["YennJ12 Engineering Team"]
-readTime: "32 min"
+authors: ["yen"]
+readTime: "18 min"
 ---
 
 ## 前言
@@ -204,6 +204,9 @@ Thread B: 立刻取得鎖 → 讀到 A 還未 commit 的資料（舊資料）→
 @Service  // 注意：OrderService 類別本身沒有 @Transactional
 public class OrderService {
 
+    // 由 Spring Boot 自動配置提供（spring-boot-starter-data-jpa 會註冊 TransactionTemplate bean）
+    private final TransactionTemplate transactionTemplate;
+
     // 1. 鎖的取得：在事務開始之前
     // 2. doPlaceOrder 執行（含事務 commit）
     // 3. 鎖釋放：在事務 commit 之後
@@ -216,7 +219,10 @@ public class OrderService {
                     "Could not acquire order lock for user " + user.getId()
                     + " — a concurrent checkout is already in progress");
             }
-            doPlaceOrder(user, sessionId);  // 事務在這裡 commit
+            // 不能直接呼叫 this.doPlaceOrder()：同類別內的自我呼叫不經過 Spring 代理，
+            // @Transactional 會被忽略。改用 TransactionTemplate 以程式方式開啟事務。
+            transactionTemplate.executeWithoutResult(
+                status -> doPlaceOrder(user, sessionId));  // 事務在這裡 commit
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Interrupted while acquiring order lock", e);
@@ -225,9 +231,9 @@ public class OrderService {
         }
     }
 
-    // 實際的業務邏輯放在一個有 @Transactional 的 package-private 方法
-    @Transactional
-    void doPlaceOrder(User user, String sessionId) {
+    // 實際的業務邏輯：由上面的 TransactionTemplate 包在事務裡執行
+    // （刻意不標 @Transactional，因為自我呼叫時它不會生效）
+    private void doPlaceOrder(User user, String sessionId) {
 
         CartDto cartDto = cartService.listCartItems(user);
         List<CartItemDto> cartItemDtoList = cartDto.getCartItems();
@@ -260,7 +266,7 @@ public class OrderService {
         }
 
         cartService.deleteUserCartItems(user);
-        // ← 方法結束，@Transactional commit 在這裡發生
+        // ← 方法結束，TransactionTemplate 在這裡 commit
     }
 
     // 讀取操作標記 readOnly=true，讓讀寫分離路由把這些查詢導向 Replica
@@ -278,15 +284,21 @@ public class OrderService {
 }
 ```
 
+**為什麼不能在 `doPlaceOrder` 上標 `@Transactional` 就好？** Spring 的 `@Transactional` 是透過代理（proxy）實作的：只有「從外部經由代理呼叫」的方法才會被攔截並開啟事務。`placeOrder()` 裡的 `doPlaceOrder()` 其實是 `this.doPlaceOrder()`，直接呼叫目標物件、繞過代理，所以註解完全不會生效，每個 repository 呼叫各自獨立 commit，鎖也就保護不了「整筆訂單」這個單位。常見的三種解法：
+
+1. **`TransactionTemplate`**（上面的寫法）：以程式方式界定事務邊界，最直觀。
+2. **拆成另一個 bean**：把 `doPlaceOrder` 移到 `OrderTxService` 並標 `public @Transactional`，由 `OrderService` 注入呼叫，呼叫就會經過代理。
+3. **自我注入**：注入自己的代理（`@Lazy OrderService self`）後呼叫 `self.doPlaceOrder()`，可行但較不直觀。
+
 正確的執行順序：
 
 ```
 Thread A 呼叫 placeOrder：
   1. tryLock("order:user:7") → 成功，取得鎖
-  2. doPlaceOrder() 開始執行（Spring 開始事務）
+  2. TransactionTemplate 開始事務，執行 doPlaceOrder()
   3. 讀取購物車 → 有商品
   4. 建立訂單、清空購物車
-  5. doPlaceOrder() 返回 → Spring commit 事務
+  5. doPlaceOrder() 返回 → TransactionTemplate commit 事務
   6. finally: unlock() → 釋放鎖
 
 Thread B 同時呼叫 placeOrder（在 A 持有鎖期間）：

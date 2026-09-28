@@ -7,7 +7,7 @@ description: "深入解析 RAG 系統三大評估指標——Context Relevance�
 categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "Observability", "Evaluation"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "11 min"
 ---
 
 **RAG 系統沒有「準確率」這個單一指標——你需要三把尺同時量：檢索對了嗎？答案有根據嗎？答案回答了問題嗎？少量其中任何一把，幻覺或廢話就悄悄進入生產。**
@@ -151,7 +151,9 @@ Answer → 生成問題 →  Q1: "Pod 失敗後如何自動重啟？"     sim=0.
            Answer Relevance = mean = 0.85  ✓
 ```
 
-### 具體基準數字
+### 具體基準數字（示意量級）
+
+以下數字為說明改善方向的估算量級，並非特定資料集的量測結果，實際分數依領域與評估集而異：
 
 | 指標 | 未調優 RAG（baseline） | Hybrid Search + Reranking | 提升幅度 |
 |------|----------------------|--------------------------|--------|
@@ -322,4 +324,4 @@ groups:
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-19-vector-database-zh/) | [後一篇](/posts/fde-interview-core-topic-21-prompt-engineering-zh/) →
+← [前一篇](/posts/fde-core-concept-19-llm-judge-bias-mitigation-zh/) | [後一篇](/posts/fde-core-concept-21-discovery-to-constraints-zh/) →

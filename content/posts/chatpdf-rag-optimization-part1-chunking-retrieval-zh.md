@@ -308,7 +308,7 @@ def _minmax(by_key: dict) -> dict:
 
 - 若文件本身就是均勻短段落(如 FAQ 條目),固定切塊反而簡單可靠,不必上 Semantic。
 - 若查詢幾乎全是自然語言問句、沒有專有名詞,純 dense(alpha=1.0)就夠,BM25 是多餘成本。
-- 若語料極大(百萬級 chunk),每次查詢都重算全語料 BM25 會太慢——需要預建倒排索引(這正是 PR #2 加 LRU cache 要解的問題,見下篇)。
+- 若語料極大(百萬級 chunk),每次查詢都對全語料算 BM25(加上 dense 也是全語料評分)會太慢——需要預建倒排索引或 ANN 索引。注意 PR #2 加的 LRU cache(見下篇)只快取已建好的 BM25 物件、省掉重建成本,每次查詢仍會掃過全語料,並沒有解決這個問題。
 
 ---
 
@@ -334,15 +334,15 @@ def _minmax(by_key: dict) -> dict:
 
 > 一句話總結:RAG 的品質不是靠更強的 LLM 堆出來的,而是靠「切對地方、撈對段落」省出來的。
 
-下一篇([第二部分](../chatpdf-rag-optimization-part2-backend-hardening-zh/))會進入**後端強化與進階 RAG**:上傳安全驗證、資源邊界、多查詢擴展、檢索評分過濾、頁碼引用、LRU 快取——把這套 pipeline 從「能跑」變成「能上線」。
+下一篇([第二部分](/posts/chatpdf-rag-optimization-part2-backend-hardening-zh/))會進入**後端強化與進階 RAG**:上傳安全驗證、資源邊界、多查詢擴展、檢索評分過濾、頁碼引用、LRU 快取——把這套 pipeline 從「能跑」變成「能上線」。
 
 ---
 
 **系列導覽**
 
 - 第一部分:語意切塊與混合檢索(本篇)
-- [第二部分:後端強化與進階 RAG](../chatpdf-rag-optimization-part2-backend-hardening-zh/)
-- [第三部分:可觀測性與評估](../chatpdf-rag-optimization-part3-observability-eval-zh/)
+- [第二部分:後端強化與進階 RAG](/posts/chatpdf-rag-optimization-part2-backend-hardening-zh/)
+- [第三部分:可觀測性與評估](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/)
 
 **參考連結**
 

@@ -5,12 +5,14 @@ draft: false
 weight: 17
 description: "深入解析 Vertex AI Context Caching 的 KV 快取原理、三層驅逐架構設計，以及如何避免每小時 $4.50 的隱性計費陷阱。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "VertexAI", "Caching", "CostOptimization"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Vertex AI", "Caching", "Cost Optimization"]
 authors: ["yen"]
 readTime: "18 min"
 ---
 
 **核心定義：Vertex AI Context Caching 將大型 prompt prefix 的 KV activations 固定在 TPU 記憶體，後續呼叫跳過 prefill 階段，token 成本降至 1/4——但按小時計費的機制讓閒置快取成為最隱蔽的成本炸彈，正確的驅逐策略是區分工程師與初學者的分水嶺。**
+
+> 2026 註：本文的 32K 最小閾值與價格數字（$4.50/hr 儲存費、$1.25 → $0.3125 per 1M）是 Gemini 1.5 世代 explicit caching 的規格。Gemini 2.x 之後明確快取的最小 token 數已大幅降低，並新增自動套用、不收儲存費的 implicit caching；「閒置快取 = 成本炸彈」的論點只適用於 explicit caching。實作前請以官方文件的最新價格與限制為準。
 
 ---
 
@@ -102,9 +104,9 @@ Vertex AI Context Cache 的計費有**三個計量維度**，必須同時理解�
 
 低於 4.8 次/小時，開快取反而更貴。這個數字對低活躍用戶（例如睡眠中的用戶）來說輕易就會破功。
 
-### 2.3 32K Token 最小閾值的由來
+### 2.3 32K Token 最小閾值（Gemini 1.5 世代規格）
 
-Vertex AI 要求 Context Cache prefix 至少達到 **32,768 tokens**。這個限制來自 TPU 記憶體管理的頁面對齊（page alignment）設計——TPU HBM 以 32K token 為基本分配單位。小於此閾值時，管理 KV store 的 metadata、lookup table、eviction scheduler 所帶來的開銷，超過了省下的 prefill 計算量，平台直接拒絕。
+Gemini 1.5 世代的 Vertex AI 要求 Context Cache prefix 至少達到 **32,768 tokens**，小於此閾值時平台直接拒絕建立快取（新世代模型的最小值已大幅降低，請查當前文件）。本節以 32K 作為範例閾值說明決策邏輯：prefix 太短時，快取的管理成本與儲存費會超過省下的 prefill 計算量。
 
 ```
 token 數量 vs. 快取效益（概念圖）：
@@ -123,7 +125,7 @@ token 數量 vs. 快取效益（概念圖）：
     ▼  損失
 ```
 
-在實作端，需要在呼叫 API 之前自行做 token 計數（可用 `google.generativeai.count_tokens()` 或 Tiktoken 近似值），確認超過 32K 門檻後才建立快取。Token 計數本身的延遲約 50-100ms，但這個成本一次性發生在「是否升級至 L2」的決策點，遠小於因錯誤建立快取而浪費的儲存費。
+在實作端，需要在呼叫 API 之前自行做 token 計數（可用 `google-genai` SDK 的 `client.models.count_tokens()`；舊的 `google.generativeai` SDK 已被取代），確認超過 32K 門檻後才建立快取。Token 計數本身的延遲約 50-100ms，但這個成本一次性發生在「是否升級至 L2」的決策點，遠小於因錯誤建立快取而浪費的儲存費。
 
 **32K 閾值的邊界效應**：若系統 prompt 長期維持在 30-35K token 之間（例如動態注入工具 schema 導致長度浮動），應設定一個保守的觸發閾值（例如 36K），避免在閾值附近反覆建立和刪除快取（每次建刪都有 API overhead 和最少 1 分鐘的費用）。
 
@@ -440,4 +442,4 @@ $0.3125/M  CachedContent.create()
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-16-zh/) | [後一篇](/posts/fde-interview-core-topic-18-zh/) →
+← [前一篇](/posts/fde-core-concept-16-ttft-throughput-optimization-zh/) | [後一篇](/posts/fde-core-concept-18-semantic-model-routing-zh/) →

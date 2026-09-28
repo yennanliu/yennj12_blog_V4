@@ -3,10 +3,11 @@ title: "Kubernetes Autoscaling Complete Guide (Part 5): Vertical Pod Autoscaler 
 date: 2025-11-09T20:00:00+08:00
 draft: false
 weight: 5
-authors: ["yennj12 team"]
+authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "VPA", "Vertical Pod Autoscaler", "Resource Optimization", "Cost Optimization", "Right-sizing", "Performance", "FinOps", "devops", "optimization"]
+tags: ["Kubernetes", "K8S", "VPA", "Vertical Pod Autoscaler", "Resource Optimization", "Cost Optimization", "Right-sizing", "Performance", "FinOps", "DevOps", "Optimization"]
 summary: "Part 5 of the Kubernetes Autoscaling series: Deep dive into Vertical Pod Autoscaler (VPA), resource right-sizing strategies, combining VPA with HPA, and production-grade resource optimization techniques for cost-effective Kubernetes operations."
+description: "Part 5 of the Kubernetes Autoscaling series: Deep dive into Vertical Pod Autoscaler (VPA), resource right-sizing strategies, combining VPA with HPA, and production-grade resource optimization techniques for cost-effective Kubernetes operations."
 readTime: "35 min"
 ---
 
@@ -448,16 +449,17 @@ spec:
 - **PDBs Required**: Prevent cascading failures
 - **Monitoring**: Watch for elevated pod restart rates
 
-### Mode 4: Auto (Future - Not Yet Implemented)
+### Mode 4: InPlaceOrRecreate (In-Place Resize)
 
-**Status**: Planned feature for in-place resource updates
+**Status (updated 2026)**: This section originally described in-place updates as a future feature. That is no longer true. Kubernetes in-place pod resize (KEP-1287) reached beta, enabled by default, in 1.33 and has since graduated to GA. VPA exposes it as a separate `InPlaceOrRecreate` update mode, first added as an alpha feature in VPA 1.4 behind a feature gate. Check the VPA release notes for the maturity and feature-gate requirements of the version you run.
+
+Note that `updateMode: "Auto"` does **not** mean in-place: today it behaves like `Recreate` (evict and recreate the pod).
 
 ```yaml
-# Future capability (not yet available)
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
-  name: my-app-vpa-auto
+  name: my-app-vpa-inplace
 spec:
   targetRef:
     apiVersion: apps/v1
@@ -465,16 +467,15 @@ spec:
     name: my-app
 
   updatePolicy:
-    updateMode: "Auto"  # In-place updates without pod restart
-
-# When available, will update resources WITHOUT pod eviction
-# Requires Kubernetes in-place resource update feature
+    # Try to resize the running pod in place; fall back to evict+recreate
+    # when the node cannot fit the new size or the resize is infeasible
+    updateMode: "InPlaceOrRecreate"
 ```
 
-**Expected Behavior** (when implemented):
-- Update pod resources without restart
-- Zero disruption
-- Immediate application of new limits
+**Behavior:**
+- Resizes pod resources without a restart when the node has room (subject to each container's `resizePolicy`)
+- Falls back to eviction when an in-place resize is not possible
+- Much less disruptive than `Recreate`, which matters for the VPA + HPA combination discussed below
 
 ## Part 3: VPA Configuration Deep Dive
 

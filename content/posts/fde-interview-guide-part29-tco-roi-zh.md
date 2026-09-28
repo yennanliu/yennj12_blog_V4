@@ -5,7 +5,7 @@ draft: false
 weight: 29
 description: "以 Google FDE 顧問視角拆解 AI 系統的總持有成本（TCO）估算方法：Token 成本、Infra 成本、人力成本的計算框架、如何用 ROI 語言說服財務決策者，以及 Vertex AI 定價模型的實際試算"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Consultant", "TCO", "ROI", "Pricing", "Vertex AI", "GCP", "Cost Optimization", "Interview", "Google", "RKK"]
+tags: ["AI", "FDE", "Consultant", "TCO", "ROI", "Pricing", "Vertex AI", "GCP", "Cost Optimization", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "15 min"
 ---
@@ -29,7 +29,7 @@ readTime: "15 min"
 ```
 技術架構決定成本結構：
 
-你選 Gemini 1.5 Pro vs Gemini 1.5 Flash → 成本差 5 倍
+你選 Pro 級 vs Flash 級模型 → 單價可差到一個數量級以上
 你選 Vertex AI Vector Search vs pgvector → 成本和維護方式不同
 你選 Cloud Run vs GKE → Infra 成本和工程複雜度不同
 
@@ -70,7 +70,8 @@ Layer 3：人力成本（最容易被忽略）
 ### Step 1：LLM API 成本
 
 ```
-Gemini 1.5 Pro 定價（2026 年參考）：
+Gemini 1.5 Pro 定價（2024 年公開定價；該模型已於 2025 年退役，
+以下僅示範計算方法，請代入當期官方價目表）：
   Input：$3.50 per 1M tokens
   Output：$10.50 per 1M tokens
 
@@ -114,7 +115,9 @@ Gemini 1.5 Pro 定價（2026 年參考）：
 ```
 選項 A：Vertex AI Vector Search（全託管）
   費用結構：
-  ├── Index size：$0.08 per GB per hour（Node 費用）
+  ├── Index size：$0.08 per GB per hour（Node 費用，簡化示意；
+  │   實際是按部署節點的機器類型 × 小時計價，建索引另按 GB 計，
+  │   請以官方價目表為準）
   ├── Query：$0.30 per 1M queries
   └── 假設 1M 個向量（384 維），約 1.5GB 索引
 
@@ -166,6 +169,7 @@ Egress（如果 Pinecone 在 GCP 外）：
 ├────────────────────────────────────────────────────────┤
 │  合計                                $3,833/month      │
 └────────────────────────────────────────────────────────┘
+（以上為依 2024 年舊定價的示意估算）
 
 建置成本（一次性）：
   工程師 2 人 × 3 週 × $X/週（依客戶情況）
@@ -177,9 +181,11 @@ Egress（如果 Pinecone 在 GCP 外）：
 ## 四、成本優化選項（給客戶看的）
 
 ```
-優化方向 1：改用 Gemini 1.5 Flash（成本降低 5 倍）
-  Flash 定價：Input $0.075/1M, Output $0.30/1M
-  月 LLM 成本：約 $735/month
+優化方向 1：改用 Flash 級模型（以當時價目，單價差距約 40 倍）
+  Flash 定價（2024 年，1.5 Flash）：Input $0.075/1M, Output $0.30/1M
+  Input：10,000 × 2,000 × $0.075/1M = $1.5/day
+  Output：10,000 × 500 × $0.30/1M = $1.5/day
+  月 LLM 成本：約 $3 × 30 ≈ $90/month
   
   什麼時候適合：
   ├── FAQ 問答（答案較固定）
@@ -193,23 +199,33 @@ Egress（如果 Pinecone 在 GCP 外）：
   如果 System Prompt + FAQ 文件（固定部分）可以 Cache，
   Cache hit 後 Input token 成本降低 75%
   
-  # 使用 Vertex AI Caching API
-  from vertexai.preview import caching
+  # 使用 Google Gen AI SDK（google-genai）的 Vertex AI Context Caching
+  # （舊的 vertexai 生成式 SDK 已棄用）
+  from google import genai
+  from google.genai import types
   
-  cached_content = caching.CachedContent.create(
-      model_name="gemini-1.5-pro-001",
-      system_instruction=SYSTEM_PROMPT,
-      contents=[fixed_context],  # 固定的 FAQ context
-      ttl=datetime.timedelta(hours=24),
+  client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
+  MODEL_ID = "..."  # 請填官方文件列出的現行 Gemini 模型 ID
+  
+  cache = client.caches.create(
+      model=MODEL_ID,
+      config=types.CreateCachedContentConfig(
+          system_instruction=SYSTEM_PROMPT,
+          contents=[fixed_context],  # 固定的 FAQ context
+          ttl="86400s",              # 24 小時
+      ),
   )
   
   # 後續 request 引用 cache
-  response = model.generate_content(
-      user_query,
-      cached_content=cached_content,
+  response = client.models.generate_content(
+      model=MODEL_ID,
+      contents=user_query,
+      config=types.GenerateContentConfig(cached_content=cache.name),
   )
   
-  潛在節省：如果 1,500 tokens 是固定 context，
+  潛在節省（示意）：如果 1,500 tokens 是固定 context
+  （注意：顯式快取有最小長度門檻，1,500 tokens 可能不夠格，
+    且 cache 另有儲存費；請以官方文件為準），
   每月節省：1,500 × 10,000 × 30 × 75% × $3.5/1M
           ≈ $1,181/month
 
@@ -302,8 +318,8 @@ ROI：154,000 / 46,000 = 335%（年化）
 
 第一層是 LLM API 成本，這個最容易算——
 每個 query 的 token 數乘以定價，乘以 query 量。
-10,000 queries × 2,500 tokens × Gemini 1.5 Pro 的定價，
-大約是每月 $3,700 左右。
+10,000 queries × 2,500 tokens × 當期 Pro 級模型定價，
+以 2024 年 Gemini 1.5 Pro 的價格示意，大約是每月 $3,700 左右。
 
 第二層是 Infra 成本——Vector DB、Compute、Storage——
 這部分通常是 LLM 成本的 10-20%，大約 $150/month。
@@ -324,3 +340,9 @@ ROI：154,000 / 46,000 = 335%（年化）
 **成本估算不是財務分析師的工作。**  
 **它是 FDE 幫助客戶做決策的工具。**  
 **會算，才能推進。**
+
+---
+
+**系列導航**
+
+← [Part 28：顧問實戰——生產事故診斷與客戶溝通語言](/posts/fde-interview-guide-part28-incident-communication-zh/) | [Part 30：顧問實戰——Constraint-First 架構設計：VPC 限制下的 GCP AI 系統](/posts/fde-interview-guide-part30-constraint-driven-architecture-zh/) →

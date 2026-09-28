@@ -5,12 +5,12 @@ draft: false
 weight: 4
 description: "深入解析混合檢索（Dense + Sparse）與 Reciprocal Rank Fusion 的核心原理、實作層次及面試答題策略，涵蓋 BM25、HNSW、SPLADE、Vertex AI Search 等關鍵技術與具體效能數字。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "VectorSearch", "BM25"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "Vector Search", "BM25"]
 authors: ["yen"]
 readTime: "18 min"
 ---
 
-**單一檢索模態最多只能取得 72% 的 Recall；混合 Dense + Sparse 搭配 RRF 融合，可將 Recall@10 推至 84%——多 12 個百分點就是 RAG 系統品質的分水嶺。**
+**以示意量級來說，單一檢索模態可能只取得約 72% 的 Recall；混合 Dense + Sparse 搭配 RRF 融合，可將 Recall@10 推至約 84%——多出的十幾個百分點就是 RAG 系統品質的分水嶺。**（本文 72% / 68% / 84% 等數字為示意，實際提升幅度依資料集而定，需在自己的評估集上量測。）
 
 ---
 
@@ -222,7 +222,7 @@ k=200  1/201= 0.0050   1/210= 0.0048   1.04x  ← 幾乎相等（極度均衡）
 
 ---
 
-### 效能數字對照
+### 效能數字對照（示意量級）
 
 | 指標 | Dense Only | Sparse Only | Hybrid RRF | Hybrid + Reranker |
 |------|-----------|------------|------------|-------------------|
@@ -430,4 +430,4 @@ LIMIT 10
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-3-zh/) | [後一篇](/posts/fde-interview-core-topic-5-zh/) →
+← [前一篇](/posts/fde-core-concept-3-state-machine-dag-zh/) | [後一篇](/posts/fde-core-concept-5-reranking-cross-encoder-zh/) →

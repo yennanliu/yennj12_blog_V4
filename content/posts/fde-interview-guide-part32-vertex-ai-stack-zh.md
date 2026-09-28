@@ -5,7 +5,7 @@ draft: false
 weight: 32
 description: "以 Google FDE 視角完整拆解 Vertex AI AI 產品棧：何時選 Agent Builder vs 自建、Vertex AI Search 和 DIY RAG 的根本差異、Gemini API 四個關鍵特性（system instruction、tool use、grounding、context caching），以及企業 AI 系統的 GCP 部署架構"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Vertex AI", "Gemini", "Agent Builder", "GCP", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Vertex AI", "Gemini", "Agent Builder", "GCP", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "19 min"
 ---
@@ -267,9 +267,9 @@ Grounding with Vertex AI Search（企業內部知識庫）：
 原理：
   把不常改變的「固定 context」（System Prompt、長文件、FAQ）
   預先送給 Gemini 處理並快取
-  後續 request 引用 cache，只需支付 cache storage 費用（比正常 input token 便宜）
+  後續 request 引用 cache，被快取的 token 以折扣價計費，另加按時間計的 cache storage 費用
 
-費用對比（參考）：
+費用對比（2024 年 Gemini 1.5 Pro 定價，該模型已退役，僅示意比例）：
   正常 input token：$3.50 / 1M tokens（Gemini 1.5 Pro）
   Cache storage：  $1.00 / 1M tokens / hour
   Cache hit read： $0.875 / 1M tokens（75% 折扣）
@@ -281,23 +281,35 @@ Grounding with Vertex AI Search（企業內部知識庫）：
   └── 大型 PDF 或合約文件（先 cache，多次問答）
 
 Cache 的設計限制：
-  ├── 最小 cache 大小：1,024 tokens（小於這個用正常 token 更便宜）
+  ├── 最小 cache 大小：依模型而定，未達門檻的內容無法建立 cache
+  │   （Gemini 1.5 世代為 32,768 tokens，新世代模型門檻低很多；
+  │     新模型另有自動生效的 implicit caching，請以官方文件為準）
   ├── Cache 有 TTL（存活時間），到期自動刪除
   └── Cache 不跨 model 版本共享（換模型版本需要重新建 cache）
 
 工程設計示意：
 
+  （使用 Google Gen AI SDK；舊的 vertexai 生成式 SDK 已棄用）
+  from google import genai
+  from google.genai import types
+  client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
+  MODEL_ID = "..."  # 請填官方文件列出的現行 Gemini 模型 ID
+
   建立 Cache（一次性）：
-  cached_content = caching.CachedContent.create(
-      model="gemini-1.5-pro-001",
-      contents=[system_prompt + faq_documents],
-      ttl=timedelta(hours=24)
+  cache = client.caches.create(
+      model=MODEL_ID,
+      config=types.CreateCachedContentConfig(
+          system_instruction=system_prompt,
+          contents=[faq_documents],
+          ttl="86400s",  # 24 小時
+      ),
   )
 
   後續 request 引用（重複使用）：
-  response = model.generate_content(
-      user_question,
-      cached_content=cached_content
+  response = client.models.generate_content(
+      model=MODEL_ID,
+      contents=user_question,
+      config=types.GenerateContentConfig(cached_content=cache.name),
   )
 ```
 
@@ -399,7 +411,7 @@ Container 存放           Artifact Registry     GCP 原生，整合 Cloud Build
 Model Garden 是 Vertex AI 的模型中心，包含三類模型：
 
 類型 1：Google 模型
-  Gemini 系列（Gemini 2.0 Flash、Gemini 1.5 Pro）
+  Gemini 系列（撰文時為 Gemini 2.0 Flash、Gemini 1.5 Pro；型號更新快，以 Model Garden 現況為準）
   Gemma 系列（開源，可自行部署和微調）
   Imagen（圖像生成）
 
@@ -449,11 +461,11 @@ A：Vertex AI 提供 Supervised Fine-Tuning（SFT）服務，
 
 ```
 答：三個主要限制：
-    1. 最小 cache 大小 1,024 tokens——小於這個，cache storage 費用
-       比直接打 input token 還貴
+    1. 有最小 cache 大小門檻（依模型而定，1.5 世代為 32,768 tokens）——
+       未達門檻無法建立；而且 cache 另有儲存費，使用次數太少反而更貴
     2. Cache 有 TTL，到期要重建——動態內容頻繁更新的場景，
        cache 維護成本反而高
-    3. Cache 不跨模型版本——如果你從 gemini-1.5-pro-001 升級到 002，
+    3. Cache 不跨模型版本——例如從某模型的 -001 版升級到 -002 版，
        所有 cache 要重建
     適合 cache 的：長且穩定的 system prompt、不常更新的 FAQ 文件
     不適合 cache 的：每次 request 都會變化的 context
@@ -527,3 +539,9 @@ A：Vertex AI 提供 Supervised Fine-Tuning（SFT）服務，
 
 **Google FDE 的核心價值不是說「Google 的東西最好」，**  
 **而是說「在你的場景下，Google 的哪個選項給你最好的 ROI，以及為什麼。」**
+
+---
+
+**系列導航**
+
+← [Part 31：RKK 實戰——Google ADK 深度設計：Agent 類型、Tool 宣告與 Multi-Agent 協調](/posts/fde-interview-guide-part31-adk-deep-dive-zh/) | [Part 33：RKK 面試解剖——面試官怎麼看你、怎麼評分、什麼叫做強力雇用](/posts/fde-interview-guide-part33-rkk-anatomy-zh/) →

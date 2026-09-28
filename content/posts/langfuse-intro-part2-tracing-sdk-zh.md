@@ -6,7 +6,7 @@ description: "概念懂了,該動手了。本篇示範用 Langfuse Python SDK �
 categories: ["all", "ai", "engineering"]
 tags: ["Langfuse", "LLM", "Observability", "Tracing", "Python", "SDK", "OpenAI", "LangChain", "LLMOps"]
 authors: ["yen"]
-readTime: "15 min"
+readTime: "10 min"
 ---
 
 > 可觀測性最大的阻力,從來不是「值不值得」,而是「要改多少程式碼」。
@@ -17,7 +17,7 @@ readTime: "15 min"
 
 ## 一、起手式:安裝與設定
 
-[Part 1](../langfuse-intro-part1-concepts-zh/) 講完概念,這篇全是實作。先裝套件、設好金鑰。
+[Part 1](/posts/langfuse-intro-part1-concepts-zh/) 講完概念,這篇全是實作。先裝套件、設好金鑰。
 
 ```bash
 pip install langfuse
@@ -231,16 +231,16 @@ langfuse.update_current_trace(
 
 > 一句話總結:可觀測性不該是「之後有空再加」的負債,用 Langfuse 它可以是「現在就加、幾乎零成本」的基礎建設。
 
-資料進來了,下一篇([Part 3](../langfuse-intro-part3-evaluation-zh/))處理最關鍵的問題:**這些回答到底好不好?** 我們會用 Score、LLM-as-a-Judge、與 Dataset 實驗,把品質變成可量化的數字。
+資料進來了,下一篇([Part 3](/posts/langfuse-intro-part3-evaluation-zh/))處理最關鍵的問題:**這些回答到底好不好?** 我們會用 Score、LLM-as-a-Judge、與 Dataset 實驗,把品質變成可量化的數字。
 
 ---
 
 **系列導覽**
 
-- [Part 1 — 核心概念與資料模型](../langfuse-intro-part1-concepts-zh/)
+- [Part 1 — 核心概念與資料模型](/posts/langfuse-intro-part1-concepts-zh/)
 - Part 2 — SDK 整合與 Tracing 實戰(本篇)
-- [Part 3 — LLM 評估:Score、LLM-as-a-Judge、Dataset](../langfuse-intro-part3-evaluation-zh/)
-- [Part 4 — 監控與 Prompt 管理](../langfuse-intro-part4-monitoring-prompt-management-zh/)
+- [Part 3 — LLM 評估:Score、LLM-as-a-Judge、Dataset](/posts/langfuse-intro-part3-evaluation-zh/)
+- [Part 4 — 監控與 Prompt 管理](/posts/langfuse-intro-part4-monitoring-prompt-management-zh/)
 
 **參考連結**
 

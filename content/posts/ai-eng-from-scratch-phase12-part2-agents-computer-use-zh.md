@@ -5,9 +5,9 @@ draft: false
 weight: 25
 description: "深入解析多模態 Agent 架構：OCR+VLM 文件理解、電腦視覺 UI 自動化、SeeAct/Computer Use 系統設計與安全邊界"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multimodal", "Agent", "Computer Use", "VLM", "Document AI", "RKK", "Interview"]
+tags: ["AI", "Multimodal", "Agent", "Computer Use", "VLM", "Document AI", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "18 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的公司正在開發一個企業級 RPA Agent，能自動完成跨系統的報表匯出與郵件歸檔任務。目前系統在 POC 階段成功率約 62%，但 PM 要求上線後達到 90%+。請設計一個多模態 Computer Use Agent 架構，說明你如何提升可靠性、如何控制成本，以及如何在不破壞生產環境的前提下安全執行自動化操作。
 
@@ -220,7 +220,7 @@ series: ["ai-eng-from-scratch"]
 
 圖表（bar chart、line chart、pie chart）是 OCR 完全失效的場景——它們沒有可提取的文字結構，必須完全依賴 VLM 的視覺推理能力。
 
-**VLM 對圖表的理解能力（基準測試）：**
+**VLM 對圖表的理解能力（示意估算，非公開基準測試結果）：**
 
 | 圖表類型 | GPT-4V 精度 | Claude 3.5 Sonnet 精度 | LLaVA-1.6（7B）精度 |
 |---------|------------|----------------------|-------------------|
@@ -228,6 +228,8 @@ series: ["ai-eng-from-scratch"]
 | 折線圖趨勢判斷 | 94% | 93% | 81% |
 | 圓餅圖比例估算 | 85% | 83% | 64% |
 | 複合圖表（雙軸） | 78% | 76% | 51% |
+
+> 表中為 2024 年世代的模型，數字僅用來說明「雲端大模型 vs 本地 7B」的相對差距。實際選型請用 ChartQA 等公開基準與自己的報表樣本重測；電腦操作任務的端對端成功率，則可參考 OSWorld、WebArena 這類公開基準。
 
 **精度 vs 成本的取捨策略**：
 - 對精度要求 < 85% 的場景（如大量報表批次摘要），使用本地 LLaVA-1.6，成本 ~$0.001/圖
@@ -478,11 +480,13 @@ TaskPolicy {
 | 截圖-VLM 呼叫次數/任務 | 15 次 | 10 次（差異優化） | 9 次 | -40% |
 | 高風險操作誤執行事件數/月 | 12 件 | 2 件 | 0 件 | -100% |
 
+> 以上為示意估算，非實測數據。
+
 **成本模型試算（1,000 任務/日）：**
 
 - Phase 1：1,000 × $0.45 = **$450/日**，月費 $13,500
 - Phase 2：1,000 × $0.27 = **$270/日**，月費 $8,100
-- Phase 3：1,000 × $0.06 = **$60/日**，月費 $1,800（含本地 GPU 折舊後仍比 Phase 1 低 87%）
+- Phase 3：1,000 × $0.06 = **$60/日**，月費 $1,800（含本地 GPU 折舊後仍比 Phase 1 低 87%）。降幅來自兩處：主路徑改由自建 VLM 處理（約 $0.004/截圖 × 9 次 ≈ $0.036），只有置信度不足的步驟才升級到雲端 API，其餘約 $0.02 攤給雲端後備與 GPU 折舊
 
 **任務類型完成率細分（Phase 3）：**
 
@@ -500,20 +504,22 @@ TaskPolicy {
 
 本文是 **AI 工程從零開始** 系列 Phase 12 的第 2 篇。
 
-← **上一篇：[Phase 12 Part 1：多模態基礎 — VLM 架構與視覺語言對齊](/posts/ai-eng-from-scratch-phase12-part1-vlm-basics-zh/)**
+← **上一篇：[Phase 12 Part 1：Vision Transformer 與多模態融合架構](/posts/ai-eng-from-scratch-phase12-part1-vit-fusion-zh/)**
 
-→ **下一篇：[Phase 13 Part 1：Agent 評估框架 — 基準測試、自動評分與人工標注管線](/posts/ai-eng-from-scratch-phase13-part1-agent-eval-zh/)**
+→ **下一篇：[Phase 13 Part 1：MCP 與 API 整合 — AI 與真實世界的介面](/posts/ai-eng-from-scratch-phase13-part1-mcp-apis-zh/)**
 
 ---
 
 **系列索引：**
 
-- Phase 1–4：基礎建設（資料工程、訓練基礎設施、模型服務）
-- Phase 5–8：LLM 應用工程（RAG、Prompt 工程、Fine-tuning、評估）
-- Phase 9–11：Agent 系統（工具呼叫、多 Agent 協作、記憶體管理）
-- **Phase 12（本系列）：多模態 Agent**（VLM 基礎 → 電腦操作 Agent）
-- Phase 13–15：Agent 評估、安全與生產運維
+- Phase 1–3：數學基礎、傳統機器學習、深度學習核心
+- Phase 4–6：電腦視覺、NLP、語音
+- Phase 7–10：Transformer、生成模型、強化學習、從頭構建 LLM
+- Phase 11：LLM 推論工程、RAG 與評估
+- **Phase 12（本階段）：多模態**（ViT 與多模態融合 → 多模態 Agent 與電腦操作）
+- Phase 13–16：MCP 與工作流程編排、Agent 系統、長時程自主系統、多 Agent 協調
+- Phase 17–19：推論服務與可觀測性、AI 安全與治理、Capstone
 
 ---
 
-*本文為 AI 工程從零開始系列內容，適用於準備 Staff/Principal Engineer 面試的工程師，以及正在設計企業級 AI 自動化平台的架構師。*
+*本文為 AI 工程從零開始系列內容，適用於想深入 AI 工程的工程師，以及正在設計企業級 AI 自動化平台的架構師。*

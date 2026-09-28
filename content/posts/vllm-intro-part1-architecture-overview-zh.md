@@ -7,7 +7,7 @@ description: "vLLM 原始碼與架構導讀系列第一篇：用一張全景圖�
 categories: ["all", "ai", "engineering", "infrastructure"]
 tags: ["vLLM", "LLM", "AI", "Inference", "PagedAttention", "Architecture", "GPU", "繁體中文"]
 authors: ["yen"]
-readTime: "24 min"
+readTime: "17 min"
 ---
 
 > *大多數人部署 LLM 的方式，是 `pipeline("text-generation")` 加一台 A100，跑得動就上線，跑不動就換 H100。*
@@ -27,7 +27,7 @@ readTime: "24 min"
 
 | Part | 主題 | 對應原始碼 |
 |---|---|---|
-| **Part 1（本篇）** | 全景架構、請求生命週期、記憶體帳本、V0→V1 | `vllm/v1/engine/`、`vllm/config.py` |
+| **Part 1（本篇）** | 全景架構、請求生命週期、記憶體帳本、V0→V1 | `vllm/v1/engine/`、`vllm/config/` |
 | Part 2 | PagedAttention 與 KV Cache 管理、Prefix Caching | `vllm/v1/core/kv_cache_manager.py`、`csrc/attention/` |
 | Part 3 | 連續批次、統一排程器、Chunked Prefill、投機解碼 | `vllm/v1/core/sched/scheduler.py` |
 | Part 4 | 分散式推論、量化、torch.compile 與 CUDA Graph | `vllm/distributed/`、`vllm/compilation/` |
@@ -252,9 +252,13 @@ V1 最容易被忽略但影響最大的改動，是**把 API 伺服器和引擎�
 
 同一個 vLLM，在不同規模下該長成完全不同的樣子。以下用三個階段說明。
 
-### ╔═══════════════════════════════════════════════════╗
-### ║  Phase 1：POC —— 單卡、單模型、< 10 QPS           ║
-### ╚═══════════════════════════════════════════════════╝
+### Phase 1：POC —— 單卡、單模型、< 10 QPS
+
+```
+╔═══════════════════════════════════════════════════╗
+║  Phase 1：POC —— 單卡、單模型、< 10 QPS           ║
+╚═══════════════════════════════════════════════════╝
+```
 
 ```
 ┌──────────────┐      ┌────────────────────────────────┐
@@ -280,9 +284,13 @@ vllm serve Qwen/Qwen3-8B \
 - **解決了什麼**：能用、延遲可接受、API 和 OpenAI 相容所以前端不用改。
 - **還沒解決什麼**：機器掛了就全掛；模型換版本要停機；沒有任何指標；長 prompt 進來會把短請求的 ITL 拖爛（因為你還沒調 `max_num_batched_tokens`）。
 
-### ╔═══════════════════════════════════════════════════╗
-### ║  Phase 2：MVP —— 單機多卡、K8s、10–200 QPS        ║
-### ╚═══════════════════════════════════════════════════╝
+### Phase 2：MVP —— 單機多卡、K8s、10–200 QPS
+
+```
+╔═══════════════════════════════════════════════════╗
+║  Phase 2：MVP —— 單機多卡、K8s、10–200 QPS        ║
+╚═══════════════════════════════════════════════════╝
+```
 
 ```
                     ┌────────────────────────────┐
@@ -335,9 +343,13 @@ vllm serve meta-llama/Llama-3.3-70B-Instruct-FP8 \
 - **解決了什麼**：高可用、可觀測、能撐住 100+ QPS、模型可以滾動更新。
 - **還沒解決什麼**：前綴快取在多副本之間不共享（同一個使用者的第二輪對話可能打到別的 pod，重算整段歷史）；prefill 與 decode 還混在同一個 batch，長 prompt 進來時 P99 ITL 仍會抖；擴容以 pod 為單位，粒度是 4 張卡。
 
-### ╔═══════════════════════════════════════════════════╗
-### ║  Phase 3：Scale —— 多機、P/D 分離、200 QPS – 1M MAU║
-### ╚═══════════════════════════════════════════════════╝
+### Phase 3：Scale —— 多機、P/D 分離、200 QPS – 1M MAU
+
+```
+╔═══════════════════════════════════════════════════╗
+║  Phase 3：Scale —— 多機、P/D 分離、200 QPS – 1M MAU║
+╚═══════════════════════════════════════════════════╝
+```
 
 ```
                   ┌──────────────────────────────────────┐
@@ -600,7 +612,7 @@ vs 託管 API         模型與參數完全自主                    無需維�
 - **Part 4 — 分散式與編譯優化**：TP/PP/DP/EP 四種平行度的通訊量分析、多機部署與 NCCL 排錯、量化方法與硬體支援矩陣、torch.compile 的 piecewise CUDA graph、attention backend 選擇。
 - **Part 5 — 生產部署**：OpenAI 相容 API 全表、Multi-LoRA、結構化輸出、指標與症狀診斷鏈、P/D 分離與 KV connector、benchmark 與容量規劃。
 
-→ [vLLM Intro Part 2 — PagedAttention 與 KV Cache — 把作業系統的分頁搬進 GPU](../vllm-intro-part2-paged-attention-kv-cache-zh)
+→ [vLLM Intro Part 2 — PagedAttention 與 KV Cache — 把作業系統的分頁搬進 GPU](/posts/vllm-intro-part2-paged-attention-kv-cache-zh/)
 
 ---
 

@@ -7,7 +7,7 @@ description: "什麼時候才該微調？從資料準備、LoRA/QLoRA 原理、T
 categories: ["all", "ai", "engineering"]
 tags: ["Hugging Face", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "TRL", "LLM", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "19 min"
 series: ["hugging-face"]
 ---
 
@@ -348,7 +348,7 @@ print(f"train={len(split['train']):,}  eval={len(split['test']):,}")
 | `target_modules` | 全部 linear | 只調 `q,v` 省 40% 記憶體但效果較差；**建議全上** |
 | `learning_rate` | 2e-4 | LoRA 用 1e-4 ~ 3e-4（比全參數微調高 10–100 倍） |
 | `num_train_epochs` | 2–3 | > 3 幾乎必定過擬合，除非資料 > 50K |
-| `max_seq_length` | 2048 | 依 P95 樣本長度設定，設太大是純浪費 |
+| `max_length` | 2048 | 依 P95 樣本長度設定，設太大是純浪費 |
 
 > **最常見的超參數錯誤：** 把全參數微調的 `lr=2e-5` 直接拿來用在 LoRA 上。LoRA 只有 0.1% 的參數在動，用這麼小的學習率等於幾乎沒訓練——loss 曲線會很平、評估分數幾乎不變，然後你會誤以為「微調沒用」。
 
@@ -428,7 +428,7 @@ model = AutoModelForCausalLM.from_pretrained(
     quantization_config=bnb,
     device_map={"": 0},              # QLoRA 訓練不要用 "auto"
     attn_implementation="flash_attention_2",   # 沒裝就改 "sdpa"
-    torch_dtype=torch.bfloat16,
+    dtype=torch.bfloat16,
 )
 model.config.use_cache = False       # 與 gradient checkpointing 衝突
 model = prepare_model_for_kbit_training(
@@ -467,7 +467,7 @@ cfg = SFTConfig(
     gradient_checkpointing=True,
     gradient_checkpointing_kwargs={"use_reentrant": False},
 
-    max_seq_length=2048,
+    max_length=2048,                 # 舊版 TRL 叫 max_seq_length，已改名
     packing=False,                   # 對話資料不要 packing（見下方說明）
 
     logging_steps=10,
@@ -526,7 +526,7 @@ tok.save_pretrained(f"{OUTPUT_DIR}/final")
 
   VRAM 不夠時的調整順序：
     1. 降 per_device_batch_size，同步提高 grad_accum（有效 batch 不變）
-    2. 降 max_seq_length（記憶體隨長度平方成長）
+    2. 降 max_length（啟用 flash_attention_2/SDPA 時，activation 記憶體約隨長度線性成長）
     3. 開 gradient_checkpointing（換 20–30% 速度）
     4. 從 LoRA 改成 QLoRA
 ```
@@ -567,7 +567,7 @@ ADAPTER = "./out/support-qlora/final"
 tok = AutoTokenizer.from_pretrained(ADAPTER)
 tok.padding_side = "left"              # 推論時必須 left padding
 base = AutoModelForCausalLM.from_pretrained(
-    BASE, torch_dtype=torch.bfloat16, device_map="auto"
+    BASE, dtype=torch.bfloat16, device_map="auto"
 )
 model = PeftModel.from_pretrained(base, ADAPTER)
 model.eval()
@@ -694,7 +694,7 @@ MERGED = "./out/support-merged"
 
 # 關鍵：合併時要用「未量化」的底模載入
 base = AutoModelForCausalLM.from_pretrained(
-    BASE, torch_dtype=torch.bfloat16, device_map="cpu"
+    BASE, dtype=torch.bfloat16, device_map="cpu"
 )
 model = PeftModel.from_pretrained(base, ADAPTER)
 model = model.merge_and_unload()          # ΔW 加回 W，移除 LoRA 結構

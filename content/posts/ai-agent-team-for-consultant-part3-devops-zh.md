@@ -6,8 +6,8 @@ weight: 3
 description: "AI 顧問 Agent 團隊上線後怎麼辦？本文從 DevOps/SRE 角度，涵蓋系統效能評估、品質驗證、監控告警、部署策略、以及持續改善的 Roadmap。"
 categories: ["all", "ai", "infrastructure"]
 tags: ["AI Agent", "DevOps", "SRE", "LangSmith", "監控", "部署", "評估", "繁體中文", "Agent"]
-authors: ["YennJ12 Engineering Team"]
-readTime: "25 min"
+authors: ["yen"]
+readTime: "15 min"
 ---
 
 ## 前言
@@ -154,7 +154,7 @@ class BenchmarkResult:
     quality_score: float
     success: bool
 
-# 目標基準（SLO）
+# 目標基準（SLO）——以下數值是起步用的預設值，請依自己的基線量測調整
 SLO = {
     "p50_latency_s": 30,        # 50% 的請求在 30 秒內完成
     "p95_latency_s": 90,        # 95% 在 90 秒內
@@ -173,8 +173,8 @@ SLO = {
 ```python
 # 在 graph.py 中加入追蹤
 import os
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_PROJECT"] = "ai-consultant-prod"
+os.environ["LANGSMITH_TRACING"] = "true"          # 舊名 LANGCHAIN_TRACING_V2
+os.environ["LANGSMITH_PROJECT"] = "ai-consultant-prod"  # 舊名 LANGCHAIN_PROJECT
 
 # 每次執行都會自動送到 LangSmith Dashboard
 # 可以看到：

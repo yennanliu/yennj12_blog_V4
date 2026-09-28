@@ -4,8 +4,9 @@ date: 2025-08-10T15:28:17+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["AI", "resilience", "fault-tolerance", "reliability", "distributed-systems"]
+tags: ["resilience", "fault-tolerance", "Reliability", "Distributed Systems"]
 summary: "How we built systems that gracefully handle failures and maintain service availability even when components fail."
+description: "How we built systems that gracefully handle failures and maintain service availability even when components fail."
 readTime: "10 min"
 ---
 
@@ -44,6 +45,10 @@ type CircuitSettings struct {
     SuccessThreshold int64
 }
 
+// WARNING: simplified for illustration. State is read under RLock and then
+// acted on after the lock is released (check-then-act), so concurrent callers
+// can race, e.g. several goroutines all entering half-open at once. For
+// production use a tested library such as sony/gobreaker (Go) or resilience4j (Java).
 func (cb *CircuitBreaker) Execute(operation func() error) error {
     cb.mutex.RLock()
     state := cb.state

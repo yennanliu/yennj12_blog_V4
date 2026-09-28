@@ -6,7 +6,8 @@ authors: ["yen"]
 categories: ["all", "ai"]
 tags: ["Career-Ops", "求職", "AI", "應聘工具", "職業發展", "自動化", "career", "job-search"]
 summary: "深入講解 Career-Ops，一個由 AI 驅動的求職系統，幫助你在數百個工作機會中找到最適合的職位。涵蓋安裝、配置、使用技巧和策略，助力你高效求職。"
-readTime: "40 min"
+description: "深入講解 Career-Ops，一個由 AI 驅動的求職系統，幫助你在數百個工作機會中找到最適合的職位。涵蓋安裝、配置、使用技巧和策略，助力你高效求職。"
+readTime: "17 min"
 ---
 
 傳統求職方式低效且被動：你提交簡歷，公司用 AI 篩選你。Career-Ops 反轉了這個過程：**你用 AI 來評估公司**。這個開源工具由一位求職者創建，他用它評估了 740+ 個職位，最終成功獲得了 Head of Applied AI 角色。本文詳細講解如何使用 Career-Ops。
@@ -36,12 +37,9 @@ Career-Ops：
 ### 數據
 
 ```
-創始人 Santiago 的真實數據：
+創始人 Santiago 公開的數據（見 README）：
 - 評估職位數：740+
 - 成功獲聘：是（Head of Applied AI）
-- 公司包括：Anthropic, OpenAI, Retool, n8n 等
-- 平均評估時間：每個職位 30-60 秒
-- 節省時間：~400 小時（與傳統方式比較）
 ```
 
 ---
@@ -86,7 +84,7 @@ Career-Ops：
   ├─ 生成 PDF（ATS 友好格式）
   └─ 存儲版本歷史
 
-結果：ATS 通過率提升 3-5 倍
+目標：提高履歷通過 ATS 篩選的機率
 ```
 
 ### 3. 職位源自動發現
@@ -172,6 +170,8 @@ AI 評估完成 → [你查看評分]
 ---
 
 ## 安裝和設置
+
+> ⚠️ 2026-09 查證：上游 [career-ops README](https://github.com/santifer/career-ops) 的安裝方式是 `npx @santifer/career-ops init`（或 clone 後 `npm install` 再 `npx playwright install chromium`），日常操作則是在 Claude Code 等 AI 程式碼 CLI 裡使用 `/career-ops` 系列 slash command（例如 `/career-ops {JD}`、`/career-ops scan`、`/career-ops pdf`、`/career-ops tracker`）。本文以下出現的 `npm start`、`npm run test`、`npm run discover` 等 npm 指令，以及 `scripts/import_linkedin.py`，都不在 README 中，應視為示意而非可執行的指令；設定檔方面，README 列出的是 `cv.md`、`config/profile.yml`、`portals.yml`。
 
 ### 前置要求
 
@@ -339,6 +339,8 @@ projects:
 
 ## 使用工作流
 
+> ⚠️ 本節的 `npm run …` 指令為示意，未出現在上游 README 中，無法照抄執行；實際操作方式見「安裝和設置」開頭的說明。
+
 ### 步驟 1：發現職位
 
 ```bash
@@ -453,6 +455,8 @@ npm run prepare Anthropic "AI Safety Research"
 
 ## 進階功能
 
+> ⚠️ 本節的 `npm run …` 指令為示意，未出現在上游 README 中，無法照抄執行；實際操作方式見「安裝和設置」開頭的說明。
+
 ### 1. 批量應聘（可選）
 
 ```yaml
@@ -525,6 +529,8 @@ npm run benchmark
 
 ## 最佳實踐
 
+> ⚠️ 本節的 `npm run …` 指令為示意，未出現在上游 README 中，無法照抄執行；實際操作方式見「安裝和設置」開頭的說明。
+
 ### 1. 信息的完整性
 
 ```
@@ -593,6 +599,8 @@ npm run track-application
 ---
 
 ## 統計和分析
+
+> ⚠️ 本節的 `npm run …` 指令為示意，未出現在上游 README 中，無法照抄執行；實際操作方式見「安裝和設置」開頭的說明。
 
 ### 查看進度
 
@@ -676,6 +684,8 @@ npm run delete-old-resumes --older-than 90days
 
 ## 與其他工具集成
 
+> ⚠️ 本節的 `npm run …` 指令與 `scripts/import_linkedin.py`為示意，未出現在上游 README 中，無法照抄執行；實際操作方式見「安裝和設置」開頭的說明。
+
 ### 連接到 LinkedIn
 
 ```python
@@ -703,24 +713,20 @@ npm run export-applications --format sheets
 
 ## 性能指標（基於創始人數據）
 
-Santiago 的實際結果：
+作者 Santiago 在 [README](https://github.com/santifer/career-ops) 中公開的數字：
 
 ```
-評估前：
-- 投遞 100+ 職位
-- 成功率 5-10%
-- 時間投入：40+ 小時
-
-使用 Career-Ops：
-- 評估 740+ 職位
-- 只申請優質職位（A/B 級）
-- 成功率：22%（18/82）
-- 時間投入：~40 小時（自動化節省時間）
-- 最終成功：Head of Applied AI 角色 @Anthropic
+- 評估 740 個職缺
+- 實際投遞 68 個
+- 取得 12 次面試
+- 最終 1 個 offer
+```
 
 關鍵洞察：
+
+```
 ✓ 質量 > 數量（專注 A/B 級職位）
-✓ 個性化簡歷提升 3-5 倍通過率
+✓ 個性化履歷有助於通過篩選
 ✓ AI 評估減少無謂申請
 ✓ 面試準備更充分
 ```
@@ -746,16 +752,14 @@ Career-Ops 改變了求職方式：
 **使用 Career-Ops 的你**：
 - 評估 100+ 職位（而不是盲目投遞）
 - 成功率提升 2-3 倍
-- 節省 30-50% 的時間
+- 節省篩選職缺的時間
 - 找到更適合的職位
 - 更有信心談判薪資
 
-**立即開始**：
+**立即開始**（依上游 README）：
 ```bash
-git clone https://github.com/santifer/career-ops.git
-cd career-ops
-npm install
-npm start
+npx @santifer/career-ops init
+# 之後在 Claude Code 中使用 /career-ops 系列指令
 ```
 
 祝你求職成功！🚀

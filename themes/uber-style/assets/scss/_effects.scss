@@ -20,7 +20,7 @@
   isolation: isolate;
   overflow: hidden;
   background: var(--gradient-ink);
-  color: var(--color-white);
+  color: var(--on-ink);
 
   // Grid + vignette. `mask-image` fades the grid out towards the edges so it
   // never collides with the section boundary.

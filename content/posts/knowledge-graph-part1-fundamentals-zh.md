@@ -7,7 +7,7 @@ description: "從零理解知識圖譜：實體、關係、三元組、本體（
 categories: ["all", "ai", "engineering"]
 tags: ["Knowledge Graph", "知識圖譜", "RDF", "SPARQL", "Ontology", "Semantic Web", "Graph Database"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "11 min"
 series: ["knowledge-graph"]
 ---
 
@@ -191,7 +191,7 @@ JOIN franchises f     ON f.id = m2.franchise_id
 WHERE d.name = 'Nolan' AND f.name = 'Marvel';
 ```
 
-SQL 需要七次 JOIN 來「重建」關係；SPARQL（與後面會看到的 Cypher）則是直接描述圖上的「路徑模式」。當關係跳數越多，這個差距越明顯——這正是知識圖譜的核心價值。
+SQL 需要六次 JOIN 來「重建」關係；SPARQL（與後面會看到的 Cypher）則是直接描述圖上的「路徑模式」。當關係跳數越多，這個差距越明顯——這正是知識圖譜的核心價值。
 
 ---
 
@@ -201,14 +201,14 @@ SQL 需要七次 JOIN 來「重建」關係；SPARQL（與後面會看到的 Cyp
 |------|--------|
 | 1985 | WordNet 開始記錄詞彙之間的語意關係 |
 | 2000s | W3C 制定 RDF / OWL，語意網路（Semantic Web）時代 |
-| 2007 | DBpedia、Freebase 出現，成為通用開放知識庫 |
+| 2007 | DBpedia、Freebase 出現，成為通用開放知識庫（Freebase 已於 2016 年關閉，資料移轉至 Wikidata） |
 | 2012 | 大型搜尋引擎推出 Knowledge Graph，讓這個詞紅遍業界 |
 | 2014 | Wikidata 成為社群維護的開放知識中樞 |
 | 2020s | KG + LLM 融合、GraphRAG、Graph Neural Network 興起 |
 
 幾個你可能天天接觸卻沒意識到的知識圖譜：
 
-- **搜尋引擎知識面板**：你搜尋一位名人，右側跳出生日、作品、關係人物的卡片，背後就是 5 億以上實體的知識圖譜。
+- **搜尋引擎知識面板**：你搜尋一位名人，右側跳出生日、作品、關係人物的卡片，背後就是規模達數億實體的知識圖譜。
 - **Wikidata / DBpedia**：社群維護的開放知識庫，本系列後面會直接拿來查詢練習。
 - **電商商品圖譜**：把商品、屬性、分類、評論連成網，用來做「買了這個的人也買了」。
 - **金融知識圖譜**：把公司、股東、交易、新聞連起來，做 KYC 合規與洗錢偵測（AML）。

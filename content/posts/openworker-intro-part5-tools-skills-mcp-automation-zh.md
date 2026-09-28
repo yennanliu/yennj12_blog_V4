@@ -7,7 +7,7 @@ description: "拆解 OpenWorker 的五層能力擴充體系：ToolRegistry 與�
 categories: ["all", "ai", "engineering"]
 tags: ["OpenWorker", "AI Agent", "MCP", "Agent Skills", "Tool Use", "Multi-Agent", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "22 min"
 series: ["openworker-intro"]
 ---
 

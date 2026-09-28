@@ -5,7 +5,7 @@ draft: false
 weight: 31
 description: "深入解析 Agent 生產部署工程：執行追蹤、成本預算控制、並發限流、Guardrails 安全防護、A/B 測試框架與 Agent 監控告警設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Production", "Observability", "Guardrails", "Cost Control", "RKK", "Interview"]
+tags: ["AI", "Agent", "Production", "Observability", "Guardrails", "Cost Control", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 「你們的 AI Agent 在 staging 表現很好，但上線兩週後 token 費用暴增 400%，還出現幾次無限迴圈。你作為 tech lead，怎麼設計一個生產級的 Agent 系統架構來防止這些問題？請從可觀測性、成本控制、安全護欄三個維度說明，並說明你會如何科學地評估新 Agent 策略的效果。」
 
@@ -189,8 +189,8 @@ LLM 的輸出行為可能因模型版本更新而改變，即使你沒有改任�
 **解決的問題**：
 - 完整跨 Step、跨 Agent 的追蹤（sub-agent 呼叫不斷鏈）
 - 精確成本歸因（哪個 task type 最貴、哪個用戶最多花費）
-- 99.2% Prompt Injection 攔截率
-- 科學化 A/B 評估，新 Agent 版本上線零風險
+- 在自建攻擊測試集上達到高 Prompt Injection 攔截率（不可能 100%，需持續紅隊測試）
+- 科學化 A/B 評估，新 Agent 版本上線風險大幅降低且可快速回滾
 
 **遺留的問題**：
 - Agent 決策的深層可解釋性（XAI）仍有限：為什麼選這個工具而非那個？
@@ -352,8 +352,10 @@ Agent 的成本控制不能只有一個開關，需要像防火牆一樣有多�
 | 正常 | GPT-4o | — | — | — |
 | 用戶預算 > 80% 已用 | GPT-4o-mini | — | 97% | 約 15–20% |
 | 全域預算 > 80% | GPT-4o-mini | — | 97% | 約 15–20% |
-| 全域預算 > 95% | gpt-3.5-turbo | — | 99.96% | 約 35–40% |
+| 全域預算 > 95% | 語意快取優先 | 未命中才呼叫 GPT-4o-mini | > 97%（依快取命中率） | 約 15–25% |
 | 緊急降級 | 快取回應 | 靜態規則 | 100% | 顯著下降 |
+
+> 為什麼不再往下降到 gpt-3.5-turbo：它的單價比 gpt-4o-mini 更高、品質也更差，從 4o-mini 降到 3.5 既不省錢也不保品質。輕量模型之後的下一層應該是快取或靜態回應，而不是更舊的模型。
 
 ### 預算控制的原子性問題
 
@@ -677,12 +679,14 @@ Shadow Mode 確認 v2 無崩潰、無無限迴圈、無異常高成本後，才�
 | Agent 錯誤率 | 8.5%（無護欄、無重試機制） | 0.6%（Guardrails + CB + 重試） | **93% 降低** |
 | 成本 / 1,000 次請求 | $45（含無限迴圈事件攤分） | $11（預算控制 + 模型降級） | **76% 節省** |
 | p95 回應延遲 | 45,000ms（同步阻塞 + 排隊） | 8,200ms（Worker Pool + 非同步） | **82% 改善** |
-| 無限迴圈事件 / 月 | 12 次（平均每次損失 $8） | 0 次（步數上限 + Circuit Breaker） | **100% 消除** |
-| Prompt Injection 攔截率 | 0%（完全無防護） | 99.2%（三層 Guardrails） | **顯著提升** |
+| 無限迴圈事件 / 月 | 12 次（平均每次損失 $375） | 0 次（步數上限 + Circuit Breaker） | **100% 消除** |
+| Prompt Injection 攔截率 | 0%（完全無防護） | 高（三層 Guardrails，依攻擊測試集而定） | **顯著提升** |
 | 成本可見性延遲 | 30 天（月帳單） | 即時（per-user per-run 追蹤） | **即時化** |
-| 新版本上線風險 | 直接替換（無法快速回滾） | Shadow → Canary → 全量（隨時可回滾） | **零風險** |
+| 新版本上線風險 | 直接替換（無法快速回滾） | Shadow → Canary → 全量（隨時可回滾） | **風險大幅降低** |
 | 告警雜訊 / 天 | 0（沒有任何告警系統） | 2.1 次（高信噪比，False Positive < 5%） | **精準告警** |
 | 工程師調查時間 / 事件 | 2–4 小時（從 print log 找原因） | 15 分鐘（Jaeger trace 直接定位） | **94% 縮短** |
+
+> 以上為示意估算，非實測數據。
 
 ### 成本結構改變前後
 
@@ -700,9 +704,9 @@ Shadow Mode 確認 v2 無崩潰、無無限迴圈、無異常高成本後，才�
 
 ## 十、系列導航
 
-← [Phase 14 Part 3：Agent 工具設計與記憶體管理](/posts/ai-eng-from-scratch-phase14-part3-tools-memory-zh/)
+← [Phase 14 Part 3：Agent 框架全景 — AutoGen、CrewAI 與自建的取捨](/posts/ai-eng-from-scratch-phase14-part3-frameworks-zh/)
 
-→ [Phase 15 Part 1：RAG 系統設計與向量資料庫選型](/posts/ai-eng-from-scratch-phase15-part1-rag-zh/)
+→ [Phase 15 Part 1：長時程自主系統 — 跨天任務的 Agent 工程](/posts/ai-eng-from-scratch-phase15-part1-long-horizon-zh/)
 
 ---
 

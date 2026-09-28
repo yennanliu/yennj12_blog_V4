@@ -4,8 +4,9 @@ date: 2026-03-12T14:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "claude-code", "prompt-caching", "RAG", "vector-database", "cost-optimization", "API", "LLM-optimization", "agent-orchestration", "development-tools"]
+tags: ["AI", "Claude Code", "Prompt Caching", "RAG", "Vector Database", "Cost Optimization", "API", "LLM-optimization", "agent-orchestration", "Development Tools"]
 summary: "多 Agent Token 優化系列 pt.2：深入探索 Prompt Caching 的實際應用，從 Claude API 原生快取、應用層記憶體快取、到 RAG 系統整合，提供完整程式碼範例，幫助你打造高效低成本的 AI 應用。"
+description: "多 Agent Token 優化系列 pt.2：深入探索 Prompt Caching 的實際應用，從 Claude API 原生快取、應用層記憶體快取、到 RAG 系統整合，提供完整程式碼範例，幫助你打造高效低成本的 AI 應用。"
 readTime: "30 min"
 ---
 
@@ -25,7 +26,7 @@ readTime: "30 min"
 │  Layer 1: Claude API Prompt Caching                                │
 │  ├── 快取 System Prompt、工具定義等固定前綴                          │
 │  ├── 由 Anthropic 伺服器管理                                        │
-│  └── 5 分鐘自動過期                                                 │
+│  └── 預設 5 分鐘過期（另有 1 小時 TTL 選項）                        │
 │                                                                     │
 │  Layer 2: 應用層記憶體快取 (In-Memory Cache)                        │
 │  ├── 快取完整 API 回應                                              │
@@ -552,7 +553,9 @@ class CachedClaudeClient:
 
     def _build_system_with_cache(self, system: str) -> list:
         """構建帶 API 快取的 system content"""
-        if self.enable_api_cache and len(system) > 1024:  # 快取需要 > 1024 tokens
+        # 注意：len() 算的是字元數，不是 tokens；最低可快取長度依模型而異（以 tokens 計）。
+        # 較穩妥的做法是直接加上 cache_control，再用 usage.cache_read_input_tokens 驗證是否命中。
+        if self.enable_api_cache and len(system) > 1024:
             return [{
                 "type": "text",
                 "text": system,

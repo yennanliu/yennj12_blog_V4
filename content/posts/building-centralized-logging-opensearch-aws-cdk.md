@@ -3,8 +3,8 @@ title: "Building Centralized Logging with OpenSearch and AWS CDK"
 date: 2024-12-15T14:30:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "engineering", "architecture"]
-tags: ["AI", "opensearch", "aws", "cdk", "kubernetes", "logging", "kinesis", "observability", "cloudwatch"]
+categories: ["all", "engineering", "architecture", "infrastructure"]
+tags: ["opensearch", "AWS", "CDK", "Kubernetes", "Logging", "Kinesis", "Observability", "CloudWatch"]
 summary: "Deep dive into architecting a production-ready centralized logging solution using OpenSearch, Kinesis Data Firehose, and AWS CDK for comprehensive Kubernetes cluster observability."
 description: "Learn how to build a scalable centralized logging platform using OpenSearch, Kinesis Data Firehose, and AWS CDK to collect, process, and analyze logs from Kubernetes clusters and containerized applications."
 readTime: "16 min"
@@ -54,7 +54,7 @@ OpenSearch provides powerful search and analytics capabilities specifically desi
 
 ### **Kinesis Data Firehose: Reliable Log Delivery**
 
-Kinesis Data Firehose provides reliable, scalable log delivery with built-in transformation:
+Kinesis Data Firehose (renamed **Amazon Data Firehose** in 2024; the CDK module and APIs keep the old name) provides reliable, scalable log delivery with built-in transformation:
 
 | Traditional Approach | Kinesis Firehose Approach |
 |---------------------|---------------------------|
@@ -460,7 +460,7 @@ This centralized logging architecture provides a foundation for comprehensive Ku
 
 ### **Key Takeaways**
 
-- **Serverless architecture** reduces operational overhead while providing automatic scaling
+- **Managed services** (Firehose, Lambda, a managed OpenSearch domain) reduce operational overhead; the provisioned OpenSearch domain still needs capacity planning, unlike OpenSearch Serverless
 - **Configuration-driven deployment** enables consistent multi-environment management
 - **Comprehensive error handling** prevents log data loss during system failures
 - **Built-in monitoring** provides visibility into the logging pipeline itself

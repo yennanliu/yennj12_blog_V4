@@ -5,20 +5,20 @@ draft: false
 weight: 42
 description: "端對端構建生產級 AI Agent 產品：從架構設計到上線，涵蓋 ReAct 迴圈、工具整合、記憶系統、Guardrails、可觀測性與商業指標追蹤"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "LLM Engineering", "Production", "Capstone", "ReAct", "RKK", "Interview"]
+tags: ["AI", "Agent", "LLM Engineering", "Production", "Capstone", "ReAct", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "22 min"
 series: ["ai-eng-from-scratch"]
 ---
 
 > *大多數人做法：把 ChatGPT API 包一層 wrapper，加幾個 if-else，叫它「AI 客服 Agent」。*
 > *正確答案：ReAct 迴圈 + 工具安全閘 + 對話記憶 + Guardrails + 完整可觀測性，*
 > *缺少任何一層，上線兩週後你就會收到第一封「Agent 幫客戶退了根本沒問題的訂單」的事後報告。*
-> *本文是一個真實 Sprint 4 週期的工程回顧，紀錄哪些設計決策讓我們撐過了 100K sessions/day。*
+> *本文以一個 4 週 Sprint 的參考設計呈現，紀錄哪些設計決策能讓系統撐過 80K sessions/day 的峰值。*
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的公司想把電商客服從人工轉為 AI Agent，日均客服量約 30K sessions，高峰期（雙 11）可能到 80K。客服範圍包含訂單查詢、退換貨申請、產品推薦以及升級至人工。請描述你會如何設計這個系統，從 MVP 到可以承受 80K sessions/day 的生產架構，並說明關鍵的工程決策與取捨。
 
@@ -26,7 +26,7 @@ series: ["ai-eng-from-scratch"]
 
 ## 一、專案目標：AI 客服 Agent 的真實產品需求
 
-這個 Capstone 專案的原型來自一個真實的電商平台改造案。業務背景很清楚：
+這個 Capstone 是一個電商平台改造案的參考設計（情境與數字為示意，非真實專案資料）。業務背景很清楚：
 
 - **現狀**：人工客服 45 人，平均回應時間 4.2 分鐘，CSAT 3.7/5，月薪資成本 $180K USD
 - **目標**：AI 處理率 ≥ 70%，平均回應時間 < 8 秒，CSAT ≥ 4.0/5，月 AI 成本 < $35K
@@ -50,9 +50,13 @@ series: ["ai-eng-from-scratch"]
 
 ## 二、三個演進階段（Sprint 1 / Sprint 2–3 / Sprint 4）
 
-### ╔══════════════════════════════════════╗
-### ║  Phase 1：Sprint 1 / POC / < 1K sessions/day  ║
-### ╚══════════════════════════════════════╝
+### Phase 1：Sprint 1 / POC / < 1K sessions/day
+
+```
+╔══════════════════════════════════════╗
+║  Phase 1：Sprint 1 / POC / < 1K sessions/day  ║
+╚══════════════════════════════════════╝
+```
 
 **目標**：讓 Agent 能跑起來，能走完一個退款流程端對端。
 
@@ -102,9 +106,13 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-### ╔══════════════════════════════════════╗
-### ║  Phase 2：Sprint 2–3 / MVP / 1K–20K sessions/day  ║
-### ╚══════════════════════════════════════╝
+### Phase 2：Sprint 2–3 / MVP / 1K–20K sessions/day
+
+```
+╔══════════════════════════════════════╗
+║  Phase 2：Sprint 2–3 / MVP / 1K–20K sessions/day  ║
+╚══════════════════════════════════════╝
+```
 
 **目標**：生產安全，讓客服主管敢讓真實客戶使用。
 
@@ -163,9 +171,13 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-### ╔══════════════════════════════════════╗
-### ║  Phase 3：Sprint 4 / Scale / 20K–100K sessions/day  ║
-### ╚══════════════════════════════════════╝
+### Phase 3：Sprint 4 / Scale / 20K–100K sessions/day
+
+```
+╔══════════════════════════════════════╗
+║  Phase 3：Sprint 4 / Scale / 20K–100K sessions/day  ║
+╚══════════════════════════════════════╝
+```
 
 **目標**：企業級，支援雙 11 峰值 80K sessions/day，成本可預期。
 
@@ -601,9 +613,9 @@ Grafana 上追蹤的核心指標：
 
 ---
 
-## 九、系統效應（上線後 90 天的真實指標）
+## 九、系統效應（上線後 90 天的示意指標）
 
-上線日期：2026-03-01，以下是 90 天後（2026-05-31）的指標對比。
+假設上線日期為 2026-03-01，以下是 90 天後（2026-05-31）的指標對比。表中數字為參考設計的示意估算，非實測數據。
 
 ### 核心 KPI
 
@@ -627,9 +639,9 @@ Grafana 上追蹤的核心指標：
 
 ### 失敗與學習
 
-**問題 1：雙 11 前三天，Escalation rate 飆到 31%（警戒線 25%）**
+**問題 1：母親節檔期大促前三天，Escalation rate 飆到 31%（警戒線 25%）**
 
-根本原因：知識庫沒有更新雙 11 的特殊退換貨政策，Agent 給了舊的回答，客戶不滿意就要求轉人工。
+根本原因：知識庫沒有更新母親節檔期的特殊退換貨政策，Agent 給了舊的回答，客戶不滿意就要求轉人工。
 
 修復：建立知識庫版本審核流程，重大活動前 72 小時必須完成知識庫更新，並用 100 個測試問題驗證 Agent 回答正確性後才上線。
 
@@ -665,10 +677,10 @@ Haiku 用於低複雜度任務（純查詢、格式化輸出），Sonnet 用於�
 
 本文是 **AI 工程從零開始** 系列 Phase 19 的第 2 篇。
 
-← **Phase 19 Part 1**：[Capstone — 系統設計與 Sprint 規劃](/posts/ai-eng-from-scratch-phase19-part1-capstone-design-zh/)
+← **Phase 19 Part 1**：[Phase 19 Part 1：Capstone — 企業級 RAG 知識庫系統端對端實作](/posts/ai-eng-from-scratch-phase19-part1-capstone-rag-system-zh/)
 
-→ **Phase 19 Part 3**：[Capstone — 上線後優化與 A/B 測試框架](/posts/ai-eng-from-scratch-phase19-part3-capstone-optimization-zh/)
+→ **Phase 19 Part 3**：[Phase 19 Part 3：Capstone — 多模態 AI 應用端對端實作與系列總結](/posts/ai-eng-from-scratch-phase19-part3-capstone-multimodal-app-zh/)
 
 ---
 
-*本文撰寫於 2026 年 6 月，基於實際 Sprint 回顧紀錄。系統架構數字已部分模糊化以保護客戶隱私，但量級與比例關係忠實反映真實情況。*
+*本文撰寫於 2026 年 6 月，是以參考設計形式呈現的工程回顧；文中數字為示意估算，用來說明量級與取捨，非真實專案資料。*

@@ -6,8 +6,8 @@ weight: 1
 description: "深入剖析一個真實 Spring Boot 購物車系統如何從「默認設定」升級到能承受 C10K 的生產級高並發架構：JDK 21 Virtual Threads、HikariCP 連線池調校、Redis 分層快取設計，以及升級到 Spring Boot 3.2 過程中的關鍵踩坑。"
 categories: ["all", "engineering", "architecture"]
 tags: ["Spring Boot", "Java", "High Concurrency", "Redis", "HikariCP", "Virtual Threads", "Backend", "繁體中文"]
-authors: ["YennJ12 Engineering Team"]
-readTime: "30 min"
+authors: ["yen"]
+readTime: "17 min"
 ---
 
 ## 前言
@@ -148,7 +148,7 @@ Virtual Thread 在所有這些 I/O 等待點都能把平台執行緒讓出，效
 
 ### 注意事項
 
-Virtual Threads 不適合 CPU 密集型任務（例如圖片處理、加密運算），這些工作用傳統的固定執行緒池更合適。此外，舊版 MySQL connector（`mysql-connector-java`）有些 native 方法不支援 Virtual Thread 的 pinning unpark，需要升級到 `mysql-connector-j`。
+Virtual Threads 不適合 CPU 密集型任務（例如圖片處理、加密運算），這些工作用傳統的固定執行緒池更合適。此外要注意 pinning：在 JDK 21 中，Virtual Thread 若在 `synchronized` 區塊內執行阻塞 I/O，會被「釘」在載體執行緒（carrier thread）上無法卸載，等於退化成平台執行緒。舊版 MySQL connector（`mysql-connector-java`）內部大量使用 `synchronized`，因此要升級到已改用 `ReentrantLock` 的新版 `mysql-connector-j`。JDK 24 的 JEP 491 已解決 `synchronized` 造成的 pinning，升級到 JDK 24 以上後，`synchronized` 造成的 pinning 就不再是問題。
 
 ---
 
@@ -169,9 +169,12 @@ Virtual Threads 不適合 CPU 密集型任務（例如圖片處理、加密運�
 # Keep total connections < MySQL max_connections (default 151).
 spring.datasource.hikari.maximum-pool-size=50
 spring.datasource.hikari.minimum-idle=10
-spring.datasource.hikari.connection-timeout=3000        # 等待連線最多 3 秒
-spring.datasource.hikari.idle-timeout=600000            # 閒置 10 分鐘後關閉
-spring.datasource.hikari.max-lifetime=1800000           # 連線最多存活 30 分鐘
+# 等待連線最多 3 秒
+spring.datasource.hikari.connection-timeout=3000
+# 閒置 10 分鐘後關閉
+spring.datasource.hikari.idle-timeout=600000
+# 連線最多存活 30 分鐘
+spring.datasource.hikari.max-lifetime=1800000
 spring.datasource.hikari.pool-name=ShoppingCartHikariPool
 ```
 

@@ -7,7 +7,7 @@ description: "把前四篇串起來：用 bge-m3 + FAISS + reranker + 微調模�
 categories: ["all", "ai", "engineering"]
 tags: ["Hugging Face", "RAG", "LLM", "FAISS", "Gradio", "FastAPI", "vLLM", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "22 min"
 series: ["hugging-face"]
 ---
 
@@ -431,7 +431,7 @@ class HybridRetriever:
 
         self.rk_tok = AutoTokenizer.from_pretrained(rerank_model)
         self.rk = AutoModelForSequenceClassification.from_pretrained(
-            rerank_model, torch_dtype=torch.float16
+            rerank_model, dtype=torch.float16
         ).to(device).eval()
 
     # ── 第一階段：召回 ──
@@ -490,9 +490,9 @@ class HybridRetriever:
         return hits
 ```
 
-### 5.1 每個階段的實測貢獻
+### 5.1 每個階段的貢獻（示意估算）
 
-同一組 300 題的測試集：
+假設同一組 300 題的測試集（以下為示意估算，非實測數據）：
 
 | 配置 | Recall@5 | 生成正確率 | 額外延遲 |
 |------|----------|-----------|---------|

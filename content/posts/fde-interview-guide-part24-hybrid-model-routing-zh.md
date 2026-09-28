@@ -5,13 +5,13 @@ draft: false
 weight: 24
 description: "以系統設計視角拆解 Hybrid Model Routing 架構：Semantic Router 的設計原理、小模型 vs 大模型的路由決策框架、如何用 Eval Pipeline 確保路由器不會犧牲整體品質，以及 Gemma 與 Gemini 的混合部署策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Model Routing", "Semantic Router", "Gemma", "Gemini", "Cost Optimization", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Model Routing", "Semantic Router", "Gemma", "Gemini", "Cost Optimization", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
 ---
 
 > 為什麼用 Gemini Pro 回答「你好！」？  
-> 用 Gemma-2b 回答「你好！」，品質幾乎一樣，成本低 20 倍。  
+> 用 Gemma-2b 回答「你好！」，品質幾乎一樣，成本估計低一個數量級（算式見第六節）。  
 > 問題不是「要不要用小模型」，而是「如何設計一個系統，讓正確的問題找到正確的模型」。
 
 ---
@@ -263,8 +263,10 @@ GKE 部署考量：
   1,800M tokens × $1.25/1M = $2,250/月
 
   Gemma on GKE（70%）：
-  4,200M tokens / (2,000 tokens/sec × 86,400 sec/day) = 需要 ~24 個 GPU 小時
-  ~$1,440/月（GKE L4 GPU 費用）
+  4,200M tokens / (2,000 tokens/sec × 86,400 sec/day) ≈ 24 個 GPU-天
+  （≈ 583 GPU 小時，理論滿載只要 ~$350/月）
+  實務上要為尖峰流量與常駐 Warm Pod 預留，以約 3 張 L4 常駐計
+  ~$1,440/月（GKE L4 GPU 費用，含冗餘的示意值）
 
   路由器費用（Embedding + 少量 LLM 判斷）：~$100/月
 
@@ -273,6 +275,8 @@ GKE 部署考量：
 節省：$7,500 - $3,790 = $3,710/月（節省 49%）
 投資回報率：路由系統開發成本通常 1~2 個月回本
 ```
+
+> 以上模型（Gemma-2b/7b、Gemini 1.5 Pro、text-embedding-004）與單價皆以 2025 年撰文時為準，部分已退役或被新版取代，數字僅為示意估算；請以官方最新模型與價目表重算，結論（路由比例 × 單價差決定省多少）不變。
 
 ---
 
@@ -290,6 +294,6 @@ GKE 部署考量：
 
 ---
 
-**系列導覽：**  
-← [（二十三）RKK 實戰：多租戶 Agent 的限流、Fair-Share 與 Token 預算控制](../fde-interview-guide-part23-ratelimit-fairshare-zh/)  
-→ [（二十五）RKK 實戰：Self-Reflection 與幻覺校正迴圈設計](../fde-interview-guide-part25-self-reflection-loop-zh/)
+**系列導航**
+
+← [Part 23：RKK 實戰——多租戶 Agent 的限流、Fair-Share 與 Token 預算控制](/posts/fde-interview-guide-part23-ratelimit-fairshare-zh/) | [Part 25：RKK 實戰——Self-Reflection 與幻覺校正迴圈設計](/posts/fde-interview-guide-part25-self-reflection-loop-zh/) →

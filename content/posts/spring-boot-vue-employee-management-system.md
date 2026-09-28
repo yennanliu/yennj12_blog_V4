@@ -4,9 +4,10 @@ date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["AI", "employee-management", "vue.js", "rest-api", "microservices", "docker", "swagger", "hr-system", "full-stack", "spring-boot", "enterprise"]
+tags: ["employee-management", "Vue.js", "REST API", "Microservices", "Docker", "swagger", "hr-system", "full-stack", "Spring Boot", "Enterprise"]
 summary: "Comprehensive guide to building a modern employee management system using Spring Boot microservices architecture and Vue.js frontend, designed for enterprise scalability and extensibility."
-readTime: "20 min"
+description: "Comprehensive guide to building a modern employee management system using Spring Boot microservices architecture and Vue.js frontend, designed for enterprise scalability and extensibility."
+readTime: "35 min"
 ---
 
 ## 🎯 Project Overview & Business Context
@@ -1731,9 +1732,11 @@ public class CacheConfig {
 }
 ```
 
-## 💰 Cost Analysis & ROI Calculation
+## 💰 Cost Analysis
 
 ### 📊 Infrastructure Cost Breakdown
+
+*Rough estimates at on-demand pricing for a small deployment; check current AWS pricing for your region.*
 
 | Component | Monthly Cost | Yearly Cost | Scaling Factor |
 |-----------|-------------|-------------|----------------|
@@ -1743,28 +1746,6 @@ public class CacheConfig {
 | **S3 Storage (Documents)** | $10 | $120 | Grows with file uploads |
 | **CloudWatch Monitoring** | $8 | $96 | Log volume dependent |
 | **Total Infrastructure** | **$111** | **$1,332** | **~25% yearly growth** |
-
-### 💼 Business Value & ROI
-
-**Operational Efficiency Gains**:
-- **HR Process Time Reduction**: 60% decrease in manual data entry and paperwork
-- **Employee Self-Service**: 40% reduction in HR helpdesk tickets
-- **Reporting Automation**: 80% faster generation of compliance and management reports
-- **Onboarding Efficiency**: 50% faster new employee setup and orientation
-
-**Cost Savings Analysis**:
-```
-Annual HR Staff Time Savings: 520 hours
-Average HR Staff Cost: $65/hour
-Direct Labor Savings: $33,800/year
-
-Reduced Paper/Manual Processes: $5,200/year
-Compliance & Audit Efficiency: $12,000/year
-
-Total Annual Savings: $51,000/year
-Infrastructure Cost: $1,332/year
-Net ROI: $49,668/year (3,700% return)
-```
 
 ## 🔮 Scalability & Future Evolution
 

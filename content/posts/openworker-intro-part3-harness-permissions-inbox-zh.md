@@ -7,7 +7,7 @@ description: "拆解 OpenWorker 的安全外殼：58 行的 RiskClass 如何撐�
 categories: ["all", "ai", "engineering"]
 tags: ["OpenWorker", "AI Agent", "Agent Harness", "Security", "Prompt Injection", "SSRF", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "29 min"
+readTime: "19 min"
 series: ["openworker-intro"]
 ---
 

@@ -7,7 +7,7 @@ description: "後訓練不只是再微調一次。完整解析 DPO / ORPO / KTO 
 categories: ["all", "ai", "engineering"]
 tags: ["Hugging Face", "Post-training", "DPO", "ORPO", "GRPO", "RLHF", "TRL", "LLM", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "21 min"
 series: ["hugging-face"]
 ---
 
@@ -171,7 +171,7 @@ SFT_MODEL = "./out/support-merged"      # 上一篇訓練出來的模型
 tok = AutoTokenizer.from_pretrained(SFT_MODEL)
 tok.padding_side = "left"
 model = AutoModelForCausalLM.from_pretrained(
-    SFT_MODEL, torch_dtype=torch.bfloat16, device_map="auto"
+    SFT_MODEL, dtype=torch.bfloat16, device_map="auto"
 )
 
 
@@ -437,7 +437,7 @@ model = AutoModelForCausalLM.from_pretrained(
     quantization_config=bnb,
     device_map={"": 0},
     attn_implementation="sdpa",
-    torch_dtype=torch.bfloat16,
+    dtype=torch.bfloat16,
 )
 model.config.use_cache = False
 model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=True)
@@ -516,9 +516,9 @@ DPO 的 loss 值本身沒什麼解讀價值，真正要看的是這四個：
 
 > **一個非常實用的直覺：** `rewards/accuracies` 是「模型認為 chosen 優於 rejected 的比例」。它應該從 0.5（隨機）平滑爬升到 0.8 左右。如果它在前 20 步就衝到 0.99，代表你的 chosen/rejected 差異太明顯（例如一個是正常回覆一個是亂碼）——這種資料訓不出細緻的品質提升。
 
-### 4.4 β 的實測影響
+### 4.4 β 的影響（示意估算）
 
-同一份 3,000 組偏好資料、Qwen2.5-7B SFT 模型：
+以下為示意估算（假設同一份 3,000 組偏好資料、Qwen2.5-7B SFT 模型），非實測數據，用來說明趨勢：
 
 | β | 勝率 vs SFT | 平均長度變化 | 通用能力回歸 | 判斷 |
 |---|------------|------------|------------|------|
@@ -528,7 +528,7 @@ DPO 的 loss 值本身沒什麼解讀價值，真正要看的是這四個：
 | 0.3 | 64% | +3% | −0.4 pt | 保守，改善有限 |
 | 0.5 | 58% | +1% | −0.2 pt | 幾乎沒動 |
 
-**注意 β=0.01 的勝率最高（71%）但其實是最糟的選擇**——它的勝率來自「回答變長變詳細」這個評審偏誤，而不是真的變好，代價是通用能力掉了 11 個百分點。**只看單一指標會做出完全錯誤的決策，這就是為什麼要同時盯長度與回歸測試。**
+**注意勝率最高的 β=0.05（74%）與同樣亮眼的 β=0.01（71%）其實都不是好選擇**——它們的勝率很大一部分來自「回答變長變詳細」這個評審偏誤，而不是真的變好；β=0.01 更是最糟的選擇，代價是通用能力掉了 11 個百分點。**只看單一指標會做出完全錯誤的決策，這就是為什麼要同時盯長度與回歸測試。**
 
 ---
 
@@ -632,9 +632,9 @@ cfg = CPOConfig(
 
 **如果你的 DPO 訓練出現嚴重的長度膨脹（平均長度 +40% 以上），SimPO 是最直接的解法。**
 
-### 5.4 四種方法的實測對比
+### 5.4 四種方法的對比（示意估算）
 
-同一組 5,000 筆資料、Qwen2.5-7B、單張 A100 80G：
+以下為示意估算（假設同一組 5,000 筆資料、Qwen2.5-7B、單張 A100 80G），非實測數據：
 
 | 方法 | 需要 SFT 模型 | 需要參考模型 | 訓練時間 | VRAM | 勝率 vs SFT | 長度變化 |
 |------|-------------|------------|---------|------|------------|---------|
@@ -788,7 +788,7 @@ trainer.train()
 
 1. **獎勵下限與上限都要設。** 「短就好」要改成「150 字以內滿分，但少於 20 字直接 0 分」。
 2. **多個獎勵函式互相牽制。** 單一獎勵幾乎必然被 hack；三個以上正交的獎勵就困難得多。
-3. **KL 懲罰不要關。** `beta=0.04` 的作用就是「不准離原本的模型太遠」，這是防崩壞的最後一道保險。
+3. **KL 懲罰要不要關，有爭議。** `beta=0.04` 的作用是「不准離原本的模型太遠」；但 TRL 目前 `GRPOConfig` 的預設已改為 `beta=0.0`（不載入參考模型、省記憶體），依據是 DAPO／Dr. GRPO 等研究認為 KL 項在可驗證獎勵場景不必要。本文保留 `0.04` 作為保守做法，若改用 0.0，請更密切盯住回歸測試。
 4. **每 50 步人工看 5 筆生成結果。** 這是唯一能發現「獎勵在漲但輸出很怪」的方式。自動化指標永遠追不上模型找漏洞的創意。
 
 ```python
@@ -960,7 +960,7 @@ DPO/ORPO          任務品質是主觀的（語氣、有用性）    答案可�
 
 ## 九、系統效應：一條完整鏈路的累積效果
 
-同一個繁中客服場景，Qwen2.5-7B 為底，逐階段疊加：
+同一個繁中客服場景，Qwen2.5-7B 為底，逐階段疊加（以下為示意估算，非實測數據）：
 
 | 階段 | 任務準確率 | JSON 合規率 | 人工滿意度 | 平均長度 | 通用能力 | 累積成本 |
 |------|-----------|------------|-----------|---------|---------|---------|

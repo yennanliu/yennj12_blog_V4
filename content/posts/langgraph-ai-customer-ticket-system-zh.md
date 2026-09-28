@@ -4,9 +4,10 @@ date: 2026-04-11T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "engineering"]
-tags: ["LangGraph", "LangChain", "AI", "客服系統", "工作流", "多 Agent", "生產級應用", "backend"]
+tags: ["LangGraph", "LangChain", "AI", "客服系統", "工作流", "多 Agent", "生產級應用", "Backend"]
 summary: "詳細講解如何使用 LangGraph 和 AI 構建生產級的智能客服工單處理系統，涵蓋架構設計、Agent 定義、狀態管理、錯誤處理和實際案例，幫助你快速上線 AI 驅動的客服系統。"
-readTime: "45 min"
+description: "詳細講解如何使用 LangGraph 和 AI 構建生產級的智能客服工單處理系統，涵蓋架構設計、Agent 定義、狀態管理、錯誤處理和實際案例，幫助你快速上線 AI 驅動的客服系統。"
+readTime: "15 min"
 ---
 
 客服工單處理是企業運營中的關鍵環節：需要快速分類、智能路由、實時回應和全程追蹤。傳統方案依賴人工，效率低、成本高。而 LangGraph 作為新一代 Agent 編排框架，使得我們可以構建**可預測、可追蹤、可控制**的 AI 客服系統。本文詳細介紹如何用 LangGraph 打造生產級的智能工單系統。
@@ -27,7 +28,7 @@ readTime: "45 min"
     ├→ [優先級 Agent]      - 評估緊急程度
     ├→ [路由 Agent]        - 決定分配給哪個部門
     ├→ [回應 Agent]        - 生成初始回覆
-    └→ [質量檢查 Agent]    - 驗證回應質量
+    └→ [品質檢查 Agent]    - 驗證回應品質
     ↓
 [存儲和通知]
 ```
@@ -128,10 +129,13 @@ from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.graph import StateGraph, END
 import json
+import os
 
 class TicketAgents:
     def __init__(self):
-        self.model = ChatAnthropic(model="claude-3-5-sonnet-20241022")
+        # 模型 ID 從環境變數讀取：請填目前可用的 Claude 模型 ID（見 Anthropic 模型文件），
+        # 不要寫死已退役的 claude-3-5-sonnet-20241022。
+        self.model = ChatAnthropic(model=os.environ["LLM_MODEL"])
     
     # Agent 1: 分類 Agent
     def classify_agent(self, state: TicketState) -> TicketState:
@@ -326,12 +330,12 @@ class TicketAgents:
         
         return state
     
-    # Agent 5: 質量檢查 Agent
+    # Agent 5: 品質檢查 Agent
     def quality_check_agent(self, state: TicketState) -> TicketState:
-        """驗證回應質量"""
+        """驗證回應品質"""
         
         prompt = ChatPromptTemplate.from_template("""
-        評估以下客服回覆的質量：
+        評估以下客服回覆的品質：
         
         工單：{subject}
         回覆：{response}
@@ -369,9 +373,9 @@ class TicketAgents:
         state.response_quality_score = result["overall_score"]
         state.current_node = "quality_check"
         
-        # 如果質量不符合要求，生成改進建議
+        # 如果品質不符合要求，生成改進建議
         if not result["approved"]:
-            state.errors.append(f"質量檢查未通過：{result['issues']}")
+            state.errors.append(f"品質檢查未通過：{result['issues']}")
             return state
         
         state.processing_history.append({
@@ -387,8 +391,7 @@ class TicketAgents:
 ### 3. 構建 LangGraph
 
 ```python
-from langgraph.graph import StateGraph, END
-from langgraph.graph.graph import START
+from langgraph.graph import StateGraph, START, END
 
 def build_ticket_workflow():
     """構建工單處理工作流"""
@@ -410,7 +413,7 @@ def build_ticket_workflow():
     workflow.add_edge("routing", "response_generation")
     workflow.add_edge("response_generation", "quality_check")
     
-    # 質量檢查的條件轉移
+    # 品質檢查的條件轉移
     def check_quality(state: TicketState):
         if state.response_quality_score >= 0.8:
             return "end"
@@ -461,7 +464,7 @@ print(f"工單 ID: {result.ticket_id}")
 print(f"分類: {result.category} (置信度: {result.category_confidence:.2%})")
 print(f"優先級: {result.priority}")
 print(f"分配部門: {result.assigned_department}")
-print(f"回應質量分數: {result.response_quality_score:.2f}")
+print(f"回應品質分數: {result.response_quality_score:.2f}")
 print(f"生成的回覆:\n{result.response}")
 print(f"\n処理歷史:")
 for entry in result.processing_history:
@@ -561,7 +564,7 @@ def monitor_workflow(state: TicketState):
         alert(f"工單 {state.ticket_id} 重試次數過多")
     
     if state.response_quality_score < 0.7:
-        alert(f"工單 {state.ticket_id} 回應質量低")
+        alert(f"工單 {state.ticket_id} 回應品質低")
 ```
 
 ---
@@ -627,12 +630,14 @@ async def process_ticket(ticket: TicketState):
 
 ## 性能指標
 
+> 下表是**設計目標**，不是量測結果；上線後請以實際監控數據（見上方監控章節）回填。
+
 | 指標 | 目標值 | 實現方式 |
 |------|-------|--------|
 | 平均響應時間 | <5 秒 | 並行處理，快速模型 |
 | 工單分類準確率 | >95% | 微調模型，人工審查 |
 | 首次解決率 | >70% | 知識庫集成，持續優化 |
-| 質量滿意度 | >4.5/5 | 質量檢查 Agent，人工評審 |
+| 品質滿意度 | >4.5/5 | 品質檢查 Agent，人工評審 |
 | 成本 / 工單 | <$0.1 | 批量處理，快速模型 |
 
 ---

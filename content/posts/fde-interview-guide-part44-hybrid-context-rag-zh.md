@@ -5,7 +5,7 @@ draft: false
 weight: 44
 description: "深度拆解長文本 LLM（200 萬 Token 上下文）與傳統 RAG 的動態混合架構：為什麼超大 Context Window 仍需 RAG、如何設計智能上下文管理器（Dynamic Hybrid Router）、Vertex AI Context Caching Registry 快取策略、成本矩陣（$2.50 vs $0.001）、降級策略、RRF 融合機制，以及 Staff 級 FDE 面試的完整答題框架"
 categories: ["all", "ai", "engineering"]
-tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "LLM", "VertexAI", "ContextCaching", "VectorSearch", "SystemDesign"]
+tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "LLM", "Vertex AI", "ContextCaching", "Vector Search", "System Design"]
 authors: ["yen"]
 readTime: "26 min"
 ---
@@ -19,7 +19,7 @@ readTime: "26 min"
 
 ## 面試情境
 
-> 你的客戶是一家擁有 50,000 名財務分析師的大型投資銀行。他們剛取得了 Gemini 的 200 萬 Token Context Window 存取權，興奮地計劃把整年的財務報表（約 100 萬 Token/份）直接塞給 LLM。當系統上線第一週，並發查詢量衝到 50,000 QPS，P99 延遲爆到 35 秒，TPU Cluster 飽和，成本在 72 小時內燒掉了月度預算。你被緊急召入，如何設計一個「動態混合路由器（Dynamic Hybrid Router）」來同時解決成本、延遲和吞吐量三個問題？
+> 你的客戶是一家擁有 50,000 名財務分析師的大型投資銀行。他們剛取得了 Gemini 的 200 萬 Token Context Window 存取權，興奮地計劃把整年的財務報表（約 100 萬 Token/份）直接塞給 LLM。當系統上線第一週，每天約 100 萬次查詢（平均約 12 QPS，開盤等尖峰時段是平均的數倍），每個長文本請求又要跑十幾秒，同時在途的請求大量堆積，P99 延遲爆到 35 秒，TPU Cluster 飽和，成本在 72 小時內燒掉了月度預算。你被緊急召入，如何設計一個「動態混合路由器（Dynamic Hybrid Router）」來同時解決成本、延遲和吞吐量三個問題？
 
 ---
 
@@ -45,6 +45,8 @@ RAG 替代方案（3 個 500-Token Chunks）：
 成本比：2500:1
 ```
 
+> 本文單價以 2025 年撰文時的 Gemini Pro / Flash 公開定價為基礎（長 context 另有階梯費率），僅作示意估算，請以官方最新價目表為準。
+
 當 50,000 名分析師每天各發 20 次查詢：
 
 | 方案 | 每日查詢數 | 單次成本 | 每日成本 | 月成本 |
@@ -64,10 +66,10 @@ RAG 替代方案（3 個 500-Token Chunks）：
   P50 端到端：~14 秒
   P99 端到端：~22 秒（負載正常時）
 
-50,000 並發時：
-  TPU Cluster 容量：~500 並發長文本請求
+極端尖峰（例如大量分析師在財報發布後同時送出請求）時：
+  可用的長文本推論容量：~500 個並發請求（示意假設）
   排隊時間（第 10,000 個請求）：~280 秒
-  P99 延遲：>35 秒（實測爆掉）
+  P99 延遲：>35 秒（示意估算）
 ```
 
 ### 1.3 任務分類的關鍵洞察
@@ -302,11 +304,11 @@ QueryFeature {
 
 ### 3.2 意圖分類模型
 
-使用 Fine-tuned `textembedding-gecko` 的輕量分類頭：
+使用 Fine-tuned embedding 模型（撰文時用 `textembedding-gecko`，該模型已退役，現行可改用 `gemini-embedding-001` 等新模型）的輕量分類頭：
 
 ```
 訓練資料：
-  - 50,000 條真實財務查詢（人工標注）
+  - 65,000 條財務查詢（人工標注）
   - 全域對比：22,000 條
   - 局部查找：35,000 條
   - 模糊/邊界：8,000 條
@@ -315,7 +317,7 @@ QueryFeature {
   - Base：textembedding-gecko 嵌入向量（768 維）
   - 分類頭：2 層 MLP，128 → 3 類
   - 推理延遲：~3ms（Cloud Run，2 vCPU）
-  - 準確率：91.4%（測試集）
+  - 準確率：~91%（示意目標值，非實測）
   - 模糊類閾值：score < 0.70 → fallback 規則
 
 部署：Cloud Run 最小實例 10 個（預熱，避免冷啟動）
@@ -411,6 +413,8 @@ def compute_doc_fingerprint(documents: list[str]) -> str:
 ## 五、降級策略與 TPU 負載管理
 
 系統在高負載下必須優雅降級，而非讓 P99 爆炸。
+
+> 重要前提：使用 Vertex AI 託管 Gemini 的客戶看不到供應商的 TPU 使用率。本文的「TPU 負載」應理解為客戶端可觀測訊號組成的綜合負載指標：429 錯誤率、配額（TPM/QPM）使用率、Provisioned Throughput 使用率、請求延遲與自家佇列深度。只有自建推論叢集（例如 GKE 上自己部署模型）時，才真的能直接監控加速器使用率。
 
 ### 5.1 三段式降級閾值
 
@@ -713,7 +717,7 @@ Gemini Flash 查詢改寫（耗時 ~200ms，成本 $0.00003）：
 
 | 設計決策 | 選 X 的理由 | 不選 Y 的理由 | Flip Condition |
 |---------|------------|--------------|----------------|
-| **Bloom Filter 做快取探針** vs 直接查 Cloud Spanner | O(1) 記憶體查詢 <0.5ms；誤報率 <0.1%，成本極低；避免 95% 的無效 DB 往返 | 直接 DB：每次查詢 2ms 延遲 × 1M QPS = 2000 CPU 秒/秒；Spanner 費用按讀操作計費 | 若 Bloom Filter 誤報率導致 >2% 的長文本啟動失敗，改為 Redis SET 精確快取 |
+| **Bloom Filter 做快取探針** vs 直接查 Cloud Spanner | O(1) 記憶體查詢 <0.5ms；誤報率 <0.1%，成本極低；避免 95% 的無效 DB 往返 | 直接 DB：每次查詢多 2ms 延遲；以本案尖峰約百級 QPS 計，讀取量有限（約 0.2–0.3 CPU 秒/秒），Bloom Filter 的主要價值在尾延遲而非省算力；Spanner 費用按讀操作計費 | 若 Bloom Filter 誤報率導致 >2% 的長文本啟動失敗，改為 Redis SET 精確快取 |
 | **Vertex AI Vector Search（HNSW）** vs Elasticsearch | 托管服務，零運維；ANN 延遲 <10ms；與 Vertex AI 生態整合（IAM、VPC）；千億級向量水平擴展 | Elasticsearch：運維負擔重（JVM 調優、Shard 管理）；BM25 對語義查詢效果差；延遲 20-50ms | 若需要混合全文搜索（BM25 + 向量），或已有 ES 基礎設施，改用 ES 8.x 的 dense_vector |
 | **Fine-tuned 分類器** vs GPT-4 意圖分類 | 推理延遲 3ms vs 800ms；月成本 $200 vs $15,000；可針對領域數據微調；無外部 API 依賴 | GPT-4 意圖分類：延遲無法接受（800ms 讓整體 P50 超標）；成本 $15K/月；無法保證一致性 | 若查詢量 <1,000 QPS 且不在乎成本，可用 GPT-4 簡化部署複雜度 |
 | **Cloud Spanner** 做 Registry vs Redis | 全球強一致性，無資料遺失風險；多區域複製；SQL 查詢方便統計分析；TTL 到期自動清理 | Redis：最終一致性（主從複製延遲）；單點故障風險；持久化代價高；資料結構對 Registry 太輕量 | 若 Registry 查詢量 >100K QPS 且可接受最終一致性，Redis Cluster 延遲更低（0.1ms vs 2ms） |
@@ -792,6 +796,8 @@ ROI：($17.8M - $3.6M) / $3.6M ≈ 394%（≈ 400% 提升）
 | **每請求平均成本** | $0.593 | $0.119 | -80% |
 | **吞吐量上限** | 500 並發（TPU 瓶頸） | 50,000 並發（RAG 分流） | +100x |
 
+> 以上為示意估算，非實測結果。「導入前」的成本沿用 9.2 的比較基準（假設純長文本也已有 85% 快取命中）；若完全沒有快取，依第一節計算，純長文本每日約 $2.5M。
+
 ---
 
 ## 十二、面試答題要點
@@ -800,7 +806,7 @@ ROI：($17.8M - $3.6M) / $3.6M ≈ 394%（≈ 400% 提升）
 >
 > *動態路由的核心洞察是查詢的 80/20 法則：80% 的財務查詢是局部事實查核（「Q3 毛利率是多少？」），這類查詢用 RAG 3 個 500-Token Chunks 加 Gemini Flash 在 0.8 秒內用 $0.001 解決，而長文本的成本是 $2.50，貴 2500 倍但答案品質相近。把昂貴的長文本算力留給真正需要全域理解的 20% 交叉對比任務，是整個 ROI 提升 400% 的根本原因。*
 >
-> *為什麼選 Bloom Filter 不選直接查 Cloud Spanner 做快取探針？因為 Bloom Filter O(1) 查詢耗時 <0.5ms，誤報率 <0.1%，能過濾掉 95% 的無效 DB 往返，在 1M QPS 下節省 2000 CPU 秒/秒的 Spanner 讀操作成本。為什麼選 Fine-tuned 分類器不選 GPT-4 做意圖分類？因為 GPT-4 推理延遲 800ms 會讓整體 P50 從 0.8 秒變成 1.6 秒，而且月成本高出 75 倍（$15K vs $200）。*
+> *為什麼選 Bloom Filter 不選直接查 Cloud Spanner 做快取探針？因為 Bloom Filter O(1) 查詢耗時 <0.5ms，誤報率 <0.1%，能過濾掉 95% 的無效 DB 往返，降低快取探針的尾延遲與 Spanner 讀操作次數（本案尖峰只有百級 QPS，省下的算力有限）。為什麼選 Fine-tuned 分類器不選 GPT-4 做意圖分類？因為 GPT-4 推理延遲 800ms 會讓整體 P50 從 0.8 秒變成 1.6 秒，而且月成本高出 75 倍（$15K vs $200）。*
 >
 > *降級策略是 Staff 級設計的關鍵細節：當 TPU 負載超過 85% 時，系統自動全量切換 RAG 路徑，全域查詢改用 20 個 Chunks + 兩階段 Flash 推理替代，品質損失約 15-20% 但成本從 $2.50 降至 $0.008，延遲從快取命中的 3.2 秒降至 4.2 秒，系統可用率從 87% 提升到 99.7%。這個降級不是失敗，是設計的一部分。」*
 
@@ -822,6 +828,6 @@ ROI：($17.8M - $3.6M) / $3.6M ≈ 394%（≈ 400% 提升）
 
 ---
 
-**系列導覽：**  
-← [（四十二）FDE 顧問技能：Discovery 框架與 POC 範圍定義](../fde-interview-guide-part42-consulting-discovery-zh/)  
-→ [（四十五）下一篇：即將推出](../fde-interview-guide-part45-zh/)
+**系列導航**
+
+← [Part 43：跨國電商百萬級購物車 Agent 的分散式動態權限與狀態回復](/posts/fde-interview-guide-part43-async-cart-agent-zh/) | [Part 45：Agent 工具鏈的間接提示詞注入防禦設計](/posts/fde-interview-guide-part45-prompt-injection-defense-zh/) →

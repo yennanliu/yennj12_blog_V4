@@ -4,8 +4,9 @@ date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering"]
-tags: ["AI", "java-fundamentals", "oop", "design-patterns", "concurrency", "testing", "frameworks", "reactive-programming", "microservices", "java", "programming", "software-engineering"]
+tags: ["java-fundamentals", "oop", "Design Patterns", "Concurrency", "Testing", "frameworks", "reactive-programming", "Microservices", "Java", "programming", "software-engineering"]
 summary: "Complete exploration of Java programming concepts through practical examples, covering core language features, object-oriented principles, design patterns, modern frameworks, and advanced topics like reactive programming and microservices."
+description: "Complete exploration of Java programming concepts through practical examples, covering core language features, object-oriented principles, design patterns, modern frameworks, and advanced topics like reactive programming and microservices."
 readTime: "25 min"
 ---
 
@@ -1098,9 +1099,9 @@ This learning journey demonstrates that modern Java development requires underst
 The Java ecosystem continues evolving, with new features and frameworks enhancing developer productivity:
 
 **Language Evolution**:
-- **Project Loom**: Virtual threads for massive concurrency improvements
-- **Project Panama**: Enhanced foreign function and memory APIs
-- **Pattern Matching**: Advanced pattern matching and switch expressions
+- **Project Loom**: Virtual threads for massive concurrency improvements (no longer emerging: GA since JDK 21, September 2023)
+- **Project Panama**: Foreign Function & Memory API (final since JDK 22)
+- **Pattern Matching**: Pattern matching for `switch` and record patterns (final since JDK 21)
 - **Value Types**: Project Valhalla's value types for better memory efficiency
 
 **Framework Innovation**:

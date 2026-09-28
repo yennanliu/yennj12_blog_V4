@@ -4,10 +4,10 @@ date: 2026-09-11T18:00:00+08:00
 draft: false
 weight: 5
 description: "Mem0 原始碼導讀系列最終篇：拆解 OSS 與 Platform 的完整差異、Graph Memory／Temporal Reasoning／Memory Decay／Dream 四個專屬能力各自解決什麼問題與 OSS 的補法、v2→v3 破壞性變更遷移清單、怎麼用官方開源評測框架測自己的資料，以及一份生產檢查清單。"
-categories: ["all", "ai", "engineering", "infrastructure", "architecture"]
+categories: ["all", "ai", "engineering", "infrastructure"]
 tags: ["Mem0", "Production", "AI Agent", "Memory", "Evaluation", "MCP", "LangGraph", "繁體中文"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "17 min"
 ---
 
 > *大多數人評估「要用開源版還是託管版」的方式，是比較功能清單的長度，然後選比較便宜的那個。*
@@ -67,6 +67,8 @@ readTime: "27 min"
 ---
 
 ## 二、四個 Platform 專屬能力，以及 OSS 的補法
+
+> 注意：Platform 是閉源託管服務，本節對這四個能力的機制描述來自官方文件（`docs/platform/`），不是原始碼閱讀；OSS 補法的部分才是對照原始碼。
 
 ### 2.1 Graph Memory：從外接圖庫變成內建
 

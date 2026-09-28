@@ -5,7 +5,7 @@ draft: false
 weight: 12
 description: "深入解析 ASR 工程架構：聲學特徵提取（MFCC/Mel Spectrogram）、CTC/Attention 解碼、Whisper 架構與生產級語音辨識系統設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Speech", "ASR", "Whisper", "CTC", "Audio", "RKK", "Interview"]
+tags: ["AI", "Speech", "ASR", "Whisper", "CTC", "Audio", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "20 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你正在設計一個線上教育平台的即時字幕系統，需要支援 10,000 位同時在線的學生。系統要求：辨識延遲 < 500ms、WER < 10%、支援中英文混合語音。請說明你的 ASR 架構選擇，以及如何在 POC 到 Scale 的過程中演進這個系統。
 
@@ -30,7 +30,7 @@ series: ["ai-eng-from-scratch"]
 
 **三大核心張力**
 
-1. **準確率 vs 延遲**：離線 batch 辨識可以拿到最好的準確率（Whisper large-v3 WER 4.2%），但需要等音訊結束後才能處理。串流辨識要求 < 300ms 的 partial result，但準確率可能下降 15–30%。
+1. **準確率 vs 延遲**：離線 batch 辨識可以拿到最好的準確率（Whisper large-v3 在 LibriSpeech test-clean 上 WER 約 2.7%），但需要等音訊結束後才能處理。串流辨識要求 < 300ms 的 partial result，但準確率可能下降 15–30%。
 
 2. **通用性 vs 領域適應**：預訓練模型在 clean speech 上表現優秀，但在特定領域（醫療術語、程式碼朗讀、帶口音的中文）WER 可能飆升至 30%+。Fine-tune 需要標注資料，成本每小時約 $50–200。
 
@@ -147,8 +147,8 @@ WER：5–8%（通用模型）
        ▼
     用戶端
 
-成本：GPU 雲端實例 $0.38/h，10 並發 = $0.038/h
-     vs 雲端 API $0.006/min × 50K 用戶 = $3,000+/日
+成本（示意估算）：GPU 雲端實例 $0.38/h，每張約承載 10 路並發 ≈ $0.038/h per 串流
+     vs 雲端 API $0.006/min ≈ $0.36/h per 串流（貴約 10 倍）
 延遲：150–300ms（端到端）
 WER：6–10%（small model，噪音環境）
 ```
@@ -211,8 +211,10 @@ WER：6–10%（small model，噪音環境）
 
 成本：A100 spot instance $1.8/h，動態擴縮
      平均 0.8× 使用率 = $1.44/h per A100
-     50K 並發 ≈ 50 張 GPU = $72/h = $1,728/日
-     vs 雲端 API = $43,200/日（節省 96%）
+     50K 並發 ÷ 每卡 10–50 路 ≈ 1,000–5,000 張 GPU
+     = $1,440–$7,200/h ≈ $35K–$173K/日
+     vs 雲端 API $0.36/h × 50K = $432,000/日（節省約 60–92%）
+     （示意估算：每卡可承載路數依模型大小與批次策略差異很大）
 延遲：P50 120ms，P99 280ms
 WER：4.2–6.8%（依模型與場景）
 ```
@@ -283,7 +285,7 @@ Mel 值：       150  607  1000  1474  2146  2840
 **Mel Spectrogram 形狀**：
 - 輸入：30 秒音訊
 - 輸出：80 × 3,000 的矩陣（80 個 Mel bin，每 10ms 一幀，共 3,000 幀）
-- Whisper 使用：80 Mel bin，固定填充到 30 秒 = 80 × 3,000
+- Whisper v1/v2 使用：80 Mel bin，固定填充到 30 秒 = 80 × 3,000；large-v3 改用 128 Mel bin（128 × 3,000）
 
 ---
 
@@ -380,9 +382,11 @@ Loss = λ × CTC_Loss + (1-λ) × Attention_Loss，λ = 0.3
 
 ## 六、Whisper 架構：OpenAI 的工程選擇
 
-Whisper 是目前最廣泛使用的開源 ASR 模型，理解其架構選擇是面試的核心考點。
+Whisper 是目前最廣泛使用的開源 ASR 模型，理解其架構選擇是掌握現代 ASR 的關鍵。
 
-**訓練資料**：680,000 小時弱監督標注音訊（網路爬取字幕），覆蓋 99 種語言。
+**訓練資料**：初版（v1/v2）為 680,000 小時弱監督標注音訊（網路爬取字幕），覆蓋 99 種語言；large-v3 擴大到約 100 萬小時弱監督標注 + 約 400 萬小時由 large-v2 產生的偽標注資料。
+
+> 部署時多數團隊會改用 large-v3-turbo（解碼器從 32 層縮到 4 層，約 809M 參數，速度大幅提升、準確率略降），並搭配 faster-whisper（CTranslate2）等推理引擎。
 
 **模型規模**：
 
@@ -406,7 +410,7 @@ Whisper 是目前最廣泛使用的開源 ASR 模型，理解其架構選擇是�
 │       ▼                                                     │
 │  ┌─────────────────────────────────────────────────────┐   │
 │  │  音訊編碼器（Transformer Encoder）                  │   │
-│  │  80 Mel × 3000 幀                                   │   │
+│  │  80 Mel × 3000 幀（large-v3：128 Mel）              │   │
 │  │  → 2 × Conv1D（stride=2，下採樣 4×）                │   │
 │  │  → Sinusoidal Position Embedding                   │   │
 │  │  → N × Transformer Blocks（Self-Attention）         │   │
@@ -526,7 +530,7 @@ VAD 是串流 ASR 的「守門員」：
 | **WER（噪音環境，SNR 10dB）** | 12–20% | 15–25% | 8–14%（+降噪）|
 | **P50 端到端延遲** | 2,000ms | 180ms | 120ms |
 | **P99 端到端延遲** | 5,000ms | 350ms | 280ms |
-| **成本（50K 並發/日）** | $43,200 | $2,400 | $1,728 |
+| **成本（50K 並發/日，示意估算）** | ≈ $432,000 | ≈ $45,600（5,000 卡 × $0.38/h）| ≈ $35K–$173K |
 | **串流即時字幕支援** | ✗ | ✓（partial result）| ✓（P99 < 300ms）|
 | **多語言支援** | ✓（API 提供）| 有限（single model）| ✓（語言路由）|
 | **領域微調能力** | ✗ | △（需重新部署）| ✓（A/B 路由）|
@@ -537,16 +541,16 @@ VAD 是串流 ASR 的「守門員」：
 - Whisper large-v3 在 LibriSpeech test-clean WER：**2.7%**
 - 加入 RNNoise 降噪後，噪音環境 WER 改善：**8–15%**
 - VAD 過濾靜音後，推理呼叫次數減少：**40–60%**
-- 從雲端 API 遷移到自建，50K 並發時成本節省：**96%**
+- 從雲端 API 遷移到自建，50K 並發時成本節省：**約 60–92%**（示意估算，取決於每卡承載路數）
 - Conformer-CTC 串流延遲 vs Whisper chunked：**150ms vs 350ms**
 
 ---
 
 ## 十、系列導航
 
-← [Phase 5 Part 3：向量資料庫與 RAG 系統設計](/posts/ai-eng-from-scratch-phase5-part3-rag-zh/)
+← [Phase 5 Part 3：進階 NLP — BERT、問答系統與語言理解](/posts/ai-eng-from-scratch-phase5-part3-advanced-nlp-zh/)
 
-→ [Phase 6 Part 2：文字轉語音（TTS）系統設計](/posts/ai-eng-from-scratch-phase6-part2-tts-zh/)
+→ [Phase 6 Part 2：語音合成與音訊模型 — 讓機器開口說話](/posts/ai-eng-from-scratch-phase6-part2-tts-audio-models-zh/)
 
 ---
 

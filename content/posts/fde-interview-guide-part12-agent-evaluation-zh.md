@@ -5,7 +5,7 @@ draft: false
 weight: 12
 description: "以系統設計視角拆解 AI Agent 的 Evaluation Pipeline：核心問題是什麼、RAG 評估三角怎麼設計、LLM-as-Judge 的取捨、以及怎麼讓 eval 成為持續整合的一環——含完整架構圖"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Evaluation", "Metrics", "RAG", "RAGAS", "LLM", "Observability", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Evaluation", "Metrics", "RAG", "LLM", "Observability", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "15 min"
 ---
@@ -338,6 +338,6 @@ Eval Pipeline：測試集 → Agent Run → Auto Metrics + LLM Judge
 
 ---
 
-**系列導覽：**  
-← [（十一）RKK 實戰：Agent 線上除錯與故障排除](../fde-interview-guide-part11-agent-debugging-zh/)  
-→ [（十三）RKK 實戰：Prompt Injection 攻防與 Agent 安全](../fde-interview-guide-part13-prompt-injection-zh/)
+**系列導航**
+
+← [Part 11：RKK 實戰——AI Agent 線上除錯與故障排除](/posts/fde-interview-guide-part11-agent-debugging-zh/) | [Part 13：RKK 實戰——Prompt Injection 攻防與 Agent 安全](/posts/fde-interview-guide-part13-prompt-injection-zh/) →

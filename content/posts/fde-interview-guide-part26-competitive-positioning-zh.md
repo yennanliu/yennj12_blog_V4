@@ -5,7 +5,7 @@ draft: false
 weight: 26
 description: "以 Google FDE 顧問視角拆解競品定位對話：如何回應客戶的 OpenAI / AWS 比較、用場景驅動而非規格比較的說服框架、Vertex AI 的差異化優勢在哪裡，以及如何避免常見的定位陷阱"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Consultant", "Vertex AI", "GCP", "Competitive", "Interview", "Google", "RKK"]
+tags: ["AI", "FDE", "Consultant", "Vertex AI", "GCP", "Competitive", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "15 min"
 ---
@@ -83,12 +83,12 @@ Vertex AI 的具體優勢：
 ┌──────────────────────────────────────────────────────┐
 │  OpenAI API（Direct）          Vertex AI              │
 ├──────────────────────────────────────────────────────┤
-│  資料送往 OpenAI 的美國        資料留在客戶指定的      │
-│  伺服器                       GCP Region（如 asia-   │
-│                               east1 台灣節點）        │
+│  預設由 OpenAI 基礎設施處理；  資料留在客戶指定的      │
+│  有部分地區的資料駐留選項，    GCP Region（如 asia-   │
+│  Azure OpenAI 也可選區域部署   east1 台灣節點）        │
 ├──────────────────────────────────────────────────────┤
-│  OpenAI 的資料使用政策         Google 不使用客戶資料  │
-│  有使用者需自行確認            訓練模型（BAA 可簽）   │
+│  API 資料預設不用於訓練模型    Google 不使用客戶資料  │
+│  （BAA 可申請）                訓練模型（BAA 可簽）   │
 ├──────────────────────────────────────────────────────┤
 │  SOC 2 Type II                SOC 2 + ISO 27001 +    │
 │                               FedRAMP（視需求）       │
@@ -96,7 +96,7 @@ Vertex AI 的具體優勢：
 
 你給客戶的語言：
 「如果你們的資料合規要求是資料不能離開特定地理區域，
- 直接呼叫 OpenAI API 在架構上就有一個天花板。
+ 就要先確認 OpenAI 的資料駐留選項有沒有涵蓋你們要求的區域。
  Vertex AI 讓你在 GCP 的 Region 邊界內完成整個推理，
  這對你們的合規審計報告來說，是可以直接說清楚的架構。」
 ```
@@ -141,11 +141,11 @@ vs.
 ┌────────────────────────────────────────────────────────────┐
 │  使用量級   OpenAI GPT-4o 估算   Vertex AI Gemini 1.5 Pro  │
 ├────────────────────────────────────────────────────────────┤
-│  1M input   $5.00               $3.50                      │
-│  tokens/月                                                  │
+│  1M input   依當期官方價目表     依當期官方價目表           │
+│  tokens/月  （兩家價格變動頻繁，請用客戶實際用量試算）      │
 ├────────────────────────────────────────────────────────────┤
-│  Committed  無長期承諾折扣       CUD（Committed Use        │
-│  Use                            Discount）最高 ~60% 折扣   │
+│  Committed  Batch 折扣 / 企業    Provisioned Throughput    │
+│  Use        方案需另行洽談       （固定期限預購吞吐量）     │
 ├────────────────────────────────────────────────────────────┤
 │  跑在 GCP   無 egress 優化       Vertex AI + GCS + BigQuery │
 │  上的資料                        在同一個 VPC，無 egress fee │
@@ -154,8 +154,8 @@ vs.
 
 你給客戶的語言：
 「如果你們的工作負載是確定性的——每天大概 X 個 request，
- Y token 量——我可以幫你們算一個 Committed Use 的方案，
- 通常比 pay-as-you-go 省 30-50%。這不是規格問題，是採購策略。」
+ Y token 量——我可以幫你們評估 Provisioned Throughput 的方案，
+ 換取可預測的成本與保證容量。這不是規格問題，是採購策略。」
 ```
 
 ---
@@ -181,21 +181,24 @@ vs.
 做法 2：指出 SDK 互通性
   from openai import OpenAI
 
-  # 只換 base_url，其餘程式碼不變
+  # 走 Vertex AI（資料留在指定 Region）的 OpenAI 相容端點
+  # 只換 base_url 與認證，其餘程式碼不變
+  PROJECT, LOCATION = "your-project", "asia-east1"
   client = OpenAI(
-      api_key="YOUR_GOOGLE_API_KEY",
-      base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+      api_key=GCP_ACCESS_TOKEN,  # 例如 gcloud auth print-access-token 取得
+      base_url=f"https://{LOCATION}-aiplatform.googleapis.com/v1/"
+               f"projects/{PROJECT}/locations/{LOCATION}/endpoints/openapi"
   )
 
   # 工程師熟悉的介面照用
   response = client.chat.completions.create(
-      model="gemini-1.5-pro",
+      model="google/<現行 Gemini 模型 ID>",  # 請以官方文件列出的現行模型為準
       messages=[{"role": "user", "content": "Hello"}]
   )
 
   「Gemini 支援 OpenAI 相容的 API 格式。
    你們工程師熟悉的呼叫方式可以幾乎不動，
-   只換 endpoint 和 API key。」
+   只換 endpoint 和認證方式（Vertex AI 用 GCP access token）。」
 
 做法 3：把決定還給工程師
   「我不是要說服你今天就切換。
@@ -266,7 +269,7 @@ vs.
 全 Google Workspace  整合複雜度、工程      原生 IAM 整合
 用戶                 維護成本              Drive / Gmail 直連
 
-大規模推論用量       token 成本            CUD 折扣、Gemini 定價
+大規模推論用量       token 成本            Provisioned Throughput、Gemini 定價
                                           同 VPC 零 egress
 
 已有大量 GCP 資源    平台碎片化            統一 billing、單一
@@ -280,3 +283,9 @@ AI 新手客戶         不知從哪裡開始        Vertex AI Agent Builder
 
 這道題的答案永遠不是規格表。  
 是：**先聽懂客戶的問題，再用他的語言說清楚 Google 能解決什麼。**
+
+---
+
+**系列導航**
+
+← [Part 25：RKK 實戰——Self-Reflection 與幻覺校正迴圈設計](/posts/fde-interview-guide-part25-self-reflection-loop-zh/) | [Part 27：顧問實戰——如何在 45 分鐘內把模糊需求變成 POC 計畫](/posts/fde-interview-guide-part27-poc-scoping-zh/) →

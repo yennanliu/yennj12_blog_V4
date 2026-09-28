@@ -10,7 +10,7 @@ description: "Deep dive into the everything-claude-code repository by an Anthrop
 readTime: "22 min"
 ---
 
-The [everything-claude-code](https://github.com/affaan-m/everything-claude-code) repository represents one of the most comprehensive and battle-tested collections of Claude Code configurations available today. Created by an Anthropic hackathon winner and evolved over 10+ months of intensive daily use building real products, this repository has earned its 22.3k stars by providing production-ready solutions to common development challenges.
+The [everything-claude-code](https://github.com/affaan-m/everything-claude-code) repository represents one of the most comprehensive and battle-tested collections of Claude Code configurations available today. Created by an Anthropic hackathon winner and evolved over 10+ months of intensive daily use building real products, this repository had earned its 22.3k stars (as of January 2026) by providing production-ready solutions to common development challenges.
 
 This post provides a complete guide to setting up, customizing, and mastering this powerful plugin collection, along with best practices learned from real-world usage.
 
@@ -213,27 +213,29 @@ Rules are automatically applied to every Claude Code interaction, ensuring consi
 
 Hooks execute automatically in response to events, enabling powerful automations:
 
-```javascript
-// pre-tool-use hook: Save context before tool execution
-{
-  "eventType": "PreToolUse",
-  "script": "scripts/save-context.js",
-  "enabled": true
-}
+Hooks are configured under the `"hooks"` key of `settings.json` (`~/.claude/settings.json` for user scope, `.claude/settings.json` for a project); a plugin ships the same structure in its `hooks/hooks.json`. Each event takes a list of matchers, and each matcher runs one or more shell commands:
 
-// post-tool-use hook: Run tests after file edits
+```json
 {
-  "eventType": "PostToolUse",
-  "toolNames": ["Edit", "Write"],
-  "script": "scripts/run-tests.js",
-  "enabled": true
-}
-
-// on-stop hook: Generate session summary
-{
-  "eventType": "Stop",
-  "script": "scripts/session-summary.js",
-  "enabled": true
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "node scripts/save-context.js" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "node scripts/run-tests.js" }]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [{ "type": "command", "command": "node scripts/session-summary.js" }]
+      }
+    ]
+  }
 }
 ```
 
@@ -244,14 +246,14 @@ Hooks execute automatically in response to events, enabling powerful automations
 The fastest and easiest method:
 
 ```bash
-# In Claude Code CLI
-/plugins search everything-claude-code
+# In Claude Code: register the repository as a plugin marketplace
+/plugin marketplace add affaan-m/everything-claude-code
 
-# Install the plugin
-/plugins install everything-claude-code
+# Install the plugin from that marketplace (check the repo README for the exact name)
+/plugin install <plugin-name>@<marketplace-name>
 
-# Verify installation
-/plugins list
+# Review what is installed
+/plugin
 ```
 
 This method handles all file copying and configuration automatically, with built-in update support.
@@ -296,20 +298,10 @@ npm install
 After installation, customize for your environment:
 
 ```bash
-# 1. Configure your package manager preference
-# Edit ~/.claude/config.json
-{
-  "packageManager": "pnpm",  # or npm, yarn, bun
-  "enabledAgents": [
-    "planner",
-    "tdd-engineer",
-    "code-reviewer"
-  ],
-  "enabledHooks": [
-    "save-context",
-    "run-tests"
-  ]
-}
+# 1. Keep only what you use: subagents are active if their file is in
+#    ~/.claude/agents/ (or .claude/agents/), and hooks are the ones listed
+#    under "hooks" in ~/.claude/settings.json
+ls ~/.claude/agents/
 
 # 2. Set up MCP servers
 # Edit ~/.claude/mcp-configs/github.json
@@ -354,7 +346,7 @@ Remaining for code: ~70k tokens
 
 ```bash
 # ✅ GOOD: Project-specific configuration
-~/projects/web-app/.claude/mcp-config.json
+~/projects/web-app/.mcp.json
 {
   "mcpServers": {
     "github": {
@@ -363,7 +355,7 @@ Remaining for code: ~70k tokens
     },
     "supabase": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-supabase"]
+      "args": ["-y", "@supabase/mcp-server-supabase@latest"]
     }
   }
 }
@@ -381,31 +373,21 @@ From the repository's best practices:
 2. **Under 80 total active tools** - Each tool definition consumes ~200 tokens
 3. **Project-specific configurations** - Different MCP servers for different projects
 4. **Disable unused tools** - Even within enabled MCPs, disable tools you don't need
-5. **Monitor token usage** - Use `/context-stats` to see current consumption
+5. **Monitor token usage** - Use `/context` to see current consumption
 
 ### **Practical Example: E-commerce Project**
 
 ```json
-// ~/projects/ecommerce/.claude/mcp-config.json
+// ~/projects/ecommerce/.mcp.json (JSON itself does not allow comments)
 {
   "mcpServers": {
-    // Frontend development
-    "github": { "enabled": true },
-
-    // Backend API
-    "supabase": { "enabled": true },
-
-    // Deployment
-    "vercel": { "enabled": true },
-
-    // Payment processing (only when needed)
-    "stripe": { "enabled": false }  // Enable manually with /mcp enable stripe
-  },
-  "contextOptimization": {
-    "autoDisableUnusedTools": true,
-    "sessionBasedActivation": true
+    "github":   { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-github"] },
+    "supabase": { "command": "npx", "args": ["-y", "@supabase/mcp-server-supabase@latest"] },
+    "vercel":   { "command": "npx", "args": ["-y", "<vercel-mcp-package>"] }
   }
 }
+// Payment processing (Stripe) is left out; add it only for the sessions that need it:
+//   claude mcp add stripe -- <command>
 ```
 
 ## Workflow Patterns: Real-World Usage
@@ -595,43 +577,35 @@ Define workflows specific to your technology:
 
 Chain multiple hooks for complex workflows:
 
-```javascript
-// ~/.claude/hooks/complete-feature-workflow.json
+```json
 {
-  "hooks": [
-    {
-      "eventType": "PreToolUse",
-      "toolNames": ["Write", "Edit"],
-      "script": "scripts/backup-files.js"
-    },
-    {
-      "eventType": "PostToolUse",
-      "toolNames": ["Write", "Edit"],
-      "script": "scripts/format-code.js"
-    },
-    {
-      "eventType": "PostToolUse",
-      "toolNames": ["Write", "Edit"],
-      "script": "scripts/run-tests.js",
-      "continueOnError": true
-    },
-    {
-      "eventType": "PostToolUse",
-      "toolNames": ["Write", "Edit"],
-      "conditions": {
-        "allTestsPassed": true
-      },
-      "script": "scripts/update-docs.js"
-    }
-  ]
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [{ "type": "command", "command": "node scripts/backup-files.js" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "node scripts/format-code.js" },
+          { "type": "command", "command": "node scripts/run-tests.js" }
+        ]
+      }
+    ]
+  }
 }
 ```
+
+There is no built-in "only if all tests passed" condition: put that logic inside the script itself (e.g. have `run-tests.js` call `update-docs.js` only on success). A hook command signals failure through its exit code, which Claude Code reports back.
 
 ### **4. Verification Loops for Quality Assurance**
 
 Implement continuous validation:
 
-```markdown
+````markdown
 # ~/.claude/skills/verification-loop/
 
 ## Continuous Verification Pattern
@@ -671,7 +645,7 @@ graders:
     command: npm run benchmark
     threshold: 95  # 95th percentile < 100ms
 ```
-```
+````
 
 ## Common Pitfalls and Solutions
 
@@ -681,23 +655,15 @@ graders:
 
 **Solution**: Enable only agents you actively use:
 
-```json
-// ~/.claude/config.json
-{
-  "enabledAgents": [
-    "tdd-engineer",   // For daily development
-    "code-reviewer",  // For PR reviews
-    "build-fixer"     // For CI/CD issues
-  ],
-  "disabledAgents": [
-    "architect",      // Use only for major features
-    "security-auditor", // Use before releases
-    "documentor"      // Use during sprint end
-  ]
-}
+```bash
+# Subagents are enabled by their presence in ~/.claude/agents/ (or .claude/agents/).
+# Park the ones you only need occasionally:
+mkdir -p ~/.claude/agents-parked
+mv ~/.claude/agents/architect.md ~/.claude/agents/security-auditor.md ~/.claude/agents-parked/
+# Keep tdd-engineer, code-reviewer, build-fixer for daily work
 ```
 
-**Pro tip**: Enable agents on-demand with `/agent enable <name>`.
+**Pro tip**: Run `/agents` inside Claude Code to see and manage the available subagents.
 
 ### **Pitfall 2: Conflicting Rules**
 
@@ -768,25 +734,7 @@ export async function hook({ event, context }) {
 
 **Problem**: Session context grows unbounded, degrading performance.
 
-**Solution**: Implement context pruning:
-
-```javascript
-// ~/.claude/hooks/on-stop/prune-context.js
-export async function hook({ sessionData }) {
-  // Keep only recent context
-  const maxContextAge = 24 * 60 * 60 * 1000; // 24 hours
-  const now = Date.now();
-
-  sessionData.messages = sessionData.messages.filter(msg =>
-    (now - msg.timestamp) < maxContextAge
-  );
-
-  // Compress old decisions into summaries
-  sessionData.decisions = compressDecisions(sessionData.decisions);
-
-  return { updatedSession: sessionData };
-}
-```
+**Solution**: Hooks cannot rewrite the conversation history, so prune with the built-in commands instead: check usage with `/context`, run `/compact [focus instructions]` to summarise the session so far, and `/clear` when you switch to an unrelated task. Durable decisions belong in `CLAUDE.md`, not in the running session.
 
 ## Customization Strategies
 
@@ -855,10 +803,7 @@ Create team variations:
     └── figma.json
 ```
 
-**Switch profiles**:
-```bash
-claude code --profile backend
-```
+**Switch profiles**: Claude Code has no built-in profile switch; copy (or symlink) the relevant profile's `agents/` and `skills/` into the project's `.claude/` directory and its MCP servers into the project's `.mcp.json`.
 
 ### **Strategy 3: Project Templates**
 
@@ -871,48 +816,21 @@ Create starter templates for different project types:
 │   ├── agents/         # Relevant agents
 │   ├── skills/         # Stack-specific skills
 │   ├── rules/          # Project conventions
-│   └── mcp-config.json # Required MCPs
+│   └── settings.json   # Permissions and hooks
+├── .mcp.json           # Required MCPs
 ├── .gitignore
 ├── package.json
 └── README.md
 
-# Use template
-claude init --template fullstack-nextjs
+# Use template: copy it into the new project
+cp -r ~/.claude/templates/fullstack-nextjs/.claude ~/.claude/templates/fullstack-nextjs/.mcp.json ./
 ```
 
 ## Performance Monitoring
 
 Track your productivity gains:
 
-```bash
-# Built-in metrics
-/stats show
-
-# Sample output:
-Claude Code Statistics (Last 30 Days)
-======================================
-Commands Used: 156
-  /tdd:          45 (29%)
-  /code-review:  32 (21%)
-  /build-fix:    28 (18%)
-  /plan:         25 (16%)
-  /refactor:     26 (16%)
-
-Agent Delegations: 89
-  tdd-engineer:      38
-  code-reviewer:     28
-  build-fixer:       23
-
-Time Saved (estimated): 42.5 hours
-  Test writing:     15.2h
-  Code review:      12.8h
-  Bug fixing:       14.5h
-
-Context Efficiency:
-  Avg tokens used:  45k / 200k (22.5%)
-  Avg response time: 3.2s
-  Cache hit rate:   67%
-```
+The simplest signals are the ones Claude Code already exposes: `/context` for context usage in the current session and `/cost` for token spend. For longer-term trends, compare your own before/after numbers (PR cycle time, review turnaround) rather than relying on estimated "time saved".
 
 ## Contributing Back to the Repository
 
@@ -924,8 +842,8 @@ The repository welcomes contributions. Here's how to add value:
 # 1. Create your agent
 ~/.claude/agents/my-custom-agent/
 
-# 2. Test thoroughly
-claude test-agent my-custom-agent
+# 2. Test thoroughly: place it in a test project's .claude/agents/
+#    and ask Claude to delegate a task to it
 
 # 3. Document clearly
 # Add comprehensive README with examples
@@ -942,7 +860,7 @@ git push origin agent/my-custom-agent
 ### **2. Report Issues with Context**
 
 When reporting bugs:
-```markdown
+````markdown
 **Issue**: Hook infinite loop with TypeScript watch mode
 
 **Environment**:
@@ -955,10 +873,12 @@ When reporting bugs:
 ```json
 {
   "hooks": {
-    "post-tool-use": {
-      "enabled": true,
-      "script": "run-tests.js"
-    }
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "node run-tests.js" }]
+      }
+    ]
   }
 }
 ```
@@ -972,7 +892,7 @@ When reporting bugs:
 
 **Expected**: Hook should detect watcher and skip
 **Actual**: Infinite loop until manual intervention
-```
+````
 
 ### **3. Improve Documentation**
 
@@ -1031,115 +951,56 @@ jobs:
 ### **Problem: "Agent not found" error**
 
 ```bash
-# Check agent installation
-ls ~/.claude/agents/
+# Subagents are Markdown files with YAML front matter
+ls ~/.claude/agents/ .claude/agents/
 
-# Verify agent configuration
-cat ~/.claude/agents/tdd-engineer/config.json
+# Check the front matter has a name and description
+head -n 10 .claude/agents/tdd-engineer.md
 
-# Reinstall specific agent
-claude install-agent tdd-engineer
-
-# Check Claude Code can find it
-claude list-agents
+# Inside Claude Code: list and manage subagents
+/agents
 ```
 
 ### **Problem: Hooks not triggering**
 
 ```bash
-# Enable hook debugging
-export CLAUDE_DEBUG_HOOKS=true
+# Start Claude Code with debug output to see hook execution
+claude --debug
 
-# Check hook configuration
-cat ~/.claude/hooks/post-tool-use/run-tests.json
+# Inside Claude Code: review the registered hooks
+/hooks
 
-# Verify hook script exists and is executable
+# Verify hook script exists and runs on its own
 ls -la ~/.claude/scripts/run-tests.js
-chmod +x ~/.claude/scripts/run-tests.js
-
-# Test hook manually
 node ~/.claude/scripts/run-tests.js
 ```
 
 ### **Problem: Context window exceeded**
 
 ```bash
-# Check current context usage
-claude /context-stats
+# Inside Claude Code: see what is using the context
+/context
 
-# Disable unused MCPs
-claude mcp disable docker kubernetes aws
+# Summarise the session, or start fresh for a new task
+/compact
+/clear
 
-# Clear old context
-claude /clear-context --keep-session
+# Remove MCP servers you are not using
+claude mcp list
+claude mcp remove docker
 
-# Use project-specific MCP config
-echo '{"mcpServers": {"github": {}}}' > .claude/mcp-config.json
+# Prefer a project-scoped .mcp.json with only the servers this repo needs
 ```
 
 ### **Problem: Slow response times**
 
-```bash
-# Profile performance
-claude --profile
-
-# Common causes:
-# 1. Too many active tools (>80)
-claude mcp list --count
-
-# 2. Large context history
-claude /context-stats
-
-# 3. Expensive hooks
-claude hooks disable --all
-# Re-enable one by one to find culprit
-
-# 4. Network latency to MCP servers
-claude mcp health-check
+```text
+Common causes:
+1. Too many active MCP tools: check `claude mcp list` and remove unused servers
+2. Large context history: check `/context`, then `/compact` or `/clear`
+3. Expensive hooks: review them with `/hooks` and temporarily remove slow ones
+4. Slow MCP servers: `/mcp` shows each server's connection status
 ```
-
-## Real-World Success Stories
-
-From the repository's discussions and issues:
-
-### **Case Study 1: 10x Test Writing Speed**
-
-> "Before: Writing tests took 40% of development time.
-> After: TDD agent writes comprehensive tests in minutes.
-> Time saved: ~15 hours per week for our team of 5."
->
-> – Frontend Team Lead, Series B Startup
-
-**Their Setup:**
-- TDD Engineer agent for all feature work
-- Custom skill for React Testing Library patterns
-- Post-edit hook to run affected tests automatically
-
-### **Case Study 2: Zero Security Incidents**
-
-> "We had 3 security incidents in 6 months pre-adoption.
-> Zero incidents in 8 months since using Security Auditor.
-> Agent catches issues before code review."
->
-> – CTO, FinTech Company
-
-**Their Setup:**
-- Security Auditor agent runs on every PR
-- Custom rules for PCI DSS compliance
-- Pre-commit hook blocks commits with HIGH severity issues
-
-### **Case Study 3: Reduced Code Review Time**
-
-> "Code reviews took 2-3 hours and still missed issues.
-> Now Claude does first-pass review in 2 minutes.
-> Human reviewers focus on architecture and business logic."
->
-> – Engineering Manager, Enterprise SaaS
-
-**Their Setup:**
-- Code Reviewer agent integrated with GitHub Actions
-- Custom skill encoding company coding standards
-- Automated comment posting on PRs
 
 ## Conclusion: From Good to Great
 

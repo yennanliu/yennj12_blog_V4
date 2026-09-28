@@ -1,13 +1,14 @@
 ---
-title: "AI 深海/太空環境音串流實戰（二）：8K 視覺製作與動態場景生成"
+title: "AI 深海/太空環境音串流實戰（二）：4K 視覺製作與動態場景生成"
 date: 2026-01-18T17:30:00+08:00
 draft: false
 weight: 2
 authors: ["yen"]
 categories: ["all", "ai", "business", "creative"]
-tags: ["Midjourney", "Runway", "視覺設計", "8K", "深海", "太空", "AI生成", "動態視覺", "streaming", "visual-design"]
-summary: "系列第二篇：使用 Midjourney V7 和 Runway Gen-3 創造令人驚嘆的 8K 深海與太空視覺。從提示詞工程到動態影片生成，打造沉浸式直播體驗。"
-readTime: "28 min"
+tags: ["Midjourney", "Runway", "視覺設計", "4K", "深海", "太空", "AI生成", "動態視覺", "Streaming", "visual-design"]
+summary: "系列第二篇：使用 Midjourney V7 和 Runway Gen-3 創造令人驚嘆的 4K 深海與太空視覺。從提示詞工程到動態影片生成，打造沉浸式直播體驗。"
+description: "系列第二篇：使用 Midjourney V7 和 Runway Gen-3 創造令人驚嘆的 4K 深海與太空視覺。從提示詞工程到動態影片生成，打造沉浸式直播體驗。"
+readTime: "21 min"
 ---
 
 在系列第一篇中，我們掌握了 AI 音頻生成技術。本篇將聚焦於視覺設計：如何使用最新的 AI 工具創造令人屏息的深海和太空場景，並將靜態圖像轉換為流暢的動態影片。
@@ -21,7 +22,7 @@ readTime: "28 min"
 ```yaml
 縮圖點擊率（CTR）影響因素:
 
-測試數據（10,000 樣本）:
+示意假設（非實測數據，請用 YouTube 縮圖 A/B 測試自行驗證）:
   低品質視覺（720p 靜態圖）:
     CTR: 2.1%
     平均觀看時長: 12 分鐘
@@ -34,15 +35,11 @@ readTime: "28 min"
     CTR: 7.6%（+262%）
     平均觀看時長: 47 分鐘（+292%）
 
-  超高品質（8K 沉浸式）:
-    CTR: 9.2%（+338%）
-    平均觀看時長: 68 分鐘（+467%）
-    CPM: +45%（高品質吸引高價值觀眾）
+  註: YouTube 直播最高接收 4K，8K 素材在直播中沒有額外效益
 
 結論:
-  投資視覺品質可帶來 3-4 倍的流量增長
+  視覺品質可能明顯影響點擊率與觀看時長（實際幅度需自行測試）
   觀看時長是貨幣化的核心指標
-  8K 視覺可提升 CPM 達 45%
 ```
 
 **觀眾心理學**：
@@ -85,7 +82,7 @@ readTime: "28 min"
 優勢:
   ✓ 業界最佳圖像品質（2026 年標準）
   ✓ 擅長自然場景（深海、太空）
-  ✓ 高解析度支持（原生 8K）
+  ✓ 支援放大輸出（直播最終以 4K / 1080p 為上限）
   ✓ 一致性控制（同系列圖像風格統一）
   ✓ 社群龐大（提示詞資源豐富）
 
@@ -593,7 +590,7 @@ Step 3: 質量檢查
 
 **免費替代方案（GIMP）**：
 
-```markdown
+````markdown
 GIMP 批次處理（使用 Python-Fu）:
 
 1. 安裝 GIMP: https://www.gimp.org/downloads/
@@ -647,7 +644,7 @@ batch_process("/path/to/input", "/path/to/output")
 
 4. 執行腳本
 5. 等待處理完成
-```
+````
 
 ---
 
@@ -1161,6 +1158,5 @@ DaVinci Resolve（完全免費！）
 ## 延伸閱讀
 
 - [AI 深海/太空環境音串流實戰（一）：市場分析、科學原理與 AI 工具選擇](/posts/ai-ocean-space-ambient-streaming-part1-foundation-zh/)
-- [24/7 YouTube 串流賺錢策略完整分析](/posts/youtube-24-7-streaming-money-strategy-zh/)
 
 **標籤**: #Midjourney #Runway #視覺設計 #8K #AI生成 #深海 #太空 #動態視覺 #YouTube

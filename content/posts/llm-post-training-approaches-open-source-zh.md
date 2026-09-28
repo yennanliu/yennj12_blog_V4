@@ -4,9 +4,10 @@ date: 2026-03-13T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai"]
-tags: ["LLM", "post-training", "fine-tuning", "Qwen", "HuggingFace", "SFT", "RLHF", "DPO", "LoRA", "PEFT", "open-source", "AI", "Machine Learning", "MLOps"]
+tags: ["LLM", "Post-training", "Fine-tuning", "Qwen", "Hugging Face", "RLHF", "LoRA", "PEFT", "Open Source", "AI", "Machine Learning", "MLOps"]
 summary: "全面介紹開源 LLM 的 Post-Training 方法，包含 SFT、RLHF、DPO、ORPO、持續預訓練等技術，以 Qwen 為範例，深入分析各方法的優缺點、所需資源與適用場景，幫助你選擇最合適的訓練策略。"
-readTime: "35 min"
+description: "全面介紹開源 LLM 的 Post-Training 方法，包含 SFT、RLHF、DPO、ORPO、持續預訓練等技術，以 Qwen 為範例，深入分析各方法的優缺點、所需資源與適用場景，幫助你選擇最合適的訓練策略。"
+readTime: "17 min"
 ---
 
 > **前言：** 隨著 Qwen、LLaMA、Mistral 等高品質開源模型的普及，越來越多工程師開始思考：「如何讓這些模型更符合我的業務需求？」本文將系統性地介紹各種 Post-Training 方法，讓你在選擇技術路線前有完整的全局觀。
@@ -174,6 +175,8 @@ Step 3: PPO 強化學習
 
 ### 使用 TRL 的 PPO 訓練
 
+> **版本注意**：下面是 TRL 舊版（0.11 以前）的 PPO API。TRL 0.12 起已移除 `AutoModelForCausalLMWithValueHead` 這套流程，`PPOConfig(model_name=…, optimize_cuda_cache=…, early_stopping=…, target_kl=…)` 等參數也不再存在；新版 `PPOTrainer` 改為傳入 `args`、`processing_class`、`model`、`ref_model`、`reward_model`、`value_model`、`train_dataset`。要照抄這段請固定 `pip install "trl<0.12"`，否則請改寫成新版 API。
+
 ```python
 from trl import PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead
 from transformers import pipeline
@@ -271,7 +274,7 @@ dpo_trainer = DPOTrainer(
     ref_model=ref_model,         # 參考模型（SFT 後的凍結版）
     args=dpo_config,
     train_dataset=dpo_dataset,
-    tokenizer=tokenizer,
+    processing_class=tokenizer,  # 新版 TRL 以 processing_class 取代 tokenizer=
 )
 dpo_trainer.train()
 ```
@@ -329,7 +332,7 @@ orpo_trainer = ORPOTrainer(
     model=model,           # 注意：不需要 ref_model！
     args=orpo_config,
     train_dataset=dataset,
-    tokenizer=tokenizer,
+    processing_class=tokenizer,  # 新版 TRL 以 processing_class 取代 tokenizer=
 )
 orpo_trainer.train()
 ```

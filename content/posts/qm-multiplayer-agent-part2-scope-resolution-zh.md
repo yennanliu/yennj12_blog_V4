@@ -7,7 +7,7 @@ description: "拆解 QM 多人隔離的核心：五種 ScopeId、workspace 分�
 categories: ["all", "ai", "engineering"]
 tags: ["QM", "AI Agent", "Multi-tenant", "ACL", "TypeScript", "Access Control", "繁體中文"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "18 min"
 series: ["qm-deep-dive"]
 ---
 

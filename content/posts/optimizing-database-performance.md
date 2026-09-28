@@ -4,8 +4,9 @@ date: 2025-08-10T15:28:17+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering"]
-tags: ["AI", "database", "performance", "optimization", "postgresql", "redis"]
+tags: ["Database", "Performance", "Optimization", "postgresql", "Redis"]
 summary: "A comprehensive guide to database performance optimization techniques that helped us reduce query response times from seconds to milliseconds."
+description: "A comprehensive guide to database performance optimization techniques that helped us reduce query response times from seconds to milliseconds."
 readTime: "15 min"
 ---
 
@@ -34,15 +35,16 @@ ALTER SYSTEM SET log_statement = 'all';
 ALTER SYSTEM SET log_duration = on;
 ALTER SYSTEM SET log_min_duration_statement = 1000; -- Log queries > 1s
 
--- Analyze slow queries
+-- Analyze slow queries (PostgreSQL 13+ column names;
+-- before 13 they were total_time / mean_time)
 SELECT 
     query,
     calls,
-    total_time,
-    mean_time,
+    total_exec_time,
+    mean_exec_time,
     rows
 FROM pg_stat_statements
-ORDER BY mean_time DESC
+ORDER BY mean_exec_time DESC
 LIMIT 10;
 ```
 
@@ -516,7 +518,9 @@ groups:
 
 ## Results and Impact
 
-Our systematic approach to database optimization yielded significant improvements:
+> **Note:** The figures in this section are an illustrative composite of what this kind of optimization typically achieves, not measurements from a specific named system. Measure your own before/after numbers.
+
+The kind of improvements this systematic approach can yield:
 
 ### Performance Improvements
 - **Query latency**: 95th percentile reduced from 15s to 50ms

@@ -7,7 +7,7 @@ description: "GEO 工具市場已經很擁擠，但九成的工具只做同一�
 categories: ["all", "ai", "engineering", "business"]
 tags: ["GEO", "AIO", "工具", "開源", "Cloudflare", "監測", "技術棧", "繁體中文"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "12 min"
 ---
 
 > 大多數人的做法：買一個 GEO 監測工具，看著 dashboard 的數字，然後不知道要做什麼。
@@ -21,6 +21,8 @@ readTime: "20 min"
 ## 一、先講一件會改變前提的事
 
 **2026 年 7 月 1 日，Cloudflare 宣布：從 9 月 15 日起，新註冊的網域將預設封鎖 AI 訓練與 agent 類爬蟲。** 同時所有方案（含免費版）都能在後台依類別允許或封鎖 AI 爬蟲。
+
+> 2026-09 補註：本文寫於 2026-08，9 月 15 日的生效日已過。實際上線的預設行為、類別與層級名稱，請以 Cloudflare 官方文件的現行說明為準，本段不代表已驗證上線後的細節。
 
 這件事對 GEO 生意的三個直接影響：
 

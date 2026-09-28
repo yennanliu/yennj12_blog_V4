@@ -5,9 +5,9 @@ draft: false
 weight: 36
 description: "以系統設計視角拆解生產級 AI 評估管線：黃金資料集的建立原則、離線評估架構（RAGAS vs Vertex AI Evaluation Service）、CI/CD 品質閘門設計、Safety 作為獨立評估維度，以及線上評估的抽樣策略與 Trade-off"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Evaluation", "RAGAS", "Vertex AI", "CI/CD", "Safety", "Pipeline", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Evaluation", "RAGAS", "Vertex AI", "CI/CD", "Safety", "Pipeline", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "13 min"
 ---
 
 > Eval Pipeline 和 Eval 的差別：  
@@ -306,7 +306,7 @@ CI 報告格式（讓工程師看到的不只是 PASS/FAIL）：
                品質驗證，閾值由你們律師定」
 ──────────────────────────────────────────────────────────────────
 
-結論：Eval Pipeline 的成本（$0.4/次 CI）遠低於它防止的風險（千萬損失）。
+結論：Eval Pipeline 的成本（約 $0.4/次 CI，以每題 judge 呼叫約 $0.002 示意估算，實際依 judge 模型與當期定價而定）遠低於它防止的風險（千萬損失）。
       這是必要成本，不是可選的優化。
 ```
 
@@ -324,6 +324,6 @@ CI 報告格式（讓工程師看到的不只是 PASS/FAIL）：
 
 ---
 
-**系列導覽：**  
-← [（三十五）Granular Tracing 與可觀測性設計](../fde-interview-guide-part35-granular-tracing-zh/)  
-→ [（三十七）企業 AI 的連接組織：Legacy 系統整合](../fde-interview-guide-part37-legacy-integration-zh/)
+**系列導航**
+
+← [Part 35：RKK 實戰——生產級可觀測性設計：Granular Tracing、Span 樹與 Cloud Trace 整合](/posts/fde-interview-guide-part35-granular-tracing-zh/) | [Part 37：RKK 實戰——企業 AI 的「連接組織」：Legacy 系統整合、API 橋接與安全邊界設計](/posts/fde-interview-guide-part37-legacy-integration-zh/) →

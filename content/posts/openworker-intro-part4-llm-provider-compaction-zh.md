@@ -7,14 +7,14 @@ description: "拆解 OpenWorker 如何同時支援 OpenAI、Anthropic、Gemini�
 categories: ["all", "ai", "engineering"]
 tags: ["OpenWorker", "LLM", "Provider Abstraction", "Context Window", "Prompt Caching", "Token", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "19 min"
 series: ["openworker-intro"]
 ---
 
 > *「支援多家 LLM」聽起來像是一個 adapter pattern 練習題。*
 > *直到你發現：Anthropic 沒有 mid-thread system message、*
 > *Gemini 的 thought signature 必須原樣送回、*
-> *OpenAI 的 GPT-5.6 在 Chat Completions 上不准 tools 搭配 reasoning、*
+> *OpenAI 的 GPT-5.6（依該 commit 的處理邏輯）在 Chat Completions 上不准 tools 搭配 reasoning、*
 > *而使用者可以在對話中途從 Claude 換到 Ollama 上的 Llama。*
 
 ---

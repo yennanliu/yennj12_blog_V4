@@ -5,7 +5,7 @@ draft: false
 weight: 27
 description: "深入解析 AI 工作流程編排：LangChain/LlamaIndex/Haystack 框架比較、DAG 管線設計、有狀態工作流程、錯誤重試與生產監控"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LangChain", "LlamaIndex", "Orchestration", "Pipeline", "Workflow", "RKK", "Interview"]
+tags: ["AI", "LangChain", "LlamaIndex", "Orchestration", "Pipeline", "Workflow", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境**：你的團隊要上線一個 RAG 客服機器人，需要：查詢改寫 → 向量檢索 → 文件重排序 → 生成答案 → 品質過濾。QA 反映目前有 15% 的查詢因為某一步失敗而整條管線崩潰。架構師問你：如何設計這個管線的錯誤處理策略，以及你會選哪個編排框架？請解釋你的技術決策。
+**工程情境**：你的團隊要上線一個 RAG 客服機器人，需要：查詢改寫 → 向量檢索 → 文件重排序 → 生成答案 → 品質過濾。QA 反映目前有 15% 的查詢因為某一步失敗而整條管線崩潰。架構師問你：如何設計這個管線的錯誤處理策略，以及你會選哪個編排框架？請解釋你的技術決策。
 
 ---
 
@@ -303,11 +303,12 @@ SLA：99.9%（<8.7h 停機/年）
 
 ### 4.1 LCEL 的核心設計
 
-LangChain Expression Language（LCEL）是 LangChain v0.2+ 的核心抽象。一切組件都實現 `Runnable` 介面，可以用 `|` 運算子組合。
+LangChain Expression Language（LCEL，2023 年引入）是 LangChain 組合元件的核心抽象。（版本註記：LangChain 在 2025 年推出 1.x，Agent 執行改以 LangGraph 為基礎；下方程式碼以 `langchain_core` 的 Runnable 介面撰寫，實作前請對照當前版本文件。）一切組件都實現 `Runnable` 介面，可以用 `|` 運算子組合。
 
 ```python
-from langchain_core.runnables import RunnablePassthrough, RunnableLambda
+from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
 
 # 定義各步驟
@@ -345,8 +346,6 @@ full_pipeline = (
 **內建重試**：
 
 ```python
-from langchain_core.runnables import RunnableRetry
-
 resilient_llm = llm.with_retry(
     retry_if_exception_type=(RateLimitError, TimeoutError),
     stop_after_attempt=3,
@@ -379,7 +378,7 @@ LANGCHAIN_PROJECT=your_project
 - 延遲分解（哪個步驟最慢）
 - 錯誤堆疊追蹤
 
-**實際數字**：接入 LangSmith 後，P95 延遲的問題步驟定位時間從 2 小時縮短到 15 分鐘。
+**示意估算**：接入 LangSmith 後，P95 延遲的問題步驟定位時間可從數小時縮短到十幾分鐘（非實測數據）。
 
 ---
 
@@ -433,11 +432,11 @@ class RAGWorkflow(Workflow):
 
 ### 5.3 LlamaIndex 的獨特優勢
 
-**知識圖譜整合**：`KnowledgeGraphIndex` 自動從文件提取實體關係，支援多跳查詢。對「誰是 A 公司 CEO 的前任老闆？」這類問題，準確率比純向量搜尋高 35%。
+**知識圖譜整合**：`KnowledgeGraphIndex` 自動從文件提取實體關係，支援多跳查詢。對「誰是 A 公司 CEO 的前任老闆？」這類問題，準確率可明顯高於純向量搜尋（幅度依資料而定）。
 
-**多模態支援**：ImageIndex 處理圖片，TableIndex 處理結構化資料。混合內容文件（PDF 含表格）的解析準確率比 LangChain 高 ~20%。
+**多模態支援**：ImageIndex 處理圖片，TableIndex 處理結構化資料。混合內容文件（PDF 含表格）的解析品質通常優於通用 Loader（幅度依文件而定）。
 
-**Sub-Question 引擎**：自動把複雜問題分解成多個子問題，分別查詢後合併答案。對複雜分析型問題的 recall 提升 ~25%。
+**Sub-Question 引擎**：自動把複雜問題分解成多個子問題，分別查詢後合併答案。對複雜分析型問題的 recall 通常有明顯提升。
 
 ---
 
@@ -574,13 +573,15 @@ def classify_error(error: Exception, attempt: int) -> EscalationLevel:
     return EscalationLevel.AUTO_RETRY
 ```
 
-**實際效果**：引入分層錯誤處理後，生產環境管線失敗率從 15% 降到 2.3%，P99 延遲從 12s 降到 4.2s。
+**示意效果**：引入分層錯誤處理後，管線失敗率可從十幾 % 降到 2% 上下（與 §九 表格同為示意估算，非實測數據）。
 
 ### 7.4 Circuit Breaker（熔斷器）
 
 當下游服務持續失敗時，快速失敗而非繼續重試浪費資源：
 
 ```python
+import time
+
 class CircuitBreaker:
     def __init__(self, failure_threshold=5, timeout=60):
         self.failures = 0
@@ -744,9 +745,11 @@ Chroma        本地開發零配置，Python 原生        Pinecone：POC 階段
 | Bug 定位時間（均值） | 4.2 小時 | 35 分鐘 | 12 分鐘 |
 | 可測試步驟比例 | 20% | 80% | 95% |
 
+> 以上為示意估算，非實測數據。
+
 ### 9.2 開發速度影響
 
-引入 LangChain LCEL 後，**新功能迭代速度提升約 2.4×**，主要來源：
+引入 LangChain LCEL 後，**新功能迭代速度可明顯提升**（示意估算），主要來源：
 
 1. 步驟可以獨立開發、測試、替換（不需要整條管線跑）
 2. LangSmith 讓 Prompt 調優從「猜測」變成「資料驅動」
@@ -782,9 +785,9 @@ Level 4：蒸餾/微調（難度：高）
 
 ## 十、系列導航
 
-← **Phase 13 Part 1**：[RAG 系統設計：向量搜尋、重排序與上下文壓縮](/posts/ai-eng-from-scratch-phase13-part1-rag-zh/)
+← **Phase 13 Part 1**：[Phase 13 Part 1：MCP 與 API 整合 — AI 與真實世界的介面](/posts/ai-eng-from-scratch-phase13-part1-mcp-apis-zh/)
 
-→ **Phase 14 Part 1**：[AI Agent 設計：工具呼叫、規劃循環與多 Agent 協作](/posts/ai-eng-from-scratch-phase14-part1-agents-zh/)
+→ **Phase 14 Part 1**：[Phase 14 Part 1：Agent 迴圈與記憶系統 — 從單次呼叫到自主行動](/posts/ai-eng-from-scratch-phase14-part1-loop-memory-zh/)
 
 ---
 

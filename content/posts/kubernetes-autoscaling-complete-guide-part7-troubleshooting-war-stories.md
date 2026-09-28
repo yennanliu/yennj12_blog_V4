@@ -3,11 +3,12 @@ title: "Kubernetes Autoscaling Complete Guide (Part 7): Production Troubleshooti
 date: 2025-11-10T00:00:00+08:00
 draft: false
 weight: 7
-authors: ["yennj12 team"]
+authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "Troubleshooting", "Debugging", "Production", "Incidents", "War Stories", "Performance", "Autoscaling", "SRE", "devops"]
+tags: ["Kubernetes", "K8S", "Troubleshooting", "Debugging", "Production", "Incidents", "War Stories", "Performance", "Autoscaling", "SRE", "DevOps"]
 summary: "Part 7 of the Kubernetes Autoscaling series: Real-world production incidents, debugging workflows, common failure scenarios, and hard-learned lessons from operating autoscaling at scale. Battle-tested troubleshooting guides and postmortem analysis."
-readTime: "45 min"
+description: "Part 7 of the Kubernetes Autoscaling series: Real-world production incidents, debugging workflows, common failure scenarios, and hard-learned lessons from operating autoscaling at scale. Battle-tested troubleshooting guides and postmortem analysis."
+readTime: "26 min"
 ---
 
 ## Series Overview
@@ -26,13 +27,15 @@ This is **Part 7** of the Kubernetes Autoscaling Complete Guide series:
 
 Theory is important, but production teaches the hardest lessons. This guide documents real-world autoscaling failures, debugging methodologies, and hard-won insights from managing Kubernetes autoscaling at scale. These are the stories rarely told in documentation—the 2 AM incidents, cascading failures, and subtle bugs that cost millions.
 
+> **Note:** The three war stories below are **composite, illustrative scenarios** assembled from common autoscaling failure modes. They are not reports of specific incidents at a named company, and the dates, dollar figures and percentages are illustrative, not measured. The failure mechanics and fixes are the part to take away.
+
 ## War Story #1: The Black Friday Meltdown
 
 ### The Incident
 
-**Date:** November 25, 2022
-**Duration:** 2 hours 37 minutes
-**Impact:** $3.2M revenue loss, 89% service degradation
+**Scenario date (illustrative):** Black Friday
+**Duration:** ~2.5 hours
+**Impact (illustrative):** major revenue loss, most requests degraded
 **Root Cause:** HPA thrashing during traffic spike
 
 ### Timeline
@@ -46,8 +49,8 @@ Theory is important, but production teaches the hardest lessons. This guide docu
 08:50 UTC - HPA sees high CPU, scales to 200 pods
 08:51 UTC - Kubernetes scheduler cannot place pods (insufficient nodes)
 08:52 UTC - Cluster Autoscaler adds nodes (provision time: 3 min)
-08:53 UTC - API server overwhelmed by HPA queries (1000+ req/s)
-08:54 UTC - HPA controller starts timing out
+08:53 UTC - metrics-server (sized for 50 pods) struggles to scrape 3x the pods
+08:54 UTC - HPA metric fetches fail/stale; scaling decisions stall
 08:55 UTC - Pods begin OOMKilling due to memory pressure
 08:56 UTC - Service enters cascading failure mode
 08:57 UTC - Manual intervention begins
@@ -76,7 +79,7 @@ Theory is important, but production teaches the hardest lessons. This guide docu
 │       ↓                                                         │
 │  Pods Pending                                                   │
 │       ↓                                                         │
-│  API Server Overload (HPA queries)                            │
+│  metrics-server Overload (stale metrics)                      │
 │       ↓                                                         │
 │  HPA Timeouts                                                   │
 │       ↓                                                         │
@@ -354,7 +357,7 @@ spec:
 1. **Slow startup kills autoscaling** - 2-minute app startup + 3-minute node provisioning = 5 minutes total lag
 2. **Traffic spikes need pre-warming** - Reactive scaling is too slow for flash events
 3. **HPA + CA delays compound** - Each layer adds latency; total delay can be fatal
-4. **API server is a bottleneck** - HPA can overwhelm API server with queries
+4. **The metrics pipeline is a bottleneck** - an under-sized metrics-server returns stale or failed metrics exactly when pod counts spike (the HPA controller itself only syncs every 15s)
 5. **Readiness probes are critical** - Without them, traffic hits non-ready pods
 
 ### Preventive Measures
@@ -412,9 +415,8 @@ spec:
 
 ### The Incident
 
-**Date:** March 15, 2023
-**Duration:** 6 hours 12 minutes
-**Impact:** 45% service availability, database corruption
+**Duration (illustrative):** ~6 hours
+**Impact (illustrative):** severely reduced availability, database corruption risk
 **Root Cause:** VPA recommendations too aggressive, causing OOM loop
 
 ### The Problem
@@ -651,9 +653,8 @@ spec:
 
 ### The Incident
 
-**Date:** August 8, 2023
-**Duration:** 1 hour 23 minutes
-**Impact:** 70% pod evictions, service disruption
+**Duration (illustrative):** ~1.5 hours
+**Impact (illustrative):** most pods evicted, service disruption
 **Root Cause:** AWS spot instance interruptions not handled gracefully
 
 ### The Timeline
@@ -679,7 +680,7 @@ spec:
 
 ```yaml
 # ❌ Original Karpenter NodePool
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: general-spot
@@ -721,7 +722,7 @@ spec:
 **1. Maximum Instance Diversity:**
 
 ```yaml
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: diversified-spot
@@ -754,12 +755,19 @@ spec:
         values: ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d"]
 
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: diversified
 
-  # ✅ Short expiration to refresh instances frequently
+      # ✅ Short expiration to refresh instances frequently (v1: under template.spec)
+      expireAfter: 12h
+
+  # ✅ Higher weight = preferred; Karpenter tries higher-weight pools first
+  weight: 50
+
   disruption:
-    consolidationPolicy: WhenUnderutilized
-    expireAfter: 12h
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 1m
 
   limits:
     cpu: "500"
@@ -768,7 +776,7 @@ spec:
 **2. On-Demand Fallback Pool:**
 
 ```yaml
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: on-demand-fallback
@@ -785,10 +793,13 @@ spec:
         values: ["m", "c"]
 
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: on-demand-fallback
 
-  # ✅ Lower priority (higher weight value)
-  weight: 100
+  # ✅ Lower priority: Karpenter prefers the highest weight, so the
+  # fallback must have a LOWER weight than the spot pool above
+  weight: 10
 
   limits:
     cpu: "200"  # Reserve capacity
@@ -798,12 +809,15 @@ spec:
 
 ```yaml
 # ✅ On-demand pool for critical services
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: critical-on-demand
 spec:
   template:
+    metadata:
+      labels:
+        workload-type: critical
     spec:
       requirements:
       - key: karpenter.sh/capacity-type
@@ -815,10 +829,9 @@ spec:
         value: critical
         effect: NoSchedule
 
-      labels:
-        workload-type: critical
-
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: critical
 
   limits:
@@ -1303,7 +1316,7 @@ kubectl drain <spot-node> --ignore-daemonsets --delete-emptydir-data
 6. **Monitor metric lag** - 60-second lag can cause total failure during spikes
 7. **Pre-warm for known events** - Black Friday, etc. need manual pre-scaling
 8. **Test failover paths** - Spot → On-demand fallback must be tested
-9. **API server capacity matters** - HPA can overwhelm API server
+9. **Metrics pipeline capacity matters** - size metrics-server / Prometheus Adapter for peak pod count
 10. **OOMKills propagate** - One OOM can cascade to entire service
 
 ### Recommended SLOs

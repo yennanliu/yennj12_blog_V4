@@ -7,7 +7,7 @@ description: "拆解 QM 的持久化能力：三種沙箱後端與能力損失�
 categories: ["all", "ai", "engineering"]
 tags: ["QM", "AI Agent", "Sandbox", "microVM", "Agent Skills", "Cron", "Memory", "繁體中文"]
 authors: ["yen"]
-readTime: "29 min"
+readTime: "22 min"
 series: ["qm-deep-dive"]
 ---
 
@@ -21,6 +21,8 @@ series: ["qm-deep-dive"]
 本篇是 [QM 深度解析系列](/posts/qm-multiplayer-agent-part1-architecture-zh/)
 的最後一篇，涵蓋 `src/sandbox/`（3,226 行）、`src/skills/`（1,904 行）、
 `src/cron/`（699 行）、`src/memory/`（1,247 行）與部署層。
+
+> 本篇引用的程式碼中，`// ★ …` 開頭的註解是筆者加上的導讀說明，不在原始碼內（QM 採零註解政策，見 Part 1）。
 
 ---
 

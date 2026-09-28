@@ -4,9 +4,10 @@ date: 2026-01-17T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "claude-code", "mcp", "plugin", "skill", "agent", "開發工具", "自動化", "架構設計", "development-tools"]
+tags: ["AI", "Claude Code", "MCP", "Plugin", "skill", "Agent", "開發工具", "自動化", "架構設計", "Development Tools"]
 summary: "完整解析 Claude Code 的核心架構元件：從底層的 MCP 協議到高層的 Sub-agent，了解 Plugin、Skill、Sub-agent 與 MCP 的運作原理、使用時機與層級關係。"
-readTime: "20 min"
+description: "完整解析 Claude Code 的核心架構元件：從底層的 MCP 協議到高層的 Sub-agent，了解 Plugin、Skill、Sub-agent 與 MCP 的運作原理、使用時機與層級關係。"
+readTime: "29 min"
 ---
 
 Claude Code 作為 Anthropic 官方推出的 AI 驅動開發工具，其強大功能背後是由多個精心設計的架構元件組成。本文將深入解析 **MCP (Model Context Protocol)**、**Plugin**、**Skill** 和 **Sub-agent** 這四個核心概念，幫助開發者全面理解 Claude Code 的架構設計並有效運用。
@@ -278,7 +279,7 @@ async def get_prompt(name: str, arguments: dict):
 
 ### 🔧 設定 MCP Server
 
-**Claude Code 設定檔 (`~/.config/claude-code/settings.json`)：**
+**專案層級設定檔（專案根目錄的 `.mcp.json`，可提交進版控與團隊共用；也可以用 `claude mcp add <name> -- <command>` 新增）：**
 
 ```json
 {
@@ -288,24 +289,18 @@ async def get_prompt(name: str, arguments: dict):
       "args": ["/path/to/database-mcp-server.py"],
       "env": {
         "DATABASE_URL": "postgresql://localhost/mydb"
-      },
-      "description": "資料庫查詢工具",
-      "enabled": true
+      }
     },
     "slack-integration": {
       "command": "node",
       "args": ["/path/to/slack-mcp-server.js"],
       "env": {
         "SLACK_TOKEN": "${SLACK_BOT_TOKEN}"
-      },
-      "description": "Slack 訊息整合",
-      "enabled": true
+      }
     },
     "custom-tools": {
       "command": "uvx",
-      "args": ["my-mcp-package"],
-      "description": "自訂開發工具集",
-      "enabled": true
+      "args": ["my-mcp-package"]
     }
   }
 }
@@ -428,7 +423,7 @@ server.setRequestHandler("tools/call", async (request) => {
 
 ### 🔍 什麼是 Plugin？
 
-**Plugin** 是基於 MCP 協議構建的預先打包好的功能模組，提供特定領域的能力擴展。可以將 Plugin 視為「MCP Server 的應用商店版本」。
+在 Claude Code 中，**Plugin** 是**打包與散佈的單位**：一個 Plugin 可以把 slash commands、subagents、skills、hooks 與 MCP servers 包在一起，透過 marketplace 安裝（`/plugin marketplace add <repo>` → `/plugin install <name>@<marketplace>`）。本節下方列出的多半是 MCP Server 設定，它們可以單獨寫進 `.mcp.json`，也可以包進 Plugin 裡散佈。
 
 ```
 ┌───────────────────────────────────────────────────┐
@@ -662,9 +657,9 @@ Claude 執行流程：
 └────────────────────────────────────────────────────┘
 ```
 
-### 📋 內建 Skills 列表
+### 📋 常見 Skills 範例（示意）
 
-Claude Code 預設提供多個實用 Skills：
+以下是團隊常自行建立的 Skills / 自訂命令範例，用來說明 Skill 的定位。**注意：`/test`、`/build`、`/deploy` 並非 Claude Code 內建**，需要自己用 `SKILL.md` 定義，或由安裝的 Plugin 提供；實際可用的命令請在 Claude Code 中輸入 `/` 查看。
 
 #### 1. **/commit** - Git 提交管理
 
@@ -766,84 +761,32 @@ Claude 分析程式碼變更：
 
 **Skill 定義檔案結構：**
 
-```typescript
-// ~/.config/claude-code/skills/my-skill.ts
-import { Skill } from '@claude/skill-sdk';
+Skill 是一個資料夾，放在專案的 `.claude/skills/<name>/`（或個人的 `~/.claude/skills/<name>/`），核心是一份帶 YAML front matter 的 `SKILL.md`。Claude 會根據 `description` 判斷何時自動載入它，你也可以直接要求使用：
 
-export const myCustomSkill: Skill = {
-  name: 'deploy-full-stack',
-  description: '一鍵部署前後端應用',
+```markdown
+<!-- .claude/skills/deploy-full-stack/SKILL.md -->
+---
+name: deploy-full-stack
+description: 一鍵部署前後端應用到 dev / staging / production。當使用者要求部署整個應用時使用。
+---
 
-  // 命令參數定義
-  arguments: {
-    environment: {
-      type: 'string',
-      required: true,
-      choices: ['dev', 'staging', 'production']
-    },
-    skipTests: {
-      type: 'boolean',
-      default: false
-    }
-  },
+# 部署前後端應用
 
-  // 執行邏輯
-  async execute(args, context) {
-    const { environment, skipTests } = args;
-
-    // 步驟 1: 執行測試（除非跳過）
-    if (!skipTests) {
-      await context.runSkill('test');
-    }
-
-    // 步驟 2: 建構前端
-    await context.bash('cd frontend && npm run build');
-
-    // 步驟 3: 建構後端
-    await context.bash('cd backend && go build');
-
-    // 步驟 4: 建立 Docker images
-    await context.plugin('docker', 'build', {
-      tags: [`app-frontend:${environment}`, `app-backend:${environment}`]
-    });
-
-    // 步驟 5: 部署
-    if (environment === 'production') {
-      await context.confirmWithUser('確定要部署到 production？');
-    }
-
-    await context.plugin('kubernetes', 'deploy', {
-      namespace: environment,
-      manifests: ['k8s/frontend.yaml', 'k8s/backend.yaml']
-    });
-
-    // 步驟 6: 驗證部署
-    const health = await context.plugin('kubernetes', 'healthCheck', {
-      namespace: environment
-    });
-
-    if (health.status === 'healthy') {
-      await context.plugin('slack', 'sendMessage', {
-        channel: '#deployments',
-        message: `✅ 已成功部署到 ${environment}`
-      });
-
-      return { success: true, message: '部署完成！' };
-    } else {
-      throw new Error('部署健康檢查失敗');
-    }
-  }
-};
+1. 除非使用者明確要求跳過，先執行測試：`npm test`（frontend）與 `go test ./...`（backend）
+2. 建構前端：`cd frontend && npm run build`
+3. 建構後端：`cd backend && go build`
+4. 建立 Docker images，tag 為 `app-frontend:<env>`、`app-backend:<env>`
+5. 若目標是 production，**先向使用者確認**再繼續
+6. `kubectl apply -n <env> -f k8s/frontend.yaml -f k8s/backend.yaml`
+7. 檢查 rollout 狀態；健康檢查失敗就停止並回報錯誤
 ```
 
 **使用自訂 Skill：**
-```bash
-# 註冊 Skill
-claude-code skill add deploy-full-stack
 
-# 使用
-/deploy-full-stack staging
-/deploy-full-stack production --skip-tests
+```text
+# 不需要註冊指令；把資料夾放進 .claude/skills/ 即可被偵測
+使用者: 幫我把整個應用部署到 staging
+Claude: [依 description 匹配並載入 deploy-full-stack Skill，照步驟執行]
 ```
 
 ### 🎯 何時使用 Skill？

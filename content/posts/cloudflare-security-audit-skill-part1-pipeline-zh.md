@@ -372,7 +372,7 @@ Layer B（Output encoding）：缺失
 
 ### 多次 run 是 additive
 
-測試顯示，單次 run 大約只能找到所有漏洞的 50%。系統設計支援多次 run：
+單次 run 通常無法找到所有漏洞（LLM 的探索具隨機性，每次命中的攻擊面不同）。系統設計支援多次 run：
 
 ```
 Run 1：找到 findings A, B, C

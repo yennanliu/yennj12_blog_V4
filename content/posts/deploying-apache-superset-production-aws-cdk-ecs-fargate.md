@@ -3,10 +3,11 @@ title: "Deploying Apache Superset at Scale: Production-Ready BI Platform with AW
 date: 2026-01-10T11:00:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "engineering", "architecture"]
-tags: ["AI", "aws", "cdk", "ecs", "fargate", "superset", "rds", "postgresql", "alb", "route53", "analytics", "bi"]
+categories: ["all", "engineering", "architecture", "infrastructure"]
+tags: ["AWS", "CDK", "ECS", "fargate", "superset", "rds", "postgresql", "ALB", "route53", "Analytics", "bi"]
 summary: "Comprehensive guide to architecting a highly available, production-grade Apache Superset deployment using ECS Fargate, RDS PostgreSQL, and AWS CDK for enterprise business intelligence at scale."
-readTime: "19 min"
+description: "Comprehensive guide to architecting a highly available, production-grade Apache Superset deployment using ECS Fargate, RDS PostgreSQL, and AWS CDK for enterprise business intelligence at scale."
+readTime: "26 min"
 ---
 
 Deploying Apache Superset, the modern open-source business intelligence platform, requires careful architectural planning to handle enterprise-scale workloads. While Superset is powerful out of the box, production deployments demand high availability, horizontal scalability, and robust data persistence. This post explores building a production-ready Superset platform using ECS Fargate, RDS PostgreSQL, and AWS CDK.
@@ -435,6 +436,7 @@ const taskDefinition = new ecs.FargateTaskDefinition(this, 'SupersetTask', {
 
 // Superset container configuration
 const supersetContainer = taskDefinition.addContainer('SupersetContainer', {
+  // Pin an explicit release tag in production instead of :latest
   image: ecs.ContainerImage.fromRegistry('apache/superset:latest'),
   logging: ecs.LogDrivers.awsLogs({
     streamPrefix: 'superset',
@@ -553,6 +555,8 @@ const initTaskDefinition = new ecs.FargateTaskDefinition(this, 'InitTask', {
 });
 
 const initContainer = initTaskDefinition.addContainer('InitContainer', {
+  // Pin the same explicit version tag as the web service (never :latest), so a
+  // redeploy cannot silently run a schema-changing \`db upgrade\`
   image: ecs.ContainerImage.fromRegistry('apache/superset:latest'),
   command: [
     '/bin/bash',
@@ -567,13 +571,17 @@ const initContainer = initTaskDefinition.addContainer('InitContainer', {
       --firstname Admin \
       --lastname User \
       --email admin@example.com \
-      --password ${ADMIN_PASSWORD}
+      --password "\$ADMIN_PASSWORD"
+    # ^ Escaped on purpose: an unescaped \${ADMIN_PASSWORD} inside a TypeScript
+    #   template literal is interpolated at synth time, which would write the
+    #   password in plain text into the CloudFormation template. Escaped, the
+    #   shell reads it at runtime from the Secrets Manager-injected env var below.
 
     # Initialize Superset
     superset init
 
-    # Load example dashboards (optional)
-    superset load_examples
+    # Do not run \`superset load_examples\` in production: it loads demo
+    # datasets and dashboards into the metadata DB.
     `
   ],
   logging: ecs.LogDrivers.awsLogs({
@@ -1235,12 +1243,12 @@ The key decisions that make this system production-ready:
 1. **ECS Fargate over EC2**: Serverless containers eliminate operational overhead
 2. **RDS Multi-AZ PostgreSQL**: Managed database with automatic failover
 3. **Application Load Balancer**: Layer 7 routing with health checks and SSL termination
-4. **Redis Caching**: 10-100x query performance improvement
+4. **Redis Caching**: Repeated queries are served from cache instead of hitting the data source
 5. **CDK Infrastructure**: Version-controlled, reproducible deployments
 
-### **Real-World Performance**
+### **Design Targets (Illustrative, Not Measured)**
 
-At production scale, this architecture delivers:
+These are the targets this architecture is designed for, not measurements from the demo repository. Benchmark your own workload before quoting them:
 - **99.95% availability** with automatic failover and task recovery
 - **Sub-second dashboard loads** for cached queries
 - **10-50 concurrent users per instance** based on query complexity

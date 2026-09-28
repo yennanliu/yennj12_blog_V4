@@ -24,6 +24,8 @@ readTime: "26 min"
 > 同時 Vertex AI 帳單每月 $120K，CFO 要求兩個月內把成本降低 50%。
 > 你被要求在不降低對話品質的前提下，重新設計快取架構。你的方案是什麼？
 
+> 前提說明：使用 Vertex AI 託管 Gemini 的客戶不會管理 KV Cache 或 GPU 顯存，也不會遇到 VRAM OOM；只有自建推論（例如在 GKE 上用 vLLM 部署開源模型）才需要處理 KV Cache 驅逐與 PagedAttention。本文的 L1 Redis「對話槽位」實際上是對話歷史快取，不是模型內部的 KV Cache。閱讀時可把 GPU/OOM 相關段落理解為自建推論的情境，把 Context Caching 與帳單段落理解為託管 Gemini 的情境。
+
 ---
 
 ## 一、核心問題：為什麼 KV Cache 管理會讓 B2B SaaS 崩潰
@@ -32,19 +34,20 @@ readTime: "26 min"
 
 大型語言模型在推理時，Attention 機制需要存取所有歷史 Token 的 Key/Value 向量。每一輪新對話都要「看過」所有先前的 Token，這個快取（KV Cache）讓模型不需要重新計算，代價是它活在 GPU 顯存（VRAM）裡。
 
-以 Gemini 1.5 Pro 為例：
-- 每 1K tokens 的 KV Cache 佔用約 **0.5–1 MB VRAM**
-- 100 輪對話 × 平均 500 tokens/輪 = 50K tokens = **25–50 MB per session**
-- 同時服務 1,000 個活躍 session = **25–50 GB VRAM**
+託管模型（如 Gemini）的 KV Cache 大小並未公開，但可以用通用的 Transformer 公式估算：
 
-一張 A100 80GB 只能服務約 1,600 個並發長對話 session，再多就 OOM。
+- 每個 token 的 KV Cache = 2（K 與 V）× 層數 × KV heads 數 × head 維度 × 每個數值的 bytes
+- 以 8B 級開源模型（32 層、8 個 KV heads、head 維度 128、FP16）為例：2 × 32 × 8 × 128 × 2 bytes ≈ **128 KB / token**
+- 100 輪對話 × 平均 500 tokens/輪 = 50K tokens ≈ **6.4 GB per session**
+
+一張 A100 80GB 扣掉約 16 GB 模型權重後，只放得下約 10 個完整長度的長對話 session，再多就 OOM——這就是自建推論必須做 KV Cache 驅逐、PagedAttention 與 prefix 共用的原因。
 
 ### 1.2 計費陷阱：Vertex AI Context Caching 的結構性問題
 
-Vertex AI Context Caching 按以下規則計費：
+Vertex AI Context Caching 按以下規則計費（以下為 Gemini 1.5 世代的規則，新世代模型的最低門檻低很多，且另有自動生效的 implicit caching；計費細節請以官方最新文件為準）：
 - **最低快取長度：32,768 tokens**（低於此不得建立快取）
-- **計費單位：每小時**，不足一小時按一小時計算
-- **快取寫入費：** 比標準輸入 token 低 25%，但快取存儲本身每小時有持續費用
+- **計費單位：** 存儲費按快取存活時間計（本文以「每小時」為單位簡化估算）
+- **快取費用：** 被快取的 token 在後續請求中以折扣價計（1.5 世代約為標準輸入價的 25%），但快取存儲本身按時間持續計費
 
 這意味著：若用戶聊了 10 分鐘（產生 5K tokens）就下線，快取根本無法建立；若強行建立也不符合條件。但若系統設計不當，在對話剛過 32K 就立即建立，而用戶在 10 分鐘後下線，你就付了整整一小時的快取存儲費，什麼效益都沒有。
 
@@ -367,7 +370,7 @@ L2 存活時間低於 45 分鐘代表升層條件設得太寬鬆，讓太多短�
 
 ### 4.4 L2 快取的版本管理問題
 
-當 Gemini 模型版本升級時（如從 gemini-1.5-pro-001 升至 gemini-1.5-pro-002），舊版本的 Context Cache 無法被新版本讀取，必須重建。這個「快取失效風暴」（Cache Invalidation Storm）如果發生在高峰期，會造成：
+當 Gemini 模型版本升級時（例如從某模型的 -001 版升到 -002 版），舊版本的 Context Cache 無法被新版本讀取，必須重建。這個「快取失效風暴」（Cache Invalidation Storm）如果發生在高峰期，會造成：
 
 - 所有活躍的 L2 快取同時失效
 - 瞬間大量請求降級到 L1 或重建 Context
@@ -724,6 +727,8 @@ ROI：約 108:1
 | **L1 快取讀取延遲（p99）** | 45ms（每次全量 DB 讀取） | 3ms | 1.2ms | ↓ 97% |
 | **對話請求端到端延遲（p99）** | 2,800ms | 1,900ms | 1,400ms | ↓ 50% |
 | **用戶重新上線 Context 重建成本** | 50K tokens（$0.15/次） | 50K tokens | 800 tokens（$0.002/次） | ↓ 98% |
+
+> 以上為示意估算，非實測結果。各列並非由同一組假設推導：例如「每 MAU 每天費用」乘上用戶數後與月帳單對不上，下方成本拆解的總計（$26,260）也與表中 Phase 3 的 $36K 不同，請只把它們當成相對變化的方向參考。
 | **無效 L2 快取費用比例** | N/A | 22% | 3% | ↓ 86% |
 | **Flash 壓縮任務失敗率** | N/A | N/A | 0.8% | 基線 |
 | **L3 Snapshot Context Recall** | N/A | N/A | 78% | 基線 |
@@ -806,4 +811,4 @@ KV Cache 在 GPU 層面共享記憶體，理論上存在跨用戶讀取的風險
 
 **系列導航**
 
-← [Part 50：前一篇](/posts/fde-interview-guide-part50-multi-agent-orchestration-zh/) | [Part 52：下一篇](/posts/fde-interview-guide-part52-streaming-rag-latency-zh/) →
+← [Part 50：生產環境 GenAI 自動化評估管線與 LLM-as-a-Judge 漂移監控](/posts/fde-interview-guide-part50-llm-judge-evaluation-zh/) | [Part 52：百萬級 Agent Tool-Calling 的全域非同步並行優化與扇出控制](/posts/fde-interview-guide-part52-tool-fanout-optimization-zh/) →

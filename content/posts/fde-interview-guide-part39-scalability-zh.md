@@ -5,7 +5,7 @@ draft: false
 weight: 39
 description: "以系統設計視角拆解 AI 系統從內部試點到百萬外部用戶的擴展挑戰：三個演進階段的完整架構圖、無狀態服務設計、非同步佇列、語意快取、三層速率限制、Auto-scaling 策略，以及每個關鍵技術選型的 Why X not Y 決策邏輯"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Scalability", "Architecture", "Cache", "Queue", "RateLimit", "AutoScaling", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Scalability", "Architecture", "Cache", "Queue", "RateLimit", "Autoscaling", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "25 min"
 ---
@@ -688,19 +688,21 @@ Scale-Out 效果     ❌ Session 斷掉  ✅ 無狀態，有效    ✅ 全面有
 長任務體驗          同步等待/超時   同步等待           非同步 202，不超時
 ──────────────────────────────────────────────────────────────────────
 月架構成本          $500            $1,500            $4,000-6,000
-月 LLM 成本（1M MAU）不適用         不適用             $1,500,000 × 45% 省去
+月 LLM 成本（1M MAU）不適用         不適用             $1,500,000 × 55% 省去
                                                       ≈ $825,000 節省
 ──────────────────────────────────────────────────────────────────────
 
-Phase 3 架構投入的 ROI 計算：
+Phase 3 架構投入的 ROI 計算（示意估算）：
+  （基數：1M MAU × $1.50/MAU = $1,500,000/月）
   額外架構成本：~$4,000/月
   LLM 成本節省（55% 快取）：~$825,000/月（1M MAU 規模）
   ROI：200x+
 
   即使在 100K MAU 規模：
-  LLM 節省：$82,500 × 30% = $24,750/月
+  LLM 基數：100K MAU × $2.50/MAU = $250,000/月
+  LLM 節省：$250,000 × 30% = $75,000/月
   架構成本：$1,500/月
-  ROI：16x
+  ROI：約 50x
 ```
 
 ---
@@ -717,6 +719,6 @@ Phase 3 架構投入的 ROI 計算：
 
 ---
 
-**系列導覽：**  
-← [（三十八）從 POC 到 Production：生產化清單](../fde-interview-guide-part38-prototype-to-production-zh/)  
-→ [（四十）AI 系統的 PII 保護：資料脫敏與合規稽核](../fde-interview-guide-part40-pii-security-zh/)
+**系列導航**
+
+← [Part 38：RKK 實戰——從 POC 到 Production：AI 系統的五個生產化差距與 Rollback 設計](/posts/fde-interview-guide-part38-prototype-to-production-zh/) | [Part 40：RKK 實戰——AI 系統的 PII 保護：假名化設計、最小存取原則與合規稽核](/posts/fde-interview-guide-part40-pii-security-zh/) →

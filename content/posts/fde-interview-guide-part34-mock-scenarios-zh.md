@@ -5,7 +5,7 @@ draft: false
 weight: 34
 description: "六個完整的 FDE RKK 面試 Mock 情境，每題包含客戶場景與限制條件、面試官的追問鏈、模範答案架構，以及最常見的失分點——涵蓋金融合規、保險多 Agent、醫療 VPC、零售推薦、政府法規、教育 SaaS 六個垂直場景"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "RKK", "Mock Interview", "System Design", "Google", "Playbook", "Interview"]
+tags: ["AI", "FDE", "RKK", "Mock Interview", "System Design", "Cloud", "Playbook", "Interview"]
 authors: ["yen"]
 readTime: "25 min"
 ---
@@ -663,3 +663,9 @@ Memory 設計：
 **六個情境覆蓋了 FDE RKK 最常見的考題類型。**  
 **但真正的面試題永遠比這裡的更複雜、更模糊——**  
 **練習這些情境，練的不是「背答案」，而是「在模糊中快速找到關鍵 constraint 的能力」。**
+
+---
+
+**系列導航**
+
+← [Part 33：RKK 面試解剖——面試官怎麼看你、怎麼評分、什麼叫做強力雇用](/posts/fde-interview-guide-part33-rkk-anatomy-zh/) | [Part 35：RKK 實戰——生產級可觀測性設計：Granular Tracing、Span 樹與 Cloud Trace 整合](/posts/fde-interview-guide-part35-granular-tracing-zh/) →

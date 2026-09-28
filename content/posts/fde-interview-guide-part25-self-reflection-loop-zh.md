@@ -5,7 +5,7 @@ draft: false
 weight: 25
 description: "以系統設計視角拆解 Generator-Evaluator 雙節點架構：為什麼 LLM 需要自我檢查機制、Reflexion Pattern 的設計原理、如何防止反思迴圈變成無限循環，以及收斂保證的工程實踐"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Self-Reflection", "Hallucination", "LangGraph", "Reflexion", "Generator-Evaluator", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Self-Reflection", "Hallucination", "LangGraph", "Reflexion", "Generator-Evaluator", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
 ---
@@ -71,6 +71,8 @@ Reflexion 的三個核心洞察：
   ✅ 「第 3 條和第 7 條數字矛盾（500 萬 vs 50 萬），答案沒有提及這個矛盾」
   結構化的錯誤原因 → 生成者能有針對性地修正
 ```
+
+> 名詞說明：嚴格來說，Reflexion（Shinn et al., 2023）是指跨多次嘗試、把語言回饋存入情節記憶後再重試的方法；本文在單次請求內做「生成 → 評估 → 修正」迴圈，更接近 Self-Refine（Madaan et al., 2023）或 generator-critic 模式。本文沿用「Reflexion Pattern」泛指這類自我反思設計。
 
 ---
 
@@ -313,6 +315,6 @@ Self-Reflection 的成本：
 
 ---
 
-**系列導覽：**  
-← [（二十四）RKK 實戰：混合模型路由與語意路由器設計](../fde-interview-guide-part24-hybrid-model-routing-zh/)  
-← [系列首篇：（一）RAG 完全攻略](../fde-interview-guide-part1-rag-zh/)
+**系列導航**
+
+← [Part 24：RKK 實戰——混合模型路由與語意路由器設計](/posts/fde-interview-guide-part24-hybrid-model-routing-zh/) | [Part 26：顧問實戰——「我們現在用 OpenAI，為什麼要換 Vertex AI？」](/posts/fde-interview-guide-part26-competitive-positioning-zh/) →

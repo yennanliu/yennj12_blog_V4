@@ -5,7 +5,7 @@ draft: false
 weight: 38
 description: "以系統設計視角拆解 AI 系統從 POC 到生產最容易失敗的五個差距：Token Budget 失控、延遲 SLA 差距、Session State 消失、錯誤處理不完整、Rollback 機制缺席；包含生產化 Go-Live 清單、Prompt 版本控制、模型版本釘選、Canary 部署設計，以及每個差距對系統效能和穩定性的量化影響"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Production", "POC", "Deployment", "Rollback", "SLA", "Token Budget", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Production", "POC", "Deployment", "Rollback", "SLA", "Token Budget", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "18 min"
 ---
@@ -326,6 +326,6 @@ Rollback 時間 < 5 分鐘（環境變數切換）    30-60 分鐘（改代碼�
 
 ---
 
-**系列導覽：**  
-← [（三十七）企業 AI 的連接組織：Legacy 系統整合](../fde-interview-guide-part37-legacy-integration-zh/)  
-← [（三十三）RKK 面試解剖：面試官怎麼評分](../fde-interview-guide-part33-rkk-anatomy-zh/)
+**系列導航**
+
+← [Part 37：RKK 實戰——企業 AI 的「連接組織」：Legacy 系統整合、API 橋接與安全邊界設計](/posts/fde-interview-guide-part37-legacy-integration-zh/) | [Part 39：RKK 實戰——從 10,000 到百萬用戶：AI 系統的橫向擴展架構設計](/posts/fde-interview-guide-part39-scalability-zh/) →

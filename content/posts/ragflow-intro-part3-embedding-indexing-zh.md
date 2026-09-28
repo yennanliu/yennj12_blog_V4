@@ -7,7 +7,7 @@ description: "RAGFlow 原始碼導讀系列第三篇：拆解混合向量（0.1 
 categories: ["all", "ai", "engineering"]
 tags: ["RAGFlow", "RAG", "AI", "Embedding", "Elasticsearch", "Vector Database", "Infinity", "繁體中文"]
 authors: ["yen"]
-readTime: "25 min"
+readTime: "18 min"
 ---
 
 > *大多數人處理 RAG 的儲存，是 `collection.add(documents=chunks, embeddings=vecs)`，然後就不再想這件事。*
@@ -19,7 +19,7 @@ readTime: "25 min"
 
 ## 前言
 
-[Part 2](../ragflow-intro-part2-deepdoc-chunking-zh) 結束時，我們手上有一組 chunk：純文字、可能帶版面座標、可能帶人工或 LLM 產生的關鍵字與問句。
+[Part 2](/posts/ragflow-intro-part2-deepdoc-chunking-zh/) 結束時，我們手上有一組 chunk：純文字、可能帶版面座標、可能帶人工或 LLM 產生的關鍵字與問句。
 
 本篇處理接下來兩步：
 
@@ -658,7 +658,7 @@ vs 只支援 ES            （國企要信創、雲廠要自家服務）；     
 
 - **Part 4 — Decode 與檢索**：混合搜尋、Rerank、GraphRAG / RAPTOR 與引用
 
-← [Part 2 — 資料進場 — DeepDoc 解析、Chunking 策略與 14 種模板](../ragflow-intro-part2-deepdoc-chunking-zh) | [Part 4 — Decode 與檢索 — 混合搜尋、Rerank、GraphRAG/RAPTOR 與引用 →](../ragflow-intro-part4-retrieval-rerank-zh)
+← [Part 2 — 資料進場 — DeepDoc 解析、Chunking 策略與 14 種模板](/posts/ragflow-intro-part2-deepdoc-chunking-zh/) | [Part 4 — Decode 與檢索 — 混合搜尋、Rerank、GraphRAG/RAPTOR 與引用 →](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
 
 ---
 

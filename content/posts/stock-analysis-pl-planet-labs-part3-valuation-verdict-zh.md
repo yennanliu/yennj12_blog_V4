@@ -4,9 +4,9 @@ date: 2026-06-27T11:00:00+08:00
 draft: false
 description: "Planet Labs（NYSE: PL）三部曲完整選股分析（下）：DCF 三情境機率加權、P/S 與 EV/Revenue 相對估值、可比公司分析、足球場估值匯總、安全邊際、資本配置與股本稀釋，最終給出目標價區間與綜合投資裁決訊號。"
 categories: ["all", "finance"]
-tags: ["Stock Analysis", "PL", "Planet Labs", "DCF", "Valuation", "Football Field", "Price Target", "Investment Thesis", "Satellite", "InvestSkill", "繁體中文", "investment"]
+tags: ["Stock Analysis", "PL", "Planet Labs", "DCF", "Valuation", "Football Field", "Price Target", "Investment Thesis", "Satellite", "InvestSkill", "繁體中文", "Investment"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "15 min"
 ---
 
 > 多數人估值 PL 只會丟一句「市銷率 20 倍，太貴」。
@@ -17,6 +17,7 @@ readTime: "23 min"
 > **分析日期：2026 年 6 月 26 日** ｜ 股價：**$28.42** ｜ 市值：**約 $9.4B** ｜ 52 週區間：**$5.52 – $51.76**
 > 本系列由 Claude Code 搭配 [InvestSkill](https://github.com/yennanliu/InvestSkill) `us-stock-analysis` 插件生成，格式參考 [Full Demo — RKLB](https://yennj12.js.org/InvestSkill/full-demo-rklb.html)。
 > 所有數據為公開資料整理與模型估算，僅供教育用途，**不構成投資建議**。
+> 📌 **價格已過時(2026-09 註)**：本篇股價與估值以 2026-06-26 為準，其後已有新一季財報，請以最新數據重新評估。
 
 ---
 
@@ -24,8 +25,8 @@ readTime: "23 min"
 
 本篇為 **Planet Labs（PL）三部曲分析**的第三部（完結）：
 
-- （上）基本面與產業競爭力
-- （中）技術面、籌碼面與市場情緒
+- [（上）基本面與產業競爭力](/posts/stock-analysis-pl-planet-labs-part1-fundamentals-zh/)
+- [（中）技術面、籌碼面與市場情緒](/posts/stock-analysis-pl-planet-labs-part2-technical-sentiment-zh/)
 - **（下）估值模型與投資裁決** ← 你正在這裡
 
 ---
@@ -414,7 +415,7 @@ DCF       本系列     現價       分析師均     分析師高
 
 1. **純現金流估值仍偏貴**：DCF 機率加權內在價值僅 $18，現價溢價 +58%。前瞻 P/S 21.7x、EV/Rev 20x，依賴「未來高成長持續兌現」，安全邊際不足，容錯空間有限。
 
-2. **技術面中期偏弱**：股價跌破 MA30 / MA60 / MA200，均線空頭排列，位於 50% 回撤中軸。技術尚未止跌，左側佈局需承受續跌至 $22–24 的風險。
+2. **技術面中期偏弱**：股價跌破 MA30 / MA60 / MA200，均線空頭排列，位於 50% 回撤中軸。技術尚未止跌，仍有續跌至 $22–24 的風險。
 
 3. **GAAP 獲利 + 稀釋懸而未決**：GAAP 仍虧損（雖含非現金認股權證雜訊），SBC 與認股權證構成持續稀釋。Alphabet 等策略股東若調節持股，為潛在賣壓來源。
 
@@ -447,9 +448,9 @@ DCF       本系列     現價       分析師均     分析師高
 ║         PL（Planet Labs）綜合投資裁決                 ║
 ╠══════════════════════════════════════════════════════╣
 ║  信號：◆ 中性偏多 / 逢回分批（NEUTRAL-BULLISH）       ║
-║  建議：現有持倉可續抱；新資金分批布局 $24–26 區間      ║
-║  加碼參考：站回 MA60（~$33）確認中期轉強再加          ║
-║  停損參考：跌破 $22（Fib 61.8% / 分析師低標）保守減倉  ║
+║  估值參考區間：加權合理價 ~$26（基本情境 $26–32）     ║
+║  技術觀察位：MA60 ~$33（趨勢轉強）/ $22（Fib 61.8%）  ║
+║  （以上為估值與技術參考，非進出場建議）               ║
 ║  信心水準：中等（MEDIUM）                             ║
 ║  適合投資人：中高風險承受度、2–3 年成長 + 國防主題     ║
 ║  綜合評分：6.3 / 10（成長型投資人視角）               ║
@@ -465,14 +466,14 @@ DCF       本系列     現價       分析師均     分析師高
 | 國防 / 主題型 | **7.0** | 純正國防數據曝險 + AI 角度，主題性強 |
 | 股息型投資人 | **1.5** | 無股息、無回購，不適合 |
 
-> **系列總結語**：Planet Labs 是商業對地觀測賽道**規模最大、唯一接近獲利、訂閱模式最成熟**的純正標的。經歷從 $51.76 腰斬至 $28 的估值修正後，它從「明顯泡沫」回到「大致合理」——五模型加權合理價 ~$26，現價溢價僅 ~8%。基本面正發生清楚質變（調整後 EBITDA 轉正、營收 +42% 加速、Backlog +72%、$730.8M 現金堡壘），國防 D&I 引擎提供結構性順風。但純 DCF 觀點仍顯偏貴（內在價值 $18），技術面中期偏弱，成長期權溢價依賴未來兌現。**裁決：中性偏多，逢回（$24–26）分批布局優於追高，站回 $33 確認趨勢再加碼，跌破 $22 則保守應對。最關鍵的催化劑觀察指標，是 backlog 轉換速度與 D&I 合約的持續落地。**
+> **系列總結語**：Planet Labs 是商業對地觀測賽道**規模最大、唯一接近獲利、訂閱模式最成熟**的純正標的。經歷從 $51.76 腰斬至 $28 的估值修正後，它從「明顯泡沫」回到「大致合理」——五模型加權合理價 ~$26，現價溢價僅 ~8%。基本面正發生清楚質變（調整後 EBITDA 轉正、營收 +42% 加速、Backlog +72%、$730.8M 現金堡壘），國防 D&I 引擎提供結構性順風。但純 DCF 觀點仍顯偏貴（內在價值 $18），技術面中期偏弱，成長期權溢價依賴未來兌現。**裁決：中性偏多。五模型加權合理價約 $26（基本情境 $26–32），技術面以 MA60 ~$33 為趨勢轉強觀察位、$22（Fib 61.8%）為關鍵支撐；本段為估值分析，非買賣建議。最關鍵的催化劑觀察指標，是 backlog 轉換速度與 D&I 合約的持續落地。**
 
 ---
 
 ### 系列導覽
 
-- （上）[基本面與產業競爭力](../stock-analysis-pl-planet-labs-part1-fundamentals-zh/) — 商業模式、三表、成長、護城河
-- （中）[技術面、籌碼面與市場情緒](../stock-analysis-pl-planet-labs-part2-technical-sentiment-zh/) — 技術型態、機構持股、空頭、總經
+- （上）[基本面與產業競爭力](/posts/stock-analysis-pl-planet-labs-part1-fundamentals-zh/) — 商業模式、三表、成長、護城河
+- （中）[技術面、籌碼面與市場情緒](/posts/stock-analysis-pl-planet-labs-part2-technical-sentiment-zh/) — 技術型態、機構持股、空頭、總經
 - **（下）估值模型與投資裁決** ← 你正在這裡
 
 ---

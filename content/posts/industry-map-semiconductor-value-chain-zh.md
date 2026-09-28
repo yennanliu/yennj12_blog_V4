@@ -6,7 +6,7 @@ description: "用 industry-map 方法把半導體產業畫成一張有向圖:從
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "TSMC", "NVDA", "ASML", "晶片", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "13 min"
 ---
 
 > 大部分人分析半導體,習慣盯著一檔股票:NVIDIA 財報多好、台積電良率多高。
@@ -27,6 +27,28 @@ readTime: "28 min"
 - **價值遷移論點**:AI 算力的稀缺性正從「GPU 本身」往兩個方向外溢——**往上游**流向 HBM 記憶體、先進封裝(CoWoS)、電力與散熱;**往下游**流向能把算力變現的**推論(inference)與軟體服務**。未來 1–3 年,誰握住「新稀缺」(先進封裝產能、HBM、電力),誰就接棒下一段利潤。
 
 ---
+
+### 📚 系列導覽:14 篇分層深拆（上游 → 下游）
+
+**上游 Upstream**
+- Part 1:[矽晶圓 / 基板](/posts/industry-map-semiconductor-part1-silicon-wafer-zh/)
+- Part 2:[特用化學 / 光阻](/posts/industry-map-semiconductor-part2-chemicals-photoresist-zh/)
+- Part 3:[EDA + IP](/posts/industry-map-semiconductor-part3-eda-ip-zh/)
+- Part 4:[晶圓設備](/posts/industry-map-semiconductor-part4-fab-equipment-zh/)
+
+**中游 Midstream**
+- Part 5:[晶圓代工](/posts/industry-map-semiconductor-part5-foundry-zh/)
+- Part 6:[IC 設計 — GPU/加速器](/posts/industry-map-semiconductor-part6-gpu-design-zh/)
+- Part 7:[IC 設計 — 其他](/posts/industry-map-semiconductor-part7-ic-design-zh/)
+- Part 8:[記憶體](/posts/industry-map-semiconductor-part8-memory-zh/)
+- Part 9:[IDM / 類比](/posts/industry-map-semiconductor-part9-idm-analog-zh/)
+- Part 10:[封裝測試 OSAT](/posts/industry-map-semiconductor-part10-osat-zh/)
+
+**下游 Downstream**
+- Part 11:[網通 / 互連](/posts/industry-map-semiconductor-part11-networking-zh/)
+- Part 12:[系統 / 伺服器 OEM](/posts/industry-map-semiconductor-part12-system-oem-zh/)
+- Part 13:[雲端 CSP](/posts/industry-map-semiconductor-part13-cloud-csp-zh/)
+- Part 14:[終端需求](/posts/industry-map-semiconductor-part14-end-demand-zh/)
 
 ## 二、產業鏈全景圖(The Chain Map)
 
@@ -193,6 +215,8 @@ HBM 記憶體(SK Hynix)    7  ███████░░░  與 GPU 綁定
 ────────────────────────────────────────────────────────
 ```
 
+> 註:各分篇深入拆解後,部分分數有修正——特用材料/光阻 6.5(Part 2)、網通/互連 6.5(Part 11)、封測拆為一般 3.75 / 先進封裝 8.75(Part 10)、設備層整體 9.3(Part 4,EUV 子層仍為 10)。以分篇為準。
+
 **三大收費站,誰更持久?**
 
 | 咽喉點 | 護城河來源 | 持久性 | 被繞過的路徑 |
@@ -281,7 +305,7 @@ GPU 算力本身               先進封裝(CoWoS)產能        CoWoS 產能開�
 - 挑一個節點 → 用 **competitor-analysis** 研究它的護城河(例:台積電 vs 三星 vs Intel)。
 - 鎖定一層 → 用 **stock-screener** 把該層的個股排序(例:把封測 OSAT 全部拉出來比)。
 - 對共識贏家 → 用 **bear-case** 壓力測試(例:NVIDIA 的 CUDA 護城河會不會被 ASIC 侵蝕?)。
-- 對單一公司 → 用 **10k-digest** 深拆年報(參見本站的 NVDA / AMD / TSM 10-K 深度解析)。
+- 對單一公司 → 用 **10k-digest** 深拆年報(參見本站的 [NVDA 2026 10-K 深度解析](/posts/nvda-2026-10k-deep-dive-zh/)、[AMD 2025 10-K 深度解析](/posts/amd-2025-10k-deep-dive-zh/))。
 
 ---
 
@@ -321,7 +345,7 @@ GPU 算力本身               先進封裝(CoWoS)產能        CoWoS 產能開�
 
 - 分析方法:InvestSkill `industry-map` skill(<https://github.com/yennanliu/InvestSkill>)——把產業畫成上游到下游的有向圖,定位咽喉點、利潤池與價值遷移。
 - 本圖的市佔率/毛利率為公開產業常識的**概估值**(截至 2026 年初),用於說明各層相對地位,非即時報價。
-- 延伸:本站的個股 10-K 深度解析(NVDA、AMD、TSM 等)可搭配本圖,先看全景、再挑節點深拆。
+- 延伸:本站的個股 10-K 深度解析([NVDA](/posts/nvda-2026-10k-deep-dive-zh/)、[AMD](/posts/amd-2025-10k-deep-dive-zh/) 等)可搭配本圖,先看全景、再挑節點深拆。
 
 ---
 

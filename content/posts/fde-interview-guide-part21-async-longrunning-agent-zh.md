@@ -5,7 +5,7 @@ draft: false
 weight: 21
 description: "以系統設計視角拆解需要執行 30~60 分鐘的 Agent 任務：為什麼不能讓用戶等 HTTP Response、解耦架構的設計原理、Checkpoint 斷點續傳機制，以及 GCP 上的具體落地方案"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Async", "Long-Running", "Checkpoint", "Cloud Pub/Sub", "GKE", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Async", "Long-Running", "Checkpoint", "Cloud Pub/Sub", "GKE", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
 ---
@@ -111,6 +111,8 @@ readTime: "17 min"
 │  └────────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────┘
 ```
+
+> 實作注意：Pub/Sub 的 ack deadline 最長只有 600 秒。30–60 分鐘的任務若一直不 ack，訊息會被重新投遞給其他 Worker，造成重複執行。做法有二：用 client library 的 lease management 持續延長 deadline，或收到訊息後先把任務寫進 State Store、立即 ack，之後的存活與重試改由心跳與 Checkpoint 負責；也可改用 Cloud Run Jobs、Workflows 這類本來就支援長時間執行的服務。
 
 ---
 
@@ -317,6 +319,6 @@ GKE 的彈性擴縮架構：
 
 ---
 
-**系列導覽：**  
-← [（二十）RKK 實戰：間接 Prompt Injection 與 Dual-LLM 防禦架構](../fde-interview-guide-part20-indirect-prompt-injection-zh/)  
-→ [（二十二）RKK 實戰：動態並行 Tool-Calling 與依賴解析引擎](../fde-interview-guide-part22-parallel-tool-calling-zh/)
+**系列導航**
+
+← [Part 20：RKK 實戰——間接 Prompt Injection 與 Dual-LLM 防禦架構](/posts/fde-interview-guide-part20-indirect-prompt-injection-zh/) | [Part 22：RKK 實戰——動態並行 Tool-Calling 與依賴解析引擎](/posts/fde-interview-guide-part22-parallel-tool-calling-zh/) →

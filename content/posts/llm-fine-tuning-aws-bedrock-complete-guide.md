@@ -4,8 +4,9 @@ date: 2025-12-21T11:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "infrastructure"]
-tags: ["AWS Bedrock", "LLM", "fine-tuning", "machine-learning", "AI", "Claude", "Titan", "AWS CDK", "Python", "boto3", "reinforcement-learning", "AWS", "Machine Learning", "MLOps"]
+tags: ["AWS Bedrock", "LLM", "Fine-tuning", "Machine Learning", "AI", "Claude", "Titan", "AWS CDK", "Python", "Reinforcement Learning", "AWS", "MLOps"]
 summary: "Comprehensive guide to fine-tuning and customizing Large Language Models (LLMs) with AWS Bedrock - covering supervised fine-tuning, continued pre-training, and reinforcement fine-tuning with practical examples and AWS CDK infrastructure setup."
+description: "Comprehensive guide to fine-tuning and customizing Large Language Models (LLMs) with AWS Bedrock - covering supervised fine-tuning, continued pre-training, and reinforcement fine-tuning with practical examples and AWS CDK infrastructure setup."
 readTime: "28 min"
 ---
 
@@ -18,8 +19,9 @@ readTime: "28 min"
 - **Improve accuracy** for domain-specific tasks (legal, medical, finance)
 - **Adapt writing style** to match your brand voice
 - **Enhance performance** on specialized workflows
-- **Reduce hallucinations** by grounding responses in your data
 - **Optimize for specific formats** (JSON output, structured responses)
+
+> Fine-tuning is **not** the tool for grounding a model in your facts or reducing hallucinations about your data; that is what RAG is for. See [the RAG vs fine-tuning decision in Part 7 of the AWS AI series](/posts/ai-system-on-native-aws-part7-foundation-model-customization-governance-zh/).
 
 ### 🚀 Why AWS Bedrock for Fine-Tuning?
 
@@ -28,7 +30,9 @@ readTime: "28 min"
 ✅ **No Infrastructure Management** - AWS handles compute, storage, and scaling
 ✅ **Multiple Customization Methods** - Fine-tuning, continued pre-training, reinforcement learning
 ✅ **Data Privacy** - Your training data never leaves your AWS account or trains other models
-✅ **Multiple Model Support** - Amazon Titan, Meta Llama, Cohere Command, and more
+✅ **Multiple Model Support** - Amazon Nova, Meta Llama, and more (check the Bedrock console for which models support customization in your region)
+
+> **Note on the examples:** the runnable code below targets `amazon.titan-text-express-v1` and the Titan `inputText` request body. Titan Text has since been superseded by **Amazon Nova**; for new projects, pick a fine-tunable Nova model and use its messages-style request format instead of `inputText`.
 ✅ **Cost-Effective** - Pay only for training time and inference
 ✅ **Enterprise Security** - Customer managed keys, VPC endpoints, IAM integration
 
@@ -171,6 +175,8 @@ bedrock-finetuning/
 ```
 
 **For Reinforcement Fine-Tuning (Prompts with Multiple Responses):**
+
+> Illustrative only: Bedrock's RFT jobs take prompts plus a reward function or grader rather than pre-scored responses like the sample below. Check the current Bedrock RFT documentation for the exact input format.
 
 ```jsonl
 {
@@ -1226,7 +1232,7 @@ python scripts/inference.py \
 ```python
 # Conservative (safe, slower learning)
 conservative_params = {
-    "epochCount": "5",
+    "epochCount": "2",
     "batchSize": "1",
     "learningRate": "0.000005"
 }
@@ -1240,7 +1246,7 @@ moderate_params = {
 
 # Aggressive (faster, risk of overfitting)
 aggressive_params = {
-    "epochCount": "2",
+    "epochCount": "5",
     "batchSize": "2",
     "learningRate": "0.00005"
 }

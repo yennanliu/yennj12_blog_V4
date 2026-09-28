@@ -7,7 +7,7 @@ description: "八個步驟的完整實作：AI crawler 存取層與 CDN 白名�
 categories: ["all", "ai", "engineering", "business"]
 tags: ["GEO", "AIO", "Hugo", "Next.js", "llms.txt", "JSON-LD", "SSR", "CI", "繁體中文", "SEO"]
 authors: ["yen"]
-readTime: "29 min"
+readTime: "23 min"
 ---
 
 > 大多數人的做法：讀完方法論，開一份 Notion 待辦，然後三個月後還在第一項。
@@ -65,7 +65,7 @@ Allow: /
 User-agent: Claude-SearchBot
 Allow: /
 
-User-agent: Claude-Web
+User-agent: Claude-User
 Allow: /
 
 User-agent: PerplexityBot
@@ -128,7 +128,7 @@ Sitemap: https://example.com/sitemap.xml
      (http.user_agent contains "OAI-SearchBot") or
      (http.user_agent contains "ChatGPT-User") or
      (http.user_agent contains "Claude-SearchBot") or
-     (http.user_agent contains "Claude-Web") or
+     (http.user_agent contains "Claude-User") or
      (http.user_agent contains "PerplexityBot") or
      (http.user_agent contains "Applebot")
    動作：Skip → 勾選 All remaining custom rules、Rate limiting、
@@ -174,7 +174,7 @@ map $http_user_agent $is_ai_bot {
     "~*GPTBot"              1;
     "~*ClaudeBot"           1;
     "~*Claude-SearchBot"    1;
-    "~*Claude-Web"          1;
+    "~*Claude-User"         1;
     "~*PerplexityBot"       1;
     "~*Applebot"            1;
     "~*Googlebot"           1;

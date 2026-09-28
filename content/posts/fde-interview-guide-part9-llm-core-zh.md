@@ -3,9 +3,9 @@ title: "FDE 面試準備指南（九）：LLM 核心知識——Token、Prompt E
 date: 2026-05-31T11:00:00+08:00
 draft: false
 weight: 9
-description: "以 Google AI 工程師兼面試官的視角，整理 FDE 面試中最關鍵的 LLM 實用知識：Token 與 Context Window 的工程意涵、Prompt Engineering 五大技法，以及 Embedding 在語意搜尋中的原理與選型"
+description: "從面試官的視角，整理 FDE 面試中最關鍵的 LLM 實用知識：Token 與 Context Window 的工程意涵、Prompt Engineering 五大技法，以及 Embedding 在語意搜尋中的原理與選型"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "LLM", "Prompt Engineering", "Embedding", "Token", "RAG", "CoT", "ReAct", "Interview", "Google"]
+tags: ["AI", "FDE", "LLM", "Prompt Engineering", "Embedding", "Token", "RAG", "CoT", "ReAct", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "15 min"
 ---
@@ -78,6 +78,8 @@ Context Window = Input tokens + Output tokens
 | Gemini 2.0 Flash | 1,048,576 tokens |
 | GPT-4o | 128,000 tokens |
 | Claude 3.5 Sonnet | 200,000 tokens |
+
+> 上表為 2024–2025 年撰文時的資料，其中 Gemini 1.5 系列等模型已退役，請以各家官方最新文件為準。
 
 ---
 
@@ -319,6 +321,8 @@ Output: [0.23, -0.15, 0.87, ..., 0.42]（例如 768 維）
 | `BGE-M3` | BAAI | 1024 | 開源，多語言，中文強 | 中文為主 |
 | `multilingual-e5-large` | MS | 1024 | 開源，多語言均衡 | 多語言均等場景 |
 
+> 模型清單以 2025 年撰文時為準：Google 現行的通用 embedding 模型已是 `gemini-embedding-001`，`text-embedding-004` 屬上一代；實際選型請以官方文件與 MTEB 最新排名為準。
+
 **`text-embedding-004` 的 task_type 設計：**
 
 | Task Type | 使用場景 |
@@ -476,4 +480,4 @@ System Design 實戰（Part 4）
 
 ---
 
-*本系列已完結。如有特定主題想深入，歡迎留言。*
+*以上是基礎篇（Part 1–9）的總整理。系列繼續往 Agent、評估、安全與規模化深入 —— 下一篇：[FDE 面試準備指南（十）：RKK 實戰——AI Agent 的 Context Management](/posts/fde-interview-guide-part10-context-management-zh/)*

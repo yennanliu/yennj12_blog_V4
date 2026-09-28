@@ -58,7 +58,7 @@ title: "<CompanyName> (<TICKER>) <FY> 10-K 深度解析"
 date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "一句話,說明用 10k-digest 方法拆解 <公司> FY<FY> 年報,涵蓋五年財務軌跡、事業體/地區、關鍵獲利品質議題、資本配置、風險與投資訊號。"
-categories: ["finance", "investing", "all"]
+categories: ["all", "finance"]   # closed set: "all" first + canonical slugs only (see CLAUDE.md)
 tags: ["<TICKER>", "<Company EN>", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill"]  # + 1-3 topical tags
 authors: ["yen"]
 readTime: "~28-32 min"
@@ -98,15 +98,22 @@ Adapt/rename sections to the business model, but keep the depth.
 17. 十六、正面因素與紅旗 — ✅ positives / 🔴🟠🟡 red flags checklists.
 18. 十七、會計品質評分 — X/10 scorecard with deduction rationale.
 19. 十八、估值脈絡 — illustrative only; use cover market value; P/E, EV/FCF, net cash; STRONG caveat.
+    Right under the caveat, state the anchor date: `> 📅 市值基準日:YYYY-MM-DD(10-K 封面,距發文約 N 個月)`,
+    so the multiples are never read as current.
 20. 十九、最終判斷、論點反轉與投資訊號 — recommendation + 論點反轉條件 list + a boxed
     INVESTMENT SIGNAL card (Sentiment / Conviction / Horizon / Quality X.0/10 / Action) in ╔═╗ style.
+    - **One** `Conviction:` row only (above Horizon). Do not repeat it under Action.
+    - `Quality` **must equal** the §十七 會計品質評分 — it is the same number, not a second score.
+    - Under the box, do **not** add a guide that maps the Quality score onto 偏多/偏空 bands. Use:
+      `> 評分說明:本框 Quality X.X 即第十七節的「財報/會計品質」分數,Sentiment <S> 指「當前基本面與估值下的投資姿態」,兩者是不同維度;品質分數高低不直接對應偏多或偏空。`
 21. 二十、參考來源 — SEC EDGAR filing, items used, `10k-digest` link, and the report-structure
     reference <https://yennj12.js.org/InvestSkill/full-demo-amd.html>.
 22. Closing: 系列導覽/延伸閱讀 + a repeated non-advice reminder.
 
 **Be honest per company.** Score on the actual filing — unprofitable / expensive / high-risk names
 get lower quality scores and NEUTRAL/cautious signals. Do not make everything bullish. (In the
-batch, only AMZN and GOOGL earned BULLISH; ONDS/KTOS/AVAV landed at 4.0–5.0/10.)
+batch, only AMZN, GOOGL and META earned BULLISH; ONDS/KTOS/AVAV scored 4.5–6.0/10 on accounting
+quality and carry cautious NEUTRAL signals.)
 
 ## 6. Build & validation
 

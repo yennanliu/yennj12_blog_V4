@@ -7,7 +7,7 @@ description: "拆解 QM 的分層防禦：三種 security posture 如何組合�
 categories: ["all", "ai", "engineering"]
 tags: ["QM", "AI Agent", "Security", "Prompt Injection", "Threat Model", "ReDoS", "繁體中文"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "19 min"
 series: ["qm-deep-dive"]
 ---
 

@@ -6,7 +6,7 @@ description: "從 0 認識 agent_auto_system:一個用 CrewAI 打造、能透過
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "AI Agent", "Automation", "FastAPI", "LLM", "Multi-Agent", "AI Engineering", "Harness"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "11 min"
 ---
 
 > 大部分人寫 AI Agent:把 prompt 丟給 OpenAI SDK,拿到字串,`json.loads()`,能跑就好。
@@ -63,6 +63,8 @@ resp = client.chat.completions.create(model="gpt-4o", messages=[...])
 data = json.loads(resp.choices[0].message.content)
 return data
 ```
+
+> 本系列出現的 `gpt-4o` / `gpt-4o-mini` 等模型名稱沿用專案撰寫時的設定,僅作示意;實際使用請換成當下可用的模型 ID。
 
 但當你有 **11 種任務、3 家供應商、每個任務都需要重試/驗證/成本追蹤**時,如果每個任務都各寫一遍上面的邏輯,你會得到 11 份互相不一致、各自有 bug 的「跟 LLM 打交道」的程式碼。
 
@@ -320,9 +322,9 @@ doc/                       # 架構、部署、開發筆記
 ### 系列導覽
 
 - **Part 1(本篇)**:系統總覽、架構、資料流
-- Part 2:Harness 引擎——多模型容錯、自我修正、LLM 評審、成本追蹤
-- Part 3:自動化任務實戰——Shopee、Google Maps、Tasker
-- Part 4:生產化之路——Langfuse、Docker、AWS、權限
-- Part 5:前端體驗與 Pipeline 編排
+- [Part 2](/posts/auto-agent-system-part2-harness-engine-zh/):Harness 引擎——多模型容錯、自我修正、LLM 評審、成本追蹤
+- [Part 3](/posts/auto-agent-system-part3-automations-zh/):自動化任務實戰——Shopee、Google Maps、Tasker
+- [Part 4](/posts/auto-agent-system-part4-production-zh/):生產化之路——Langfuse、Docker、AWS、權限
+- [Part 5](/posts/auto-agent-system-part5-frontend-pipeline-zh/):前端體驗與 Pipeline 編排
 
 > 專案原始碼:[github.com/yennanliu/agent_auto_system](https://github.com/yennanliu/agent_auto_system)

@@ -5,7 +5,7 @@ draft: false
 weight: 11
 description: "以系統設計視角拆解 AI Agent 的 Troubleshooting：為什麼 Agent 難 debug、觀測性架構怎麼設計、五大故障模式怎麼追蹤——含完整架構圖與 Google Doc 模擬情境應答框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Debugging", "Troubleshooting", "Observability", "Tracing", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Debugging", "Troubleshooting", "Observability", "Tracing", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
 ---
@@ -194,6 +194,8 @@ Q1：Retrieval 有沒有回傳相關文件？
                                 回覆：我沒有相關資訊"
 ```
 
+> 圖中的 0.7 / 0.8 閾值只是示意起點，不是通用標準；相似度分數的分佈會隨 embedding 模型與語料而變，實際閾值要用自己的評估集校準。
+
 ---
 
 ### 故障二：工具呼叫失敗
@@ -336,6 +338,6 @@ DARK 框架：Diagnose → Ask → Root Cause → Kill it
 
 ---
 
-**系列導覽：**  
-← [（十）RKK 實戰：AI Agent 的 Context Management](../fde-interview-guide-part10-context-management-zh/)  
-→ [（十二）RKK 實戰：Agent 統計評估與品質量化](../fde-interview-guide-part12-agent-evaluation-zh/)
+**系列導航**
+
+← [Part 10：RKK 實戰——AI Agent 的 Context Management](/posts/fde-interview-guide-part10-context-management-zh/) | [Part 12：RKK 實戰——AI Agent 統計評估與品質量化](/posts/fde-interview-guide-part12-agent-evaluation-zh/) →

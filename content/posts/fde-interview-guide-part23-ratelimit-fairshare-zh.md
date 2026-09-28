@@ -5,7 +5,7 @@ draft: false
 weight: 23
 description: "以系統設計視角拆解多租戶 AI Agent 系統的資源隔離問題：為什麼傳統 RPM 限流不夠、Token-Aware Rate Limiting 的設計原理、分散式令牌桶架構，以及如何防止 Noisy Neighbor Effect 影響其他租戶"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Rate Limiting", "Multi-tenant", "Token Budget", "Fair-Share", "Redis", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Rate Limiting", "Multi-tenant", "Token Budget", "Fair-Share", "Redis", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "16 min"
 ---
@@ -44,7 +44,8 @@ AI API 的資源消耗模型：
   → 請求 B 讓整個系統的 Token Quota 瞬間耗盡
   → 其他 99 個正常用戶全部 429
 
-問題量化（Gemini 1.5 Pro 的 GCP 預設限制）：
+問題量化（以 2025 年撰文時 Gemini 1.5 Pro 的專案配額為例示意；
+該模型已退役，新模型的配額機制與數字請以官方最新文件為準）：
   └── 全域 TPM：4,000,000 tokens/min（整個 GCP 專案）
   └── 一個「分析 200 頁合約」的請求 = 200,000 tokens
   └── 20 個這樣的並發請求 = 全部 Quota 耗盡
@@ -298,6 +299,6 @@ Noisy Neighbor 的攻擊場景：
 
 ---
 
-**系列導覽：**  
-← [（二十二）RKK 實戰：動態並行 Tool-Calling 與依賴解析引擎](../fde-interview-guide-part22-parallel-tool-calling-zh/)  
-→ [（二十四）RKK 實戰：混合模型路由與語意路由器設計](../fde-interview-guide-part24-hybrid-model-routing-zh/)
+**系列導航**
+
+← [Part 22：RKK 實戰——動態並行 Tool-Calling 與依賴解析引擎](/posts/fde-interview-guide-part22-parallel-tool-calling-zh/) | [Part 24：RKK 實戰——混合模型路由與語意路由器設計](/posts/fde-interview-guide-part24-hybrid-model-routing-zh/) →

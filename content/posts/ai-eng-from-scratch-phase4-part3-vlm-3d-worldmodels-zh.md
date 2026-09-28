@@ -5,7 +5,7 @@ draft: false
 weight: 8
 description: "深入解析 CLIP/BLIP/LLaVA 視覺語言模型架構、NeRF/3D Gaussian Splatting 三維重建、以及 Sora 等影片生成世界模型的工程原理"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Computer Vision", "VLM", "CLIP", "LLaVA", "NeRF", "3D Vision", "World Models", "RKK", "Interview"]
+tags: ["AI", "Computer Vision", "VLM", "CLIP", "LLaVA", "NeRF", "3D Vision", "World Models", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：** 你正在設計一個自動駕駛感知系統，需要整合街景攝影機（2D RGB）、LiDAR 點雲（3D）、以及自然語言指令（「前方有行人，請減速」）。面試官問：你會如何架構視覺語言理解管線？在 10K 場景/天的訓練規模下，NeRF 重建和 3D Gaussian Splatting 各有什麼取捨？當系統需要預測「接下來 3 秒會發生什麼」時，你會引入什麼樣的世界模型？
+**工程情境：** 你正在設計一個自動駕駛感知系統，需要整合街景攝影機（2D RGB）、LiDAR 點雲（3D）、以及自然語言指令（「前方有行人，請減速」）。技術主管問：你會如何架構視覺語言理解管線？在 10K 場景/天的訓練規模下，NeRF 重建和 3D Gaussian Splatting 各有什麼取捨？當系統需要預測「接下來 3 秒會發生什麼」時，你會引入什麼樣的世界模型？
 
 ---
 
@@ -49,7 +49,7 @@ series: ["ai-eng-from-scratch"]
 ┌─────────────────────────────────────────────────────────┐
 │                    Phase 1 架構                          │
 │                                                         │
-│  用戶輸入圖片 ──▶ Base64 編碼 ──▶ GPT-4V / Claude 3     │
+│  用戶輸入圖片 ──▶ Base64 編碼 ──▶ 多模態 LLM API        │
 │                                        │                │
 │  文字 Prompt ────────────────────────▶ LLM API          │
 │                                        │                │
@@ -62,7 +62,7 @@ series: ["ai-eng-from-scratch"]
 └─────────────────────────────────────────────────────────┘
 ```
 
-**新增元件：** GPT-4V 或 Claude 3 Vision API 呼叫、圖片壓縮預處理（< 2MB）
+**新增元件：** 多模態 LLM API（OpenAI、Anthropic 等的旗艦視覺模型）呼叫、圖片壓縮預處理（< 2MB）
 **成本：** $0.01–0.03 / 張圖，API 費用直接計費，無基礎設施
 **解決：** 快速展示跨模態理解能力
 **遺留問題：** 延遲高（2–5 秒/請求）、無法客製化、成本不可控
@@ -247,6 +247,8 @@ LLaVA-1.5 的突破在於將 Linear Projection 換成 MLP（2 層），並用 VQ
 - 最高精度 → GPT-4V API（但成本 10x）
 - 需要 OCR / 文件理解 → LLaVA-NeXT 或 Qwen-VL
 
+> **時效說明（2026-09）**：上表為 2023–24 年的模型與分數。GPT-4V 已退役，API 端現在是各家原生多模態的旗艦模型；自架端的主流開源 VLM 也已換成 Qwen-VL、InternVL、Gemma 等較新世代。選型前請以最新 benchmark 重新比較。
+
 ---
 
 ## 五、3D 視覺基礎：點雲 / 體素 / NeRF
@@ -407,7 +409,7 @@ Sora 基於 Diffusion Transformer（DiT），將影片視為時空 patch 序列�
                          Attention ─┘    VAE Decoder
                                               │
                                               ▼
-                                         生成影片（最高 1080p, 60s）
+                                    生成影片（2024/2 技術報告：最高 1080p、約 60s）
 ```
 
 **Sora 的「世界模型」特性：**
@@ -418,7 +420,7 @@ Sora 基於 Diffusion Transformer（DiT），將影片視為時空 patch 序列�
 **技術細節（公開資訊）：**
 - Spacetime Patch：一個 patch 代表 (t, h, w) 的局部時空區塊
 - Variable Duration/Resolution：同一模型處理任意長寬比和時長
-- Recaptioning：用 CogVLM 等模型重新為訓練影片生成詳細描述
+- Recaptioning：沿用 DALL·E 3 的 re-captioning 技術，先訓練一個高描述力的 captioner，再為訓練影片生成詳細描述（用 CogVLM 等開源模型做 recaptioning 是 Open-Sora 等開源復現的做法）
 
 ### 工程上的世界模型分類
 
@@ -532,11 +534,11 @@ Sora 基於 Diffusion Transformer（DiT），將影片視為時空 patch 序列�
 | + Video DiT 世界模型 | H100 × 8 | $500/模型更新 | 2,000ms | $28,000 |
 
 **關鍵 threshold：**
-- 100 QPS 以下：GPT-4V API 比自架便宜（無運維成本）
+- 100 QPS 以下：多模態 API 通常比自架便宜（無運維成本）；此門檻為示意，實際取決於每張圖的 token 數與當前 API 單價
 - 100–1,000 QPS：LLaVA-7B A100 × 2 自架開始划算
 - 1,000+ QPS：需要多卡 + vLLM 批次推論，延遲 SLA 是架構決策的核心約束
 
-### Before / After 實際案例數字
+### Before / After 示意案例數字（示意估算，非實測數據）
 
 **電商商品 3D 展示（從 2D 圖片到 3DGS）：**
 - Before：每個 SKU 人工 3D 建模 8 小時，成本 $200
@@ -555,10 +557,10 @@ Sora 基於 Diffusion Transformer（DiT），將影片視為時空 patch 序列�
 本文是「AI 工程從零開始」系列 Phase 4 的第 3 篇。
 
 **← 上一篇：**
-[Phase 4 Part 2：目標偵測、語義分割與姿態估計](/posts/ai-eng-from-scratch-phase4-part2-detection-segmentation-zh/)
+[Phase 4 Part 2：目標偵測與語義分割 — 讓機器看懂空間](/posts/ai-eng-from-scratch-phase4-part2-detection-segmentation-zh/)
 
 **→ 下一篇：**
-[Phase 5 Part 1：語音識別、TTS 與多模態語音系統](/posts/ai-eng-from-scratch-phase5-part1-speech-asr-tts-zh/)
+[Phase 5 Part 1：NLP 基礎 — 文字是智慧的介面](/posts/ai-eng-from-scratch-phase5-part1-text-fundamentals-zh/)
 
 ---
 
@@ -566,8 +568,8 @@ Sora 基於 Diffusion Transformer（DiT），將影片視為時空 patch 序列�
 
 | 篇 | 主題 | 核心技術 |
 |----|------|---------|
-| Part 1 | 卷積神經網路與圖像分類 | ResNet, EfficientNet, ViT |
-| Part 2 | 目標偵測、語義分割與姿態估計 | YOLO, SAM, MediaPipe |
+| [Part 1](/posts/ai-eng-from-scratch-phase4-part1-cnn-image-fundamentals-zh/) | 電腦視覺基礎 — 從像素到 CNN 特徵 | ResNet, EfficientNet, 遷移學習 |
+| [Part 2](/posts/ai-eng-from-scratch-phase4-part2-detection-segmentation-zh/) | 目標偵測與語義分割 — 讓機器看懂空間 | YOLO, Faster R-CNN, Mask R-CNN |
 | **Part 3** | **視覺語言模型、3D 視覺與世界模型** | **CLIP, LLaVA, NeRF, 3DGS, Sora** |
 
 ---

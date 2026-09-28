@@ -5,9 +5,9 @@ draft: false
 weight: 37
 description: "以系統設計視角拆解 FDE 最常遇到的現場問題：如何把 ADK Agent 接上 SAP、Oracle DB、Mainframe CSV 等 Legacy 資料孤島；API 橋接層的選型邏輯；安全邊界連接工程（Private Service Connect、VPC-SC、CMEK）；以及每種整合模式對系統效能、穩定性、成本和風險的影響"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Integration", "Legacy", "API", "GCP", "VPC", "Security", "Enterprise", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Integration", "Legacy", "API", "GCP", "VPC", "Security", "Enterprise", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
-readTime: "19 min"
+readTime: "14 min"
 ---
 
 > Demo 時 Agent 很漂亮。  
@@ -256,7 +256,7 @@ Private Service Connect 架構：
   ┌──────────────────────────────────────────────────────────────┐
   │  GCP（Cloud Run / ADK Agent）                                 │
   │                                                              │
-  │  Cloud Run → VPC Connector                                   │
+  │  Cloud Run → Direct VPC egress（舊做法：VPC Connector）      │
   │  （所有 Outbound traffic 走 VPC，不走 Public Internet）        │
   └──────────────────────────┬───────────────────────────────────┘
                              │ 私有網路（不走 Public Internet）
@@ -336,7 +336,7 @@ VPC-SC vs IAM vs CMEK：選哪個，為什麼
 >
 > *三種資料來源，三種整合模式：SAP 用 API 橋接層（隱藏認證複雜性、Rate Limiting、Cache）；Oracle 用 Stored Procedure 層（防 SQL Injection、最小權限、索引優化）；Mainframe CSV 用批次攝取 Pipeline（GCS → Schema 驗證 → BigQuery，Agent 查 BigQuery 不讀原始 CSV）。*
 >
-> *安全設計：Cloud Run 透過 VPC Connector 走私有網路，不讓資料經過公共網路。Credentials 存在 Secret Manager，Agent 代碼裡沒有任何密碼。Oracle DB 帳號只有 EXECUTE 特定 SP 的權限，沒有任何 SELECT/UPDATE 權限。*
+> *安全設計：Cloud Run 透過 Direct VPC egress（現行建議做法，舊做法是 Serverless VPC Access Connector）走私有網路，不讓資料經過公共網路。Credentials 存在 Secret Manager，Agent 代碼裡沒有任何密碼。Oracle DB 帳號只有 EXECUTE 特定 SP 的權限，沒有任何 SELECT/UPDATE 權限。*
 >
 > *批次資料的資料新鮮度：Tool docstring 說明「每日凌晨更新，非即時」，讓 LLM 在回答時主動告知用戶資料截止時間，管理預期。*
 >
@@ -344,6 +344,6 @@ VPC-SC vs IAM vs CMEK：選哪個，為什麼
 
 ---
 
-**系列導覽：**  
-← [（三十六）生產級 Eval Pipeline 設計](../fde-interview-guide-part36-eval-pipeline-zh/)  
-→ [（三十八）從 POC 到 Production：生產化清單](../fde-interview-guide-part38-prototype-to-production-zh/)
+**系列導航**
+
+← [Part 36：RKK 實戰——生產級 AI Evaluation Pipeline：從黃金資料集到 CI/CD 品質閘門](/posts/fde-interview-guide-part36-eval-pipeline-zh/) | [Part 38：RKK 實戰——從 POC 到 Production：AI 系統的五個生產化差距與 Rollback 設計](/posts/fde-interview-guide-part38-prototype-to-production-zh/) →

@@ -8,7 +8,7 @@ categories: ["all", "engineering", "finance"]
 tags: ["Cryptocurrency", "Production", "Live Trading", "Machine Learning", "Optimization", "Walk-Forward Analysis", "DevOps", "Monitoring", "AWS", "Docker"]
 summary: "Deploy cryptocurrency trading strategies to production. Master walk-forward analysis, parameter optimization, live trading integration, real-time monitoring, and machine learning enhancements. Complete production-ready system with AWS deployment and comprehensive risk controls."
 description: "Complete guide to deploying quantitative crypto trading strategies to production. Learn validation techniques, optimization methods, live trading APIs, monitoring systems, and ML enhancements. Includes full AWS deployment architecture and Docker containerization."
-readTime: "30 min"
+readTime: "24 min"
 ---
 
 In Parts 1 and 2, we built the foundations: data infrastructure, technical indicators, trading strategies, and backtesting frameworks. Now comes the critical step: validating these strategies properly and deploying them to production with confidence.
@@ -1350,7 +1350,7 @@ To be in the 1%:
 
 **Books:**
 - "Quantitative Trading" by Ernest Chan
-- "Algorithmic Trading" by Stefan Jansen
+- "Machine Learning for Algorithmic Trading" by Stefan Jansen
 - "Machine Learning for Asset Managers" by Marcos López de Prado
 
 **Online Courses:**
@@ -1375,5 +1375,3 @@ This series provided a complete foundation, but quantitative trading is a contin
 ---
 
 **Remember**: Quantitative trading is not a get-rich-quick scheme. It requires significant time investment, technical skills, capital, and most importantly—discipline. Start small, validate rigorously, and scale gradually.
-
-*Have you deployed your first trading strategy? Share your experience in the comments! What challenges did you face?*

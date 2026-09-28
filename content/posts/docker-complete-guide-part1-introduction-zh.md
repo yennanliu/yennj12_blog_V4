@@ -6,8 +6,8 @@ weight: 1
 description: "全面介紹 Docker 容器技術的基礎概念，包含虛擬化原理、Docker 架構、核心元件，以及實用的安裝與配置教學。從零開始學習 Docker 容器化技術。"
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Docker", "容器化", "虛擬化", "Container", "DevOps", "雲端運算", "微服務", "基礎教學"]
-authors: ["yennj12 team"]
-readTime: "50 min"
+authors: ["yen"]
+readTime: "22 min"
 ---
 
 ## 🎯 前言

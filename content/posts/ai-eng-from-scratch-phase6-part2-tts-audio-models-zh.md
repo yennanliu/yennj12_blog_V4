@@ -5,7 +5,7 @@ draft: false
 weight: 13
 description: "深入解析 TTS 工程架構：Tacotron/FastSpeech/VITS 聲學模型、聲碼器設計、情感語音合成、音樂生成與即時語音克隆系統"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Speech", "TTS", "Audio", "Voice Cloning", "Music Generation", "RKK", "Interview"]
+tags: ["AI", "Speech", "TTS", "Audio", "Voice Cloning", "Music Generation", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "20 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的公司要推出有聲書朗讀功能，支援繁體中文與英文雙語、使用者可上傳 30 秒聲音樣本克隆自己的聲音、整體端對端延遲需低於 300ms。請說明你會如何設計這套 TTS 系統，包含模型選型、聲碼器、語音克隆架構、以及上線後如何持續改善音質。
 
@@ -32,7 +32,7 @@ series: ["ai-eng-from-scratch"]
 
 | 維度 | 極端 A | 極端 B | 工程取捨 |
 |------|--------|--------|----------|
-| 自然度 vs 延遲 | Tortoise-TTS（MOS 4.5）推論 30s | FastSpeech2 < 50ms | 互動場景選速度，有聲書選品質 |
+| 自然度 vs 延遲 | Tortoise-TTS（MOS 約 4.2）推論 30s | FastSpeech2 < 50ms | 互動場景選速度，有聲書選品質 |
 | 個人化 vs 資料量 | 傳統 clone 需 1 小時錄音 | XTTS v2 只需 6 秒樣本 | 零樣本 clone 改變商業模式 |
 | 表達力 vs 穩定度 | 情感模型偶爾產生雜音 | 平坦語調安全但無趣 | 情感強度需可調參數 |
 
@@ -350,6 +350,10 @@ VITS（Variational Inference with adversarial learning for end-to-end TTS）消�
 
 **工程建議**：有聲書場景用 Tortoise 離線批次生成，互動語音助理用 XTTS v2 即時回應。
 
+> **授權與時效提醒（2026）**：Coqui 公司已於 2024 年初結束營運，XTTS v2 權重採 Coqui Public Model License（CPML），**僅限非商業使用**，不能直接用於商業有聲書產品；Tortoise 也已屬舊世代模型。商業專案應改評估授權明確的新一代開源模型（如 F5-TTS、CosyVoice 2、Fish Speech、Kokoro，逐一確認授權條款）或商用 TTS API。讓用戶上傳自己聲音的產品，另需處理本人同意驗證、說話人比對與浮水印，以防冒用他人聲音。
+>
+> 本文 MOS 數字多為示意估算或不同基準下的概略值，彼此不可直接比較。
+
 ### 5.3 Speaker Embedding 快取策略
 
 用戶上傳 30 秒樣本後，提取 speaker embedding 並存入 Redis（TTL 24h），後續請求無需重新提取。提取一次約 150ms，快取命中後節省此延遲。
@@ -428,7 +432,7 @@ Meta 的 AudioCraft 包含三個子模型：
 |------|------|-------------|---------------|----------------|
 | **聲學模型** | FastSpeech2 | < 50ms 推論，穩定無 Attention 失對 | Tacotron2：800ms，自回歸無法並行 | 若品質要求 MOS > 4.3 且可接受 200ms，改用 VITS |
 | **聲碼器** | HiFi-GAN V1 | MOS 4.2，167× 即時，開源生態完整 | WaveNet：0.02× 即時，生產不可用 | 若 MOS 需再高 0.1 分，改用 Vocos（需評估 fine-tuning 成本） |
-| **克隆架構** | XTTS v2 | 6 秒參考音訊，多語言，~2 秒推論 | Tortoise：推論 30s，不適合即時 | 離線批次有聲書生成用 Tortoise（MOS 更高） |
+| **克隆架構** | XTTS v2（注意：CPML 授權僅限非商業） | 6 秒參考音訊，多語言，~2 秒推論 | Tortoise：推論 30s，不適合即時 | 離線批次有聲書生成用 Tortoise（MOS 更高）；商業產品需改用授權允許商用的模型或 API |
 | **情感控制** | VAE latent（VITS） | 自然情感漸變，無需顯式標籤 | GST：情感不夠自然，需手動挑 token | 若訓練資料無情感標注，GST 是唯一選擇 |
 | **Speaker Encoder** | ECAPA-TDNN | 說話人辨識 EER 0.8%，提取快（50ms） | i-vector：準確度低，不支援端對端更新 | 若資源極有限（邊緣），改用輕量 TDNN-F |
 | **音訊格式** | Opus 48kHz | 壓縮率高，延遲低（20ms frame），WebRTC 原生支援 | MP3：編碼延遲 > 100ms，不適合串流 | 若客戶端只支援 MP3（舊系統整合），轉碼一次後快取 |
@@ -470,9 +474,9 @@ Meta 的 AudioCraft 包含三個子模型：
 
 ## 十、系列導航
 
-← 上一篇：[Phase 6 Part 1：語音辨識（ASR）— 讓機器聽懂人話](/posts/ai-eng-from-scratch-phase6-part1-asr-speech-recognition-zh/)
+← 上一篇：[Phase 6 Part 1：自動語音辨識 — 讓機器聽懂人類](/posts/ai-eng-from-scratch-phase6-part1-asr-zh/)
 
-→ 下一篇：Phase 7 Part 1：推薦系統工程基礎（即將推出）
+→ 下一篇：[Phase 7 Part 1：Transformer 架構深度解析 — 改變一切的注意力](/posts/ai-eng-from-scratch-phase7-part1-transformer-architecture-zh/)
 
 ---
 
@@ -480,12 +484,13 @@ Meta 的 AudioCraft 包含三個子模型：
 
 本文屬於「AI 工程從零開始」系列，涵蓋從基礎 ML 到生產級 AI 系統的完整工程路徑：
 
-- Phase 1：ML 基礎與特徵工程
-- Phase 2：深度學習訓練工程
-- Phase 3：LLM 應用與 RAG 系統
-- Phase 4：MLOps 與模型部署
-- Phase 5：電腦視覺工程
-- **Phase 6：語音 AI 工程**（本系列）
-  - Part 1：語音辨識（ASR）
+- Phase 1：數學基礎（線性代數、機率統計）
+- Phase 2：傳統機器學習與集成學習
+- Phase 3：深度學習核心
+- Phase 4：電腦視覺
+- Phase 5：自然語言處理
+- **Phase 6：語音 AI**
+  - Part 1：自動語音辨識（ASR）
   - **Part 2：語音合成與音訊模型**（本文）
-- Phase 7：推薦系統工程（即將推出）
+- Phase 7：Transformer 架構與訓練
+- Phase 8–19：生成模型、強化學習、從頭構建 LLM、推論與 RAG、多模態、Agent、AI 基礎設施、安全治理與 Capstone

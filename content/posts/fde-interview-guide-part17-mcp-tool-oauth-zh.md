@@ -5,7 +5,7 @@ draft: false
 weight: 17
 description: "以系統設計視角拆解 MCP（Model Context Protocol）的安全邊界：Agent 的工具授權架構、Human-in-the-loop OAuth 流程、Tool Input Validation 防禦層，以及如何防止 Tool Injection 攻擊"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "MCP", "OAuth", "Tool-Calling", "Security", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "MCP", "OAuth", "Tool Calling", "Security", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
 ---
@@ -248,7 +248,7 @@ LLM 產生的 JSON 不能直接進入企業 API。
 ```
 方案比較：
 
-                服務帳號 Key      OAuth 2.0 PKCE      OAuth 2.0 Device Flow
+                服務帳號 Key      OAuth 2.1 PKCE      OAuth 2.0 Device Flow
 ──────────────────────────────────────────────────────────────────────────
 誰的身分         系統帳號          真實用戶身分          真實用戶身分
 授權粒度         整個系統           per-user scope       per-user scope
@@ -259,10 +259,12 @@ Token 存儲      長期（危險）        短期（15min~1hr）    短期
 GDPR 合規        ❌                ✅                   ✅
 
 FDE 推薦：
-  Web/Mobile App 上的 Agent → OAuth 2.0 PKCE（標準 Web Flow）
+  Web/Mobile App 上的 Agent → OAuth 2.1 Authorization Code + PKCE（標準 Web Flow）
   Server-side 長任務 Agent  → OAuth 2.0 with Refresh Token
   完全自動化的後台任務       → 服務帳號（但最小權限）
 ```
+
+> 補充：MCP 的授權規格（2025 年版）以 OAuth 2.1 為基礎、PKCE 為強制要求，MCP Server 定位為 OAuth resource server，並明確禁止 token passthrough：MCP Server 只能接受發給自己（audience 正確）的 token；要呼叫下游企業 API 時，應另外取得該 API 專屬的 token，而不是把用戶的 token 原封不動轉傳。本文「注入 Tool Execution Context」的 token 應理解為下游 API 專屬的 token。規格仍在演進，請以最新版為準。
 
 ---
 
@@ -293,6 +295,6 @@ GCP 組件對應：
 
 ---
 
-**系列導覽：**  
-← [（十六）RKK 實戰：Multi-Agent 狀態管理與死鎖排除](../fde-interview-guide-part16-multiagent-state-deadlock-zh/)  
-→ [（十八）RKK 實戰：Agent 記憶體架構與 Context 成本調優](../fde-interview-guide-part18-memory-cost-tuning-zh/)
+**系列導航**
+
+← [Part 16：RKK 實戰——Multi-Agent 狀態管理與死鎖排除](/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh/) | [Part 18：RKK 實戰——三層記憶體架構與 LLM 成本調優](/posts/fde-interview-guide-part18-memory-cost-tuning-zh/) →

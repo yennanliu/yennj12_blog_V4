@@ -5,7 +5,7 @@ draft: false
 weight: 33
 description: "以 Google RKK 面試官的第一人稱視角，完整拆解 FDE RKK 面試的時間結構、五個評分維度、四個面試階段、「雇用」和「強力雇用」的實際差距，以及最常見的七個失敗模式"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "RKK", "Interview", "Google", "Playbook", "Scoring", "System Design"]
+tags: ["AI", "FDE", "RKK", "Interview", "Cloud", "Playbook", "Scoring", "System Design"]
 authors: ["yen"]
 readTime: "16 min"
 ---
@@ -50,7 +50,7 @@ FDE 面試流程（通常）：
 
 ---
 
-## 二、45 分鐘的時間結構
+## 二、45–60 分鐘的時間結構
 
 每個 RKK 面試官的風格不同，但大多數 Google FDE RKK 都遵循這個節奏：
 
@@ -85,6 +85,8 @@ FDE 面試流程（通常）：
 ## 三、五個評分維度
 
 Google 的評分不是「對不對」，而是在五個維度上給 1-4 分。
+
+> 本文的面試流程、評分維度與分數刻度是根據公開資料與經驗整理的示意，並非官方評分表；實際流程與標準請以招募方的官方說明為準。
 
 ### 維度一：技術深度（Technical Depth）
 
@@ -430,3 +432,9 @@ CTO 聽不懂 Faithfulness。
 **RKK 面試測的是一件事：**  
 **你能不能在不確定的情況下，做出有依據的判斷，並且用讓客戶聽懂的語言說清楚。**  
 **知識是基礎，但判斷力才是 FDE 的核心。**
+
+---
+
+**系列導航**
+
+← [Part 32：RKK 實戰——Vertex AI 產品棧全解析：Agent Builder、Vertex AI Search、Gemini API 與部署架構](/posts/fde-interview-guide-part32-vertex-ai-stack-zh/) | [Part 34：RKK 實戰演練——六個端對端 Mock 情境題與模範答案](/posts/fde-interview-guide-part34-mock-scenarios-zh/) →

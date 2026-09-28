@@ -3,9 +3,9 @@ title: "FDE 面試準備指南（六）：RAG 進階——檢索失敗、Groundi
 date: 2026-05-31T09:30:00+08:00
 draft: false
 weight: 6
-description: "以 Google AI 工程師兼面試官的視角，深度拆解 RAG 系統的四大進階主題：檢索失敗的原因與修復、Grounding 策略、RAG 評估指標設計，以及生產環境中的成本控制"
+description: "從面試官的視角，深度拆解 RAG 系統的四大進階主題：檢索失敗的原因與修復、Grounding 策略、RAG 評估指標設計，以及生產環境中的成本控制"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "RAG", "Grounding", "Evaluation", "RAGAS", "Cost Control", "Interview", "Google"]
+tags: ["AI", "FDE", "RAG", "Grounding", "Evaluation", "RAGAS", "Cost Control", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "14 min"
 ---
@@ -339,7 +339,7 @@ API 成本通常相同，但可以減少網路 overhead 和 rate limit 風險。
 - 每次 context：~2,000 tokens
 - 每次 LLM output：~500 tokens
 
-使用 Gemini 1.5 Flash：
+使用 Gemini 1.5 Flash（2025 年撰文時的定價，該模型已退役，僅作量級示意）：
 ```
 Query Embedding: 100,000 × 1,000 tokens × $0.00002/1K = $2/day
 LLM Input: 100,000 × 2,000 tokens × $0.000075/1K = $15/day
@@ -438,7 +438,7 @@ Total: ~$32/day = ~$960/month
 「如果成本超出預算，第一個動作是加 Semantic Cache——
  相似的問題直接回快取，不過 LLM。
  第二個動作是把 FAQ 類的簡單問題路由到較便宜的模型（Flash 而不是 Pro）。
- 這兩步通常可以把成本降 40-60%，而不影響複雜問題的回答品質。」
+ 依快取命中率與流量組成而定，這兩步有機會把成本降低數成（示意估算），而不影響複雜問題的回答品質。」
 ```
 
 ---

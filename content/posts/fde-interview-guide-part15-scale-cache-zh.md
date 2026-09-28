@@ -5,7 +5,7 @@ draft: false
 weight: 15
 description: "以系統設計視角拆解 AI Agent 的規模化挑戰：為什麼 LLM 系統的擴展和傳統 Web 不同、三層 Cache 各解決什麼問題、Stateful Agent 怎麼做水平擴展——含完整架構圖與成本估算框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Scale", "Cache", "KV Cache", "Semantic Cache", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Scale", "Cache", "KV Cache", "Semantic Cache", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "16 min"
 ---
@@ -31,10 +31,13 @@ LLM 系統的規模化現實：
 流量增加 → 每個請求都要花錢叫 LLM API
 成本模型：token 按量計費，和傳統 infra 的成本結構完全不同
 
+以 Pro 級模型粗估（每 1K tokens 約 $0.002，即 $2/1M；比第七節用的 Flash 級單價貴約 27 倍）：
 10K req/day × avg 3,000 tokens × $0.002/1K tokens = $60/day = $1,800/month
 100K req/day = $18,000/month
 1M req/day  = $180,000/month   ← 沒有 cache，就是這個數字
 ```
+
+> 本文所有單價皆為 2025 年撰文時 Gemini 1.5 世代的公開定價，僅作示意估算；該世代模型已退役，實際請以官方最新價目表為準。
 
 **三個讓 LLM 系統難以規模化的特性：**
 
@@ -194,6 +197,10 @@ KV Cache 的成本結構（以 Gemini 1.5 Pro 為例）：
   後續請求：cached_tokens × $0.31/1M（便宜 4 倍）
              + new_tokens × $1.25/1M
 
+注意：cache 另有「儲存費」（按 cached tokens × 存活時間計），
+且有最小可快取長度限制，實際費率與門檻請以官方最新文件為準
+（新世代模型另有自動生效的 implicit caching）。
+
 划算的條件：
   同一個 prefix 被使用 2+ 次 → KV Cache 就開始省錢
   prefix 越長（50K+ tokens）、使用次數越多 → 越划算
@@ -298,16 +305,18 @@ Token 估算：
   output:   400 tokens/req
 
 無 cache 月成本（Gemini Flash，$0.075/1M input, $0.30/1M output）：
-  input:  300K × 2500 / 1M × $0.075 × 30 = $169/month
+  input:  300K × 2500 / 1M × $0.075 × 30 = $1,688/month
   output: 300K × 400  / 1M × $0.300 × 30 = $1,080/month
-  total:  ~$1,249/month
+  total:  ~$2,768/month
 
 加入 Cache 後：
-  L1 hit rate 15%:  省 $1,249 × 15% ≈ $187
-  L2 hit rate 35%:  省 $1,249 × 35% ≈ $437
-  KV Cache（prefix 75% 便宜）: 省 input 的 ~60% ≈ $101
-  估算月節省：~$725（省 58%）
-  最終月成本：~$524
+  L1 hit rate 15%:  省 $2,768 × 15% ≈ $415
+  L2 hit rate 35%:  省 $2,768 × 35% ≈ $969
+  KV Cache（prefix 75% 便宜）: 只作用在未命中 L1/L2 的 50% 請求，
+    假設省下這部分 input 的 ~60% ≈ $1,688 × 50% × 60% ≈ $506
+  估算月節省：~$1,890（省 68%）
+  最終月成本：~$878
+  （以上皆為示意估算）
 ```
 
 ---
@@ -343,13 +352,13 @@ E → Edge Cases   cache invalidation、冷啟動、個人化問題
 
 **完整範例回答：**
 
-> *「先估算規模。10 萬 DAU，每人 3 次查詢，30 萬請求/天。Gemini Flash 每月基線成本約 $1,200，這驅動了 cache 設計的必要性。*
+> *「先估算規模。10 萬 DAU，每人 3 次查詢，30 萬請求/天。Gemini Flash 每月基線成本約 $2,800，這驅動了 cache 設計的必要性。*
 >
 > *架構上我會做三層：L1 Redis 做 exact match 的 hot query cache（15% hit rate）；L2 Semantic Cache 用向量相似度複用語意相近的答案（35% hit rate）；L3 Vertex AI Context Cache 把固定的 system prompt 和 RAG 知識庫 prefix 快取，prefix token 成本降低 75%。*
 >
 > *Agent instance 本身完全無狀態，session state 和 memory 全部外部化到 Redis 和向量資料庫，可以自由水平擴展。*
 >
-> *三層 cache 合計月節省約 58%，從 $1,200 降到 $500 左右。*
+> *三層 cache 合計月節省約 68%，從 $2,800 降到 $900 左右（示意估算）。*
 >
 > *邊界情況：知識庫更新時需要清除相關 Semantic Cache；個人化回答不進共享 cache，以 user_id 為 key 隔離。」*
 
@@ -377,6 +386,6 @@ CAPE 框架：Capacity → Architecture → Performance → Edge Cases
 
 ---
 
-**系列導覽：**  
-← [（十四）RKK 實戰：AI Agent Memory 架構設計](../fde-interview-guide-part14-memory-architecture-zh/)  
-← [系列首篇：（一）RAG 完全攻略](../fde-interview-guide-part1-rag-zh/)
+**系列導航**
+
+← [Part 14：RKK 實戰——AI Agent Memory 架構設計](/posts/fde-interview-guide-part14-memory-architecture-zh/) | [Part 16：RKK 實戰——Multi-Agent 狀態管理與死鎖排除](/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh/) →

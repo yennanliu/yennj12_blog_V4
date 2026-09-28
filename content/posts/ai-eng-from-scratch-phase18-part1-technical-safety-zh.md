@@ -5,7 +5,7 @@ draft: false
 weight: 39
 description: "深入解析 AI 技術安全工程：對齊問題的技術根源、紅隊測試方法論、越獄攻擊分類、毒化攻擊防禦、模型可解釋性與安全評估框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Safety", "Alignment", "Red Teaming", "Interpretability", "Ethics", "RKK", "Interview"]
+tags: ["AI", "Safety", "Alignment", "Red Teaming", "Interpretability", "Ethics", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -20,7 +20,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：**
+**工程情境：**
 
 > 你的公司剛完成一個面向消費者的 LLM 聊天產品，DAU 達 50 萬。安全團隊發現有使用者透過角色扮演場景讓模型輸出有害內容，失效率約 1.8%。CTO 問你：「我們現在該做什麼？下個季度的架構長什麼樣？」請說明你的診斷、優先順序與技術路線圖。
 
@@ -44,9 +44,13 @@ series: ["ai-eng-from-scratch"]
 
 ## 二、三個演進階段（含 ASCII 架構圖）
 
-### ╔══════════════════════════════════════════════╗
-### ║ Phase 1：POC / < 10K 用戶                   ║
-### ╚══════════════════════════════════════════════╝
+### Phase 1：POC / < 10K 用戶
+
+```
+╔══════════════════════════════════════════════╗
+║ Phase 1：POC / < 10K 用戶                   ║
+╚══════════════════════════════════════════════╝
+```
 
 **核心思路：** 用最低成本先擋住最明顯的風險，快速驗證產品可行性。
 
@@ -88,9 +92,13 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-### ╔══════════════════════════════════════════════╗
-### ║ Phase 2：MVP / 10K–200K 用戶                ║
-### ╚══════════════════════════════════════════════╝
+### Phase 2：MVP / 10K–200K 用戶
+
+```
+╔══════════════════════════════════════════════╗
+║ Phase 2：MVP / 10K–200K 用戶                ║
+╚══════════════════════════════════════════════╝
+```
 
 **核心思路：** 引入 ML 分類器取代硬編碼規則；建立可稽核的日誌；開始系統性紅隊測試。
 
@@ -144,9 +152,13 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-### ╔══════════════════════════════════════════════╗
-### ║ Phase 3：Scale / 200K–1M+ 用戶              ║
-### ╚══════════════════════════════════════════════╝
+### Phase 3：Scale / 200K–1M+ 用戶
+
+```
+╔══════════════════════════════════════════════╗
+║ Phase 3：Scale / 200K–1M+ 用戶              ║
+╚══════════════════════════════════════════════╝
+```
 
 **核心思路：** Constitutional AI 取代人工標注成為主要對齊訊號；紅隊自動化；實時監控與合規框架整合。
 
@@ -557,7 +569,7 @@ series: ["ai-eng-from-scratch"]
 
 ## 九、系統效應（Before / After 比較表）
 
-以下數字來自實際部署 Phase 2 → Phase 3 安全架構的典型案例：
+以下為部署 Phase 2 → Phase 3 安全架構的**示意估算**（非實測數據），用來說明各階段的相對改善幅度：
 
 ### 關鍵安全指標
 
@@ -592,7 +604,7 @@ series: ["ai-eng-from-scratch"]
 
 ## 十、系列導航
 
-[← Phase 17 Part 3](../ai-eng-from-scratch-phase17-part3-advanced-rag-techniques-zh) | [Phase 18 Part 2 →](../ai-eng-from-scratch-phase18-part2-ai-governance-zh)
+[← Phase 17 Part 3：AI 成本優化與規模化](/posts/ai-eng-from-scratch-phase17-part3-cost-scale-zh/) | [Phase 18 Part 2：AI 治理與倫理 →](/posts/ai-eng-from-scratch-phase18-part2-governance-zh/)
 
 ---
 

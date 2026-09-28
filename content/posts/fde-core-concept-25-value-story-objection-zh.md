@@ -16,7 +16,7 @@ readTime: "15 min"
 
 ## 一、為什麼面試官問這個
 
-FDE（Field Delivery Engineer）的核心挑戰不是技術本身，而是**技術與業務之間的翻譯**。面試官問這個，是想確認你能不能獨立面對高管、技術評估者、採購委員會三種截然不同的受眾。
+FDE（Forward Deployed Engineer）的核心挑戰不是技術本身，而是**技術與業務之間的翻譯**。面試官問這個，是想確認你能不能獨立面對高管、技術評估者、採購委員會三種截然不同的受眾。
 
 - **測試敘事能力**：弱答案是「我們的 RAG 系統 latency 很低、accuracy 很高」——這是功能清單，不是故事。強答案是「你們每月 6,000 張重複工單，每張浪費 3.2 分鐘搜文件；我們讓這個時間歸零，換算下來每月省 \$19,200」。
 - **測試異議轉化能力**：弱答案是在客戶說「LLM 會幻覺」時，開始解釋 RAG 原理。強答案是先問「你最擔心的是哪個業務場景的錯誤？」然後秀出 Groundedness 分數和 human-in-the-loop 機制。
@@ -411,4 +411,4 @@ Feature Demo（功能展示）          Value Story Demo（價值故事展示）
 
 **系列導航**
 
-← [前一篇：Structured Troubleshooting — 自上而下分層排錯與 AI 系統觀測方法論](/posts/fde-interview-core-topic-22-structured-troubleshooting-zh/)
+← [前一篇：POC Scoring & ROI：概念驗證評分矩陣與投資回報框架設計](/posts/fde-core-concept-24-poc-scoring-roi-zh/)

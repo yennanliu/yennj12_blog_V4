@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // which is what un-hides the scroll-reveal content.
     safeInit(initReveal);
 
+    // Light/dark theme switch (the theme itself is applied in head.html)
+    safeInit(initThemeToggle);
+
     // Primary navigation (drawer + dropdowns)
     safeInit(initNav);
 
@@ -50,6 +53,52 @@ function prefersReducedMotion() {
 // this only manages the explicit click/keyboard state so touch and keyboard
 // users get the same panels.
 const NAV_DESKTOP_QUERY = '(min-width: 1024px)';
+
+// Header light/dark toggle. head.html has already set data-theme before first
+// paint; this only flips it, remembers the choice, and — until the reader has
+// made one — keeps following the OS setting if it changes mid-visit.
+function initThemeToggle() {
+    const root = document.documentElement;
+    const button = document.getElementById('themeToggle');
+    const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+    function saved() {
+        try {
+            const value = localStorage.getItem('theme');
+            return value === 'light' || value === 'dark' ? value : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function apply(theme) {
+        root.setAttribute('data-theme', theme);
+        if (!button) return;
+        const dark = theme === 'dark';
+        const label = dark ? 'Switch to light theme' : 'Switch to dark theme';
+        button.setAttribute('aria-pressed', String(dark));
+        button.setAttribute('aria-label', label);
+        button.setAttribute('title', label);
+    }
+
+    apply(root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+    if (button) {
+        button.addEventListener('click', function() {
+            const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            apply(next);
+            try { localStorage.setItem('theme', next); } catch (e) { /* not persisted */ }
+        });
+    }
+
+    if (media) {
+        const follow = function(event) {
+            if (!saved()) apply(event.matches ? 'dark' : 'light');
+        };
+        if (media.addEventListener) media.addEventListener('change', follow);
+        else if (media.addListener) media.addListener(follow);
+    }
+}
 
 function initNav() {
     const menu    = document.getElementById('primaryNav');

@@ -3,11 +3,12 @@ title: "Kubernetes Autoscaling Complete Guide (Part 8): Security, Compliance & G
 date: 2025-11-10T02:00:00+08:00
 draft: false
 weight: 8
-authors: ["yennj12 team"]
+authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "Security", "RBAC", "Compliance", "Governance", "Policy", "Audit", "Multi-Tenancy", "OPA", "Gatekeeper", "PCI-DSS", "HIPAA", "SOC2", "devops"]
+tags: ["Kubernetes", "K8S", "Security", "RBAC", "Compliance", "Governance", "Policy", "Audit", "Multi-tenancy", "OPA", "Gatekeeper", "DevOps"]
 summary: "Part 8 of the Kubernetes Autoscaling series: Complete guide to securing autoscaling infrastructure with RBAC, policy enforcement, compliance frameworks (PCI-DSS, HIPAA, SOC2), multi-tenancy patterns, audit logging, and governance best practices for enterprise Kubernetes."
-readTime: "50 min"
+description: "Part 8 of the Kubernetes Autoscaling series: Complete guide to securing autoscaling infrastructure with RBAC, policy enforcement, compliance frameworks (PCI-DSS, HIPAA, SOC2), multi-tenancy patterns, audit logging, and governance best practices for enterprise Kubernetes."
+readTime: "30 min"
 ---
 
 ## Series Overview
@@ -771,7 +772,7 @@ metadata:
 
 ---
 # Karpenter NodePool for tenant
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: tenant-a-pool
@@ -792,6 +793,8 @@ spec:
         effect: NoSchedule
 
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: tenant-a-nodes
 
   limits:
@@ -1008,7 +1011,7 @@ metadata:
 
 ---
 # 2. Node pool with encryption
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: hipaa-nodes
@@ -1021,15 +1024,19 @@ spec:
         values: ["hipaa"]
 
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: hipaa-encrypted
 
 ---
-apiVersion: karpenter.k8s.aws/v1beta1
+apiVersion: karpenter.k8s.aws/v1
 kind: EC2NodeClass
 metadata:
   name: hipaa-encrypted
 spec:
-  amiFamily: AL2
+  # v1: amiSelectorTerms is required
+  amiSelectorTerms:
+  - alias: al2023@latest
   role: KarpenterNodeRole-hipaa
 
   blockDeviceMappings:

@@ -6,8 +6,8 @@ weight: 3
 description: "Naive RAG 的搜尋精準度不夠？本篇深入四大進階檢索技術：BM25 混合搜尋、假設性文件嵌入（HyDE）、多查詢檢索（Multi-Query）、以及 Cross-Encoder Reranker，每個都有核心原理、程式碼與最佳使用場景。"
 categories: ["all", "ai", "engineering"]
 tags: ["RAG", "Hybrid Search", "HyDE", "Reranker", "BM25", "LangChain", "Python", "繁體中文"]
-authors: ["YennJ12 Engineering Team"]
-readTime: "30 min"
+authors: ["yen"]
+readTime: "14 min"
 ---
 
 ## 前言

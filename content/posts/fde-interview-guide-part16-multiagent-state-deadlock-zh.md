@@ -5,7 +5,7 @@ draft: false
 weight: 16
 description: "以系統設計視角拆解 Multi-Agent 的狀態管理與死鎖問題：為什麼階層式授權架構會產生死循環、State Reducer 的設計原理、分散式 Checkpoint 策略，以及如何在 LangGraph 中設計收斂的 Agent 圖"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Multi-Agent", "LangGraph", "State Management", "Deadlock", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Multi-Agent", "LangGraph", "State Management", "Deadlock", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "18 min"
 ---
@@ -337,6 +337,6 @@ LangGraph Graph 結構設計：
 
 ---
 
-**系列導覽：**  
-← [（十五）RKK 實戰：Agent 規模化與 Cache 策略](../fde-interview-guide-part15-scale-cache-zh/)  
-→ [（十七）RKK 實戰：MCP 與 Tool-Calling 安全隔離](../fde-interview-guide-part17-mcp-tool-oauth-zh/)
+**系列導航**
+
+← [Part 15：RKK 實戰——AI Agent 規模化與 Cache 策略](/posts/fde-interview-guide-part15-scale-cache-zh/) | [Part 17：RKK 實戰——MCP 伺服器、Tool-Calling 安全與 OAuth 授權](/posts/fde-interview-guide-part17-mcp-tool-oauth-zh/) →

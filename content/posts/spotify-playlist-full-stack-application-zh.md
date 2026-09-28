@@ -4,12 +4,16 @@ date: 2025-09-06T14:13:59+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering"]
-tags: ["AI", "spotify-api", "machine-learning", "oauth", "recommendation-system", "java", "vue.js", "full-stack", "spring-boot", "vue"]
+tags: ["AI", "spotify-api", "Machine Learning", "OAuth", "recommendation-system", "Java", "Vue.js", "full-stack", "Spring Boot", "vue"]
 summary: "使用 Spring Boot 後端與 Vue.js 前端，整合 Spotify API 打造智能音樂推薦系統，突破 Spotify 原生推薦限制，提供更主動的音樂探索體驗。"
+description: "使用 Spring Boot 後端與 Vue.js 前端，整合 Spotify API 打造智能音樂推薦系統，突破 Spotify 原生推薦限制，提供更主動的音樂探索體驗。"
 readTime: "15 min"
+aliases: ["/posts/spotify-playlist-full-stack-application/"]
 ---
 
 ## 🎯 專案動機與背景
+
+> ⚠️ **2026 年補充：** Spotify 已於 2024 年 11 月對新註冊的應用程式停用 Web API 的 Recommendations、Audio Features 等端點，本文核心功能依賴的 `/recommendations`（`getRecommendations`）因此無法在新建立的應用程式上重現。另外，本專案的推薦結果來自把種子參數轉交給 Spotify API，並沒有自行訓練機器學習模型。
 
 Spotify 作為全球最受歡迎的音樂串流平台之一，雖然擁有強大的推薦演算法，但往往會陷入**推薦相似歌曲**的循環中，使用者缺乏**主動探索新音樂**的有效途徑。因此，我開發了這個全端應用程式，讓使用者能夠更主動地控制音樂發現過程。
 

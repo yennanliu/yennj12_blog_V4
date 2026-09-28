@@ -6,7 +6,7 @@ description: "RAG demo 能跑,不代表能上線。本篇拆解 chatPDF 如何�
 categories: ["all", "ai", "engineering"]
 tags: ["RAG", "LLM", "ChatPDF", "Security", "Backend", "Production", "Multi-Query", "LRU Cache", "API Hardening"]
 authors: ["yen"]
-readTime: "17 min"
+readTime: "11 min"
 ---
 
 > 多數 RAG 專案的生命週期:demo 驚艷 → 上線 → 第一個惡意上傳把記憶體吃爆 → 第一個含程式碼的 PDF 讓檢索掛掉 → 緊急修補。
@@ -17,7 +17,7 @@ readTime: "17 min"
 
 ## 一、為什麼 demo 跟 production 是兩回事
 
-[上一篇](../chatpdf-rag-optimization-part1-chunking-retrieval-zh/)解決了 RAG 的品質核心:切塊與檢索。但品質好不等於能上線。[PR #2](https://github.com/yennanliu/chatPDF/pull/2) 的主題是 **hardening(強化)**——把這套系統從「在我電腦上能跑」推到「面對真實使用者、惡意輸入、長時間運行都不會倒」。
+[上一篇](/posts/chatpdf-rag-optimization-part1-chunking-retrieval-zh/)解決了 RAG 的品質核心:切塊與檢索。但品質好不等於能上線。[PR #2](https://github.com/yennanliu/chatPDF/pull/2) 的主題是 **hardening(強化)**——把這套系統從「在我電腦上能跑」推到「面對真實使用者、惡意輸入、長時間運行都不會倒」。
 
 它涵蓋兩條主線:
 
@@ -241,11 +241,11 @@ temperature 參數化的好處:**生成答案用 0.0(穩定),judge/評估呼叫�
 | 大檔案 | 可能 OOM | 解析階段即 413 拒絕 |
 | 刪除 | 順序不定,易留孤兒 | DB 先行 + try-except 清理 |
 | BM25 記憶體 | 無上限(會洩漏) | LRU 上限 64 |
-| 檢索召回 | 單一查詢 | 多查詢擴展,recall 提升 |
-| context 品質 | 含弱命中噪音 | min_score 過濾 |
+| 檢索召回 | 單一查詢 | 多查詢擴展(預期提升 recall,本 PR 未量測) |
+| context 品質 | 含弱命中噪音 | min_score 過濾(效果未量測) |
 | 引用 | 僅檔名 | 頁碼級可查證 |
 | API 穩定性 | 直接失敗 | 重試 + 退避 |
-| 測試 | — | 後端 195 測試全綠,前端 +10 Vitest |
+| 測試 | — | 後端 165 測試全綠(+30 新增),前端 +10 Vitest |
 
 ---
 
@@ -259,15 +259,15 @@ temperature 參數化的好處:**生成答案用 0.0(穩定),judge/評估呼叫�
 
 > 一句話總結:demo 比的是「最好的情況能多好」,production 比的是「最壞的情況能多不壞」。
 
-下一篇([第三部分](../chatpdf-rag-optimization-part3-observability-eval-zh/))處理最後一塊:**可觀測性與評估**——Langfuse 追蹤、評估歷史持久化、即時答案評分、無依賴 SVG 圖表。沒有量測,就沒有持續優化。
+下一篇([第三部分](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/))處理最後一塊:**可觀測性與評估**——Langfuse 追蹤、評估歷史持久化、即時答案評分、無依賴 SVG 圖表。沒有量測,就沒有持續優化。
 
 ---
 
 **系列導覽**
 
-- [第一部分:語意切塊與混合檢索](../chatpdf-rag-optimization-part1-chunking-retrieval-zh/)
+- [第一部分:語意切塊與混合檢索](/posts/chatpdf-rag-optimization-part1-chunking-retrieval-zh/)
 - 第二部分:後端強化與進階 RAG(本篇)
-- [第三部分:可觀測性與評估](../chatpdf-rag-optimization-part3-observability-eval-zh/)
+- [第三部分:可觀測性與評估](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/)
 
 **參考連結**
 

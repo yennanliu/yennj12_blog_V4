@@ -5,7 +5,7 @@ draft: false
 weight: 20
 description: "深入解析 LLM 預訓練工程：資料清洗管線、Scaling Laws、分散式訓練（DP/TP/PP）、梯度累積與 Chinchilla 最優計算分配"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "Pretraining", "Scaling Laws", "Distributed Training", "Data Pipeline", "RKK", "Interview"]
+tags: ["AI", "LLM", "Pretraining", "Scaling Laws", "Distributed Training", "Data Pipeline", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：** 假設你是某 AI 新創的基礎架構工程師，團隊計畫訓練一個 7B 參數的 LLM，預算 $500K，目標是在 3 個月內完成預訓練。請說明你會如何規劃資料管線、選擇分散式訓練策略，以及如何監控並從 Loss Spike 中恢復？
+**工程情境：** 假設你是某 AI 新創的基礎架構工程師，團隊計畫訓練一個 7B 參數的 LLM，預算 $500K，目標是在 3 個月內完成預訓練。請說明你會如何規劃資料管線、選擇分散式訓練策略，以及如何監控並從 Loss Spike 中恢復？
 
 ---
 
@@ -33,7 +33,7 @@ series: ["ai-eng-from-scratch"]
 | GPT-3 | 175B | 300B | ~3.5M A100 小時 | ~$4.6M |
 | LLaMA-2 7B | 7B | 2T | ~180K A100 小時 | ~$240K |
 | LLaMA-2 70B | 70B | 2T | ~1.7M A100 小時 | ~$2.3M |
-| Mistral 7B | 7B | 1T | ~120K A100 小時 | ~$160K |
+| Mistral 7B | 7B | 未公開 | 未公開 | 未公開 |
 
 > 一次「失敗的」預訓練跑到 80% 才發現資料有問題，等於直接燒掉 $100K–$3.6M。
 
@@ -180,8 +180,8 @@ series: ["ai-eng-from-scratch"]
 
 **Phase 3 關鍵參數：**
 - 模型規模：30B–700B+ 參數
-- 資料量：2T–15T Token
-- 硬體：100–1000+ 節點，800–8000+ × A100/H100
+- 資料量：2T–15T Token（近年開源模型已到 15–36T，如 Llama 3 約 15T、Qwen3 約 36T）
+- 硬體：100–1000+ 節點，800–8000+ × A100/H100（2025 年起新叢集多為 Blackwell 世代 B200/GB200）
 - 訓練時間：1–6 個月
 - 成本：$1M–$100M+
 - MFU 目標：> 45–50%（H100 叢集）
@@ -234,7 +234,9 @@ series: ["ai-eng-from-scratch"]
 - Jaccard ≥ 0.8 的碰撞機率 > 99%，誤刪率 < 1%
 - 實際工程：用 Apache Spark 或 Ray Data 分散式計算，100B 文件約需 2–4 小時（200 cores）
 
-**資料混合比例（以 LLaMA-2 為例）：**
+> 現代清洗管線還會在規則過濾之後加一層**模型式品質過濾**：用 LLM 標註的樣本訓練輕量分類器，為每份文件打「教育價值 / 品質」分數再篩選（如 FineWeb-Edu、DCLM）。這已是提升同等 Token 預算下模型品質最主要的手段之一。
+
+**資料混合比例（以 LLaMA-1 公開的混合比例為例，Token 數按 2T 總量換算示意；LLaMA-2 未公開其資料混合）：**
 
 | 資料來源 | 比例 | Token 數 | 說明 |
 |--------|------|---------|------|
@@ -244,7 +246,7 @@ series: ["ai-eng-from-scratch"]
 | Books | 4.5% | 89B | 長文本理解 |
 | ArXiv | 2.5% | 50B | 技術推理 |
 | StackExchange | 2% | 40B | QA 格式 |
-| 其他 | 15% | 300B | 補充來源 |
+| C4 | 15% | 300B | 清洗過的 Common Crawl 子集 |
 
 ---
 
@@ -287,7 +289,7 @@ Chinchilla 最優是針對**訓練成本最優**，但工程上常見另一個�
 **實際案例（7B 模型）：**
 - Chinchilla 最優：140B Token（≈ 20 × 7B）
 - LLaMA-2：2T Token（≈ 286 × 7B）
-- 結果：LLaMA-2 7B 的推理能力接近 Chinchilla-70B，但推理成本只有 1/10
+- 結果：LLaMA-2 7B 用遠超 Chinchilla 最優的 Token 數訓練，把更多訓練算力換成更低的推理成本——同樣 7B 的推理開銷，能力明顯高於只訓練 140B Token 的 7B 模型（但仍不及 Chinchilla-70B：MMLU 約 45% vs 約 67%）
 
 **決策矩陣：**
 
@@ -505,9 +507,11 @@ dist_checkpoint.save(
 | H100 NVL 94GB | 989 | 94 GB | 900 GB/s | $5–9 | 110–198 |
 | A10G 24GB | 125 | 24 GB | PCIe only | $1–1.5 | 83–125 |
 
-**結論：** H100 的 TFLOPS/$ 是 A100 的 1.6–2×，但實際 MFU 也更高，總體訓練成本可降低 40–50%。對於 70B+ 模型，切換到 H100 叢集通常能回收成本。
+**結論：** H100 的 TFLOPS/$ 是 A100 的 1.6–2×，但實際 MFU 也更高，總體訓練成本可降低 40–50%。對於 70B+ 模型，切換到 H100 叢集通常能回收成本。（上表價格為示意區間；2026 年新建叢集多已轉向 Blackwell 世代 B200/GB200，並可用 FP8/MXFP8 訓練，比較基準應隨之更新。）
 
 ### 9.3 資料品質對最終 Loss 的影響
+
+> 下表為示意估算，用來說明各清洗步驟的相對量級，非實測數據。
 
 | 資料品質策略 | 最終 Validation Loss（7B/1T Token） | 相對提升 |
 |-----------|----------------------------------|--------|
@@ -523,9 +527,9 @@ dist_checkpoint.save(
 
 本文是 **AI 工程從零開始** 系列 Phase 10 的第 2 篇。
 
-← **上一篇**：[Phase 10 Part 1：LLM 架構深探 — Transformer 的每一層在做什麼](/posts/ai-eng-from-scratch-phase10-part1-transformer-arch-zh/)
+← **上一篇**：[Phase 10 Part 1：從頭構建 LLM — Tokenization 的工程藝術](/posts/ai-eng-from-scratch-phase10-part1-tokenization-zh/)
 
-→ **下一篇**：[Phase 10 Part 3：LLM 微調全景 — SFT、LoRA 與 RLHF 工程實踐](/posts/ai-eng-from-scratch-phase10-part3-finetuning-zh/)
+→ **下一篇**：[Phase 10 Part 3：LLM 微調 — LoRA、QLoRA 與指令對齊](/posts/ai-eng-from-scratch-phase10-part3-finetuning-zh/)
 
 ---
 
@@ -533,8 +537,6 @@ dist_checkpoint.save(
 
 | Part | 主題 | 狀態 |
 |------|------|------|
-| Part 1 | Transformer 架構深探 | ✓ |
-| **Part 2** | **LLM 預訓練工程（本文）** | **✓** |
-| Part 3 | 微調全景：SFT / LoRA / RLHF | 即將發布 |
-| Part 4 | 推理優化：量化 / KV Cache / 投機解碼 | 即將發布 |
-| Part 5 | LLM 部署：vLLM / TGI / 生產架構 | 即將發布 |
+| [Part 1](/posts/ai-eng-from-scratch-phase10-part1-tokenization-zh/) | 從頭構建 LLM — Tokenization 的工程藝術 | ✓ |
+| **Part 2** | **LLM 預訓練 — 萬億 Token 的工程挑戰（本文）** | **✓** |
+| [Part 3](/posts/ai-eng-from-scratch-phase10-part3-finetuning-zh/) | LLM 微調 — LoRA、QLoRA 與指令對齊 | ✓ |

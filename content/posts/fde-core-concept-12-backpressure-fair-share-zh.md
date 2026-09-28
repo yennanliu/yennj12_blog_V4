@@ -5,7 +5,7 @@ draft: false
 weight: 12
 description: "深入解析 Token Bucket 反壓機制與加權公平排隊，說明多租戶 AI 平台如何在突發流量下保障每個租戶的最低吞吐量，並以 Redis Lua 腳本實現亞毫秒級限速。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Scalability", "RateLimiting", "MultiTenant"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Scalability", "Rate Limiting", "Multi-tenant"]
 authors: ["yen"]
 readTime: "18 min"
 ---
@@ -457,4 +457,4 @@ Redis 記憶體使用（500 租戶）   N/A                         ~50 MB（每
 ---
 
 **系列導航**
-← [前一篇：Async Event-Driven Pipeline](/posts/fde-interview-core-topic-11-async-event-driven-pipeline-zh/) | [後一篇：Part 13](/posts/fde-interview-core-topic-13-zh/) →
+← [前一篇：Async Event-Driven Pipeline：解耦同步 HTTP 與保護後端連線池](/posts/fde-core-concept-11-async-event-driven-pipeline-zh/) | [後一篇：Idempotency & State Recovery：分佈式 Agent 的精確一次斷點續傳](/posts/fde-core-concept-13-idempotency-state-recovery-zh/) →

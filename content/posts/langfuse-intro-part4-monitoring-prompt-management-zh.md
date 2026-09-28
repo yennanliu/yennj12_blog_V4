@@ -6,7 +6,7 @@ description: "系列最終篇。把前三篇的追蹤與評估收進日常營運
 categories: ["all", "ai", "engineering"]
 tags: ["Langfuse", "LLM", "Monitoring", "Prompt Management", "Observability", "Analytics", "LLMOps", "AI Engineering"]
 authors: ["yen"]
-readTime: "15 min"
+readTime: "10 min"
 ---
 
 > 很多團隊把 prompt 當成「寫死在程式裡的字串」,改一個字就要改程式、跑 CI、重新部署。
@@ -17,7 +17,7 @@ readTime: "15 min"
 
 ## 一、從「會用」到「營運得起來」
 
-[Part 2](../langfuse-intro-part2-tracing-sdk-zh/) 讓資料進來、[Part 3](../langfuse-intro-part3-evaluation-zh/) 讓品質可評,這最後一篇處理的是**長期營運**:當你的 LLM 應用每天服務真實使用者,你需要兩件事——
+[Part 2](/posts/langfuse-intro-part2-tracing-sdk-zh/) 讓資料進來、[Part 3](/posts/langfuse-intro-part3-evaluation-zh/) 讓品質可評,這最後一篇處理的是**長期營運**:當你的 LLM 應用每天服務真實使用者,你需要兩件事——
 
 ```
    ┌─────────────────────────────────────────────┐
@@ -81,7 +81,7 @@ Part 3 累積的 score(faithfulness、relevance、使用者回饋),在儀表板�
 
 ### 自訂儀表板與告警
 
-Langfuse 支援自訂儀表板(把你最在意的指標組合在一頁),也能依 metadata/tags 切分(用上 [Part 2](../langfuse-intro-part2-tracing-sdk-zh/) 貼的標籤)。配合告警,異常時主動通知。
+Langfuse 支援自訂儀表板(把你最在意的指標組合在一頁),也能依 metadata/tags 切分(用上 [Part 2](/posts/langfuse-intro-part2-tracing-sdk-zh/) 貼的標籤)。配合告警,異常時主動通知。
 
 ---
 
@@ -155,7 +155,7 @@ answer = call_llm(compiled)
 
 ### 把 prompt 連結到 Generation:閉環的最後一塊
 
-最關鍵的整合:**把取用的 prompt 連結到它產生的 generation**。這樣 Langfuse 就能告訴你「哪一版 prompt 的品質/成本表現最好」——直接呼應 [Part 3](../langfuse-intro-part3-evaluation-zh/) 的評估。
+最關鍵的整合:**把取用的 prompt 連結到它產生的 generation**。這樣 Langfuse 就能告訴你「哪一版 prompt 的品質/成本表現最好」——直接呼應 [Part 3](/posts/langfuse-intro-part3-evaluation-zh/) 的評估。
 
 ```
    Prompt v2 ──產生──▶ Generations ──評分──▶ faithfulness 0.81
@@ -231,9 +231,9 @@ answer = call_llm(compiled)
 
 **系列導覽**
 
-- [Part 1 — 核心概念與資料模型](../langfuse-intro-part1-concepts-zh/)
-- [Part 2 — SDK 整合與 Tracing 實戰](../langfuse-intro-part2-tracing-sdk-zh/)
-- [Part 3 — LLM 評估:Score、LLM-as-a-Judge、Dataset](../langfuse-intro-part3-evaluation-zh/)
+- [Part 1 — 核心概念與資料模型](/posts/langfuse-intro-part1-concepts-zh/)
+- [Part 2 — SDK 整合與 Tracing 實戰](/posts/langfuse-intro-part2-tracing-sdk-zh/)
+- [Part 3 — LLM 評估:Score、LLM-as-a-Judge、Dataset](/posts/langfuse-intro-part3-evaluation-zh/)
 - Part 4 — 監控與 Prompt 管理(本篇)
 
 **參考連結**

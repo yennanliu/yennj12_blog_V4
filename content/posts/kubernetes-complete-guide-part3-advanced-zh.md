@@ -6,8 +6,8 @@ weight: 3
 description: "深入探討 Kubernetes 進階主題，包含自動擴展、RBAC 權限管理、Network Policy、Helm 套件管理、監控告警、日誌收集、CI/CD 整合與生產環境最佳實踐，打造企業級 K8S 平台。"
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "HPA", "RBAC", "Helm", "監控", "Prometheus", "Grafana", "CI/CD", "生產部署", "最佳實踐", "DevOps"]
-authors: ["yennj12 team"]
-readTime: "75 min"
+authors: ["yen"]
+readTime: "30 min"
 ---
 
 ## 🎯 前言
@@ -212,7 +212,8 @@ spec:
     spec:
       serviceAccountName: cluster-autoscaler
       containers:
-      - image: k8s.gcr.io/autoscaling/cluster-autoscaler:v1.27.0
+      # k8s.gcr.io 已凍結，請改用 registry.k8s.io；CA 的次版本號必須與叢集版本一致
+      - image: registry.k8s.io/autoscaling/cluster-autoscaler:v1.27.0
         name: cluster-autoscaler
         command:
         - ./cluster-autoscaler

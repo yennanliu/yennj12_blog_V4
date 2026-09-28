@@ -459,4 +459,4 @@ Cloud Audit Logs 的完整性保護：日誌一旦寫入後，即使 Project Own
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-8-zh/) | [後一篇](/posts/fde-interview-core-topic-10-zh/) →
+← [前一篇](/posts/fde-core-concept-8-pii-deidentification-zh/) | [後一篇](/posts/fde-core-concept-10-cmek-byok-envelope-zh/) →

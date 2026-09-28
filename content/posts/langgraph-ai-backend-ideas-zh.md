@@ -6,7 +6,8 @@ authors: ["yen"]
 categories: ["all", "ai"]
 tags: ["LangGraph", "應用案例", "創意", "行業解決方案", "未來趨勢"]
 summary: "探索 LangGraph AI 後端在 10 個不同行業和場景的創意應用，從客服系統到內容創作、從數據分析到程式碼生成，展示 LangGraph 的真正潛力和未來發展方向。"
-readTime: "52 min"
+description: "探索 LangGraph AI 後端在 10 個不同行業和場景的創意應用，從客服系統到內容創作、從數據分析到程式碼生成，展示 LangGraph 的真正潛力和未來發展方向。"
+readTime: "20 min"
 ---
 
 LangGraph 最強大的地方不是它能做什麼，而是**它開啟了什麼**。本文探討 10 個生產級的創意應用案例，展示如何用 LangGraph 構建明天的 AI 系統。
@@ -484,7 +485,6 @@ class CodeReviewAgent:
 
 ```python
 from langdetect import detect
-from langchain.chains import LLMChain
 
 @dataclass
 class MultilingualTicketState:

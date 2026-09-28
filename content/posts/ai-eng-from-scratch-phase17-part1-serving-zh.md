@@ -5,9 +5,9 @@ draft: false
 weight: 36
 description: "深入解析 AI 推論服務工程：模型服務器選型（Triton/TorchServe/vLLM）、負載均衡、自動擴縮容、GPU 共享與多租戶隔離架構"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Infrastructure", "Serving", "Triton", "GPU", "Kubernetes", "Production", "RKK", "Interview"]
+tags: ["AI", "Infrastructure", "Serving", "Triton", "GPU", "Kubernetes", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "18 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的電商平台每天有 500 萬次商品推薦請求，目前用一台 A100 跑 PyTorch 模型，P99 延遲 1.2s，GPU 使用率只有 23%。CTO 說三個月後要支援 10 倍流量，同時把 P99 壓到 200ms 以內，預算只能增加 2 倍。你會如何重新設計推論服務架構？請解釋你在服務框架選型、擴縮容策略、GPU 共享、以及多租戶隔離四個面向的決策依據。
 
@@ -207,6 +207,8 @@ Triton 最強的能力是 Ensemble Pipeline——可以把前處理、推論、�
 **TorchServe（推薦用於純 PyTorch 快速上線）**
 
 若團隊全部使用 PyTorch，TorchServe 的開發體驗更友好：自定義 handler 只需繼承 `BaseHandler`，模型打包用 `torch-model-archiver`，版本管理 API 開箱即用。缺點是跨框架支援弱，Ensemble Pipeline 需要自行實現。
+
+> 注意（2026 年）：TorchServe 自 2025 年起已轉為有限維護（limited maintenance）狀態，不再積極開發。新專案選用前請確認其維護狀態，或改評估 Triton、KServe 等仍在積極維護的方案。
 
 **vLLM（推薦用於 LLM 生成式 AI 服務）**
 
@@ -401,7 +403,7 @@ DCGM 指標收集每個 Pod 的 GPU 時間使用量，配合 Kubernetes Cost All
 | 效能 | ResNet50 18,000 req/s；P99 4ms | ResNet50 12,000 req/s；P99 8ms |
 | 生產可靠性 | NVIDIA 原生維護，與 CUDA/TensorRT 深度整合 | Facebook 主導，PyTorch 生態強但非 GPU 廠商 |
 
-**Flip Condition**：若團隊 100% PyTorch 且沒有 Ensemble Pipeline 需求，TorchServe 的開發體驗更友好（handler 撰寫更直覺），應選 TorchServe。
+**Flip Condition**：若團隊 100% PyTorch 且沒有 Ensemble Pipeline 需求，TorchServe 的開發體驗更友好（handler 撰寫更直覺），應選 TorchServe。（前提是能接受它已進入有限維護狀態；見上方註記。）
 
 ---
 
@@ -476,7 +478,7 @@ DCGM 指標收集每個 Pod 的 GPU 時間使用量，配合 Kubernetes Cost All
 |------|--------------------|-----------------------|---------------------|
 | GPU 使用率 | 23% | 55% | 78% |
 | P99 延遲 | 1,200ms | 320ms | 180ms |
-| 每日最大 QPS | 58 | 820 | 8,500 |
+| 日均 QPS（每日請求量 ÷ 86,400） | 58 | 820 | 8,500 |
 | GPU 冷啟動時間 | 45s | 35s | 8s |
 | 每 100 萬請求成本 | $4.12 | $1.46 | $0.68 |
 | 月可用性 SLO | 95.2%（無 HA）| 99.5% | 99.95% |
@@ -485,15 +487,17 @@ DCGM 指標收集每個 Pod 的 GPU 時間使用量，配合 Kubernetes Cost All
 | 同時支援模型數量 | 1 | 12 | 200+ |
 | 多租戶隔離 | 無 | Namespace 級別 | MIG 硬體級別 |
 
+> 以上為示意估算，非實測數據。
+
 **成本效益分析**：從 Phase 1 到 Phase 3，雖然 GPU 數量從 1 台增加到 12 台（成本 12×），但每 100 萬請求的服務成本從 $4.12 降至 $0.68（降低 83%），吞吐量提升 146 倍。這是 GPU 使用率從 23% → 78% 帶來的複利效應：相同的 GPU 資源，透過批次、共享、擴縮容最佳化，可以服務 3.4 倍的請求量。
 
 ---
 
 ## 十、系列導航
 
-← [Phase 16 Part 2：AI 訓練平台的分散式儲存與資料管線](/posts/ai-eng-from-scratch-phase16-part2-storage-zh/)
+← [Phase 16 Part 2：湧現與集體智慧 — 群體行為的工程設計](/posts/ai-eng-from-scratch-phase16-part2-emergence-collective-zh/)
 
-→ [Phase 17 Part 2：AI 推論服務的可觀測性與成本最佳化](/posts/ai-eng-from-scratch-phase17-part2-observability-zh/)
+→ [Phase 17 Part 2：AI 系統可觀測性 — 當模型行為成為監控對象](/posts/ai-eng-from-scratch-phase17-part2-observability-zh/)
 
 ---
 

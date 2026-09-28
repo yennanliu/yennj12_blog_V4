@@ -4,9 +4,9 @@ date: 2026-06-30T11:00:00+08:00
 draft: false
 description: "沒有量測就沒有優化。本篇拆解 chatPDF 如何補上 RAG 的可觀測性最後一塊:opt-in 零開銷的 Langfuse 追蹤、執行緒安全的 singleton、評估歷史持久化、即時答案評分(faithfulness/relevance)、relevance gate,以及無外部依賴的 SVG 趨勢圖表。"
 categories: ["all", "ai", "engineering"]
-tags: ["RAG", "LLM", "ChatPDF", "Observability", "Langfuse", "Evaluation", "Tracing", "LLM-as-judge", "Metrics"]
+tags: ["RAG", "LLM", "ChatPDF", "Observability", "Langfuse", "Evaluation", "Tracing", "LLM-as-Judge", "Metrics"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "11 min"
 ---
 
 > 多數 RAG 專案上線後,優化全憑「感覺答案變好了」。
@@ -17,7 +17,7 @@ readTime: "16 min"
 
 ## 一、為什麼可觀測性是 RAG 的最後一哩
 
-[第一篇](../chatpdf-rag-optimization-part1-chunking-retrieval-zh/)解決切塊與檢索品質,[第二篇](../chatpdf-rag-optimization-part2-backend-hardening-zh/)補上 production 防線。但還缺一塊:**你怎麼知道這些優化真的有效?**
+[第一篇](/posts/chatpdf-rag-optimization-part1-chunking-retrieval-zh/)解決切塊與檢索品質,[第二篇](/posts/chatpdf-rag-optimization-part2-backend-hardening-zh/)補上 production 防線。但還缺一塊:**你怎麼知道這些優化真的有效?**
 
 RAG 的恐怖之處在於它「永遠會給出一個看起來合理的答案」。沒有量測,你根本分不清:
 
@@ -309,8 +309,8 @@ prompt = _JUDGE_PROMPT.format(
 
 **系列導覽**
 
-- [第一部分:語意切塊與混合檢索](../chatpdf-rag-optimization-part1-chunking-retrieval-zh/)
-- [第二部分:後端強化與進階 RAG](../chatpdf-rag-optimization-part2-backend-hardening-zh/)
+- [第一部分:語意切塊與混合檢索](/posts/chatpdf-rag-optimization-part1-chunking-retrieval-zh/)
+- [第二部分:後端強化與進階 RAG](/posts/chatpdf-rag-optimization-part2-backend-hardening-zh/)
 - 第三部分:可觀測性與評估(本篇)
 
 **參考連結**

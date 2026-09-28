@@ -563,6 +563,18 @@
     font-size: var(--font-size-md);
 }
 
+/* Dark theme: the inverted ramp would turn this header into a bright bar
+   above a dark table — keep it a raised dark surface instead. */
+html[data-theme="dark"] .posts-table th {
+    background: var(--color-gray-100);
+    color: var(--color-black);
+    border-bottom-color: var(--color-gray-300);
+}
+
+html[data-theme="dark"] .posts-table th.sortable:hover {
+    background: var(--color-gray-200);
+}
+
 .th-content {
     display: flex;
     align-items: center;
@@ -599,7 +611,7 @@
 .posts-table th.sort-asc .sort-icon,
 .posts-table th.sort-desc .sort-icon {
     opacity: 1;
-    color: var(--color-white);
+    color: inherit;
 }
 
 .posts-table th.sort-desc .sort-icon {

@@ -4,8 +4,9 @@ date: 2025-09-29T09:50:40+08:00
 draft: false
 tags: ["JVM", "Java", "記憶體管理", "堆疊", "堆積", "垃圾回收", "效能調優"]
 categories: ["all", "engineering"]
-author: "yennj12 team"
+authors: ["yen"]
 description: "深入探討 JVM 記憶體結構，包含堆疊記憶體、堆積記憶體的運作原理、配置策略及效能最佳化技巧，搭配實際程式碼範例與圖解說明。"
+readTime: "18 min"
 ---
 
 ## 前言

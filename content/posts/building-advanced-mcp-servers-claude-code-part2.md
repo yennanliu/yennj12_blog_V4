@@ -5,9 +5,10 @@ draft: false
 weight: 2
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "mcp", "claude-code", "database", "api-integration", "production", "docker", "postgresql", "monitoring", "development-tools", "automation"]
+tags: ["AI", "MCP", "Claude Code", "Database", "API Integration", "Production", "Docker", "postgresql", "Monitoring", "Development Tools", "Automation"]
 summary: "Advanced MCP server development covering database integration, REST API connectors, real-time data processing, and production deployment strategies for Claude Code development workflows."
-readTime: "24 min"
+description: "Advanced MCP server development covering database integration, REST API connectors, real-time data processing, and production deployment strategies for Claude Code development workflows."
+readTime: "33 min"
 ---
 
 ## 🎯 Advanced MCP Server Development
@@ -276,7 +277,10 @@ class DatabaseManager:
             }
 
     def _is_safe_query(self, query: str) -> bool:
-        """Basic query safety validation"""
+        """Cheap first-pass filter only -- NOT a security boundary.
+        String matching is easy to bypass (comments, CTEs, stacked statements,
+        functions with side effects). Real protection comes from connecting
+        with a read-only database role; see the note below."""
         query_lower = query.lower().strip()
 
         # Block potentially dangerous operations
@@ -389,6 +393,8 @@ class DatabaseManager:
             "statistics": self.query_stats
         }
 ```
+
+> ⚠️ **Security note:** `_is_safe_query` is a convenience filter, not a safeguard. Before pointing this server at a real (let alone production) database, connect it with a dedicated **read-only role** (e.g. in PostgreSQL, a role granted only `SELECT` on the tables it needs, with `default_transaction_read_only = on`), so the database itself refuses writes no matter what SQL the model generates.
 
 ### 🛠️ Advanced Database Tools for MCP Server
 
@@ -1417,7 +1423,7 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-mcp_database}
       POSTGRES_USER: ${POSTGRES_USER:-mcp_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mcp_password}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d
@@ -1436,7 +1442,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: mcp-redis
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_password}
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:?set REDIS_PASSWORD}
     volumes:
       - redis_data:/data
     ports:
@@ -1459,10 +1465,10 @@ services:
       - POSTGRES_PORT=5432
       - POSTGRES_DB=${POSTGRES_DB:-mcp_database}
       - POSTGRES_USER=${POSTGRES_USER:-mcp_user}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mcp_password}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_password}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:?set REDIS_PASSWORD}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - MCP_SERVER_ENV=production
     volumes:
@@ -1508,7 +1514,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin123}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?set GRAFANA_PASSWORD}
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
@@ -1866,7 +1872,7 @@ class SecurityManager:
       "port": 5432,
       "database": "mcp_database",
       "username": "mcp_user",
-      "password": "mcp_password",
+      "password": "${PRIMARY_DB_PASSWORD}",
       "pool_size": 20,
       "timeout": 30
     },
@@ -1876,7 +1882,7 @@ class SecurityManager:
       "port": 3306,
       "database": "analytics",
       "username": "analytics_user",
-      "password": "analytics_password",
+      "password": "${ANALYTICS_DB_PASSWORD}",
       "pool_size": 10
     },
     "cache_db": {
@@ -1964,6 +1970,8 @@ class SecurityManager:
   }
 }
 ```
+
+> 🔐 Keep secrets out of this file: the `${...}` placeholders are meant to be filled from environment variables (e.g. expand them with `os.path.expandvars` when loading the config), so the JSON can be committed without leaking database credentials.
 
 ## 🎉 Conclusion & Next Steps
 

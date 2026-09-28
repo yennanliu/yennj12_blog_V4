@@ -5,20 +5,20 @@ draft: false
 weight: 14
 description: "從工程師視角完整解析 Transformer：Multi-Head Attention 矩陣計算、位置編碼、KV Cache、Flash Attention 與 MQA/GQA 生產優化"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Transformer", "Attention", "KV Cache", "Flash Attention", "Architecture", "RKK", "Interview"]
+tags: ["AI", "Transformer", "Attention", "KV Cache", "Flash Attention", "Architecture", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
 ---
 
 > *大多數人覺得 Transformer 就是「注意力機制加上前饋網路」，說完就結束了。*
-> *真正的工程師知道：矩陣分塊如何影響 GPU 記憶體帶寬，KV Cache 如何讓首 token 延遲從 8s 降到 400ms，*
+> *真正的工程師知道：矩陣分塊如何影響 GPU 記憶體帶寬，KV Cache 如何讓每個 decode 步驟不必重算整段前文（首 token 延遲則由 prefill 決定），*
 > *為什麼 GQA 能在保持 95% 品質的前提下省掉 75% 的快取記憶體。*
 > *架構不是魔法——它是一系列在硬體限制下做出的工程取捨。*
 
 ---
 
-**面試情境**：「你負責將一個 7B 參數的 LLM 部署到生產環境，P99 首 token 延遲必須 < 500ms，批次吞吐量 > 200 req/s，GPU 記憶體預算 40GB。請說明你會在 Transformer 架構層面做哪些優化決策，以及你如何取捨精度與速度。」
+**工程情境**：「你負責將一個 7B 參數的 LLM 部署到生產環境，P99 首 token 延遲必須 < 500ms，批次吞吐量 > 200 req/s，GPU 記憶體預算 40GB。請說明你會在 Transformer 架構層面做哪些優化決策，以及你如何取捨精度與速度。」
 
 ---
 
@@ -367,7 +367,8 @@ m 為 head-specific 斜率（不可學習，預定義）
 │  │    Attn(Q₆, K[1..6], V[1..6])  ← 讀 Cache          │ │
 │  └─────────────────────────────────────────────────────┘ │
 │                                                          │
-│  效果：Decode 計算量 O(n) → O(1) per step               │
+│  效果：K/V 投影每步只算新 token（O(1)），注意力仍需讀  │
+│  整個 Cache（每步 O(t)）；免去每步重算整段前文 O(t²)    │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -482,7 +483,9 @@ MQA（1 組 KV）：
 └─────────────────────────────────────────────┘
 ```
 
-LLaMA-2 7B 使用 GQA 後，同樣 A100 80GB：
+同規模模型改用 GQA（8 個 KV heads，如 Llama 3 8B）後，同樣 A100 80GB：
+（LLaMA-2 7B 本身是 MHA；DeepSeek-V2/V3 的 MLA 更進一步把 K/V 壓縮成低秩潛在向量再快取，是 GQA 之後的下一步。）
+
 - KV Cache：2.1 GB → 0.53 GB per request
 - 可服務批次：16 req → 64 req（同等記憶體下）
 - 吞吐量：4× 提升，品質幾乎無損失
@@ -532,8 +535,8 @@ Flip condition：固定長度任務且不需外推 → Sinusoidal 夠用；> 128
 ```
 選擇          優勢                              劣勢                   適用場景
 ──────────────────────────────────────────────────────────────────────────
-KV Cache      Decode 步驟 O(1) per step         大量記憶體，長序列費用高  正常 API 服務
-重新計算      記憶體接近零額外開銷               每步重算 O(n)，速度慢     記憶體極度受限環境
+KV Cache      Decode 每步 O(t)（只算新 token）  大量記憶體，長序列費用高  正常 API 服務
+重新計算      記憶體接近零額外開銷               每步重算整段 O(t²)，慢   記憶體極度受限環境
 
 Flip condition：seq_len < 64 且批次 >> 1 時，重新計算有時更高效（cache miss > compute cost）
 ```
@@ -595,9 +598,9 @@ Flip condition：下游任務對細微差異敏感（如數值計算） → BF16
 
 ## 十、系列導航
 
-← [Phase 6 Part 2：模型微調與 LoRA 工程實踐](/posts/ai-eng-from-scratch-phase6-part2-lora-finetuning-zh/)
+← [Phase 6 Part 2：語音合成與音訊模型 — 讓機器開口說話](/posts/ai-eng-from-scratch-phase6-part2-tts-audio-models-zh/)
 
-→ [Phase 7 Part 2：LLM 推理引擎與部署架構](/posts/ai-eng-from-scratch-phase7-part2-inference-deployment-zh/)
+→ [Phase 7 Part 2：Transformer 訓練策略與架構變體](/posts/ai-eng-from-scratch-phase7-part2-training-variants-zh/)
 
 ---
 

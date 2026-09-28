@@ -3,9 +3,9 @@ title: "FDE 面試準備指南（五）：RAG 深度技術——Chunking、Embed
 date: 2026-05-31T09:00:00+08:00
 draft: false
 weight: 5
-description: "以 Google AI 工程師兼面試官的視角，深度拆解 RAG 的技術細節：Chunking 策略選擇、Embedding 模型挑選、向量資料庫設計、混合搜尋與 Reranking，以及 Context Window 爆炸的處理方式"
+description: "從面試官的視角，深度拆解 RAG 的技術細節：Chunking 策略選擇、Embedding 模型挑選、向量資料庫設計、混合搜尋與 Reranking，以及 Context Window 爆炸的處理方式"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "RAG", "Chunking", "Embedding", "Vector DB", "Hybrid Search", "Reranking", "Interview", "Google"]
+tags: ["AI", "FDE", "RAG", "Chunking", "Embedding", "Vector DB", "Hybrid Search", "Reranking", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "15 min"
 ---
@@ -119,6 +119,8 @@ chunk_overlap = 50
 | `BGE-M3` | BAAI | 1024 | 開源，支援多語言，中文很強 |
 | `E5-mistral-7b` | Microsoft | 4096 | 開源裡效果最好之一 |
 | `bge-large-zh` | BAAI | 1024 | 中文專用，效能極佳 |
+
+> 模型清單以 2025 年撰文時為準：Google 現行的通用 embedding 模型已是 `gemini-embedding-001`，`text-embedding-004` 屬上一代；實際選型請以官方文件與 MTEB 最新排名為準。
 
 ---
 

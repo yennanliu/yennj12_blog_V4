@@ -4,9 +4,9 @@ date: 2026-06-27T14:00:00+08:00
 draft: false
 description: "AeroVironment（NASDAQ: AVAV）三部曲完整選股分析（中）：從 $417.86 崩跌 66% 後的下降趨勢、均線空頭排列、超賣反彈技術面，到內部人士交易、機構持股、12% 空頭興趣與軋空潛力、總體經濟與國防預算週期，全面拆解這檔「墜落天使」的籌碼與市場情緒。"
 categories: ["all", "finance"]
-tags: ["Stock Analysis", "AVAV", "AeroVironment", "Technical Analysis", "Short Interest", "Short Squeeze", "Institutional Ownership", "Macro", "Defense", "InvestSkill", "繁體中文", "investment"]
+tags: ["Stock Analysis", "AVAV", "AeroVironment", "Technical Analysis", "Short Interest", "Short Squeeze", "Institutional Ownership", "Macro", "Defense", "InvestSkill", "繁體中文", "Investment"]
 authors: ["yen"]
-readTime: "21 min"
+readTime: "13 min"
 ---
 
 > 多數人看到 AVAV 跌破 $147 創 52 週新低,直覺是「下降趨勢,別碰」。
@@ -14,7 +14,7 @@ readTime: "21 min"
 > 大多數人只看到崩跌的價格,沒看到「空方擁擠 + 估值已腰斬 + 財報在即」三者疊加的爆發潛能。
 > 真正的訊號,藏在超賣指標、空單回補天數、與 6/29 財報的交叉點上。
 
-> **分析日期：2026 年 6 月 26 日** ｜ 股價：**$142.35** ｜ 市值：**約 $7.10B** ｜ 52 週區間：**$147.75 – $417.86**
+> **分析日期：2026 年 6 月 26 日** ｜ 股價：**$142.35** ｜ 市值：**約 $7.10B** ｜ 52 週區間(本次破底前)：**$147.75 – $417.86**
 > ⚠️ **重要時點：AVAV 將於 2026/06/29 公布 Q4 FY2026 財報**——技術面與籌碼面的所有判斷,都須以此二元事件為前提。
 > 本系列由 Claude Code 搭配 [InvestSkill](https://github.com/yennanliu/InvestSkill) `us-stock-analysis` 插件生成,格式參考 [Full Demo — RKLB](https://yennj12.js.org/InvestSkill/full-demo-rklb.html)。
 > 所有數據為公開資料整理與模型估算,僅供教育用途,**不構成投資建議**。
@@ -25,9 +25,9 @@ readTime: "21 min"
 
 本篇為 **AeroVironment（AVAV）三部曲分析**的第二部：
 
-- （上）基本面與產業競爭力
+- [（上）基本面與產業競爭力](/posts/stock-analysis-avav-aerovironment-part1-fundamentals-zh/)
 - **（中）技術面、籌碼面與市場情緒** ← 你正在這裡
-- （下）估值模型與投資裁決
+- [（下）估值模型與投資裁決](/posts/stock-analysis-avav-aerovironment-part3-valuation-verdict-zh/)
 
 ---
 
@@ -413,9 +413,9 @@ SCD 衰退 + SCAR 減記               核心 AS +50% 仍強勁
 
 ### 系列導覽
 
-- （上）基本面與產業競爭力 — 雙部門模式、三表、巡飛彈護城河
+- [（上）基本面與產業競爭力](/posts/stock-analysis-avav-aerovironment-part1-fundamentals-zh/) — 雙部門模式、三表、巡飛彈護城河
 - **（中）技術面、籌碼面與市場情緒** ← 你正在這裡
-- （下）估值模型與投資裁決 — DCF、相對估值、足球場、目標價與最終裁決
+- [（下）估值模型與投資裁決](/posts/stock-analysis-avav-aerovironment-part3-valuation-verdict-zh/) — DCF、相對估值、足球場、目標價與最終裁決
 
 ---
 

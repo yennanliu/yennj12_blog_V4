@@ -7,7 +7,7 @@ description: "拆解生成式引擎的檢索管線：AI crawler 名單與行為�
 categories: ["all", "ai", "engineering", "business"]
 tags: ["GEO", "AIO", "RAG", "Chunking", "Reranking", "Crawler", "Embedding", "繁體中文", "SEO"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "16 min"
 ---
 
 > 大多數人的做法：抄一份 GEO checklist，逐項打勾，然後不知道為什麼沒效果。
@@ -60,7 +60,7 @@ GPTBot                OpenAI          訓練語料收集             不進未�
 OAI-SearchBot         OpenAI          ChatGPT Search 索引      ChatGPT 搜尋不到你 ← 嚴重
 ChatGPT-User          OpenAI          使用者觸發的即時抓取      使用者貼你的網址也讀不到
 ClaudeBot             Anthropic       訓練語料收集             同 GPTBot
-Claude-Web            Anthropic       即時瀏覽                 Claude 讀不到你的頁面
+Claude-User           Anthropic       使用者觸發的即時抓取      Claude 讀不到你的頁面
 Claude-SearchBot      Anthropic       搜尋索引                 搜尋結果中缺席
 Google-Extended       Google          Gemini 訓練（不影響搜尋）  不進 Gemini 內在知識
 Googlebot             Google          一般索引 + AI Overview    AI Overview 完全消失 ← 致命
@@ -259,7 +259,7 @@ rm -f /tmp/body.$$
 進入 context window 的 8-20 個 chunk
 ```
 
-**淘汰率通常在 85-93%**。這代表：被檢索到 ≠ 被讀到。
+**淘汰率通常很高**（依 top-k 設定而定，量級約八到九成 [推估]）。這代表：被檢索到 ≠ 被讀到。
 
 Cross-encoder 打的分數，本質上是在問：「這段文字，是不是在直接回答這個問題？」
 
@@ -435,7 +435,7 @@ Context window 裡有 12 個 chunk，其中 4 個都提到「ERP 導入約需 3-
 
 因為表格天生具備上面六項的前四項：具體、可查核、結構清晰、可直接搬用。
 
-實測上，一個格式良好的比較表被引用的機率，通常是同樣資訊寫成散文的 2-3 倍。這也是為什麼 Part 3 會要求「每篇核心內容至少一張表」。
+就實務觀察，一個格式良好的比較表被引用的機率，明顯高於同樣資訊寫成散文（量級約 2-3 倍 [推估]）。這也是為什麼 Part 3 會要求「每篇核心內容至少一張表」。
 
 ---
 
@@ -513,7 +513,7 @@ Context window 裡有 12 個 chunk，其中 4 個都提到「ERP 導入約需 3-
 
 ---
 
-## 七、實測：同一份資訊，四種寫法的差異
+## 七、實驗設計（示意）：同一份資訊，四種寫法的差異
 
 以下是一個可以自己重跑的小實驗設計。用同一份事實資訊，寫成四種形式，各自建成獨立頁面，觀察 4-6 週後的引用情況。
 
@@ -532,7 +532,7 @@ C       結構化段落 + 數據 + 日期            ✔          ✔           
 D       C + 比較表 + 具名來源 + FAQ         ✔          ✔           ~45%
 ```
 
-數字為示意量級（實際會依主題競爭度大幅變動），但**相對關係在各種主題上都很穩定**：
+數字為示意量級（實際會依主題競爭度大幅變動）。外部引擎的 rerank 結果無法直接觀察，「進 rerank」欄只能從「被檢索到卻從未被引用」間接推斷。但**相對關係在各種主題上都很穩定**：
 
 ```
 影響力排序（由大到小）
@@ -652,7 +652,7 @@ vs 完全不提對手        比較表格易被引用
 ## 十、小結：三個必須內化的機制
 
 1. **Rerank 是瓶頸，不是 retrieval。**
-   被找到很容易，被選中很難。85-93% 的候選在 rerank 掛掉。所有內容決策都要問一句：「這一段被單獨抽出來，是不是在直接回答某個問題？」
+   被找到很容易，被選中很難。多數候選在 rerank 掛掉 [推估]。所有內容決策都要問一句：「這一段被單獨抽出來，是不是在直接回答某個問題？」
 
 2. **Chunk 是優化單位，不是頁面。**
    你在優化的不是「這篇文章」，而是「這篇文章能切出幾個高品質的獨立答案」。一篇好文章可能貢獻 5 個可引用 chunk；一篇壞文章貢獻 0 個。

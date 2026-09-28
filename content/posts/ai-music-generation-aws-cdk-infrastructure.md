@@ -4,8 +4,9 @@ date: 2026-01-17T09:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["AI", "aws", "cdk", "sagemaker", "bedrock", "machine-learning", "music-generation", "generative-ai", "lambda", "s3", "api-gateway"]
+tags: ["AI", "AWS", "CDK", "SageMaker", "Bedrock", "Machine Learning", "Music Generation", "Generative AI", "Lambda", "s3", "API Gateway"]
 summary: "Complete guide to architecting a production-ready AI music generation platform on AWS using CDK, comparing SageMaker and Bedrock approaches with detailed pros, cons, and implementation strategies for generating music from text prompts."
+description: "Complete guide to architecting a production-ready AI music generation platform on AWS using CDK, comparing SageMaker and Bedrock approaches with detailed pros, cons, and implementation strategies for generating music from text prompts."
 readTime: "21 min"
 ---
 
@@ -50,9 +51,11 @@ MusicGen Capabilities:
 │ • Duration control (up to 30s standard)    │
 │ • Multiple model sizes (300M, 1.5B, 3.3B)  │
 │ • Reasonable inference time (30-60s)       │
-│ • Open source (MIT license)                │
+│ • Code: MIT; pretrained weights: CC-BY-NC  │
 └────────────────────────────────────────────┘
 ```
+
+> **Licensing:** The AudioCraft/MusicGen *code* is MIT-licensed, but Meta's pretrained MusicGen *weights* are released under CC-BY-NC 4.0, which forbids commercial use. The commercial use cases later in this post (streaming app, creator tool, game studio) would need a model whose weights permit commercial use, or your own trained weights. Check the current model card before deploying.
 
 **Key Features:**
 - **Text prompts**: "Energetic rock guitar with heavy drums, 120 BPM"
@@ -610,6 +613,8 @@ def handler(event, context):
 
 AWS Bedrock offers a serverless alternative, though currently limited in music generation models:
 
+> **Note:** This Bedrock path is hypothetical. Bedrock has no music-generation model, and `amazon.music-gen-v1` below does not exist, so this stack will not work as written. It is kept only to illustrate what a managed-API integration would look like. Every "Choose Bedrock" recommendation in this post applies only if such a model becomes available.
+
 ### **Bedrock Architecture**
 
 ```typescript
@@ -701,7 +706,6 @@ def handler(event, context):
 
 3. **Cost at Scale**
    - Fixed hourly cost regardless of request volume
-   - Break-even at ~850 requests/month
    - Predictable infrastructure costs
 
 4. **Customization**
@@ -807,33 +811,9 @@ SageMaker Costs:
 │                                                        │
 │ Total: ~$877/month (fixed, regardless of volume)      │
 └────────────────────────────────────────────────────────┘
-
-Bedrock Costs (Hypothetical):
-┌────────────────────────────────────────────────────────┐
-│ Assumed pricing: $0.08 per generation                  │
-│ (Similar to Stable Diffusion on Bedrock)              │
-│                                                        │
-│ Volume-based costs:                                    │
-│ • 100 generations/month: $8                           │
-│ • 500 generations/month: $40                          │
-│ • 1,000 generations/month: $80                        │
-│ • 5,000 generations/month: $400                       │
-│ • 10,000 generations/month: $800                      │
-│ • 20,000 generations/month: $1,600                    │
-│                                                        │
-│ Break-even point: ~10,950 generations/month           │
-└────────────────────────────────────────────────────────┘
 ```
 
-### **Cost Decision Matrix**
-
-| Monthly Volume | Best Choice | Estimated Cost |
-|---------------|------------|----------------|
-| **< 100 generations** | Bedrock | $8 |
-| **100-500** | Bedrock | $40 |
-| **500-1,000** | Bedrock | $80 |
-| **1,000-10,000** | Depends on growth | $80-800 |
-| **> 10,000** | SageMaker | $877 (fixed) |
+**Bedrock costs:** there is no Bedrock price to compare against, because Bedrock does not offer a music-generation model (see the note in the Bedrock section). An earlier version of this post assumed "$0.08 per generation" and derived a break-even volume from it; that assumption had no basis and has been removed. For a real pay-per-use comparison, price SageMaker Serverless or Asynchronous Inference (which can scale to zero) or a third-party music-generation API against the fixed ~$877/month above.
 
 ## Production Use Cases and Examples
 
@@ -872,7 +852,7 @@ Bedrock Costs (Hypothetical):
 ```
 
 **Best Approach**: Hybrid
-- Use Bedrock for low-volume users (free tier)
+- Use a pay-per-use path (e.g. SageMaker Serverless/Async Inference) for low-volume users
 - Migrate power users to SageMaker endpoints
 - Volume-based pricing tiers
 
@@ -1063,14 +1043,17 @@ Building production-grade AI music generation infrastructure requires careful ev
 
 ### **Choose SageMaker When:**
 - You need custom models (MusicGen, custom fine-tuned models)
-- High volume usage (>10,000 generations/month)
+- Sustained, high-volume usage that keeps a fixed instance busy
 - Require full control over inference pipeline
 - Need VPC deployment for compliance
 - Latency predictability is critical
 
 ### **Choose Bedrock When:**
+
+*(Hypothetical: only applies if Bedrock adds a music-generation model.)*
+
 - Prototyping or MVP development
-- Low volume usage (<5,000 generations/month)
+- Low or bursty volume
 - Want zero infrastructure management
 - Need rapid deployment
 - Cost predictability at low scale matters

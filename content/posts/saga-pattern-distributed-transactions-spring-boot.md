@@ -3,10 +3,10 @@ title: "SAGA Pattern: Managing Distributed Transactions in Spring Boot Microserv
 date: 2025-01-28T01:00:00+08:00
 draft: false
 description: "Complete guide to implementing SAGA pattern for distributed transactions in Java Spring Boot applications. Learn orchestration vs choreography approaches, failure handling, and best practices with real-world examples."
-categories: ["all", "ai", "engineering", "architecture"]
-tags: ["Java", "Spring Boot", "SAGA Pattern", "Distributed Transactions", "Microservices", "Event Sourcing", "Orchestration", "Choreography", "AI"]
-authors: ["YennJ12 Engineering Team"]
-readTime: "30 min"
+categories: ["all", "engineering", "architecture"]
+tags: ["Java", "Spring Boot", "SAGA Pattern", "Distributed Transactions", "Microservices", "Event Sourcing", "Orchestration", "Choreography"]
+authors: ["yen"]
+readTime: "23 min"
 ---
 
 ## 🎯 Introduction
@@ -421,6 +421,8 @@ graph TD
 ```
 
 #### 🛠️ Java Spring Boot Implementation
+
+> **Note:** For brevity these services use Spring's in-process `ApplicationEventPublisher` / `@EventListener`, which only delivers events inside one JVM. Real cross-service choreography publishes to a broker (e.g. the Kafka setup shown later) and consumes with `@KafkaListener` in each service. Also beware the dual-write problem: saving state and publishing an event in the same method is not atomic. Use a transactional outbox (write the event to an outbox table in the same DB transaction, then relay it to the broker) so a crash cannot lose or duplicate the event.
 
 **Event-Driven Order Service:**
 ```java

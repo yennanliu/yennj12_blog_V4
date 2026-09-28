@@ -5,7 +5,7 @@ draft: false
 weight: 18
 description: "以系統設計視角拆解企業級 Agent 的三層記憶體設計：Working Memory 成本控制、Semantic Long-term Memory 的異步壓縮流程、Profile Memory 的結構化提取——以及每個設計決策背後的成本與延遲 trade-off"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Memory", "Cost Optimization", "Context Cache", "LLM", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Memory", "Cost Optimization", "Context Cache", "LLM", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "16 min"
 ---
@@ -41,7 +41,9 @@ readTime: "16 min"
   ├── 當次查詢:          100 tokens
   └── 總計:          ~450,600 tokens
 
-  成本（Gemini 1.5 Pro，$1.25/1M）：
+  成本（以 2025 年撰文時 Gemini 1.5 Pro 的 $1.25/1M 單一費率示意；
+        該模型已退役，且當時 >128K 的長 context 另有更高階梯費率，
+        所以實際只會更貴）：
   └── 每次請求 $0.56，一天 10 次 = $5.6/天/客戶
 
   100 個客戶 × $5.6 = $560/天 = $16,800/月
@@ -56,7 +58,7 @@ readTime: "16 min"
 問題 2：延遲
   Attention 複雜度是 O(n²)，n = context 長度
   450K tokens 的推理時間 vs 5K tokens：慢 ~10-50x
-  TTFT（Time to First Token）從 0.5 秒變成 5-20 秒
+  TTFT（Time to First Token）從 0.5 秒變成 5-20 秒（示意估算）
 
 問題 3：品質下降（Lost-in-the-Middle）
   LLM 對 Context 中間部分的注意力顯著弱化
@@ -201,6 +203,11 @@ readTime: "16 min"
 
 有 Context Cache 的情況：
 
+  （概念示意：實務上顯式 Context Cache 有最小可快取長度，
+    Gemini 1.5 世代為 32,768 tokens，新世代模型門檻較低，請以官方文件為準；
+    800 tokens 的 prefix 達不到門檻。真正值得快取的是數萬 tokens 級的固定前綴，
+    例如產品手冊或知識庫全文。另外 cache 還有按時間計的儲存費。）
+
   首次：建立 Cache，System Prompt + Profile (800 tokens)
         費用：$0.001（建立 cache 的一次性費用）
 
@@ -213,7 +220,7 @@ readTime: "16 min"
 成本節省估算（System Prompt 500 tokens，每天 20 次請求）：
   無 Cache：500 × 20 = 10,000 tokens/天 × $1.25/1M = $0.0125/天
   有 Cache：500 × 20 × 0.25 = 2,500 tokens/天 × $1.25/1M = $0.003/天
-  節省 76%（在這個部分）
+  節省 76%（在這個部分，未計 cache 儲存費）
 ```
 
 ---
@@ -267,10 +274,10 @@ Profile Update 邏輯：
   成本/請求：$0.0074
   每月（100 客戶 × 10 請求/天）：$222
 
-節省：98.7%（$16,578/月）
+節省：約 98.7%（$16,578/月，以上述舊單價示意估算）
 品質：因 Lost-in-the-Middle 效應減少，實際上可能更好
 
-TTFT 改善：
+TTFT 改善（示意估算，非實測）：
   方案 A：5~20 秒（450K tokens 的 attention 計算）
   方案 B：0.3~0.8 秒（5.9K tokens）
 ```
@@ -281,16 +288,16 @@ TTFT 改善：
 
 > *「這個問題的核心是：用最少的 token 讓 LLM 感覺上記得三個月的對話。我的設計是三層記憶體：*
 >
-> *Layer 1，Working Memory：最近 5~10 輪完整對話存在 Redis，利用 Vertex AI Context Caching 讓 System Prompt 的 token 費用降低 75%。*
+> *Layer 1，Working Memory：最近 5~10 輪完整對話存在 Redis，固定前綴夠長、達到可快取門檻時，再用 Vertex AI Context Caching 降低這部分的 token 費用。*
 >
 > *Layer 2，Semantic Long-term Memory：對話結束後，異步用 Gemini Flash 壓縮成摘要、向量化後存入 Vertex AI Vector Search。下次對話時，用當前 Query 做語意搜尋，召回最相關的 3~5 條歷史摘要（約 2,000 tokens）。*
 >
 > *Layer 3，Profile Memory：Extraction Agent 從對話中提煉結構化的 Key-Value 客戶資訊，存入 Firestore，每次對話固定帶入（約 300 tokens，成本完全可預測）。*
 >
-> *三層合計約 5,900 tokens，對比全部塞入的 450,000 tokens，成本降低 98.7%，TTFT 從 5~20 秒降到 0.3~0.8 秒。」*
+> *三層合計約 5,900 tokens，對比全部塞入的 450,000 tokens，成本估計可降低約 98%，TTFT 也從秒級降到 1 秒內（示意估算）。」*
 
 ---
 
-**系列導覽：**  
-← [（十七）RKK 實戰：MCP 伺服器、Tool-Calling 安全與 OAuth 授權](../fde-interview-guide-part17-mcp-tool-oauth-zh/)  
-→ [（十九）RKK 實戰：Multi-Agent 的統計評估與細粒度追蹤](../fde-interview-guide-part19-multiagent-eval-tracing-zh/)
+**系列導航**
+
+← [Part 17：RKK 實戰——MCP 伺服器、Tool-Calling 安全與 OAuth 授權](/posts/fde-interview-guide-part17-mcp-tool-oauth-zh/) | [Part 19：RKK 實戰——Multi-Agent 系統的統計評估與細粒度追蹤](/posts/fde-interview-guide-part19-multiagent-eval-tracing-zh/) →

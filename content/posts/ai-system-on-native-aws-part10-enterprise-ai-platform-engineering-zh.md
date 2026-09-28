@@ -6,7 +6,7 @@ description: "系列終章。當一個企業有幾十個團隊、上百個 AI �
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Platform Engineering", "LLM Gateway", "FinOps", "Control Tower", "Service Catalog", "Enterprise", "AI Engineering"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "12 min"
 ---
 
 > 一個團隊接 Bedrock,叫專案。五十個團隊各自接 Bedrock,叫混亂:每個團隊重新踩一次合規的坑、各自把 API key 寫死在 Lambda、成本一整包分不清誰花的、某個團隊的失控迴圈把整個帳號的 Bedrock 配額吃光、資安團隊要追五十套不同的架構。
@@ -158,6 +158,8 @@ api.root.addResource('invoke').addMethod('POST', new apigw.LambdaIntegration(gat
 });
 ```
 
+> **限制**:Lambda 的 `timeout` 設 60 秒沒有用——API Gateway REST 的整合逾時預設是 29 秒,長回應會先被 API Gateway 切斷;這個寫法也是「整包回傳」,無法把 token 串流回呼叫端。公司級 LLM 入口通常需要串流,可改用 Lambda response streaming(Function URL)或 Fargate + ALB 版本;API Gateway 的逾時上限與串流支援請以官方文件目前狀態為準。
+
 Gateway Lambda 的核心邏輯:認證 → 配額 → 快取 → 路由 → 呼叫 → 計量 → 日誌。
 
 ```typescript
@@ -266,6 +268,8 @@ new budgets.CfnBudget(this, 'TeamCsBudget', {
 
 **翻盤條件**:公司只有一兩個 AI 團隊、還沒有治理與分帳的痛 → 直連 Bedrock 更簡單,別過早平台化。**平台化是規模的產物**——團隊數過了某個門檻(通常 5–10 個),Gateway 的治理收益才超過它的複雜度與單點風險(單點用多區 + 直連 fallback 緩解)。
 
+**先看 Bedrock 原生能力能省掉多少**:application inference profile 可以直接掛團隊 cost tag、做分帳,不需要代理;AgentCore Gateway 是 AWS 原生的 MCP/工具閘道(2025 年新服務,細節請見官方文件)。這些都用上之後,自建 Gateway 剩下的職責主要是跨團隊語意快取、自訂配額與計量邏輯、以及統一的 prompt/輸出政策——如果你不需要這些,直連 + application inference profile 就夠。
+
 ### 5.2 Service Catalog(低程式碼) vs CDK Construct 庫(程式碼) vs 兩者
 
 - **Service Catalog**:給非工程或想要極簡自助的團隊,點選填參數即得。
@@ -285,6 +289,8 @@ new budgets.CfnBudget(this, 'TeamCsBudget', {
 ## 六、成本與價值
 
 平台本身的營運成本(概略,不含各團隊的業務系統):
+
+> us-east-1 公開定價概估(撰文時),實際以帳單為準。
 
 | 項目 | 用量 | 概略月費 |
 |------|------|---------|
@@ -345,15 +351,15 @@ P10 平台 讓組織可持續用 AI      Gateway+Control Tower+Catalog  集中�
 ## 系列導覽
 
 **基礎篇**
-- Part 1:Serverless RAG 智慧客服知識庫
-- Part 2:智慧文件處理(IDP)管線
-- Part 3:即時個人化推薦系統
-- Part 4:自主 AI Agent 工具呼叫系統
-- Part 5:生產化 MLOps 與可觀測性
+- [Part 1:Serverless RAG 智慧客服知識庫](/posts/ai-system-on-native-aws-part1-serverless-rag-chatbot-zh/)
+- [Part 2:智慧文件處理(IDP)管線](/posts/ai-system-on-native-aws-part2-intelligent-document-processing-zh/)
+- [Part 3:即時個人化推薦系統](/posts/ai-system-on-native-aws-part3-realtime-recommendation-zh/)
+- [Part 4:自主 AI Agent 工具呼叫系統](/posts/ai-system-on-native-aws-part4-agentic-ai-with-tools-zh/)
+- [Part 5:生產化 MLOps 與可觀測性](/posts/ai-system-on-native-aws-part5-production-mlops-observability-zh/)
 
 **進階篇**
-- Part 6:企業級多租戶 RAG 平台
-- Part 7:基礎模型客製化與模型治理
-- Part 8:即時串流 ML 與詐欺偵測
-- Part 9:企業 AI 安全、合規與資料治理
+- [Part 6:企業級多租戶 RAG 平台](/posts/ai-system-on-native-aws-part6-enterprise-multi-tenant-rag-zh/)
+- [Part 7:基礎模型客製化與模型治理](/posts/ai-system-on-native-aws-part7-foundation-model-customization-governance-zh/)
+- [Part 8:即時串流 ML 與詐欺偵測](/posts/ai-system-on-native-aws-part8-realtime-streaming-fraud-detection-zh/)
+- [Part 9:企業 AI 安全、合規與資料治理](/posts/ai-system-on-native-aws-part9-security-compliance-data-governance-zh/)
 - **Part 10(本篇)**:企業 AI 平台工程 —— 落地區、LLM Gateway 與 FinOps

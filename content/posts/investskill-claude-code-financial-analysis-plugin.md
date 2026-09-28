@@ -12,6 +12,8 @@ readTime: "15 min"
 
 ## 🎯 Introduction: AI-Powered Investment Analysis in Your IDE
 
+> **Update (2026-09):** This post describes the plugin as it was in February 2026, with six skills. It has since grown to 20+ skills (among them `dcf-valuation`, `insider-trading`, `institutional-ownership`, `short-interest`, `options-analysis`, `full-report`, `result-validator`, plus `10k-digest` and `industry-map`). Check the repo README for the current list.
+
 Financial markets are complex, data-driven environments where timely analysis can make the difference between profit and loss. Traders, investors, and financial analysts typically juggle multiple platforms, tools, and data sources to research stocks, analyze trends, and make informed decisions.
 
 **InvestSkill** changes this paradigm by bringing professional-grade investment analysis tools directly into Claude Code, your AI-powered development environment. Instead of switching between trading platforms, financial terminals, and research tools, you can now leverage Claude's intelligence for comprehensive market analysis without leaving your workflow.
@@ -506,6 +508,8 @@ Use InvestSkill alongside:
 ## 🔮 Future Roadmap
 
 The InvestSkill project is actively evolving. Planned enhancements include:
+
+> **Note (2026-09):** This roadmap reflects the February 2026 plan. Some items, such as options analysis, have since shipped; treat the time frames below as historical.
 
 ### **Short-Term (Next 3 Months)**
 

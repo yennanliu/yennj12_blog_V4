@@ -5,7 +5,7 @@ draft: false
 weight: 9
 description: "一個 8,000 名付費學員的線上課程平台，跑在 GCP Cloud Run 上。內容 90% 是影片、且全在付費牆後——這是 GEO 最困難的組合。看付費牆怎麼分層、影片怎麼變成可引用文字，以及「開放多少才不會傷害營收」的實測。"
 categories: ["all", "ai", "business"]
-tags: ["GEO", "AIO", "線上課程", "付費牆", "Paywall", "GCP", "Cloud Run", "影片字幕", "案例研究", "繁體中文", "SEO", "Case Study", "EdTech"]
+tags: ["GEO", "AIO", "線上課程", "付費牆", "Paywall", "GCP", "Cloud Run", "影片字幕", "案例研究", "繁體中文", "SEO", "Case Study"]
 authors: ["yen"]
 readTime: "18 min"
 ---
@@ -19,6 +19,8 @@ readTime: "18 min"
 ---
 
 ## 一、情境
+
+> 本案例為綜合多個專案改寫的情境示意，公司與數字皆為量級推估，非真實客戶資料。
 
 ```
 平台      資料工程 / 後端開發線上課程，繁中為主
