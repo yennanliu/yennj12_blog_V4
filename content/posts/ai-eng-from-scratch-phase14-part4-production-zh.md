@@ -5,7 +5,7 @@ draft: false
 weight: 31
 description: "深入解析 Agent 生產部署工程：執行追蹤、成本預算控制、並發限流、Guardrails 安全防護、A/B 測試框架與 Agent 監控告警設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Production", "Observability", "Guardrails", "Cost Control", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Agent", "Production", "Observability", "Guardrails", "Cost Control", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 「你們的 AI Agent 在 staging 表現很好，但上線兩週後 token 費用暴增 400%，還出現幾次無限迴圈。你作為 tech lead，怎麼設計一個生產級的 Agent 系統架構來防止這些問題？請從可觀測性、成本控制、安全護欄三個維度說明，並說明你會如何科學地評估新 Agent 策略的效果。」
 

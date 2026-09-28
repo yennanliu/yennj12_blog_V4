@@ -5,7 +5,7 @@ draft: false
 weight: 1
 description: "從工程師視角掌握 AI 必備的線性代數與微積分直覺：向量、矩陣、梯度下降、反向傳播背後的數學原理，附 ASCII 架構圖與工程決策表"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Math", "Linear Algebra", "Calculus", "Machine Learning", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Math", "Linear Algebra", "Calculus", "Machine Learning", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你正在為一個推薦系統訓練 Embedding 模型。訓練第 5 個 epoch 後 loss 突然從 0.8 跳到 `NaN`，GPU 使用率正常、資料沒問題。請問你會從哪些數學角度切入診斷？你會如何用線性代數和微積分的知識判斷根本原因並修復？
 

@@ -5,7 +5,7 @@ draft: false
 weight: 36
 description: "深入解析 AI 推論服務工程：模型服務器選型（Triton/TorchServe/vLLM）、負載均衡、自動擴縮容、GPU 共享與多租戶隔離架構"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Infrastructure", "Serving", "Triton", "GPU", "Kubernetes", "Production", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Infrastructure", "Serving", "Triton", "GPU", "Kubernetes", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的電商平台每天有 500 萬次商品推薦請求，目前用一台 A100 跑 PyTorch 模型，P99 延遲 1.2s，GPU 使用率只有 23%。CTO 說三個月後要支援 10 倍流量，同時把 P99 壓到 200ms 以內，預算只能增加 2 倍。你會如何重新設計推論服務架構？請解釋你在服務框架選型、擴縮容策略、GPU 共享、以及多租戶隔離四個面向的決策依據。
 

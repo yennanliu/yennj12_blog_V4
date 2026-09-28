@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "深入解析線性回歸、邏輯回歸、決策樹、SVM、特徵工程等傳統 ML 技術為何在 80% 生產 AI 系統中仍是首選，附完整決策框架與量化比較"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Machine Learning", "Linear Regression", "Decision Tree", "SVM", "Feature Engineering", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Machine Learning", "Linear Regression", "Decision Tree", "SVM", "Feature Engineering", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的電商平台每天有 50 萬筆訂單，需要即時預測「這筆訂單是否為詐騙」，要求推論延遲 < 5ms、需要提供法務可稽核的決策理由、訓練資料有 200 萬筆歷史記錄（其中詐騙率 0.3%）。你會選擇哪種模型？為什麼？
 

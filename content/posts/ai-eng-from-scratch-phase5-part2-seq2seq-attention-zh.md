@@ -5,7 +5,7 @@ draft: false
 weight: 10
 description: "深入解析 RNN/LSTM/GRU 序列建模、Encoder-Decoder 架構、Bahdanau 注意力機制，理解 Transformer 取代 RNN 的工程動機"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "LSTM", "Seq2Seq", "Attention", "RNN", "Encoder-Decoder", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "NLP", "LSTM", "Seq2Seq", "Attention", "RNN", "Encoder-Decoder", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境**：「你正在設計一個英中機器翻譯系統，句子長度最長 200 個 token。請說明你會選擇哪種架構，為什麼不直接用純 RNN，LSTM 與 GRU 在這個場景下如何選擇，以及如果引入注意力機制，架構上需要做哪些改變？」
+**工程情境**：「你正在設計一個英中機器翻譯系統，句子長度最長 200 個 token。請說明你會選擇哪種架構，為什麼不直接用純 RNN，LSTM 與 GRU 在這個場景下如何選擇，以及如果引入注意力機制，架構上需要做哪些改變？」
 
 ---
 

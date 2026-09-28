@@ -5,7 +5,7 @@ draft: false
 weight: 8
 description: "深入解析 CLIP/BLIP/LLaVA 視覺語言模型架構、NeRF/3D Gaussian Splatting 三維重建、以及 Sora 等影片生成世界模型的工程原理"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Computer Vision", "VLM", "CLIP", "LLaVA", "NeRF", "3D Vision", "World Models", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Computer Vision", "VLM", "CLIP", "LLaVA", "NeRF", "3D Vision", "World Models", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：** 你正在設計一個自動駕駛感知系統，需要整合街景攝影機（2D RGB）、LiDAR 點雲（3D）、以及自然語言指令（「前方有行人，請減速」）。面試官問：你會如何架構視覺語言理解管線？在 10K 場景/天的訓練規模下，NeRF 重建和 3D Gaussian Splatting 各有什麼取捨？當系統需要預測「接下來 3 秒會發生什麼」時，你會引入什麼樣的世界模型？
+**工程情境：** 你正在設計一個自動駕駛感知系統，需要整合街景攝影機（2D RGB）、LiDAR 點雲（3D）、以及自然語言指令（「前方有行人，請減速」）。技術主管問：你會如何架構視覺語言理解管線？在 10K 場景/天的訓練規模下，NeRF 重建和 3D Gaussian Splatting 各有什麼取捨？當系統需要預測「接下來 3 秒會發生什麼」時，你會引入什麼樣的世界模型？
 
 ---
 

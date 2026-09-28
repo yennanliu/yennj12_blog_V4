@@ -5,7 +5,7 @@ draft: false
 weight: 27
 description: "深入解析 AI 工作流程編排：LangChain/LlamaIndex/Haystack 框架比較、DAG 管線設計、有狀態工作流程、錯誤重試與生產監控"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LangChain", "LlamaIndex", "Orchestration", "Pipeline", "Workflow", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "LangChain", "LlamaIndex", "Orchestration", "Pipeline", "Workflow", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境**：你的團隊要上線一個 RAG 客服機器人，需要：查詢改寫 → 向量檢索 → 文件重排序 → 生成答案 → 品質過濾。QA 反映目前有 15% 的查詢因為某一步失敗而整條管線崩潰。架構師問你：如何設計這個管線的錯誤處理策略，以及你會選哪個編排框架？請解釋你的技術決策。
+**工程情境**：你的團隊要上線一個 RAG 客服機器人，需要：查詢改寫 → 向量檢索 → 文件重排序 → 生成答案 → 品質過濾。QA 反映目前有 15% 的查詢因為某一步失敗而整條管線崩潰。架構師問你：如何設計這個管線的錯誤處理策略，以及你會選哪個編排框架？請解釋你的技術決策。
 
 ---
 

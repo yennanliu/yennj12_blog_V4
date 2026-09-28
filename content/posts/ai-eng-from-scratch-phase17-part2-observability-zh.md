@@ -5,7 +5,7 @@ draft: false
 weight: 37
 description: "深入解析 AI 系統可觀測性工程：LLM 追蹤（Traces/Spans）、提示版本管理、模型效能漂移偵測、成本歸因分析與 AI 告警策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Infrastructure", "Observability", "Monitoring", "LLM", "Tracing", "Production", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Infrastructure", "Observability", "Monitoring", "LLM", "Tracing", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,9 +18,9 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
-**面試官問：**「你們的 RAG 問答系統上線後，客服主管反應『最近答案怪怪的』，但 p99 延遲和錯誤率都正常。你身為 SRE/AI 工程師，會怎麼設計可觀測性系統來定位這類問題？請說明你的 Traces 設計、漂移偵測機制，以及如何在成本和覆蓋率之間取得平衡。」
+**技術主管問：**「你們的 RAG 問答系統上線後，客服主管反應『最近答案怪怪的』，但 p99 延遲和錯誤率都正常。你身為 SRE/AI 工程師，會怎麼設計可觀測性系統來定位這類問題？請說明你的 Traces 設計、漂移偵測機制，以及如何在成本和覆蓋率之間取得平衡。」
 
 ---
 
@@ -46,7 +46,7 @@ series: ["ai-eng-from-scratch"]
 | 漂移型態 | 無（確定性系統） | 概念漂移、分佈漂移、模型版本漂移 |
 | 告警閾值 | 靜態（> 500ms alert） | 動態（品質分數 7 日移動平均下降 > 5%） |
 
-面試官問的「答案怪怪的」就是典型的**語意品質退化**。系統層面一切正常，但輸出品質已悄悄崩潰。沒有 AI-native 可觀測性，這種問題的 MTTR 往往超過 3 天。
+開頭提到的「答案怪怪的」就是典型的**語意品質退化**。系統層面一切正常，但輸出品質已悄悄崩潰。沒有 AI-native 可觀測性，這種問題的 MTTR 往往超過 3 天。
 
 ---
 

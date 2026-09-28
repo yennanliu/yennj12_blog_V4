@@ -5,7 +5,7 @@ draft: false
 weight: 21
 description: "深入解析 LLM 微調策略：LoRA/QLoRA 低秩分解原理、SFT 指令資料品質、PEFT 家族比較、微調陷阱與生產部署的工程決策"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "SFT", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "LLM", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "SFT", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：** 你負責一個醫療文件摘要產品，基礎模型在通用任務表現良好，但在臨床術語和 SOAP 格式輸出上錯誤率高達 34%。你的 GPU 預算是 2 台 A100 80GB，資料團隊提供了 8,000 條標注好的醫生對話。你會選擇 Full Fine-tuning、LoRA 還是 QLoRA？如何評估微調後的對齊品質？
+**工程情境：** 你負責一個醫療文件摘要產品，基礎模型在通用任務表現良好，但在臨床術語和 SOAP 格式輸出上錯誤率高達 34%。你的 GPU 預算是 2 台 A100 80GB，資料團隊提供了 8,000 條標注好的醫生對話。你會選擇 Full Fine-tuning、LoRA 還是 QLoRA？如何評估微調後的對齊品質？
 
 ---
 

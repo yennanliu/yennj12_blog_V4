@@ -5,7 +5,7 @@ draft: false
 weight: 15
 description: "深入解析 Transformer 訓練：學習率 Warmup/Schedule、梯度裁剪、混合精度訓練、Encoder-only/Decoder-only/Encoder-Decoder 架構選型，以及 MoE 混合專家系統"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Transformer", "Training", "MoE", "BERT", "GPT", "T5", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Transformer", "Training", "MoE", "BERT", "GPT", "T5", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,9 +18,9 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
-> 面試官問：「你要為一個電商平台設計一套 NLP 系統，需要同時支援商品描述生成（生成任務）、評論情感分析（分類任務）、以及跨語言商品搜尋（語義匹配）。你會選擇哪種 Transformer 架構？訓練時的學習率策略和精度選擇是什麼？如果預算只有 $50K，怎麼做？」
+> 技術主管問：「你要為一個電商平台設計一套 NLP 系統，需要同時支援商品描述生成（生成任務）、評論情感分析（分類任務）、以及跨語言商品搜尋（語義匹配）。你會選擇哪種 Transformer 架構？訓練時的學習率策略和精度選擇是什麼？如果預算只有 $50K，怎麼做？」
 
 ---
 

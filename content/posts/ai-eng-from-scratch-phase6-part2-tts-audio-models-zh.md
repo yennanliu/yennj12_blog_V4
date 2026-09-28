@@ -5,7 +5,7 @@ draft: false
 weight: 13
 description: "深入解析 TTS 工程架構：Tacotron/FastSpeech/VITS 聲學模型、聲碼器設計、情感語音合成、音樂生成與即時語音克隆系統"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Speech", "TTS", "Audio", "Voice Cloning", "Music Generation", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Speech", "TTS", "Audio", "Voice Cloning", "Music Generation", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "20 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的公司要推出有聲書朗讀功能，支援繁體中文與英文雙語、使用者可上傳 30 秒聲音樣本克隆自己的聲音、整體端對端延遲需低於 300ms。請說明你會如何設計這套 TTS 系統，包含模型選型、聲碼器、語音克隆架構、以及上線後如何持續改善音質。
 

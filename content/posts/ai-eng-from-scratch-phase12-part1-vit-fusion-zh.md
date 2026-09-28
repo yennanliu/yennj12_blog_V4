@@ -5,7 +5,7 @@ draft: false
 weight: 24
 description: "深入解析 ViT 的 Patch Embedding 機制、多模態融合策略（Early/Late/Cross-Modal Fusion）、CLIP/ALIGN 對比學習與多模態生產系統設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multimodal", "Vision Transformer", "ViT", "CLIP", "Fusion", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Multimodal", "Vision Transformer", "ViT", "CLIP", "Fusion", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,9 +18,9 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
-> 你正在為一家電商平台設計「以圖搜商品」加「文字描述精化」的多模態搜尋系統。目前日均查詢量 800 萬次，P99 延遲要求 < 200 ms，標注預算有限。面試官問：「你會選 CLIP zero-shot、fine-tuned ViT+BERT Late Fusion、還是 Cross-Modal Attention？各自的 tradeoff 是什麼？當查詢量成長到 5000 萬時，架構需要哪些改變？」
+> 你正在為一家電商平台設計「以圖搜商品」加「文字描述精化」的多模態搜尋系統。目前日均查詢量 800 萬次，P99 延遲要求 < 200 ms，標注預算有限。技術主管問：「你會選 CLIP zero-shot、fine-tuned ViT+BERT Late Fusion、還是 Cross-Modal Attention？各自的 tradeoff 是什麼？當查詢量成長到 5000 萬時，架構需要哪些改變？」
 
 ---
 

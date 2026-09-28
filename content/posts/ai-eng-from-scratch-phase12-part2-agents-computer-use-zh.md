@@ -5,7 +5,7 @@ draft: false
 weight: 25
 description: "深入解析多模態 Agent 架構：OCR+VLM 文件理解、電腦視覺 UI 自動化、SeeAct/Computer Use 系統設計與安全邊界"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multimodal", "Agent", "Computer Use", "VLM", "Document AI", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Multimodal", "Agent", "Computer Use", "VLM", "Document AI", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的公司正在開發一個企業級 RPA Agent，能自動完成跨系統的報表匯出與郵件歸檔任務。目前系統在 POC 階段成功率約 62%，但 PM 要求上線後達到 90%+。請設計一個多模態 Computer Use Agent 架構，說明你如何提升可靠性、如何控制成本，以及如何在不破壞生產環境的前提下安全執行自動化操作。
 
@@ -516,4 +516,4 @@ TaskPolicy {
 
 ---
 
-*本文為 AI 工程從零開始系列內容，適用於準備 Staff/Principal Engineer 面試的工程師，以及正在設計企業級 AI 自動化平台的架構師。*
+*本文為 AI 工程從零開始系列內容，適用於想深入 AI 工程的工程師，以及正在設計企業級 AI 自動化平台的架構師。*

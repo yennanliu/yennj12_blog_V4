@@ -5,7 +5,7 @@ draft: false
 weight: 41
 description: "端對端構建企業級 RAG 系統：從需求分析到生產部署，涵蓋文件解析管線、Hybrid Search、Re-ranking、LLM 評估框架與 30 天迭代路線圖"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "RAG", "LLM Engineering", "Vector Database", "Production", "Capstone", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "RAG", "LLM Engineering", "Vector Database", "Production", "Capstone", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "28 min"
 series: ["ai-eng-from-scratch"]
@@ -18,9 +18,9 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
-> **面試官**：「假設你加入一家 500 人的科技公司，負責從零打造內部知識庫問答系統。有 5 萬份文件（PDF、Word、HTML 混雜），200 位同時在線用戶，SLA 要求 P95 < 3 秒，預算每月 $3,000 以內。你的第一個月怎麼規劃？第 4 週的架構長什麼樣子？最大的技術風險在哪裡？」
+> **技術主管**：「假設你加入一家 500 人的科技公司，負責從零打造內部知識庫問答系統。有 5 萬份文件（PDF、Word、HTML 混雜），200 位同時在線用戶，SLA 要求 P95 < 3 秒，預算每月 $3,000 以內。你的第一個月怎麼規劃？第 4 週的架構長什麼樣子？最大的技術風險在哪裡？」
 
 ---
 

@@ -5,7 +5,7 @@ draft: false
 weight: 29
 description: "深入解析 AI Agent 規劃架構：Tree-of-Thought/Plan-and-Execute/MCTS、任務分解策略、規劃失敗診斷與動態重規劃機制"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Planning", "Tree of Thought", "Task Decomposition", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Agent", "Planning", "Tree of Thought", "Task Decomposition", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境**：你的 AI Agent 需要完成一個多步驟任務：先查詢資料庫、再呼叫外部 API、最後產出報告。目前用 ReAct 架構，任務完成率只有 62%，主要失敗原因是中途走錯路、無法回頭。你的架構師問你：要如何重新設計規劃層，把完成率提升到 90% 以上？
+**工程情境**：你的 AI Agent 需要完成一個多步驟任務：先查詢資料庫、再呼叫外部 API、最後產出報告。目前用 ReAct 架構，任務完成率只有 62%，主要失敗原因是中途走錯路、無法回頭。你的架構師問你：要如何重新設計規劃層，把完成率提升到 90% 以上？
 
 ---
 

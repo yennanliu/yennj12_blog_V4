@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "從工程師視角掌握 AI 必備的機率論與統計直覺：貝葉斯定理、最大概似估計、資訊理論、分佈假設背後的設計決策"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Math", "Probability", "Statistics", "Bayesian", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Math", "Probability", "Statistics", "Bayesian", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,9 +18,9 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
-面試官問：「你的分類模型在驗證集上 accuracy 已經 92%，但產品上線後客訴率比預期高出三倍。請問你會怎麼診斷這個問題？從機率與統計的角度，你會看哪些指標、做哪些檢定？」
+技術主管問：「你的分類模型在驗證集上 accuracy 已經 92%，但產品上線後客訴率比預期高出三倍。請問你會怎麼診斷這個問題？從機率與統計的角度，你會看哪些指標、做哪些檢定？」
 
 ---
 
@@ -49,7 +49,7 @@ AI 系統本質上是在處理**不確定性**。輸入有雜訊、標籤有錯�
 accuracy 是 0/1 損失的期望值，它假設所有錯誤的代價相同。在醫療診斷（漏診癌症 vs 誤診）、詐欺偵測（放行詐欺 vs 誤封帳號）等場景，這個假設完全不成立。正確做法是看 precision/recall/F1，甚至直接最佳化 AUC-ROC。
 
 **錯誤二：忽略分佈偏移（Distribution Shift）**
-訓練集和測試集來自不同分佈時，任何在訓練集上學到的統計量都可能失效。這是上面面試題的核心：92% 的 accuracy 是在某個分佈下測的，但產品用戶的輸入分佈可能完全不同。
+訓練集和測試集來自不同分佈時，任何在訓練集上學到的統計量都可能失效。這是開頭那個問題的核心：92% 的 accuracy 是在某個分佈下測的，但產品用戶的輸入分佈可能完全不同。
 
 **錯誤三：過度自信的點估計**
 大多數模型給出點預測（「這張圖片是貓」），但沒有說明不確定性。一個能說「我有 51% 的把握認為這是貓，你最好再確認一下」的模型，在高風險場景下遠比只說「是貓」的模型有價值。

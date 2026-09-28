@@ -5,7 +5,7 @@ draft: false
 weight: 26
 description: "深入解析 Model Context Protocol（MCP）架構、Function Calling 設計模式、工具整合生產化、API 安全與速率控制，以及 AI 系統的外部工具編排"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "MCP", "Function Calling", "API", "Tool Use", "Integration", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "MCP", "Function Calling", "API", "Tool Use", "Integration", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境**：你正在設計一個 AI 客服代理，需要讀取訂單資料庫、發送退款請求、查詢物流狀態。系統每日處理 5 萬通查詢，P99 回應要在 3 秒內。你怎麼設計工具層的架構，同時確保安全性與可觀測性？
+**工程情境**：你正在設計一個 AI 客服代理，需要讀取訂單資料庫、發送退款請求、查詢物流狀態。系統每日處理 5 萬通查詢，P99 回應要在 3 秒內。你怎麼設計工具層的架構，同時確保安全性與可觀測性？
 
 ---
 

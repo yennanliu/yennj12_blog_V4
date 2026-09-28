@@ -5,7 +5,7 @@ draft: false
 weight: 34
 description: "深入解析多 Agent 系統協調工程：Supervisor/Peer-to-Peer/Market 協調模式、Agent 間通訊協議、衝突解決、任務分配與共識機制"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multi-Agent", "Coordination", "Swarm", "Agent Communication", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Multi-Agent", "Coordination", "Swarm", "Agent Communication", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你負責設計一個研究助理平台：使用者輸入一個複雜問題，系統要自動拆解子任務、分派給不同專業 Agent（搜尋、摘要、數據分析、引用驗證），最後整合回一份報告。規模目標是 2,000 個並發研究任務，每個任務平均涉及 8 個子 Agent。請說明協調架構如何設計，以及當兩個 Agent 搶同一份外部資源時你怎麼處理衝突？
 

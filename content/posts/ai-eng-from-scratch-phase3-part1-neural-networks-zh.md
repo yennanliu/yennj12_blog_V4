@@ -5,7 +5,7 @@ draft: false
 weight: 5
 description: "從感知機到多層神經網路，理解反向傳播、激活函數、正則化與批次正規化的工程本質，不依賴框架手刻神經網路"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Deep Learning", "Neural Networks", "Backpropagation", "PyTorch", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Deep Learning", "Neural Networks", "Backpropagation", "PyTorch", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,9 +18,9 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
-> 你正在設計一個即時推薦系統，模型需要在 **< 20ms** 內回應，訓練資料有 **5 億筆互動記錄**，特徵空間包含 **1 萬維稀疏向量**。面試官問：「你會如何設計神經網路架構？選擇什麼激活函數、正則化策略、和最佳化器？當模型在驗證集準確率停滯在 78% 時，你的診斷流程是什麼？」
+> 你正在設計一個即時推薦系統，模型需要在 **< 20ms** 內回應，訓練資料有 **5 億筆互動記錄**，特徵空間包含 **1 萬維稀疏向量**。技術主管問：「你會如何設計神經網路架構？選擇什麼激活函數、正則化策略、和最佳化器？當模型在驗證集準確率停滯在 78% 時，你的診斷流程是什麼？」
 
 ---
 
@@ -42,7 +42,7 @@ series: ["ai-eng-from-scratch"]
 1. 理解神經網路的數學本質，能手算任意小型網路的前向與反向傳播
 2. 能在沒有框架的情況下，用純 NumPy 實作一個可訓練的兩層網路
 3. 掌握每個設計決策（激活函數、正則化、最佳化器）的量化 tradeoff
-4. 能在面試中給出有數字支撐的架構決策，而非「視情況而定」
+4. 能給出有數字支撐的架構決策，而非「視情況而定」
 
 ---
 
@@ -702,4 +702,4 @@ Flip Condition：
 
 *本文屬於「AI 工程從零開始」系列，按工程成熟度分階段介紹 AI 系統的設計與實作。*
 
-*Tags：#AI #DeepLearning #NeuralNetworks #Backpropagation #PyTorch #RKK #Interview*
+*Tags：#AI #DeepLearning #NeuralNetworks #Backpropagation #PyTorch #RKK*

@@ -5,7 +5,7 @@ draft: false
 weight: 20
 description: "深入解析 LLM 預訓練工程：資料清洗管線、Scaling Laws、分散式訓練（DP/TP/PP）、梯度累積與 Chinchilla 最優計算分配"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "Pretraining", "Scaling Laws", "Distributed Training", "Data Pipeline", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "LLM", "Pretraining", "Scaling Laws", "Distributed Training", "Data Pipeline", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：** 假設你是某 AI 新創的基礎架構工程師，團隊計畫訓練一個 7B 參數的 LLM，預算 $500K，目標是在 3 個月內完成預訓練。請說明你會如何規劃資料管線、選擇分散式訓練策略，以及如何監控並從 Loss Spike 中恢復？
+**工程情境：** 假設你是某 AI 新創的基礎架構工程師，團隊計畫訓練一個 7B 參數的 LLM，預算 $500K，目標是在 3 個月內完成預訓練。請說明你會如何規劃資料管線、選擇分散式訓練策略，以及如何監控並從 Loss Spike 中恢復？
 
 ---
 

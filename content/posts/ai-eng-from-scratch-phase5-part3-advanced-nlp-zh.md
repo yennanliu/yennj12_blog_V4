@@ -5,7 +5,7 @@ draft: false
 weight: 11
 description: "深入解析 BERT/RoBERTa/DeBERTa 預訓練策略、問答系統架構、文字摘要、機器翻譯評估與 NLP 生產系統的工程挑戰"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "BERT", "Question Answering", "Text Summarization", "Machine Translation", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "NLP", "BERT", "Question Answering", "Text Summarization", "Machine Translation", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：** 你的團隊正在為一個法律文件平台建構問答系統。文件平均 50 頁，用戶問題如「這份合約的違約金條款是什麼？」。系統需在 2 秒內回答，準確率要求 > 90%，每月處理 50 萬筆查詢。請設計整體架構，並說明為何選擇 Extractive QA 而非 Generative QA，以及如何在規模下維持品質。
+**工程情境：** 你的團隊正在為一個法律文件平台建構問答系統。文件平均 50 頁，用戶問題如「這份合約的違約金條款是什麼？」。系統需在 2 秒內回答，準確率要求 > 90%，每月處理 50 萬筆查詢。請設計整體架構，並說明為何選擇 Extractive QA 而非 Generative QA，以及如何在規模下維持品質。
 
 ---
 

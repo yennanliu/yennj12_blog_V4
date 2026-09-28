@@ -5,20 +5,20 @@ draft: false
 weight: 16
 description: "深入解析擴散模型工程原理：DDPM/DDIM 前向與反向過程、Stable Diffusion 潛在空間架構、ControlNet/LoRA 微調、生產推論優化"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Generative AI", "Diffusion Models", "Stable Diffusion", "ControlNet", "Image Generation", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Generative AI", "Diffusion Models", "Stable Diffusion", "ControlNet", "Image Generation", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
 ---
 
 > *大多數人認為擴散模型「就是反覆去雜訊」。*
-> *面試官想聽到的是：你能說明前向過程的閉合解、DDIM 的隱式馬可夫假設、以及為什麼潛在空間能讓 1024×1024 生成在消費級 GPU 上跑起來。*
+> *真正的關鍵是：你能說明前向過程的閉合解、DDIM 的隱式馬可夫假設、以及為什麼潛在空間能讓 1024×1024 生成在消費級 GPU 上跑起來。*
 > *差距不在知道有 Stable Diffusion，而在能精確量化每個設計決策的成本與效益。*
 > *本文帶你從數學推導到生產部署，一次打通。*
 
 ---
 
-**面試情境**：你負責為一個電商平台設計商品圖片自動生成系統，需要在 3 秒內生成 512×512 的商品展示圖，每日峰值 10 萬張，成本預算每張 $0.002。請描述你選擇的模型架構、推論優化策略，以及如何處理風格一致性問題。
+**工程情境**：你負責為一個電商平台設計商品圖片自動生成系統，需要在 3 秒內生成 512×512 的商品展示圖，每日峰值 10 萬張，成本預算每張 $0.002。請描述你選擇的模型架構、推論優化策略，以及如何處理風格一致性問題。
 
 ---
 

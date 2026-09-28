@@ -5,7 +5,7 @@ draft: false
 weight: 39
 description: "深入解析 AI 技術安全工程：對齊問題的技術根源、紅隊測試方法論、越獄攻擊分類、毒化攻擊防禦、模型可解釋性與安全評估框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Safety", "Alignment", "Red Teaming", "Interpretability", "Ethics", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Safety", "Alignment", "Red Teaming", "Interpretability", "Ethics", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -20,7 +20,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：**
+**工程情境：**
 
 > 你的公司剛完成一個面向消費者的 LLM 聊天產品，DAU 達 50 萬。安全團隊發現有使用者透過角色扮演場景讓模型輸出有害內容，失效率約 1.8%。CTO 問你：「我們現在該做什麼？下個季度的架構長什麼樣？」請說明你的診斷、優先順序與技術路線圖。
 

@@ -5,7 +5,7 @@ draft: false
 weight: 28
 description: "深入解析 AI Agent 工程基礎：ReAct/Reflexion 思考迴圈、記憶系統四層架構（感官/工作/情節/語意）、上下文管理與 Agent 狀態機設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Memory", "ReAct", "LLM", "Autonomous", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Agent", "Memory", "ReAct", "LLM", "Autonomous", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：**  
+**工程情境：**  
 你是某電商平台的 AI 基礎設施 Lead。PM 要求將現有的「單次 GPT 呼叫客服」升級為「可自主完成退款、查單、更換地址」的 Agent，日均對話量 80K，P99 回應時間需在 8 秒以內。請問你如何設計 Agent 迴圈、記憶系統與上下文管理策略，並說明在 MVP 和 Scale 兩個階段的架構差異？
 
 ---

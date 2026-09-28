@@ -5,7 +5,7 @@ draft: false
 weight: 30
 description: "深入比較主流 Agent 框架：AutoGen/CrewAI/LangGraph/Semantic Kernel 的架構差異、適用場景與生產成熟度，以及何時應該自建框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "AutoGen", "CrewAI", "LangGraph", "Framework", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Agent", "AutoGen", "CrewAI", "LangGraph", "Framework", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,9 +18,9 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
-> 你的團隊正在構建一個客服自動化系統，需要協調「意圖分類 Agent」、「知識庫查詢 Agent」、「回應生成 Agent」與「品質審核 Agent」四個角色。面試官問：「你會選 AutoGen、CrewAI 還是 LangGraph？為什麼？如果規模到每日 50 萬次對話，架構需要如何演進？」
+> 你的團隊正在構建一個客服自動化系統，需要協調「意圖分類 Agent」、「知識庫查詢 Agent」、「回應生成 Agent」與「品質審核 Agent」四個角色。技術主管問：「你會選 AutoGen、CrewAI 還是 LangGraph？為什麼？如果規模到每日 50 萬次對話，架構需要如何演進？」
 
 ---
 

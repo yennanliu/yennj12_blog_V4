@@ -5,7 +5,7 @@ draft: false
 weight: 4
 description: "深入解析 Random Forest、Gradient Boosting、XGBoost、超參數調優與 AutoML，理解集成方法為何在表格資料競賽與生產系統持續稱霸"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Machine Learning", "XGBoost", "Random Forest", "Gradient Boosting", "Optimization", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Machine Learning", "XGBoost", "Random Forest", "Gradient Boosting", "Optimization", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,9 +18,9 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
-> **面試官：** 你們公司的信用風險模型已上線，目前用單一 XGBoost，AUC 0.84。產品希望 AUC 提升到 0.88 以上，但訓練資料不能增加、特徵工程已飽和。請說明你會採取哪些策略，並解釋為什麼選擇這些方法而非其他替代方案？推論延遲需維持在 50ms 以內，每日預測量約 500 萬次。
+> **技術主管：** 你們公司的信用風險模型已上線，目前用單一 XGBoost，AUC 0.84。產品希望 AUC 提升到 0.88 以上，但訓練資料不能增加、特徵工程已飽和。請說明你會採取哪些策略，並解釋為什麼選擇這些方法而非其他替代方案？推論延遲需維持在 50ms 以內，每日預測量約 500 萬次。
 
 ---
 
@@ -750,7 +750,7 @@ vs 直接部署       模型文件從 200MB 降至 20MB        精度損失 1–
 
 ---
 
-> **系列說明：** 本系列基於 [AI Engineering from Scratch](https://github.com/rohitg00/ai-engineering-from-scratch) 課程架構，以繁體中文撰寫，針對每個主題加入生產系統的工程視角、具體數字、以及面試導向的決策框架。
+> **系列說明：** 本系列基於 [AI Engineering from Scratch](https://github.com/rohitg00/ai-engineering-from-scratch) 課程架構，以繁體中文撰寫，針對每個主題加入生產系統的工程視角、具體數字、以及可落地的決策框架。
 
 ---
 

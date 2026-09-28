@@ -5,7 +5,7 @@ draft: false
 weight: 35
 description: "深入解析多 Agent 系統的湧現行為：群智優化、集體推理、辯論機制、Mixture of Agents 架構與集體智慧的工程可控性"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multi-Agent", "Swarm", "Emergence", "Collective Intelligence", "Mixture of Agents", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Multi-Agent", "Swarm", "Emergence", "Collective Intelligence", "Mixture of Agents", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：** 你的團隊正在構建一個醫療診斷輔助系統，需要在 99.5% 準確率與 < 3 秒延遲之間取得平衡。單一 GPT-4 只能達到 94% 準確率，且有時會「幻覺」出不存在的藥物交互作用。請設計一個多 Agent 集體推理架構，說明如何透過湧現行為提升準確率，同時保持可控性與可解釋性。
+**工程情境：** 你的團隊正在構建一個醫療診斷輔助系統，需要在 99.5% 準確率與 < 3 秒延遲之間取得平衡。單一 GPT-4 只能達到 94% 準確率，且有時會「幻覺」出不存在的藥物交互作用。請設計一個多 Agent 集體推理架構，說明如何透過湧現行為提升準確率，同時保持可控性與可解釋性。
 
 ---
 

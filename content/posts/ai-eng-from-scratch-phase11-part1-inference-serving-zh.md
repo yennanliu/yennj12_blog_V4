@@ -5,7 +5,7 @@ draft: false
 weight: 22
 description: "深入解析 LLM 生產推論：vLLM PagedAttention、連續批次、投機解碼、量化（GPTQ/AWQ/INT4）、推論成本優化與 SLA 設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "Inference", "vLLM", "Quantization", "Serving", "Production", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "LLM", "Inference", "vLLM", "Quantization", "Serving", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境**：「你的團隊剛把一個 70B 參數的對話模型從研究環境搬到生產，目前 p99 延遲 18 秒、GPU 使用率 15%、每千 token 成本 $0.04。CTO 要求三個月內把成本降到 $0.008、p99 降到 4 秒。你的架構計畫是什麼？」
+**工程情境**：「你的團隊剛把一個 70B 參數的對話模型從研究環境搬到生產，目前 p99 延遲 18 秒、GPU 使用率 15%、每千 token 成本 $0.04。CTO 要求三個月內把成本降到 $0.008、p99 降到 4 秒。你的架構計畫是什麼？」
 
 ---
 
@@ -447,7 +447,7 @@ flip：流量非常穩定（方差 < 20%）用固定副本。有明顯日夜流�
 1. **最大的跳躍在 Naive → vLLM FP16**：不是量化，是 PagedAttention + Continuous Batching。光這一步吞吐提升 **15×**，成本降低 **4×**。
 2. **量化的貢獻是硬體效率**：從 2 張 A100 降到 1 張就能跑，節省硬體成本，但延遲改善相對有限。
 3. **投機解碼主要改善 p50**：p99 改善較小，因為長尾往往是 draft acceptance rate 低的複雜請求。
-4. **回答面試題**：從 $0.04 到 $0.008 是可以達到的（vLLM + AWQ INT4），從 p99 18s 到 4s 也是可以的（vLLM FP16 就夠了）。
+4. **回到開頭的問題**：從 $0.04 到 $0.008 是可以達到的（vLLM + AWQ INT4），從 p99 18s 到 4s 也是可以的（vLLM FP16 就夠了）。
 
 ---
 

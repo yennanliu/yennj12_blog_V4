@@ -5,7 +5,7 @@ draft: false
 weight: 32
 description: "深入解析長時程 Agent 工程挑戰：跨會話記憶持久化、多步驟任務分解、進度恢復、人機協作設計與長時程 Agent 的可靠性保障"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Autonomous Systems", "Long Horizon", "Persistent Memory", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Agent", "Autonomous Systems", "Long Horizon", "Persistent Memory", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的團隊正在建構一個自動化程式碼審查 Agent，需要在 72 小時內分析一個大型 monorepo 的 3000 個 PR，並針對每個 PR 產出安全性報告、效能建議與合規性評估。這個 Agent 在執行到第 800 個 PR 時崩潰重啟，你如何設計系統確保任務能從斷點繼續、不重複分析已完成的 PR、且最終報告的品質不會因為長時間執行而漂移？
 

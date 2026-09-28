@@ -5,7 +5,7 @@ draft: false
 weight: 43
 description: "端對端構建多模態 AI 應用：圖文理解、語音介面、文件分析三合一系統的架構設計、模態融合策略、延遲優化與系列學習路線總結"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multimodal", "LLM Engineering", "Production", "Capstone", "Vision", "Speech", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Multimodal", "LLM Engineering", "Production", "Capstone", "Vision", "Speech", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "28 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你負責一個 B2B SaaS 的商業智慧平台，客戶需要一個 AI 助理能同時分析：PDF 財務報告中的圖表、上傳的截圖、語音指令，以及結構化的 Excel 數據。目前你們每月有 50K 活躍用戶，高峰期同時在線 3,000 人，計劃六個月後擴展到 500K 用戶。請設計端對端的多模態 AI 系統架構，說明你如何處理不同模態的延遲差異（文字 200ms、圖片 800ms、語音 1200ms）、模態融合策略選擇依據、以及當某個模態服務降級時整個系統如何維持可用性。
 

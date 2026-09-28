@@ -5,22 +5,22 @@ draft: false
 weight: 6
 description: "深入解析卷積神經網路的工程直覺：卷積運算、池化、ResNet/EfficientNet 架構演進、影像資料增強與遷移學習策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Computer Vision", "CNN", "ResNet", "Transfer Learning", "Image Classification", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Computer Vision", "CNN", "ResNet", "Transfer Learning", "Image Classification", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
 ---
 
 > *大多數工程師拿到影像分類任務，第一反應是直接 Fine-tune ResNet50。*
-> *但面試官真正想聽的是：你為什麼選 ResNet？池化層存在的意義是什麼？*
+> *但真正該回答的是：你為什麼選 ResNet？池化層存在的意義是什麼？*
 > *當訓練資料只有 5,000 張時，Fine-tune 和 Feature Extraction 哪個對？*
 > *能回答這三個問題，才算真正理解電腦視覺的工程基礎。*
 
 ---
 
-## 面試情境
+## 工程情境
 
-**面試官問：** 「你的團隊要為一個醫療 App 建立皮膚病灶分類模型，訓練集只有 8,000 張標注影像、7 個類別，部署目標是手機端推論延遲 < 200ms。請說明你的架構選擇、遷移學習策略，以及你會怎麼處理類別不平衡問題。」
+**技術主管問：** 「你的團隊要為一個醫療 App 建立皮膚病灶分類模型，訓練集只有 8,000 張標注影像、7 個類別，部署目標是手機端推論延遲 < 200ms。請說明你的架構選擇、遷移學習策略，以及你會怎麼處理類別不平衡問題。」
 
 ---
 

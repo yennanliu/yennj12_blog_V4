@@ -5,7 +5,7 @@ draft: false
 weight: 38
 description: "深入解析 AI 生產成本工程：Token 成本分解、快取策略（Semantic Cache/Prompt Cache）、模型路由、批次推論、Spot GPU 與 FinOps for AI"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Infrastructure", "Cost Optimization", "FinOps", "Caching", "Model Routing", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Infrastructure", "Cost Optimization", "FinOps", "Caching", "Model Routing", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的 RAG 系統每月 AI API 費用從 $3,000 暴增到 $47,000，只花了 90 天。VP 問你：「不砍功能、不降品質，能把成本壓回 $15,000 以內嗎？」你會從哪裡下手？
 

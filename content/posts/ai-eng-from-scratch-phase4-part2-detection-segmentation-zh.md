@@ -5,7 +5,7 @@ draft: false
 weight: 7
 description: "深入解析 YOLO/Faster-RCNN 目標偵測架構、Mask R-CNN 語義分割、IoU/mAP 評估框架與工業部署的延遲優化策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Computer Vision", "Object Detection", "YOLO", "Segmentation", "mAP", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Computer Vision", "Object Detection", "YOLO", "Segmentation", "mAP", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你負責一套工廠自動化視覺系統，需要在產線 conveyor belt 上即時偵測瑕疵零件（< 1cm² 小缺陷），相機 30fps，邊緣 GPU 只有 RTX 3060（12GB VRAM），允許誤報率 ≤ 2%，漏報率 ≤ 0.5%。請說明你會選擇什麼模型架構、訓練策略與部署優化方案。
 
@@ -426,4 +426,4 @@ IoU 閾值的工程含義：
 
 ---
 
-*本文屬於「AI 工程從零開始」系列，以 RKK（Reasoning × Knowledge × Knowledge application）架構呈現，每篇均附有面試答題框架與可直接使用的工程數字。*
+*本文屬於「AI 工程從零開始」系列，以 RKK（Reasoning × Knowledge × Knowledge application）架構呈現，每篇均附有架構決策框架與可直接使用的工程數字。*

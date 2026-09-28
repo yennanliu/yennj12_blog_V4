@@ -5,7 +5,7 @@ draft: false
 weight: 42
 description: "端對端構建生產級 AI Agent 產品：從架構設計到上線，涵蓋 ReAct 迴圈、工具整合、記憶系統、Guardrails、可觀測性與商業指標追蹤"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "LLM Engineering", "Production", "Capstone", "ReAct", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Agent", "LLM Engineering", "Production", "Capstone", "ReAct", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "28 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的公司想把電商客服從人工轉為 AI Agent，日均客服量約 30K sessions，高峰期（雙 11）可能到 80K。客服範圍包含訂單查詢、退換貨申請、產品推薦以及升級至人工。請描述你會如何設計這個系統，從 MVP 到可以承受 80K sessions/day 的生產架構，並說明關鍵的工程決策與取捨。
 

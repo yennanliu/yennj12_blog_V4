@@ -5,7 +5,7 @@ draft: false
 weight: 14
 description: "從工程師視角完整解析 Transformer：Multi-Head Attention 矩陣計算、位置編碼、KV Cache、Flash Attention 與 MQA/GQA 生產優化"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Transformer", "Attention", "KV Cache", "Flash Attention", "Architecture", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Transformer", "Attention", "KV Cache", "Flash Attention", "Architecture", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境**：「你負責將一個 7B 參數的 LLM 部署到生產環境，P99 首 token 延遲必須 < 500ms，批次吞吐量 > 200 req/s，GPU 記憶體預算 40GB。請說明你會在 Transformer 架構層面做哪些優化決策，以及你如何取捨精度與速度。」
+**工程情境**：「你負責將一個 7B 參數的 LLM 部署到生產環境，P99 首 token 延遲必須 < 500ms，批次吞吐量 > 200 req/s，GPU 記憶體預算 40GB。請說明你會在 Transformer 架構層面做哪些優化決策，以及你如何取捨精度與速度。」
 
 ---
 

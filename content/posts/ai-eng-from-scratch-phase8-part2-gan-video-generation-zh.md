@@ -5,7 +5,7 @@ draft: false
 weight: 17
 description: "深入解析 GAN 訓練動態、StyleGAN/CycleGAN 架構、影片生成系統設計，以及 GAN vs 擴散模型的工程選型決策"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Generative AI", "GAN", "Video Generation", "StyleGAN", "Image Synthesis", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Generative AI", "GAN", "Video Generation", "StyleGAN", "Image Synthesis", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "20 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：** 你的團隊需要為電商平台建立「商品圖片風格轉換」系統，目標是把用戶上傳的素人照自動轉成專業棚拍風格，日處理量 50 萬張，延遲要求 < 200ms。請問你會選 GAN 還是擴散模型？架構如何設計？
+**工程情境：** 你的團隊需要為電商平台建立「商品圖片風格轉換」系統，目標是把用戶上傳的素人照自動轉成專業棚拍風格，日處理量 50 萬張，延遲要求 < 200ms。請問你會選 GAN 還是擴散模型？架構如何設計？
 
 ---
 
@@ -505,4 +505,4 @@ def temporal_consistency_loss(frames, optical_flow_net):
 
 ---
 
-**Phase 8 小結**：生成式 AI 的工程選型從來不是「最新 = 最好」。GAN 在低延遲、特定域、資料效率等場景仍不可取代；Diffusion 在通用性、多樣性、文字控制上全面領先。優秀的 AI 工程師需要理解兩者的技術本質，根據業務約束做出正確決策——這正是面試官真正在考察的能力。
+**Phase 8 小結**：生成式 AI 的工程選型從來不是「最新 = 最好」。GAN 在低延遲、特定域、資料效率等場景仍不可取代；Diffusion 在通用性、多樣性、文字控制上全面領先。優秀的 AI 工程師需要理解兩者的技術本質，根據業務約束做出正確決策——這正是 AI 工程師最核心的能力。

@@ -5,7 +5,7 @@ draft: false
 weight: 40
 description: "深入解析 AI 治理工程：EU AI Act/NIST AI RMF 合規架構、偏見偵測與緩解技術、資料隱私工程（差分隱私/聯邦學習）與 AI 稽核框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Safety", "Governance", "Ethics", "Bias", "Privacy", "Compliance", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Safety", "Governance", "Ethics", "Bias", "Privacy", "Compliance", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的團隊正要在 EU 市場推出一個信用評分 AI 系統，PM 說「先上線再合規」，CTO 問你：從工程架構角度，最低限度需要做哪些治理元件才能在 EU AI Act 生效後合法營運？如果資料集中有性別和種族代理變數，你打算怎麼處理偏見？隱私工程用什麼機制確保 GDPR 合規？
 

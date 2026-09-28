@@ -5,7 +5,7 @@ draft: false
 weight: 9
 description: "從詞袋到詞嵌入，掌握 NLP 工程師必備的文字前處理、TF-IDF、Word2Vec/GloVe/FastText 嵌入技術與文字分類生產架構"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "Word2Vec", "Text Classification", "Embeddings", "TF-IDF", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "NLP", "Word2Vec", "Text Classification", "Embeddings", "TF-IDF", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你被指派設計一個電商評論分析系統：每天新增 50 萬則中文評論，需支援情感分類（正/負/中性）、主題抽取（5 大類）、以及即時關鍵詞搜尋。系統目前是 POC 階段，但六個月後要上線服務百萬用戶。請說明你的 NLP 文字表示策略，以及各階段如何演進。
 
@@ -45,7 +45,7 @@ series: ["ai-eng-from-scratch"]
 ─────────────────────────────────────────────────
 ```
 
-這篇文章的目標：讓你在面試中能清楚說明**為什麼**在特定場景選擇特定表示法，而不只是背誦演算法。
+這篇文章的目標：讓你能清楚說明**為什麼**在特定場景選擇特定表示法，而不只是背誦演算法。
 
 ---
 

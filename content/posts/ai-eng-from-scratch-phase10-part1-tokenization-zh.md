@@ -5,7 +5,7 @@ draft: false
 weight: 19
 description: "深入解析 LLM Tokenization：BPE/WordPiece/SentencePiece 演算法、詞彙表大小的工程取捨、多語言 Token 效率與 Tiktoken 生產實作"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "Tokenization", "BPE", "SentencePiece", "Vocabulary", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "LLM", "Tokenization", "BPE", "SentencePiece", "Vocabulary", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "20 min"
 series: ["ai-eng-from-scratch"]
@@ -18,10 +18,10 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的團隊正在從零預訓練一個 30B 參數的多語言 LLM，目標語言包含英文、繁體中文、日文與 Python/SQL 代碼。  
-> 面試官問：「你會如何設計這個模型的 tokenizer？詞彙表要多大？選哪種演算法？中文效率問題怎麼處理？請以三個演進階段說明。」
+> 技術主管問：「你會如何設計這個模型的 tokenizer？詞彙表要多大？選哪種演算法？中文效率問題怎麼處理？請以三個演進階段說明。」
 
 ---
 

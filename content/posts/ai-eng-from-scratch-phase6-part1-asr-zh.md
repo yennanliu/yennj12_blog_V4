@@ -5,7 +5,7 @@ draft: false
 weight: 12
 description: "深入解析 ASR 工程架構：聲學特徵提取（MFCC/Mel Spectrogram）、CTC/Attention 解碼、Whisper 架構與生產級語音辨識系統設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Speech", "ASR", "Whisper", "CTC", "Audio", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Speech", "ASR", "Whisper", "CTC", "Audio", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "20 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你正在設計一個線上教育平台的即時字幕系統，需要支援 10,000 位同時在線的學生。系統要求：辨識延遲 < 500ms、WER < 10%、支援中英文混合語音。請說明你的 ASR 架構選擇，以及如何在 POC 到 Scale 的過程中演進這個系統。
 
@@ -380,7 +380,7 @@ Loss = λ × CTC_Loss + (1-λ) × Attention_Loss，λ = 0.3
 
 ## 六、Whisper 架構：OpenAI 的工程選擇
 
-Whisper 是目前最廣泛使用的開源 ASR 模型，理解其架構選擇是面試的核心考點。
+Whisper 是目前最廣泛使用的開源 ASR 模型，理解其架構選擇是掌握現代 ASR 的關鍵。
 
 **訓練資料**：680,000 小時弱監督標注音訊（網路爬取字幕），覆蓋 99 種語言。
 

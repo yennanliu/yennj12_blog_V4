@@ -5,7 +5,7 @@ draft: false
 weight: 18
 description: "深入解析強化學習工程原理：MDP/Q-Learning/Policy Gradient/PPO/RLHF，理解 ChatGPT 背後的對齊訓練機制"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Reinforcement Learning", "RLHF", "PPO", "Q-Learning", "Policy Gradient", "RKK", "Interview", "ai-eng-from-scratch"]
+tags: ["AI", "Reinforcement Learning", "RLHF", "PPO", "Q-Learning", "Policy Gradient", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：** 你是某家 AI 新創的首席工程師。產品已用 SFT 微調出一個能回答問題的 LLM，但用戶反映模型有時給出危險建議、有時過度冗長、有時迴避有用資訊。CTO 要求你在六週內讓模型「更符合人類期望」。你會設計怎樣的對齊訓練流程？請從框架選擇、資料收集、訓練穩定性、評估指標四個維度說明。
+**工程情境：** 你是某家 AI 新創的首席工程師。產品已用 SFT 微調出一個能回答問題的 LLM，但用戶反映模型有時給出危險建議、有時過度冗長、有時迴避有用資訊。CTO 要求你在六週內讓模型「更符合人類期望」。你會設計怎樣的對齊訓練流程？請從框架選擇、資料收集、訓練穩定性、評估指標四個維度說明。
 
 ---
 
