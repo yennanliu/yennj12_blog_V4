@@ -112,9 +112,11 @@ def markdown_links(text: str):
     """Yield (line_no, url) for Markdown links outside fenced code blocks.
 
     Fence matching follows CommonMark: a block opened with N markers closes
-    only on a run of the *same* character that is at least N long. Truncating
-    the delimiter would let an inner ``` close an outer ````, after which a
-    URL inside that code sample would be reported as a real link.
+    only on a run of the *same* character that is at least N long, with nothing
+    after it. Truncating the delimiter would let an inner ``` close an outer
+    ````, and accepting trailing text would let a ```python line inside a code
+    sample close it; either way a URL later in that sample would be reported
+    as a real link.
     """
     fence = None
     for n, line in enumerate(text.split("\n"), 1):
@@ -123,9 +125,10 @@ def markdown_links(text: str):
             token = m.group(1)
             if fence is None:
                 fence = token
-            elif token[0] == fence[0] and len(token) >= len(fence):
+                continue
+            if token[0] == fence[0] and len(token) >= len(fence) and not line[m.end():].strip():
                 fence = None
-            continue
+                continue
         if fence:
             continue
         for link in MD_LINK.finditer(line):
