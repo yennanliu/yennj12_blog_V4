@@ -39,3 +39,5 @@ yarn-error.log*
 
 # Claude Code local settings (personal, machine-specific)
 .claude/settings.local.json
+# Output of scripts/audit_content.py
+.content-audit/
