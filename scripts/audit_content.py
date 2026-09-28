@@ -38,7 +38,8 @@ CN_NUM_H2 = re.compile(r"^##\s*(一|二|三|四|五|六|七|八|九|十|十一|�
 # Case-sensitive on purpose: "Todo" is Claude Code's todo list, "xxx" an example value.
 PLACEHOLDER = re.compile(r"\b(?:TODO|TBD|FIXME)\b|lorem ipsum|待補|待填")
 MD_LINK = re.compile(r"\[([^\]]*)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
-FENCE = re.compile(r"^\s*(```+|~~~+)")
+# CommonMark: a fence may be indented at most three spaces; deeper ones are content or list-nested.
+FENCE = re.compile(r"^ {0,3}(```+|~~~+)")
 
 ALL_SLUGS = {p.stem for p in POSTS.glob("*.md")}
 ALL_TAGS = Counter()
@@ -184,7 +185,16 @@ def audit(path: Path) -> dict:
     rec["h2_count"] = len(h2s)
     rec["h3_count"] = len(h3s)
     rec["h2_cn_numeral"] = sum(1 for l in h2s if CN_NUM_H2.match(l))
-    dup = [h for h, c in Counter(h.strip() for h in h2s + h3s).items() if c > 1]
+    # A ### repeated under different ## parents (Pros and Cons per approach) is parallel
+    # structure; only a repeat within one parent section, or a repeated ##, is a defect.
+    keyed, parent = [], None
+    for l in prose_lines:
+        if re.match(r"^##\s", l):
+            parent = l.strip()
+            keyed.append((None, parent))
+        elif re.match(r"^###\s", l):
+            keyed.append((parent, l.strip()))
+    dup = [h for (_, h), c in Counter(keyed).items() if c > 1]
     rec["duplicate_headings"] = dup[:5]
     rec["max_cn_numeral"] = 0
     order = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十"]

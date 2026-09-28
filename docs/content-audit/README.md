@@ -29,7 +29,7 @@ old state. `per-post-checklist.md` is regenerated against current `main`, so it 
 
 | Check | At audit | Now |
 |---|---:|---:|
-| Posts passing every mechanical check | 78 | 257 |
+| Posts passing every mechanical check | 78 | 258 |
 | Posts with no `description` | 60 | 0 |
 | Authors with no profile | 56 | 0 |
 | `readTime` missing / ≥ 8 min off | 6 / 108 | 0 / 0 |
@@ -41,7 +41,6 @@ old state. `per-post-checklist.md` is regenerated against current `main`, so it 
 | ╔║╚ boxes as `###` headings | 13 posts | 0 |
 | Dead internal links | 210 in 85 posts | 70 in 8 posts |
 | 面試答題要點 sections | 28 | 28 |
-| Duplicate headings | — | 22 posts |
 
 **Still open, mechanical (group 2):**
 
@@ -51,20 +50,23 @@ old state. `per-post-checklist.md` is regenerated against current `main`, so it 
 - The 28 面試答題要點 sections (fde parts 16–25, 35–52) and the model-answer variants in 1–11
   and 15.
 - ai-system-on-native-aws part 5 still ends with finale language (fde part 9 is fixed).
-- 22 posts with duplicate headings.
-- Three fence bugs: a ```` ```json ```` inside a Python string closes the block early in
-  `ai-agent-team-for-consultant-part3-devops-zh`, a stray fence in `google-gemini-local-mac-zh`,
-  and an unclosed fence in kubernetes-autoscaling part 8.
+- A ```` ```json ```` inside a Python string closes the code block early in
+  `ai-agent-team-for-consultant-part3-devops-zh`, so half the code renders as prose.
 - `springdataplatform-flink-management-system.md` has Chinese prose under an English filename.
+
+All but the last are fixed in the group 2 PR (`fix/content-group2-mechanical`).
 
 **Still open, needs an owner decision:** everything in section 4. Merges, restructures and
 retirements (section 5, step 8) have not started. The source-or-label pass on numbers (step 7)
 is done for the lines the reviews named, but not as a site-wide rule.
 
-**Audit script changes since the audit:** code fences now close by CommonMark rules (a ````
-block may contain ```), language is judged on prose only, and `readTime` counts code-block
-lines at half weight outside fde-interview-guide and ai-eng-from-scratch, the rule #14 applied.
-That removed false H1, language and readTime flags, and exposed the fence bugs above.
+**Audit script changes since the audit:** code fences follow CommonMark (a ```` block may
+contain ```, and a fence indented four or more spaces is not a fence); language is judged on
+prose only; `readTime` counts code-block lines at half weight outside fde-interview-guide and
+ai-eng-from-scratch, the rule #14 applied; and a duplicate heading is flagged only when it
+repeats within one parent section, since `### Pros and Cons` under each approach is parallel
+structure. That removed false H1, language, readTime and duplicate-heading flags, and exposed
+the fence bug above.
 
 ---
 

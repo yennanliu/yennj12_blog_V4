@@ -498,7 +498,7 @@ ai-eng-from-scratch, the two series CLAUDE.md defines them for.
 | `express-nodejs-backend-framework-best-practices.md` | 1687 | — |
 | `finance-data-ai-pipeline-how-it-works-zh.md` | 408 | — |
 | `finance-data-sec-edgar-toolkit.md` | 198 | only 198 lines |
-| `google-gemini-local-mac-zh.md` | 632 | H1 inside body |
+| `google-gemini-local-mac-zh.md` | 632 | — |
 | `harness-engineering-intro-ai-zh.md` | 496 | — |
 | `hermes-agent-intro-installation-zh.md` | 532 | — |
 | `industry-map-semiconductor-value-chain-zh.md` | 348 | — |
