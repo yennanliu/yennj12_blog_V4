@@ -187,7 +187,7 @@ load_dotenv()
 class Config:
     # API Configuration
     ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-    MODEL = "claude-sonnet-4.5"  # or claude-opus-4.5 for complex tasks
+    MODEL = "claude-sonnet-5"  # or claude-opus-5-5 for complex tasks
 
     # Project paths
     PROJECT_ROOT = Path(__file__).parent
@@ -1121,7 +1121,7 @@ class PerformanceTracker:
 
 ```bash
 # Use Claude Code to run orchestration
-claude-code "Orchestrate my multi-agent system to build a blog platform"
+claude -p "Orchestrate my multi-agent system to build a blog platform"
 ```
 
 **With MCP Server integration:**

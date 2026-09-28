@@ -270,11 +270,13 @@ resolution r = γ^φ    γ = 1.15
 約束：α × β² × γ² ≈ 2
 ```
 
-EfficientNet-B0（5.3M 參數）比 ResNet-50（25M 參數）準確率還高 1%，推論速度快 6.1×。
+EfficientNet-B0（5.3M 參數）比 ResNet-50（25M 參數）準確率還高約 1%（77.1% vs 約 76%），FLOPs 只有約 1/11（0.39B vs 4.1B）。（論文中常被引用的「快 6.1×」是 EfficientNet-B7 對 GPipe 的比較，不是 B0 對 ResNet-50。）
 
 ---
 
 ## 六、遷移學習策略：Freeze / Fine-tune / Feature Extraction
+
+> 本節以 CNN backbone 說明策略；2026 年做特徵萃取時，ViT 系的自監督或圖文預訓練模型（DINOv2、CLIP/SigLIP）往往是更強的預設 backbone，下面的 Freeze / Fine-tune 流程同樣適用。
 
 ### 三種策略的選擇流程
 
@@ -493,7 +495,7 @@ transform = Normalize(mean=dataset_mean, std=dataset_std)
 
 ## 九、系統效應（Before / After 含量化數字）
 
-以下以「醫療皮膚病灶分類，8,000 張訓練影像，7 類別」為基準情境：
+以下以「醫療皮膚病灶分類，8,000 張訓練影像，7 類別」為基準情境（示意估算，非實測數據）：
 
 | 指標 | Baseline (VGG-16 Full Fine-tune) | Phase 1 (ResNet-50 Feature Ext.) | Phase 2 (EfficientNet-B0 Gradual Unfreeze) | Phase 3 (EfficientNet-B0 Full Pipeline) |
 |------|----------------------------------|----------------------------------|---------------------------------------------|------------------------------------------|
@@ -527,10 +529,10 @@ transform = Normalize(mean=dataset_mean, std=dataset_std)
 
 **系列完整索引：**
 
-- **Phase 1：** ML 基礎與特徵工程
-- **Phase 2：** 深度學習訓練工程（訓練穩定性、超參數搜索）
-- **Phase 3：** MLOps 與模型部署
+- **Phase 1：** [線性代數與微積分](/posts/ai-eng-from-scratch-phase1-part1-linear-algebra-zh/)、[機率與統計](/posts/ai-eng-from-scratch-phase1-part2-probability-stats-zh/)
+- **Phase 2：** [傳統機器學習](/posts/ai-eng-from-scratch-phase2-part1-classical-ml-zh/)、[集成學習與最佳化](/posts/ai-eng-from-scratch-phase2-part2-ensemble-optimization-zh/)
+- **Phase 3：** [深度學習核心 — 從第一原理構建神經網路](/posts/ai-eng-from-scratch-phase3-part1-neural-networks-zh/)
 - **Phase 4 Part 1：電腦視覺基礎（本文）**
-- Phase 4 Part 2：目標偵測（即將推出）
-- Phase 4 Part 3：語意分割（即將推出）
-- Phase 5：自然語言處理與 Transformer（即將推出）
+- [Phase 4 Part 2：目標偵測與語義分割](/posts/ai-eng-from-scratch-phase4-part2-detection-segmentation-zh/)
+- [Phase 4 Part 3：視覺語言模型、3D 視覺與世界模型](/posts/ai-eng-from-scratch-phase4-part3-vlm-3d-worldmodels-zh/)
+- [Phase 5 Part 1：NLP 基礎 — 文字是智慧的介面](/posts/ai-eng-from-scratch-phase5-part1-text-fundamentals-zh/)

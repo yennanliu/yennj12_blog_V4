@@ -17,7 +17,7 @@ readTime: "16 min"
 
 ## 一、為什麼 LLM 評估這麼難
 
-[Part 1](../langfuse-intro-part1-concepts-zh/) 說過,LLM 的「錯」是品質退化而非當機。這帶來一個根本困難:**品質很難測。**
+[Part 1](/posts/langfuse-intro-part1-concepts-zh/) 說過,LLM 的「錯」是品質退化而非當機。這帶來一個根本困難:**品質很難測。**
 
 ```
    傳統測試                    LLM 評估
@@ -166,6 +166,8 @@ langfuse.create_dataset_item(
 有了 dataset,用 `run_experiment()` 把你的應用對整個資料集跑一遍,並自動評分:
 
 ```python
+from langfuse import Evaluation
+
 dataset = langfuse.get_dataset("finance-qa")
 
 def my_app(*, item, **kwargs):
@@ -173,9 +175,15 @@ def my_app(*, item, **kwargs):
     answer = my_rag_pipeline(item.input["question"])
     return {"output": answer}
 
+def faithfulness_evaluator(*, input, output, expected_output, metadata, **kwargs):
+    # output 就是 my_app 的回傳值；judge_faithfulness 是你自己的評分函式（可呼叫 LLM 當裁判），回傳 0–1
+    score = judge_faithfulness(question=input["question"], answer=output["output"])
+    return Evaluation(name="faithfulness", value=score)
+
 result = dataset.run_experiment(
     name="prompt-v3-gpt4o",          # 給這次實驗命名
     task=my_app,
+    evaluators=[faithfulness_evaluator],   # 沒有 evaluator 就只會記錄輸出、不會有分數
 )
 ```
 
@@ -195,6 +203,8 @@ result = dataset.run_experiment(
    │ v3 + gemini   │   0.89    │   0.85   │ $0.08 ▲ │
    └──────────────┴───────────┴──────────┴─────────┘
 ```
+
+> 以上為示意數據,非實測;relevance 一欄需要另外再加一個對應的 evaluator。
 
 現在「該不該上 prompt-v3」不再是辯論,而是看表:faithfulness 從 0.81 升到 0.91,relevance 沒退,成本只多一點點——上。或者「換成 gemini 省 80% 成本但品質只掉 2%」——這個取捨值不值得,數據攤在眼前。
 
@@ -247,16 +257,16 @@ LLM 評估的本質,是把「我覺得」換成「數據顯示」:
 
 > 一句話總結:沒有評估的 LLM 迭代,是蒙著眼睛調參;有了 Langfuse 的評估體系,每一次改動都有數據告訴你「是變好還是變壞」。
 
-最後一篇([Part 4](../langfuse-intro-part4-monitoring-prompt-management-zh/))把這一切收進日常營運:用監控儀表板盯成本與延遲、用 Prompt 管理讓改 prompt 不必改程式、不必重新部署。
+最後一篇([Part 4](/posts/langfuse-intro-part4-monitoring-prompt-management-zh/))把這一切收進日常營運:用監控儀表板盯成本與延遲、用 Prompt 管理讓改 prompt 不必改程式、不必重新部署。
 
 ---
 
 **系列導覽**
 
-- [Part 1 — 核心概念與資料模型](../langfuse-intro-part1-concepts-zh/)
-- [Part 2 — SDK 整合與 Tracing 實戰](../langfuse-intro-part2-tracing-sdk-zh/)
+- [Part 1 — 核心概念與資料模型](/posts/langfuse-intro-part1-concepts-zh/)
+- [Part 2 — SDK 整合與 Tracing 實戰](/posts/langfuse-intro-part2-tracing-sdk-zh/)
 - Part 3 — LLM 評估(本篇)
-- [Part 4 — 監控與 Prompt 管理](../langfuse-intro-part4-monitoring-prompt-management-zh/)
+- [Part 4 — 監控與 Prompt 管理](/posts/langfuse-intro-part4-monitoring-prompt-management-zh/)
 
 **參考連結**
 

@@ -201,6 +201,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Register STOMP endpoint with SockJS fallback
         registry.addEndpoint("/ws")
+                // WARNING: "*" accepts WebSocket connections from any site. Fine for
+                // local dev; in production list your real origins, e.g.
+                // .setAllowedOriginPatterns("https://chat.example.com")
                 .setAllowedOriginPatterns("*")
                 .withSockJS()
                 .setHeartbeatTime(25000)  // Keep connection alive
@@ -243,14 +246,17 @@ public class ChatController {
     /**
      * Handle incoming chat messages
      */
+    // No @SendTo here: the message is broadcast ONLY via Redis. Every instance,
+    // including this one, receives it in the Redis listener and forwards it to
+    // /topic/public. Having both @SendTo (local broadcast) and the Redis fan-out
+    // would deliver every message twice to clients on the originating instance.
     @MessageMapping("/chat.send")
-    @SendTo("/topic/public")
-    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
+    public void sendMessage(@Payload ChatMessage chatMessage) {
         try {
             // Validate and sanitize message content
             if (chatMessage.getContent() == null || chatMessage.getContent().trim().isEmpty()) {
                 logger.warn("Empty message received from user: {}", chatMessage.getSender());
-                return null;
+                return;
             }
 
             // Set server timestamp
@@ -262,16 +268,14 @@ public class ChatController {
             // Store message history (optional)
             storeMessageHistory(chatMessage);
 
-            // Publish to Redis for cluster distribution
+            // Publish to Redis for cluster distribution (the single delivery path)
             publishToCluster(chatMessage);
 
             logger.info("Message sent from {} to public channel", chatMessage.getSender());
-            return chatMessage;
 
         } catch (Exception e) {
             logger.error("Error processing message from {}: {}",
                         chatMessage.getSender(), e.getMessage());
-            return createErrorMessage("Failed to send message");
         }
     }
 
@@ -1185,17 +1189,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ```dockerfile
 # Multi-stage build for Spring Boot application
-FROM openjdk:17-jdk-alpine AS builder
+# (The official openjdk images are deprecated and openjdk:17-jre-alpine never existed;
+#  use Eclipse Temurin images instead.)
+FROM maven:3.9-eclipse-temurin-17 AS builder
 
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
 # Build application
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Runtime stage
-FROM openjdk:17-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
+
+# curl is needed by the HEALTHCHECK below
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
@@ -1757,16 +1766,18 @@ public class ChatAnalyticsService {
 
 ## 🎉 Conclusion & Technical Impact
 
-### 📊 Performance Metrics & Achievements
+### 📊 Performance Goals
 
-**Technical Performance Results**:
+> **Note:** The figures below are illustrative design goals, not measured results. No load test backs them; benchmark your own deployment (e.g. with Gatling or k6 WebSocket scenarios) before quoting numbers.
+
+**Technical Performance Goals (illustrative)**:
 - **Message Latency**: <50ms end-to-end message delivery
 - **Concurrent Users**: Supports 10,000+ simultaneous connections
 - **Message Throughput**: 1,000+ messages per second per instance
 - **Connection Stability**: 99.9% uptime with automatic reconnection
 - **Memory Usage**: <512MB per instance under normal load
 
-**Scalability Demonstrations**:
+**Scalability Goals (illustrative)**:
 - **Horizontal Scaling**: Linear scaling across multiple instances
 - **Geographic Distribution**: Multi-region deployment with Redis clustering
 - **Protocol Efficiency**: 90% reduction in bandwidth vs. HTTP polling

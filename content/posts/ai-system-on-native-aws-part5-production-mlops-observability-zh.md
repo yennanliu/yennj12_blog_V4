@@ -193,7 +193,9 @@ const endpoint = new sagemaker.CfnEndpoint(this, 'RankingEndpoint', {
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 const modelParam = new ssm.StringParameter(this, 'RagModelId', {
   parameterName: '/ai/rag/model-id',
-  stringValue: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
+  // 參數值請填 Bedrock console 上目前可用的 Claude inference profile ID(us. / global. 前綴),
+  // 由 cdk.json 的 context 或 `cdk deploy -c ragModelId=<profile-id>` 帶入,不在程式碼裡寫死。
+  stringValue: this.node.getContext('ragModelId'),
 });
 queryFn.addEnvironment('MODEL_PARAM', modelParam.parameterName);
 modelParam.grantRead(queryFn);

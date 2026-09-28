@@ -300,6 +300,8 @@ knowsAbout      主題歸屬。告訴模型你在哪個領域是可信的
 
 ### 3.4 FAQPage：最直接的 GEO schema
 
+> 注意：Google 自 2023 年起只對政府、醫療等權威網站顯示 FAQ 複合式搜尋結果，HowTo 複合式結果也已停用。這裡保留 FAQPage / HowTo，是為了給機器讀的問答與步驟結構，不是為了拿到 rich result——Rich Results Test 看不到 FAQ 預覽是正常的。
+
 ```json
 {
   "@context": "https://schema.org",
@@ -517,7 +519,7 @@ YouTube 教學影片         ★★★☆☆             中          字幕會�
 □ 修正 dateModified 邏輯（禁止自動填 build 時間）
 □ 加 llms.txt（30 分鐘的事，順手做）
 
-驗收：Rich Results Test 全綠；每頁有 @id 且互相 reference
+驗收：Rich Results Test 無錯誤（FAQ / HowTo 不會顯示預覽，見 3.4）；每頁有 @id 且互相 reference
 成本：前端 2-3 人天 + 內容 1 人天
 
 ╔═══════════════════════════════════════════════════════════════╗
@@ -547,7 +549,7 @@ YouTube 教學影片         ★★★☆☆             中          字幕會�
 □ 啟動實體層長線工作：Wikidata、評測站、產業報告、社群
 □ 建立內容規範文件，讓新內容天生就是 GEO-ready
 
-驗收：核心 30 題的引用率相對基線 +10 個百分點以上
+驗收：核心 30 題的引用率相對基線 +10 個百分點以上 [推估]
 成本：工程 3-5 人天 + 持續營運
 ```
 

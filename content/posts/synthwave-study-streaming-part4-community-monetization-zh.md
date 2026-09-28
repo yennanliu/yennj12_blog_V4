@@ -36,7 +36,7 @@ authors: ["yen"]
 | 特性 | Lofi Hip Hop | 環境音 | **Synthwave 讀書會** |
 |------|--------------|--------|---------------------|
 | **目標受眾** | 學生、一般工作者 | 冥想、睡眠人群 | **程式設計師、科技工作者** |
-| **CPM 收益** | $2-4 | $1.5-3 | **$8-15（科技相關最高）** |
+| **CPM 收益** | $2-4 | $1.5-3 | **示意估算，可能略高於一般音樂（需實測）** |
 | **社群黏性** | 中等 | 低 | **極高（開發者社群文化）** |
 | **變現潛力** | 中 | 低 | **高（B2B 品牌合作）** |
 | **內容差異化** | 飽和 | 飽和 | **藍海市場** |
@@ -601,7 +601,7 @@ async def pomodoro(ctx, duration: int = 25):
 | 收入來源 | 門檻訂閱數 | 月收入潛力 | 難易度 | 時間投入 |
 |---------|-----------|----------|-------|---------|
 | **YouTube AdSense** | 1K + 4000 小時 | $100-500 | ⭐ 簡單 | 被動 |
-| **會員制（Membership）** | 1K（手動）/30K（內建） | $200-2000 | ⭐⭐ 中等 | 每月新內容 |
+| **會員制（Membership）** | 500（擴充版 YPP，依地區而定） | $200-2000 | ⭐⭐ 中等 | 每月新內容 |
 | **科技品牌贊助** | 5K-10K | $500-5000/案 | ⭐⭐⭐ 困難 | 每案 5-10 小時 |
 | **開發工具聯盟行銷** | 任何階段 | $100-1000 | ⭐⭐ 中等 | 初期設定 |
 | **數位產品（教學/模板）** | 3K-5K | $300-3000 | ⭐⭐⭐⭐ 高 | 前期 40+ 小時 |
@@ -612,7 +612,7 @@ async def pomodoro(ctx, duration: int = 25):
 #### 為什麼 Synthwave 開發者頻道 CPM 高？
 
 ```
-📊 CPM 比較（YouTube AdSense）：
+📊 CPM 比較（示意估算，非實測數據，實際以 YouTube Studio 為準）：
 
 一般音樂串流：     $1.5 - $3
 Lofi Hip Hop：     $2 - $4
@@ -637,14 +637,12 @@ Lofi Hip Hop：     $2 - $4
 # YouTube 影片標籤（每支 Shorts/直播）
 
 主要分類：
-  - Science & Technology（必選，CPM 最高）
+  - Music（依內容的實際性質選擇）
 
-次要分類：
-  - Education（提升廣告主信任度）
-
-避免分類：
-  - Music（會降低 CPM）
-  - Entertainment（競爭激烈）
+注意：
+  - 分類、標題、說明與標籤必須如實反映內容
+  - 為了 CPM 刻意誤植分類或堆砌不相關關鍵字，違反 YouTube 垃圾內容政策，
+    可能導致限制營利
 ```
 
 **2. 影片說明欄關鍵字**
@@ -661,10 +659,6 @@ Perfect background music for:
 ✅ System design & architecture planning
 ✅ Code review & debugging
 
-Tech Stack mentioned in chat:
-#Python #JavaScript #TypeScript #React #NodeJS
-#Docker #Kubernetes #AWS #Git #API
-
 Tools & Resources:
 🔗 VS Code Setup: [連結]
 🔗 Terminal Config: [連結]
@@ -673,13 +667,13 @@ Tools & Resources:
 ⚡ Join our Discord community: [連結]
 🎵 Spotify Playlist: [連結]
 
-<!-- 關鍵：大量使用程式語言和工具關鍵字 -->
+<!-- 只放與內容直接相關的關鍵字，避免堆砌標籤 -->
 ```
 
 **3. 直播時段選擇**
 
 ```
-💡 黃金時段（UTC 時間，CPM 最高）：
+💡 黃金時段（UTC 時間；以下 CPM 百分比為示意估算，未經查證）：
 
 週一至週五：
 13:00-17:00  美國東岸工作時間（CPM +30%）

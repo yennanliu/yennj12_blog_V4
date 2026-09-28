@@ -21,7 +21,7 @@ series: ["ai-eng-from-scratch"]
 ## 工程情境
 
 > 你的團隊正在從零預訓練一個 30B 參數的多語言 LLM，目標語言包含英文、繁體中文、日文與 Python/SQL 代碼。  
-> 技術主管問：「你會如何設計這個模型的 tokenizer？詞彙表要多大？選哪種演算法？中文效率問題怎麼處理？請以三個演進階段說明。」
+> 技術主管問：「你會如何設計這個模型的 tokenizer？詞彙表要多大？選哪種演算法？中文效率問題怎麼處理？」
 
 ---
 
@@ -33,7 +33,7 @@ Tokenization 是 LLM pipeline 的第一步，也是最容易被低估的一步�
 
 1. **模型容量分配**：詞彙表大小直接決定 Embedding 層的參數量。vocab_size=50K、embedding_dim=4096 時，Embedding 層就佔了 50K × 4096 × 2 bytes ≈ 400MB，相當於整個模型參數的 5–10%。
 
-2. **序列長度放大器**：同樣一段中文，GPT-4 tokenizer（cl100k_base）平均每個漢字消耗 1.5 tokens，而設計不良的 tokenizer 可能消耗 3–4 tokens（逐字節切割）。context window 128K tokens，有效利用率差了 2–3 倍。
+2. **序列長度放大器**：同樣一段中文，GPT-4 的 tokenizer（cl100k_base；GPT-4o 之後的 OpenAI 模型改用約 200K 詞彙的 o200k_base）平均每個漢字消耗約 1.5 tokens，而設計不良的 tokenizer 可能消耗 3–4 tokens（逐字節切割）。context window 128K tokens，有效利用率差了 2–3 倍。
 
 3. **訓練成本乘數**：預訓練是以 token 數計算的。用同樣 1TB 的中文語料，高效 tokenizer 產生 500B tokens，低效 tokenizer 產生 1.5T tokens，訓練時間差了 3 倍，費用差了 $2M–$6M。
 
@@ -243,7 +243,7 @@ low (5), low-e-r (2), n-e-w-est (6), w-i-d-est (3)
 
 1. **確定性**：給定相同語料和相同 vocab_size，訓練結果完全可重現
 2. **貪婪合併**：每步只合併當前最高頻的對，是局部最優而非全局最優
-3. **字節級 BPE**：GPT-4 使用 cl100k_base，在字節層面操作，理論上可以處理任何 Unicode 字符，不存在 OOV（Out-of-Vocabulary）問題
+3. **字節級 BPE**：GPT-4 使用 cl100k_base（GPT-4o 起為 o200k_base），在字節層面操作，理論上可以處理任何 Unicode 字符，不存在 OOV（Out-of-Vocabulary）問題
 
 **BPE 推理（Encoding）**：
 
@@ -369,7 +369,7 @@ Token 數減少 → 訓練 step 數減少 → 訓練時間縮短。128K vs 32K �
 | 純英語模型 | 32K–50K | 英語詞彙空間覆蓋充足，再大邊際效益低 |
 | 英語+代碼 | 50K–65K | 代碼有大量特殊 token，需要更多空間 |
 | 多語言（< 5 種語言）| 65K–100K | 平衡各語言的 fertility rate |
-| 多語言（> 10 種語言）| 100K–128K | LLaMA-3 使用 128K，Mistral 使用 32K（英語偏重） |
+| 多語言（> 10 種語言）| 100K–128K | LLaMA-3 使用 128K；Mistral 早期模型使用 32K，Mistral NeMo 起改用約 131K 的 Tekken tokenizer |
 | 醫療/法律 domain | base + 2K–5K | 在基礎詞彙表上擴充 domain 特定 token |
 
 ---
@@ -389,6 +389,8 @@ Token 數減少 → 訓練 step 數減少 → 訓練時間縮短。128K vs 32K �
 | LLaMA-3 (128K) | 深度學習模型訓練需要大量計算資源 | 16 | 1.3 | 大幅改善 |
 | Qwen tokenizer | 深度學習模型訓練需要大量計算資源 | 13 | 1.1 | 中文最佳化 |
 | 字節級（無 BPE）| 深度學習模型訓練需要大量計算資源 | 36 | 3.0 | 最差效率 |
+
+> 上表 token 數與每字 tokens 為示意估算（例句 16 字，「每字 tokens」欄反映一般中文文本的概略平均，並非由例句換算），非逐一實測；實際數字請用各模型的 tokenizer 對自己的語料實測。
 
 **實際影響計算（GPT-4 API 費用對比）**：
 
@@ -583,7 +585,7 @@ ID N+1– : 正常詞彙 token（按頻率或合併順序排列）
 | 生態 | OpenAI 模型完全相容 | LLaMA、T5、PaLM 生態 |
 | 格式 | .tiktoken 格式（base64 編碼） | .model + .vocab 格式 |
 | 擴充性 | 不支援官方的增量詞彙擴充 | 可以 fine-tune 詞彙表 |
-| 開源 | tiktoken 函式庫開源，但 cl100k 詞彙表使用條款需注意 | 完全開源，商用友好 |
+| 開源 | tiktoken 函式庫開源（MIT 授權） | 完全開源，商用友好 |
 
 **Flip Condition**：若產品是 OpenAI API 的 wrapper、或需要精確計算 token 費用預算，用 Tiktoken 確保 token 數一致。若是訓練自己的模型、或需要詞彙表修改，用 SentencePiece。
 
@@ -636,7 +638,7 @@ Python 代碼庫：
 
 ## 十、系列導航
 
-← [Phase 9 系列 — AI 工程從零開始](/tags/ai/) | [Phase 10 Part 2：LLM 預訓練 — 萬億 Token 的工程挑戰 →](/posts/ai-eng-from-scratch-phase10-part2-pretraining-zh/)
+← [Phase 9：強化學習基礎 — RLHF 與遊戲 AI 的根基](/posts/ai-eng-from-scratch-phase9-part1-rl-fundamentals-zh/) | [Phase 10 Part 2：LLM 預訓練 — 萬億 Token 的工程挑戰 →](/posts/ai-eng-from-scratch-phase10-part2-pretraining-zh/)
 
 ---
 

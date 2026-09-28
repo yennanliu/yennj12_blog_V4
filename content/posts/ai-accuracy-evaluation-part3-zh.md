@@ -197,6 +197,8 @@ ECE 越低，模型越「自知」——它知道自己什麼時候在說確定�
 
 ### 快速上手
 
+> **版本注意**：這段是 RAGAS 0.1.x 的寫法（`question` / `contexts` / `answer` / `ground_truth` 欄位 + `datasets.Dataset`）。RAGAS 0.2 起改用 `EvaluationDataset` / `SingleTurnSample`，欄位改名為 `user_input` / `retrieved_contexts` / `response` / `reference`，指標也改成類別實例（如 `Faithfulness()`）。照抄請固定 `pip install "ragas<0.2"`，或依官方遷移指南改寫。
+
 ```python
 from ragas import evaluate
 from ragas.metrics import (
@@ -250,7 +252,7 @@ results = evaluate(
 )
 
 print(results)
-# 輸出範例：
+# 輸出範例（示意數字，非實際執行結果）：
 # {'faithfulness': 0.97, 'answer_relevancy': 0.92,
 #  'context_precision': 0.88, 'context_recall': 0.91}
 ```

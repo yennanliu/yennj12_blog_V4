@@ -207,7 +207,7 @@ class HubAndSpokeOrchestrator:
         """初始化各專責 Agent 的配置"""
         return {
             AgentRole.ORCHESTRATOR: {
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-sonnet-5",
                 "system": """你是任務協調者。
 
 職責：
@@ -227,7 +227,7 @@ class HubAndSpokeOrchestrator:
             },
 
             AgentRole.ANALYST: {
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-sonnet-5",
                 "system": """你是需求分析師。
 
 職責：分析需求，提取關鍵資訊。
@@ -241,7 +241,7 @@ class HubAndSpokeOrchestrator:
             },
 
             AgentRole.DEVELOPER: {
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-sonnet-5",
                 "system": """你是程式開發者。
 
 職責：根據需求實作程式碼。
@@ -254,7 +254,7 @@ class HubAndSpokeOrchestrator:
             },
 
             AgentRole.REVIEWER: {
-                "model": "claude-3-5-haiku-20241022",  # 輕量任務用 Haiku
+                "model": "claude-haiku-4-5-20251001",  # 輕量任務用 Haiku
                 "system": """你是程式碼審查員。
 
 職責：審查程式碼品質。
@@ -267,7 +267,7 @@ class HubAndSpokeOrchestrator:
             },
 
             AgentRole.DOC_WRITER: {
-                "model": "claude-3-5-haiku-20241022",
+                "model": "claude-haiku-4-5-20251001",
                 "system": """你是技術文件撰寫者。
 
 職責：撰寫清晰的技術文件。
@@ -582,26 +582,26 @@ def create_development_pipeline() -> PipelineOrchestrator:
         PipelineStage(
             role=AgentRole.ANALYST,
             system_prompt="你是需求分析師。提取功能需求、非功能需求、限制條件。輸出 JSON。",
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-5",
             max_tokens=2048
         ),
         PipelineStage(
             role=AgentRole.DEVELOPER,
             system_prompt="你是程式開發者。根據需求實作 Python 程式碼。輸出完整可執行程式碼。",
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-5",
             max_tokens=4096,
             output_validator=lambda x: "def " in x or "class " in x  # 簡單驗證
         ),
         PipelineStage(
             role=AgentRole.REVIEWER,
             system_prompt="你是程式碼審查員。審查程式碼的正確性、可讀性、安全性。",
-            model="claude-3-5-haiku-20241022",
+            model="claude-haiku-4-5-20251001",
             max_tokens=1024
         ),
         PipelineStage(
             role=AgentRole.DOC_WRITER,
             system_prompt="你是文件撰寫者。為程式碼撰寫 README 文件。",
-            model="claude-3-5-haiku-20241022",
+            model="claude-haiku-4-5-20251001",
             max_tokens=2048
         ),
     ]
@@ -790,7 +790,7 @@ def create_parallel_review_system():
                 role=AgentRole.REVIEWER,
                 task=f"從安全性角度審查以下程式碼：\n\n{code}",
                 system_prompt="你是安全專家。專注於：SQL 注入、XSS、認證漏洞、敏感資料洩露。",
-                model="claude-3-5-haiku-20241022",
+                model="claude-haiku-4-5-20251001",
                 max_tokens=1024
             ),
             ParallelTask(
@@ -798,7 +798,7 @@ def create_parallel_review_system():
                 role=AgentRole.REVIEWER,
                 task=f"從效能角度審查以下程式碼：\n\n{code}",
                 system_prompt="你是效能專家。專注於：時間複雜度、記憶體使用、N+1 查詢、快取策略。",
-                model="claude-3-5-haiku-20241022",
+                model="claude-haiku-4-5-20251001",
                 max_tokens=1024
             ),
             ParallelTask(
@@ -806,7 +806,7 @@ def create_parallel_review_system():
                 role=AgentRole.REVIEWER,
                 task=f"從可維護性角度審查以下程式碼：\n\n{code}",
                 system_prompt="你是架構師。專注於：程式碼結構、命名、單一職責、可讀性。",
-                model="claude-3-5-haiku-20241022",
+                model="claude-haiku-4-5-20251001",
                 max_tokens=1024
             ),
         ]
@@ -997,7 +997,7 @@ class IntelligentRouter:
 類別："""
 
         response = client.messages.create(
-            model="claude-3-5-haiku-20241022",  # 使用便宜的模型做分類
+            model="claude-haiku-4-5-20251001",  # 使用便宜的模型做分類
             max_tokens=20,
             messages=[{"role": "user", "content": classification_prompt}]
         )
@@ -1234,17 +1234,17 @@ class StatefulOrchestrator:
         """初始化 Agent 配置"""
         return {
             AgentRole.ANALYST: {
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-sonnet-5",
                 "system": "你是需求分析師。分析需求並輸出 JSON。",
                 "max_tokens": 2048
             },
             AgentRole.DEVELOPER: {
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-sonnet-5",
                 "system": "你是程式開發者。根據需求實作程式碼。",
                 "max_tokens": 4096
             },
             AgentRole.REVIEWER: {
-                "model": "claude-3-5-haiku-20241022",
+                "model": "claude-haiku-4-5-20251001",
                 "system": "你是審查員。審查程式碼並列出問題。",
                 "max_tokens": 1024
             }

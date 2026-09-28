@@ -89,11 +89,12 @@ readTime: "27 min"
 受管制 AI 最常被質疑的一點:「你把病歷送去 Bedrock,資料會不會流出去?」答案取決於你怎麼連 Bedrock。
 
 ```
-❌ 走公網:VPC → NAT Gateway → Internet → Bedrock 公開端點
-   資料離開你的私有網路,即使加密,合規上仍是「觸網」
+❌ 走公網端點:VPC → NAT Gateway → Bedrock 公開端點
+   AWS 內部對公開端點的流量其實也走 AWS 骨幹網,但你需要 IGW/NAT,
+   也無法在網路層限定「只能連到哪些端點/帳號」,稽核上較難舉證
 
 ✅ 走 PrivateLink:VPC → Interface VPC Endpoint → Bedrock(AWS 內網)
-   流量永不離開 AWS 骨幹網,不經過公網,滿足資料主權要求
+   不需要 IGW/NAT,可用 endpoint policy 在網路層控管,滿足稽核要求
 ```
 
 透過 **Interface VPC Endpoint(PrivateLink)**,你對 Bedrock、SageMaker、S3、Comprehend 的呼叫全部走 AWS 內部網路,VPC 甚至可以完全沒有對外的 Internet Gateway。這是「資料不出境/不觸網」控制目標的技術落地。
@@ -229,7 +230,12 @@ const scpDocument = {
       Effect: 'Deny',
       Action: 's3:PutObject',
       Resource: '*',
-      Condition: { StringNotEquals: { 's3:x-amz-server-side-encryption': 'aws:kms' } },
+      // 只擋「有帶加密標頭但不是 aws:kms」的請求;沒帶標頭的寫入交給 bucket 預設 SSE-KMS 處理。
+      // 少了 Null 條件,依賴 bucket 預設加密的一般 PutObject 也會全被拒絕。
+      Condition: {
+        StringNotEquals: { 's3:x-amz-server-side-encryption': 'aws:kms' },
+        Null: { 's3:x-amz-server-side-encryption': 'false' },
+      },
     },
     {
       Sid: 'DenyDisableGuardDutyOrCloudTrail',
@@ -240,6 +246,8 @@ const scpDocument = {
   ],
 };
 ```
+
+> **兩個容易踩的地方**:(1) 「S3 一定要加密」的主力應該是 bucket 預設加密(SSE-KMS)加上 bucket policy,SCP 只當第二道防線;(2) 區域限制會影響 cross-region inference profile——EU 範圍的 profile 會把請求路由到多個 EU 區域,SCP 要允許這些區域;global profile 會路由到清單以外的區域,與這條 SCP 不相容。目前的 Claude 模型多半透過 inference profile 呼叫,這點不處理就會把自己擋在外面。
 
 > SCP 把「資料只能留在歐洲區、寫 S3 一定要加密、沒人能關掉稽核日誌」變成**物理上做不到的違規**,而不是「請大家遵守」的政策。這是合規從「承諾」變「強制」的關鍵躍遷。
 
@@ -307,6 +315,8 @@ new config.ManagedRule(this, 'S3Encrypted', {
 ## 六、成本與稽核效益
 
 合規的「成本」要對比「不合規的代價」。以一套受管制 AI 平台的資安附加成本估算(概略,疊加在業務系統之上):
+
+> us-east-1 公開定價概估(撰文時),實際以帳單為準。
 
 | 項目 | 用量 | 概略月費 |
 |------|------|---------|

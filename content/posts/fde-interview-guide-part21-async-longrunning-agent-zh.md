@@ -112,6 +112,8 @@ readTime: "17 min"
 └──────────────────────────────────────────────────────────────┘
 ```
 
+> 實作注意：Pub/Sub 的 ack deadline 最長只有 600 秒。30–60 分鐘的任務若一直不 ack，訊息會被重新投遞給其他 Worker，造成重複執行。做法有二：用 client library 的 lease management 持續延長 deadline，或收到訊息後先把任務寫進 State Store、立即 ack，之後的存活與重試改由心跳與 Checkpoint 負責；也可改用 Cloud Run Jobs、Workflows 這類本來就支援長時間執行的服務。
+
 ---
 
 ## 三、Checkpoint 斷點續傳設計

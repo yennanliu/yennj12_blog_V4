@@ -263,13 +263,17 @@ const target = new applicationautoscaling.ScalableTarget(this, 'EpScaling', {
   serviceNamespace: applicationautoscaling.ServiceNamespace.SAGEMAKER,
   resourceId: `endpoint/${endpoint.attrEndpointName}/variant/v1`,
   scalableDimension: 'sagemaker:variant:DesiredInstanceCount',
-  minCapacity: 2, maxCapacity: 20,
+  minCapacity: 2, maxCapacity: 30,
 });
 target.scaleToTrackMetric('InvocationScaling', {
   predefinedMetric: applicationautoscaling.PredefinedMetric.SAGEMAKER_VARIANT_INVOCATIONS_PER_INSTANCE,
-  targetValue: 750,
+  // 注意:InvocationsPerInstance 是「每分鐘」指標。24,000/分 ≈ 400 req/s/台,
+  // 尖峰 1 萬 QPS ≈ 25 台(maxCapacity 30 留餘裕)。單台能扛多少要以壓測為準。
+  targetValue: 24000,
 });
 ```
+
+> `SAGEMAKER_VARIANT_INVOCATIONS_PER_INSTANCE` 以**每分鐘**計算:若把 `targetValue` 設成 750,每台只承接約 12.5 req/s,1 萬 QPS 要約 800 台。所以目標值必須由「尖峰 QPS ÷ 單台壓測吞吐」反推,再搭配 `maxCapacity`。
 
 > A/B 測試就靠這裡:在 `productionVariants` 放兩個 variant(v1 / v2),用 `initialVariantWeight` 分流量(如 90/10),SageMaker 幫你把請求按權重分配。要回滾就把權重調回去,秒級生效,不用重新部署。
 
@@ -363,14 +367,16 @@ export const handler = async (event: any) => {
 
 以「日活 100 萬、尖峰 1 萬 QPS」估算(概略):
 
+> us-east-1 公開定價概估(撰文時),未計免費額度,實際以帳單為準;單台吞吐假設約 400 req/s,需以壓測校正。
+
 | 項目 | 用量 | 概略月費 |
 |------|------|---------|
-| SageMaker Endpoint | ml.c6i.xlarge × 平均 6 台(2–20 自動擴縮) | **~$1,500–2,000**(常駐大戶) |
+| SageMaker Endpoint | ml.c6i.xlarge × 平均 6 台(2–30 自動擴縮) | **~$1,500–2,000**(常駐大戶) |
 | Kinesis On-Demand | 每日數千萬事件 | ~$300–600 |
 | Feature Store 線上讀寫 | 高頻讀寫 | ~$400–800 |
 | DynamoDB | 召回查詢高併發 | ~$500–1,000 |
-| Lambda / API Gateway | 高 QPS | ~$500 |
-| **合計** | | **~$3,200–4,900 / 月** |
+| Lambda / API Gateway | 假設每人每日 ~20 次請求 ≈ 每月 6 億次;HTTP API ~$600 + Lambda ~$300–400(若用 REST API,單價約 3.5 倍,可達 ~$2,000 以上) | ~$900–1,000 |
+| **合計** | | **~$3,600–5,400 / 月** |
 
 **成本洞察**:推薦系統的成本結構跟前兩篇又不同——**它是「常駐運算主導」**(SageMaker Endpoint 與 DynamoDB 容量)。因為要求 P99 < 100ms,你不能像 RAG 那樣「零流量零成本」,必須養著常駐機器。優化方向:
 
@@ -395,7 +401,7 @@ export const handler = async (event: any) => {
 
 1. **Training-serving skew**:離線訓練用 pandas 算特徵、線上用 Lambda 算特徵,兩套邏輯不知不覺就分岔了。**唯一解是共用同一份特徵定義**(Feature Store 的意義),或至少共用同一份特徵計算程式碼。
 2. **冷啟動沒 fallback**:新用戶查不到特徵,Lambda 直接報錯或回空清單。一定要有規則式 fallback 分支。
-3. **Endpoint 冷啟動/擴縮跟不上**:尖峰來得比擴縮快,前幾分鐘延遲爆高。用 provisioned capacity 或 predictive scaling 預熱。
+3. **Endpoint 冷啟動/擴縮跟不上**:尖峰來得比擴縮快,前幾分鐘延遲爆高。用 provisioned capacity 或 predictive scaling 預熱。編排 Lambda 本身也在 P99 < 100ms 的路徑上,冷啟動可能就吃掉數百 ms,要搭配 provisioned concurrency。
 4. **候選集過期**:召回候選表如果是離線算的,商品下架了還在推。要設 TTL 並定期刷新。
 5. **A/B 測試沒有護欄**:新模型 variant 分了 10% 流量卻默默變差。一定要接 CloudWatch alarm 監控每個 variant 的線上指標,劣化自動調回權重。
 

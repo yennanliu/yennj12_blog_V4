@@ -14,7 +14,7 @@ readTime: "22 min"
 > 前者是玩具,後者是可以接進整個系統的基礎設施。
 > 這一篇,我們把那道 HTTP 門推開。
 
-在 [Part 1](../ollama-on-mac-part1-installation-zh/) 我們裝好了 Ollama、跑起第一個模型;[Part 2](../ollama-on-mac-part2-public-models-zh/) 我們把公開模型全覽過一遍、學會怎麼選型。到這裡為止,你都還停留在 `ollama run` 這個「門面」。
+在 [Part 1](/posts/ollama-on-mac-part1-installation-zh/) 我們裝好了 Ollama、跑起第一個模型;[Part 2](/posts/ollama-on-mac-part2-public-models-zh/) 我們把公開模型全覽過一遍、學會怎麼選型。到這裡為止,你都還停留在 `ollama run` 這個「門面」。
 
 但 `ollama run` 只是一個 CLI 包裝,它底下真正在做事的,是一個 HTTP 伺服器。**只要你懂 REST API 與 Modelfile,你就能把 Ollama 從一個聊天玩具,升級成一個可以被任何程式語言呼叫、可以客製 persona、可以輸出結構化 JSON 的本機推論引擎。** 這一篇是整個系列裡最偏「參考手冊」的一篇,建議收藏後隨查隨用。
 
@@ -247,7 +247,7 @@ curl http://localhost:11434/api/chat -d '{
 
 **簡單原則:新專案一律用 `/api/chat`。** 它更通用、更貼近其他主流 API(如 OpenAI 的 chat completions),未來要加工具呼叫、視覺都不用改架構。`/api/generate` 留給那些「一問一答、不需要記憶」的純函式型任務。
 
-視覺與工具的預覽——`messages` 支援 `"images": [base64...]` 做圖片理解,以及 `"tools": [...]` 做函式呼叫——完整內容我們留到 [Part 5](../ollama-on-mac-part5-advanced-zh/)。
+視覺與工具的預覽——`messages` 支援 `"images": [base64...]` 做圖片理解,以及 `"tools": [...]` 做函式呼叫——完整內容我們留到 [Part 5](/posts/ollama-on-mac-part5-advanced-zh/)。
 
 ---
 
@@ -466,9 +466,11 @@ curl -X DELETE http://localhost:11434/api/delete -d '{"model": "qwen2.5:7b"}'
 | 值 | 意義 | 適用場景 |
 |------|------|----------|
 | `"5m"`(預設) | 閒置 5 分鐘後卸載 | 一般互動使用 |
-| `"0"` | 用完立刻卸載 | 記憶體極吃緊、跑完一次就好 |
-| `"-1"` | 永遠不卸載 | 常駐服務、要求低延遲 |
+| `0` | 用完立刻卸載 | 記憶體極吃緊、跑完一次就好 |
+| `-1` | 永遠不卸載 | 常駐服務、要求低延遲 |
 | `"10m"` / `"1h"` | 自訂時間 | 依你的流量調 |
+
+> 注意型別:字串會被當成 Go duration 解析,必須帶單位(`"30m"`、`"-1m"`);`-1`、`0` 這類「不帶單位」的值請用數字,寫成字串 `"-1"` 會解析失敗。
 
 ```bash
 # 這次請求後保留 30 分鐘
@@ -480,10 +482,10 @@ curl http://localhost:11434/api/chat -d '{
 }'
 
 # 只想預熱(載入模型但不生成):送空 prompt
-curl http://localhost:11434/api/generate -d '{"model": "llama3.2", "keep_alive": "-1"}'
+curl http://localhost:11434/api/generate -d '{"model": "llama3.2", "keep_alive": -1}'
 
 # 立刻卸載,釋放記憶體
-curl http://localhost:11434/api/generate -d '{"model": "llama3.2", "keep_alive": "0"}'
+curl http://localhost:11434/api/generate -d '{"model": "llama3.2", "keep_alive": 0}'
 ```
 
 ### 8.2 載入 → 快取 → 卸載 時間線
@@ -507,7 +509,7 @@ curl http://localhost:11434/api/generate -d '{"model": "llama3.2", "keep_alive":
 **實務建議:**
 
 - **開發時**:預設 `5m` 就好。
-- **常駐 API 服務**:把 `OLLAMA_KEEP_ALIVE=-1`(或每次請求帶 `keep_alive:"-1"`),避免使用者遇到「第一個請求特別慢」。代價是模型一直佔著記憶體。
+- **常駐 API 服務**:把 `OLLAMA_KEEP_ALIVE=-1`(或每次請求帶 `"keep_alive": -1`),避免使用者遇到「第一個請求特別慢」。代價是模型一直佔著記憶體。
 - **記憶體吃緊(16GB Mac 想同時開別的東西)**:縮短到 `"1m"` 或跑完設 `"0"`。
 - **多模型輪流用**:配合 `OLLAMA_MAX_LOADED_MODELS`(第九節)控制同時載入幾個。
 
@@ -677,7 +679,7 @@ ollama serve
 
 ### 10.4 安全提醒
 
-> **⚠️ `OLLAMA_HOST=0.0.0.0` 會把你的 Ollama 伺服器對整個網路開放,而 Ollama 沒有內建任何身分驗證(no auth)。** 任何能連到這個埠的人都能用你的模型、甚至刪除你的模型。**絕對不要**直接把 `0.0.0.0:11434` 暴露到公網。要跨網路使用,請放在反向代理(如 Nginx + 驗證)或 SSH 通道後面。這個主題我們在 [Part 5](../ollama-on-mac-part5-advanced-zh/) 的「多模型服務與進階實踐」會完整處理。
+> **⚠️ `OLLAMA_HOST=0.0.0.0` 會把你的 Ollama 伺服器對整個網路開放,而 Ollama 沒有內建任何身分驗證(no auth)。** 任何能連到這個埠的人都能用你的模型、甚至刪除你的模型。**絕對不要**直接把 `0.0.0.0:11434` 暴露到公網。要跨網路使用,請放在反向代理(如 Nginx + 驗證)或 SSH 通道後面。這個主題我們在 [Part 5](/posts/ollama-on-mac-part5-advanced-zh/) 的「多模型服務與進階實踐」會完整處理。
 
 ---
 
@@ -693,17 +695,17 @@ ollama serve
 - **Modelfile 打造專屬模型**:`FROM` + `SYSTEM` + `PARAMETER` + `MESSAGE`,把 persona 與參數烤進模型。
 - **環境變數調伺服器**:改儲存位置、開 LAN、調 keep-alive/並行,並牢記 `0.0.0.0` 無驗證的風險。
 
-現在你手上有一台可程式化呼叫、可客製、可輸出結構化資料的本機 LLM 伺服器。**[Part 4 — 與應用整合](../ollama-on-mac-part4-app-integration-zh/)** 就要把這些 API 接進真實應用:Python(含 OpenAI 相容介面)、Node.js、串接 LangChain,以及用 `/api/embed` 做 embeddings 與簡易 RAG。門已經推開,接下來我們走進去蓋東西。
+現在你手上有一台可程式化呼叫、可客製、可輸出結構化資料的本機 LLM 伺服器。**[Part 4 — 與應用整合](/posts/ollama-on-mac-part4-app-integration-zh/)** 就要把這些 API 接進真實應用:Python(含 OpenAI 相容介面)、Node.js、串接 LangChain,以及用 `/api/embed` 做 embeddings 與簡易 RAG。門已經推開,接下來我們走進去蓋東西。
 
 ---
 
 ## 系列導覽
 
-- [Part 1 — 安裝與第一個本地模型](../ollama-on-mac-part1-installation-zh/)
-- [Part 2 — 公開模型全覽與選型指南](../ollama-on-mac-part2-public-models-zh/)
+- [Part 1 — 安裝與第一個本地模型](/posts/ollama-on-mac-part1-installation-zh/)
+- [Part 2 — 公開模型全覽與選型指南](/posts/ollama-on-mac-part2-public-models-zh/)
 - **Part 3 — REST API 與自訂 Modelfile(本篇)**
-- [Part 4 — 與應用整合](../ollama-on-mac-part4-app-integration-zh/)
-- [Part 5 — 工具呼叫、多模型服務與進階實踐](../ollama-on-mac-part5-advanced-zh/)
+- [Part 4 — 與應用整合](/posts/ollama-on-mac-part4-app-integration-zh/)
+- [Part 5 — 工具呼叫、多模型服務與進階實踐](/posts/ollama-on-mac-part5-advanced-zh/)
 
 ## 參考連結
 

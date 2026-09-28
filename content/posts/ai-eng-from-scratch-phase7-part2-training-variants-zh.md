@@ -269,15 +269,15 @@ BF16 與 FP32 有相同的指數範圍（8 bit exponent），幾乎不會 overfl
 
 **A100 BF16 vs FP32 吞吐量**：BF16 理論峰值 312 TFLOPS，FP32 僅 19.5 TFLOPS，約 16× 差距（實際有記憶體頻寬瓶頸，通常 3–6×）。
 
-### 4.3 FP8 訓練（H100 Only）
+### 4.3 FP8 訓練（Hopper 世代起）
 
-H100 的 Transformer Engine 支援 FP8 矩陣乘：
+H100 的 Transformer Engine 支援 FP8 矩陣乘（Blackwell 世代的 B200/GB200 進一步支援 MXFP8 與 FP4；DeepSeek-V3 已示範在大規模預訓練中使用 FP8）：
 
 - **前向計算**：E4M3（較高精度，保留特徵細節）
 - **梯度計算**：E5M2（較大範圍，容納梯度 spike）
 - **優化器狀態**：BF16 或 FP32
 
-**實測收益**：相比 BF16，FP8 訓練吞吐量提升約 30–40%，但需要 per-tensor 動態 scale 管理，工程複雜度上升。精度損失通常 < 0.1%（perplexity 差異）。
+**典型收益（概略值，依模型與框架而異）**：相比 BF16，FP8 訓練吞吐量提升約 30–40%，但需要 per-tensor 動態 scale 管理，工程複雜度上升。精度損失通常 < 0.1%（perplexity 差異）。
 
 **選型建議**：
 
@@ -285,8 +285,8 @@ H100 的 Transformer Engine 支援 FP8 矩陣乘：
 |------|---------|------|
 | V100 / T4 | FP16 + loss scaling | 無 BF16 硬體支援 |
 | A100 / A6000 | BF16 | 無 overflow 風險，硬體原生支援 |
-| H100 / H200 | BF16 前向 + FP8 矩陣乘 | 最大吞吐量 |
-| AMD MI300X | BF16 | ROCm FP8 支援尚未成熟（2025） |
+| H100 / H200 / B200 | BF16 前向 + FP8 矩陣乘（Blackwell 可評估 MXFP8） | 最大吞吐量 |
+| AMD MI300X | BF16 | 硬體支援 FP8，但需先確認所用框架/ROCm 版本的 FP8 訓練支援度 |
 
 ---
 
@@ -417,6 +417,8 @@ P_i = router 對 Expert i 的平均 softmax 機率
 ```
 
 若所有 Expert 負載均等，L_aux 最小化。若某個 Expert 過載，f_i × P_i 乘積增大，促使 router 重新分配。
+
+> Mixtral 式的「少量大 Expert + auxiliary loss」已不是唯一做法：DeepSeekMoE 改用細粒度 Expert（切得更小、每 token 啟用更多個）加上常駐的 shared expert；DeepSeek-V3 更採用 auxiliary-loss-free 負載平衡（對每個 Expert 的 routing 分數加上動態調整的 bias），避免 aux loss 干擾主任務。
 
 **Expert Parallelism（EP）**：
 
@@ -571,7 +573,7 @@ Mamba 用 Selective State Space Model 取代 attention：
 | BF16 + FP8 + ZeRO-3（H100） | 80 hrs | $12K | 8.4 | H100 最佳 |
 | MoE（46.7B 參數，等效 12B）| 220 hrs | $27K | 7.8 | 同預算更低 PPL |
 
-*以 A100 80GB $3/hr，H100 $6/hr 估算。
+*以 A100 80GB $3/hr，H100 $6/hr 估算；本表為示意估算，非實測數據。
 
 ### 9.2 架構選型對下游任務精度的影響
 

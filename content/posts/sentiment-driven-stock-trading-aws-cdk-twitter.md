@@ -37,12 +37,12 @@ X.com (formerly Twitter) provides unparalleled real-time market sentiment data:
 {
   "tweet_id": "1234567890",
   "author": {
-    "username": "elonmusk",
-    "followers": 150000000,
+    "username": "example_ev_analyst",
+    "followers": 1500000,
     "verified": true,
     "influence_score": 0.98
   },
-  "text": "$TSLA production numbers exceeded expectations. Exciting times ahead!",
+  "text": "$TSLA production numbers exceeded expectations. Exciting times ahead! (fictional example post)",
   "mentions": ["TSLA"],
   "timestamp": "2026-01-24T09:45:00Z",
   "engagement": {
@@ -167,7 +167,7 @@ Stock-specific configurations with sentiment thresholds and position limits:
       "name": "Tesla Inc.",
       "sentiment_threshold": 0.75,
       "max_position": 10000,
-      "key_influencers": ["elonmusk", "teslarati", "WholeMarsBlog"],
+      "key_influencers": ["example_account_1", "example_account_2"],
       "keywords": ["Tesla", "TSLA", "Model", "FSD", "Cybertruck"],
       "trading_enabled": true
     },
@@ -632,6 +632,8 @@ export class SentimentAnalysisConstruct extends Construct {
       environment: {
         SENTIMENT_TABLE: this.sentimentTable.tableName,
         ENABLED_MODELS: JSON.stringify(props.enabledModels),
+        // Claude 3 Sonnet (20240229) is retired on Bedrock; replace with a current
+        // Claude model ID (or inference profile) listed in your Bedrock console
         BEDROCK_MODEL_ID: 'anthropic.claude-3-sonnet-20240229-v1:0',
       },
       reservedConcurrentExecutions: 10,  // Limit concurrent executions
@@ -1607,7 +1609,7 @@ new MonitoringConstruct(this, 'Monitoring', {
 - **Lambda Memory**: Right-size sentiment analysis functions (3GB for NLP)
 - **Kinesis Shards**: Start with 2 shards, scale based on tweet volume
 - **DynamoDB**: Use on-demand billing for unpredictable workloads
-- **Reserved Capacity**: Consider RI for consistent Alpaca API usage
+- **Data Costs**: Budget for the paid X API tier needed for real-time filtered-stream access; it can dominate total cost, and third-party APIs such as Alpaca cannot be reserved like EC2 capacity
 
 ## Conclusion
 

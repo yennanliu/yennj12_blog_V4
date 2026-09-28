@@ -21,7 +21,7 @@ readTime: "16 min"
 每次呼叫 LLM，你送進去的所有 token 都要過一次 attention 計算。這意味著：
 
 - **成本**：input token 按量計費，context 越長越貴
-- **延遲**：attention 複雜度是 O(n²)，context 長度翻倍、延遲接近翻兩倍
+- **延遲**：attention 複雜度是 O(n²)，context 越長，prefill（處理輸入）的時間成長得比線性更快；但使用者感受到的總延遲多半由輸出 token 數主導，所以 context 翻倍不代表整體延遲翻倍，主要拉長的是首字延遲（TTFT）
 - **品質**：「Lost-in-the-Middle」效應——LLM 對中段資訊的注意力顯著弱化
 - **爆炸**：超過 context window 上限就直接報錯，Agent 中斷
 
@@ -326,6 +326,8 @@ Token 使用監控架構：
 | Gemini 2.0 Flash | 1M | 700K | 同上 |
 | GPT-4o | 128K | 100K | output reserve |
 | Claude 3.5 Sonnet | 200K | 150K | 同上 |
+
+> 上表模型與 context 上限以 2025 年撰文時為準，其中部分模型已退役，請以各家官方最新文件為準；重點是「1M 級 vs 128K 級」的量級差異。
 
 「有 1M context 所以不用管理」——這是成本陷阱，不是工程思維。
 

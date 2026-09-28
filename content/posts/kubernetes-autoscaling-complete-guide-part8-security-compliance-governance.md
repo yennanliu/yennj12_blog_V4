@@ -772,7 +772,7 @@ metadata:
 
 ---
 # Karpenter NodePool for tenant
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: tenant-a-pool
@@ -793,6 +793,8 @@ spec:
         effect: NoSchedule
 
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: tenant-a-nodes
 
   limits:
@@ -1009,7 +1011,7 @@ metadata:
 
 ---
 # 2. Node pool with encryption
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: hipaa-nodes
@@ -1022,15 +1024,19 @@ spec:
         values: ["hipaa"]
 
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: hipaa-encrypted
 
 ---
-apiVersion: karpenter.k8s.aws/v1beta1
+apiVersion: karpenter.k8s.aws/v1
 kind: EC2NodeClass
 metadata:
   name: hipaa-encrypted
 spec:
-  amiFamily: AL2
+  # v1: amiSelectorTerms is required
+  amiSelectorTerms:
+  - alias: al2023@latest
   role: KarpenterNodeRole-hipaa
 
   blockDeviceMappings:

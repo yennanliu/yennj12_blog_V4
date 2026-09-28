@@ -42,6 +42,8 @@ graph TD
 
 **1. Enum Singleton (Recommended):**
 
+> **Caution:** The enum-singleton *mechanism* is the recommended one, but do not copy the *example* as-is. A single shared `java.sql.Connection` is not safe to use from many threads at once, and it will not recover when the database drops the connection. Real code should hold a pooled `DataSource` (e.g. HikariCP) and borrow a connection per unit of work. In Spring, the container's default singleton scope replaces most hand-written singletons like this one.
+
 ```java
 public enum DatabaseManager {
     INSTANCE;

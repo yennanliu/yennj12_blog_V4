@@ -485,7 +485,6 @@ class CodeReviewAgent:
 
 ```python
 from langdetect import detect
-from langchain.chains import LLMChain
 
 @dataclass
 class MultilingualTicketState:

@@ -582,7 +582,9 @@ public class VolatileExample {
             int localCounter = 0;
             while (running) {  // volatile read ensures visibility
                 localCounter++;
-                counter++;     // volatile write ensures visibility
+                counter++;     // volatile write ensures visibility, but NOT atomicity:
+                               // counter++ is read-modify-write, so with 2+ writer threads
+                               // increments are lost. Use AtomicInteger / LongAdder for that.
 
                 if (localCounter % 1000000 == 0) {
                     System.out.println("Worker thread running, counter: " + counter);
@@ -1275,6 +1277,8 @@ public class ConcurrencyTestingExample {
 ## 📊 Performance Analysis Tools
 
 ### 🔍 Benchmarking Concurrent Operations
+
+> **Warning:** This code only illustrates how to exercise each mechanism. Timing with `System.nanoTime()` around a single run, with no JVM warm-up and inside a Spring bean, produces unreliable numbers: JIT compilation, dead-code elimination and GC dominate the result. For real measurements use [JMH](https://github.com/openjdk/jmh) (`@Benchmark`, `@Warmup`, `@Fork`, `@Threads`).
 
 ```java
 @Component

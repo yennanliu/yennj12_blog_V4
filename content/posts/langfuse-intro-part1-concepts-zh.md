@@ -93,7 +93,7 @@ readTime: "14 min"
 - **建立在 OpenTelemetry 標準上**:降低 vendor lock-in,跟既有的 observability 生態相容。
 - **100+ 整合**:OpenAI、Anthropic、LangChain、LlamaIndex、Vercel AI SDK……幾乎所有主流框架都能接。
 
-> 本系列前一篇講過 [chatPDF 如何整合 Langfuse 做追蹤](../chatpdf-rag-optimization-part3-observability-eval-zh/),那是「實際接上去」的視角;這個系列則從零開始,把 Langfuse 本身講清楚。
+> 本系列前一篇講過 [chatPDF 如何整合 Langfuse 做追蹤](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/),那是「實際接上去」的視角;這個系列則從零開始,把 Langfuse 本身講清楚。
 
 ---
 
@@ -213,16 +213,16 @@ Score 從哪來?三個來源:**LLM-as-a-Judge**(自動)、**人工標註**(annot
 
 > 一句話總結:Langfuse 做的事,是把 LLM 應用從一個「黑箱」,變成一個「你看得見內部、量得出好壞、改得有依據」的系統。
 
-下一篇([Part 2](../langfuse-intro-part2-tracing-sdk-zh/))進入實戰:用三行程式碼把你的應用接上 Langfuse,看第一個 trace 出現在儀表板上。
+下一篇([Part 2](/posts/langfuse-intro-part2-tracing-sdk-zh/))進入實戰:用三行程式碼把你的應用接上 Langfuse,看第一個 trace 出現在儀表板上。
 
 ---
 
 **系列導覽**
 
 - Part 1 — 核心概念與資料模型(本篇)
-- [Part 2 — SDK 整合與 Tracing 實戰](../langfuse-intro-part2-tracing-sdk-zh/)
-- [Part 3 — LLM 評估:Score、LLM-as-a-Judge、Dataset](../langfuse-intro-part3-evaluation-zh/)
-- [Part 4 — 監控與 Prompt 管理](../langfuse-intro-part4-monitoring-prompt-management-zh/)
+- [Part 2 — SDK 整合與 Tracing 實戰](/posts/langfuse-intro-part2-tracing-sdk-zh/)
+- [Part 3 — LLM 評估:Score、LLM-as-a-Judge、Dataset](/posts/langfuse-intro-part3-evaluation-zh/)
+- [Part 4 — 監控與 Prompt 管理](/posts/langfuse-intro-part4-monitoring-prompt-management-zh/)
 
 **參考連結**
 

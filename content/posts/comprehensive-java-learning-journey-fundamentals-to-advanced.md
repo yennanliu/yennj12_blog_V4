@@ -1099,9 +1099,9 @@ This learning journey demonstrates that modern Java development requires underst
 The Java ecosystem continues evolving, with new features and frameworks enhancing developer productivity:
 
 **Language Evolution**:
-- **Project Loom**: Virtual threads for massive concurrency improvements
-- **Project Panama**: Enhanced foreign function and memory APIs
-- **Pattern Matching**: Advanced pattern matching and switch expressions
+- **Project Loom**: Virtual threads for massive concurrency improvements (no longer emerging: GA since JDK 21, September 2023)
+- **Project Panama**: Foreign Function & Memory API (final since JDK 22)
+- **Pattern Matching**: Pattern matching for `switch` and record patterns (final since JDK 21)
 - **Value Types**: Project Valhalla's value types for better memory efficiency
 
 **Framework Innovation**:

@@ -186,7 +186,7 @@ readTime: "26 min"
 - max_retries=3 護欄 + Dead Letter State（防無限循環）
 - Fallback Matrix（三層：主 API → 備用 API → 靜態快取）
 - Prometheus + Grafana 面板：即時追蹤 retry_count、validation_error_rate
-- MTTD：< 1 分鐘（自動偵測）；MTTR < 5 分鐘（自動修復率 ~78%）
+- MTTD：< 1 分鐘（自動偵測）；MTTR < 5 分鐘（自動修復率 ~72%，示意估算）
 
 **代價**：月費 ~$380（Critic Agent LLM 呼叫 + 監控基礎設施）
 
@@ -637,7 +637,7 @@ Trace: task_id=ORD-2026-00431
 | **Circuit Breaker（Redis 共享）** vs 本地狀態 | 多個 Worker 共享 CB 狀態，一個 Worker 發現 API 失敗立即保護所有 Worker | 本地 CB 狀態無法跨 Pod 共享，每個 Pod 都要踩一遍失敗才能觸發保護 | 單一 Worker / 單機部署時，本地 CB 足夠，省去 Redis 依賴 |
 | **max_retries=3 護欄** vs 無限重試 | 防止 Agent 陷入修復循環消耗 LLM Token 與 API 配額；最差情況下成本可預測 | 無限重試可能在 API 端修復前持續消耗，每次 Critic Agent 呼叫約 $0.008，無限重試 = 無限燒錢 | 若任務極其重要（如金融交割），可考慮 max_retries=10 但加上費用上限熔斷 |
 | **Cloud Pub/Sub 通知** vs 直接 Slack API 呼叫 | 解耦通知與業務邏輯；Pub/Sub 有持久化保證，即使 Slack 暫時無法連線也不丟失事件 | 直接呼叫 Slack API 若失敗則通知丟失；且 Pub/Sub 可扇出至多個下游（PagerDuty、Email、JIRA 同時觸發） | 若系統規模小（< 100 事件/天），直接 Slack 呼叫複雜度更低 |
-| **gemini-1.5-flash for Critic** vs GPT-4 | Critic Agent 任務結構化明確，Flash 延遲 < 800ms，成本 $0.002/次；GPT-4 需要 3–5 秒，$0.03/次 | GPT-4 在非結構化推理上更強，但修復任務有固定 Prompt 範本，Flash 品質足夠（實測修復成功率 Flash 72% vs GPT-4 78%，差距 6%，但成本差 15 倍） | 若 Critic 需要處理極其複雜的參數重寫（如 GraphQL 查詢重構），換 claude-3-5-sonnet 或 GPT-4 |
+| **gemini-1.5-flash for Critic** vs GPT-4 | Critic Agent 任務結構化明確，Flash 延遲 < 800ms，成本 $0.002/次；GPT-4 需要 3–5 秒，$0.03/次 | GPT-4 在非結構化推理上更強，但修復任務有固定 Prompt 範本，Flash 品質足夠（示意估算：修復成功率 Flash 72% vs GPT-4 78%，差距 6 個百分點，但成本差 15 倍；模型與價格以 2025 年撰文時為準，請以官方最新文件為準） | 若 Critic 需要處理極其複雜的參數重寫（如 GraphQL 查詢重構），換 claude-3-5-sonnet 或 GPT-4 |
 
 ---
 
@@ -646,22 +646,24 @@ Trace: task_id=ORD-2026-00431
 | 指標 | 導入前（純 try-catch） | 導入後（Self-Healing Graph） | 改善幅度 |
 |------|----------------------|------------------------------|---------|
 | **軟故障偵測率** | 0%（靜默失敗） | 94%（Pydantic 攔截 + Validator） | +94 pp |
-| **自動修復率**（無需人工） | 0% | 78%（Critic Agent 修復成功） | +78 pp |
+| **自動修復率**（無需人工） | 0% | 72%（Critic Agent 修復成功，採用 Flash） | +72 pp |
 | **MTTD**（平均偵測時間） | 2–4 小時（查報表才發現） | < 1 分鐘（即時 Validator） | -99% |
 | **MTTR**（平均修復時間） | 45 分鐘（人工排查 + 重跑） | 2.3 分鐘（自動修復），27 分鐘（人工介入） | -95% / -40% |
 | **資料庫污染筆數**（事件期間） | ~28,000 筆（一夜未發現） | 0 筆（Validator 在寫入前攔截） | -100% |
 | **Critic Agent 平均延遲** | N/A | 1.8 秒（P50），3.2 秒（P99） | 新增 |
 | **月額外成本** | $0 | +$180（LLM 呼叫 + Redis + Pub/Sub） | +$180/月 |
-| **Dead Letter 事件率** | ~100%（所有錯誤都上報） | 22%（其餘被自動修復） | -78% |
+| **Dead Letter 事件率** | ~100%（所有錯誤都上報） | 28%（其餘被自動修復） | -72% |
 | **On-call 警報量**（月） | 340 次 | 75 次（其中 22% 為真正需人工介入） | -78% |
 | **API 切換延遲**（CB 觸發） | 無（只有人工操作） | < 50ms（CB 狀態讀取 Redis） | 新增能力 |
 | **P99 端對端延遲**（含修復） | 230ms（無修復）/ 無限（掛掉） | 230ms（正常）/ ~3.5 秒（含 Critic） | SLA 可預測 |
+
+> 以上為示意估算，非實測結果。
 
 ---
 
 ## 十、面試答題要點
 
-> *「我會在 LangGraph 中引入 Compiler-Validator Pattern：每個工具輸出都綁定一個 Pydantic BaseModel，Validator Node 做強型別硬校驗，成功走下一節點，失敗導向 Critic Agent。Critic Agent 拿到三份上下文——原始意圖、失敗日誌、備用工具清單——重新推理修正參數或切換工具，修正後回到 Worker 重試。State 機器設定 max_retries=3 護欄防無限循環，這一層能覆蓋約 78% 的自動修復場景。底層我還會部署 Circuit Breaker（Redis 共享狀態），連續 5 次失敗自動隔離問題 API，防止雪崩。若 3 次修復全部失敗，Dead Letter State 發布事件到 Cloud Pub/Sub，依訂單金額決定升級至 Slack 或 PagerDuty。這套架構的核心價值是：把「偵測」和「推理」分離，讓反思循環成為架構一等公民，而不是在業務邏輯裡散落一堆 try-catch，實測將 MTTD 從 4 小時降至 1 分鐘，資料庫污染事件歸零。」*
+> *「我會在 LangGraph 中引入 Compiler-Validator Pattern：每個工具輸出都綁定一個 Pydantic BaseModel，Validator Node 做強型別硬校驗，成功走下一節點，失敗導向 Critic Agent。Critic Agent 拿到三份上下文——原始意圖、失敗日誌、備用工具清單——重新推理修正參數或切換工具，修正後回到 Worker 重試。State 機器設定 max_retries=3 護欄防無限循環，這一層預估能覆蓋約七成的自動修復場景（示意估算）。底層我還會部署 Circuit Breaker（Redis 共享狀態），連續 5 次失敗自動隔離問題 API，防止雪崩。若 3 次修復全部失敗，Dead Letter State 發布事件到 Cloud Pub/Sub，依訂單金額決定升級至 Slack 或 PagerDuty。這套架構的核心價值是：把「偵測」和「推理」分離，讓反思循環成為架構一等公民，而不是在業務邏輯裡散落一堆 try-catch，預期可將 MTTD 從數小時降到分鐘級，並在寫入前攔截資料庫污染。」*
 
 ---
 

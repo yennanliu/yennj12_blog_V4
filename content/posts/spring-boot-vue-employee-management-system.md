@@ -1732,9 +1732,11 @@ public class CacheConfig {
 }
 ```
 
-## 💰 Cost Analysis & ROI Calculation
+## 💰 Cost Analysis
 
 ### 📊 Infrastructure Cost Breakdown
+
+*Rough estimates at on-demand pricing for a small deployment; check current AWS pricing for your region.*
 
 | Component | Monthly Cost | Yearly Cost | Scaling Factor |
 |-----------|-------------|-------------|----------------|
@@ -1744,28 +1746,6 @@ public class CacheConfig {
 | **S3 Storage (Documents)** | $10 | $120 | Grows with file uploads |
 | **CloudWatch Monitoring** | $8 | $96 | Log volume dependent |
 | **Total Infrastructure** | **$111** | **$1,332** | **~25% yearly growth** |
-
-### 💼 Business Value & ROI
-
-**Operational Efficiency Gains**:
-- **HR Process Time Reduction**: 60% decrease in manual data entry and paperwork
-- **Employee Self-Service**: 40% reduction in HR helpdesk tickets
-- **Reporting Automation**: 80% faster generation of compliance and management reports
-- **Onboarding Efficiency**: 50% faster new employee setup and orientation
-
-**Cost Savings Analysis**:
-```
-Annual HR Staff Time Savings: 520 hours
-Average HR Staff Cost: $65/hour
-Direct Labor Savings: $33,800/year
-
-Reduced Paper/Manual Processes: $5,200/year
-Compliance & Audit Efficiency: $12,000/year
-
-Total Annual Savings: $51,000/year
-Infrastructure Cost: $1,332/year
-Net ROI: $49,668/year (3,700% return)
-```
 
 ## 🔮 Scalability & Future Evolution
 

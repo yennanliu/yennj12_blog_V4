@@ -445,8 +445,11 @@ ENV SAGEMAKER_PROGRAM=inference.py
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5m --retries=3 \
     CMD wget --quiet --tries=1 --spider http://localhost:8080/ping || exit 1
 
+# WARNING: this alone does not start an HTTP server; see the note below
 ENTRYPOINT ["python", "inference.py"]
 ```
+
+> ⚠️ **As written, this container will fail SageMaker's health check.** `inference.py` only defines SageMaker inference-toolkit handlers (`model_fn` / `input_fn` / `predict_fn` / `output_fn`). Running it with `python inference.py` defines those functions and exits, so nothing listens on port 8080 for `/ping` and `/invocations`. Either build `FROM` an AWS Hugging Face or PyTorch **inference** Deep Learning Container (which ships a model server that loads these handlers), or add a server yourself (for example install `sagemaker-inference` + `multi-model-server` and start it from a `serve` entrypoint). SageMaker also ignores Docker's `HEALTHCHECK`; it polls `/ping` itself.
 
 ## 🏗️ Step 3: CDK Stacks Implementation
 
@@ -538,6 +541,8 @@ export class SageMakerStack extends cdk.Stack {
     const sagemakerRole = new iam.Role(this, 'SageMakerExecutionRole', {
       assumedBy: new iam.ServicePrincipal('sagemaker.amazonaws.com'),
       managedPolicies: [
+        // Broad managed policy for brevity; scope this down (ECR pull, S3 model/output
+        // buckets, CloudWatch Logs) before calling it production-ready.
         iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSageMakerFullAccess'),
       ],
     });
@@ -584,12 +589,10 @@ export class SageMakerStack extends cdk.Stack {
             initialVariantWeight: 1.0,
           },
         ],
-        // Auto-scaling configuration
-        asyncInferenceConfig: {
-          outputConfig: {
-            s3OutputPath: `s3://${cdk.Aws.ACCOUNT_ID}-ml-inference-output`,
-          },
-        },
+        // Real-time endpoint: no asyncInferenceConfig here. Adding one makes the endpoint
+        // asynchronous, and the Lambda's synchronous InvokeEndpointCommand would be rejected
+        // (async endpoints are called with InvokeEndpointAsyncCommand and need an existing
+        // S3 output bucket). Auto-scaling is configured separately via Application Auto Scaling.
       }
     );
 
@@ -1222,8 +1225,12 @@ import { modelConfigs } from '../lib/config/model-config';
 const app = new cdk.App();
 const config = getAppConfig(app);
 
-// Shared resources
-const resultsBucket = new s3.Bucket(app, 'ResultsBucket', {
+// Shared resources live in their own stack: resources cannot be created directly under the App
+const sharedStack = new cdk.Stack(app, 'SharedResourcesStack', {
+  env: { account: config.account, region: config.region },
+});
+
+const resultsBucket = new s3.Bucket(sharedStack, 'ResultsBucket', {
   bucketName: `${config.account}-ml-inference-results`,
   removalPolicy: cdk.RemovalPolicy.DESTROY,
   autoDeleteObjects: true,
@@ -1235,7 +1242,7 @@ const resultsBucket = new s3.Bucket(app, 'ResultsBucket', {
   ],
 });
 
-const metadataTable = new dynamodb.Table(app, 'MetadataTable', {
+const metadataTable = new dynamodb.Table(sharedStack, 'MetadataTable', {
   tableName: 'ml-inference-jobs',
   partitionKey: { name: 'jobId', type: dynamodb.AttributeType.STRING },
   billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
@@ -1244,7 +1251,7 @@ const metadataTable = new dynamodb.Table(app, 'MetadataTable', {
   pointInTimeRecovery: true,
 });
 
-const ecrRepository = new ecr.Repository(app, 'ModelRepository', {
+const ecrRepository = new ecr.Repository(sharedStack, 'ModelRepository', {
   repositoryName: 'ml-inference-model',
   removalPolicy: cdk.RemovalPolicy.DESTROY,
   autoDeleteImages: true,
@@ -1454,16 +1461,19 @@ const lambdaAlarm = new cloudwatch.Alarm(this, 'LambdaErrorAlarm', {
 ### 🎯 Optimization Tips
 
 ```typescript
-// 1. Use Spot Instances for SageMaker (development)
-// Add to SageMaker endpoint config for non-production
+// 1. Right-size dev endpoints (Spot does NOT apply to real-time endpoints;
+//    managed spot is a training-job feature). For non-production, use a small
+//    instance, delete the endpoint when idle, or use an async endpoint that can
+//    scale to zero instances.
 productionVariants: [{
   // ... other config
   instanceType: 'ml.g4dn.xlarge',
   initialInstanceCount: 1,
-  // Enable managed spot training (not available for all instances)
 }]
 
 // 2. Implement caching in Lambda
+// Note: this Map lives per Lambda execution environment, so each concurrent instance
+// has its own cold cache. For a shared cache use ElastiCache or DynamoDB.
 const cache = new Map<string, any>();
 
 export const handler = async (event: any) => {
@@ -1601,7 +1611,7 @@ Deploying machine learning models to production requires careful consideration o
 This guide provided a complete solution for deploying Hugging Face models using SageMaker and Lambda, with:
 - Type-safe infrastructure code
 - Scalable architecture
-- Production-ready security
+- A security hardening checklist (scope down the SageMaker role before production)
 - Comprehensive monitoring
 - Cost optimization strategies
 

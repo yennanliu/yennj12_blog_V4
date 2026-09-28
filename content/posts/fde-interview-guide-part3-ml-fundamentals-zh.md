@@ -108,6 +108,8 @@ Positional Encoding 用週期函數（sin/cos）給每個位置一個唯一的�
 | BGE-M3（開源） | 1024 | 多語言、中文強 | 中文為主的知識庫 |
 | bge-large-zh（開源） | 1024 | 中文專用，效能極佳 | 純中文場景 |
 
+> 模型清單以 2025 年撰文時為準：Google 現行的通用 embedding 模型已是 `gemini-embedding-001`，`text-embedding-004` 屬上一代；實際選型請以官方文件與 MTEB 最新排名為準。
+
 **選型關鍵問題：**
 
 ```

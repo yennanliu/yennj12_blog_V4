@@ -30,7 +30,7 @@ series: ["ai-eng-from-scratch"]
 
 這不是一個玩具問題。企業內部知識庫是 RAG 應用最高頻、也最容易出錯的場景。文件格式雜亂、安全等級各異、查詢意圖模糊、幻覺率要求嚴格——每一個細節都可以把一個「能動的 demo」變成「生產事故」。
 
-我在 2025 年底實際交付了一個類似規模的系統（為了保密，以下數字略有調整，但技術決策完全真實）。這篇文章是那次交付的技術後記。
+本文以參考設計的形式呈現：規模與數字取自典型的企業知識庫情境，屬示意估算，而非某個真實專案的量測結果；重點在每個技術決策背後的取捨理由。
 
 ### 1.2 業務需求清單
 
@@ -167,7 +167,7 @@ series: ["ai-eng-from-scratch"]
 - Qdrant Cloud（替換 ChromaDB，原生 hybrid search 支援）
 - BM25 sparse vector（Qdrant 原生支援）
 - RRF fusion layer
-- `cross-encoder/ms-marco-MiniLM-L-6-v2`（re-ranking）
+- `cross-encoder/ms-marco-MiniLM-L-6-v2`（re-ranking；注意它是英文模型，中文語料應改用多語 reranker，見 §五註記）
 - RAGAS 評估框架 + 200 golden QA 資料集
 - Metadata payload filter（部門 + 安全等級）
 
@@ -482,11 +482,16 @@ int8 量化讓延遲降 27%，Recall 只差 2%，CP 值極高。
 │  │  TTFB: 800ms，total: 1.8s avg                               │  │
 │  └──────────────────────────────────────────────────────────────┘  │
 │                                                                    │
-│  總延遲（P95）：8ms(cache) + 45ms(vec) + 120ms(rerank)             │
-│               + 1800ms(LLM) + 網路 ≈ 2.9s ✓                      │
+│  檢索 45ms(BM25 8ms ‖ vec 45ms，並行取慢者) + 120ms(rerank)        │
+│  + 1800ms(LLM) ≈ 2.0s；HyDE 額外 LLM 呼叫 + 網路 ≈ 0.9s            │
+│  總延遲（P95）≈ 2.9s ✓                                             │
 │                                                                    │
 └────────────────────────────────────────────────────────────────────┘
 ```
+
+> **Reranker 註記：** `ms-marco-MiniLM-L-6-v2` 只以英文 MS MARCO 資料訓練，對以繁體中文為主的語料排序效果有限。中文或中英混合語料應改用多語 cross-encoder（例如 `BAAI/bge-reranker-v2-m3`）或託管的多語 rerank API。多語模型的參數量大得多，在 CPU 上的延遲會明顯高於上圖的 120ms，採用時要重新核算延遲預算（通常改用 GPU 部署）。
+>
+> **延遲預算註記：** HyDE 會在檢索前多一次 LLM 呼叫，是預處理階段最大的延遲來源；若延遲預算吃緊，可只對短查詢或低召回的查詢啟用 HyDE。
 
 ### 5.2 RRF 公式與 alpha 調參
 
@@ -726,7 +731,7 @@ def detect_embedding_drift(new_vectors, reference_vectors, threshold=0.05):
 | **Context Recall** | 61% | 89% | +46% | Hybrid search（BM25+Vector）+ Parent-child chunking |
 | **Answer Relevancy** | 0.72 | 0.91 | +26% | Reranking 篩掉不相關 chunks |
 | **Faithfulness** | 0.66 | 0.94 | +42% | Citation-grounded prompt + Context Precision 提升 |
-| **P95 延遲** | 8.2s | 2.9s | -65% | 串流輸出(-3s) + int8量化(-0.4s) + Redis cache(-1.5s on cache hits) |
+| **P95 延遲** | 8.2s | 2.9s | -65% | 串流輸出(-3s) + int8 量化與並行搜尋(-0.4s) + Redis cache(-1.5s on cache hits) |
 | **Cost/query** | $0.18 | $0.04 | -78% | Prompt caching + mini fallback + context 壓縮 |
 | **OCR 支援** | 無 | 有（2.1 pps） | N/A | OCRmyPDF + Celery async |
 | **可用性** | 無保證 | 99.5%（3-node Qdrant） | N/A | Cluster HA |
@@ -748,7 +753,7 @@ def detect_embedding_drift(new_vectors, reference_vectors, threshold=0.05):
 |----------|----------|
 | SSE Streaming（主觀感受，TTFB 800ms）| -3.0s（感知） |
 | Redis cache（45% hit，28ms 直接回傳） | -1.5s（加權平均） |
-| int8 量化（向量搜索 62ms → 45ms） | -0.17s |
+| int8 量化（向量搜索 62ms → 45ms） | -0.017s |
 | asyncio parallel search（BM25 ‖ Vector）| -0.38s |
 | GPT-4o-mini fallback（35% 查詢）| -0.5s（加權） |
 
@@ -756,8 +761,8 @@ def detect_embedding_drift(new_vectors, reference_vectors, threshold=0.05):
 
 ## 十、系列導航
 
-← [Phase 18 Part 2：LLM Observability — Tracing、Evaluation 與生產監控](../ai-eng-from-scratch-phase18-part2-llm-observability-zh) | [Phase 19 Part 2：Capstone — 多模態 RAG 與影像文件處理 →](../ai-eng-from-scratch-phase19-part2-multimodal-rag-zh)
+← [Phase 18 Part 2：AI 治理與倫理 — 工程師的責任邊界](/posts/ai-eng-from-scratch-phase18-part2-governance-zh/) | [Phase 19 Part 2：Capstone — 生產級 AI Agent 產品端對端實作 →](/posts/ai-eng-from-scratch-phase19-part2-capstone-agent-product-zh/)
 
 ---
 
-*本文是「AI 工程從零開始」系列的第 41 篇。所有數字均來自實際生產環境（部分細節為保護客戶隱私而調整）。如有任何問題，歡迎在評論區留言。*
+*本文是「AI 工程從零開始」系列的第 41 篇。文中數字為參考設計的示意估算，非實際生產數據。如有任何問題，歡迎在評論區留言。*

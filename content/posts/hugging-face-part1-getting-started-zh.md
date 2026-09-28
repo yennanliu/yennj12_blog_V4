@@ -146,7 +146,7 @@ Hub 免費提供的是**儲存與頻寬**（公開 repo 幾乎無上限），不
 
 ```bash
 # 基礎三件組（CPU 版本，先確認流程跑得通）
-pip install "transformers>=4.44" "huggingface_hub>=0.34" datasets
+pip install "transformers>=4.56" "huggingface_hub>=0.34" datasets   # 4.56 起以 dtype= 取代 torch_dtype=
 
 # PyTorch：務必依照你的 CUDA 版本安裝，不要盲目 pip install torch
 # CUDA 12.1 範例：
@@ -163,13 +163,13 @@ pip install peft trl gradio sentence-transformers
 
 ### 3.3 Step 3 — 登入
 
-`huggingface_hub` v0.34 之後提供了新的 `hf` CLI，舊的 `huggingface-cli` 仍可使用但已標記為過渡：
+`huggingface_hub` v0.34 之後提供了新的 `hf` CLI；舊的 `huggingface-cli` 在 0.x 後期已標記為過渡，並在 v1.0 正式移除：
 
 ```bash
 # 新版指令（推薦）
 hf auth login
 
-# 舊版指令（等價，仍可用）
+# 舊版指令（僅 huggingface_hub < 1.0 可用）
 huggingface-cli login
 
 # 確認身分
@@ -417,7 +417,7 @@ model_id = "uer/roberta-base-finetuned-jd-binary-chinese"
 tok = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForSequenceClassification.from_pretrained(
     model_id,
-    torch_dtype=torch.float16,
+    dtype=torch.float16,
     device_map="auto",
 )
 model.eval()
@@ -448,7 +448,7 @@ model_id = "Qwen/Qwen2.5-1.5B-Instruct"   # 1.5B，一般筆電也跑得動
 tok = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
-    torch_dtype=torch.bfloat16,
+    dtype=torch.bfloat16,
     device_map="auto",
 )
 
@@ -609,8 +609,8 @@ safetensors         純資料格式，無程式碼執行風險      .bin 是 pic
                     可用任何自訓模型                  自動享有供應商的最佳化
 ────────────────────────────────────────────────────────────────────────
 翻轉條件（成本交叉點）：
-  A10G 自架 ≈ $750/月，可服務約 3,000 萬 token/月
-  Serverless 約 $0.2–0.6 / 1M token
+  A10G 自架 ≈ $750/月，可服務約 3,000 萬 token/月（撰文時價格，以官方定價頁為準）
+  Serverless 約 $0.2–0.6 / 1M token（同上）
   → 每月 < 300 萬 token 時，API 明顯較便宜
   → 每月 > 2,000 萬 token 時，自架明顯較便宜
   → 中間灰色地帶：看你有沒有人力維運，通常「沒有」就選 API
@@ -651,7 +651,7 @@ device_map="auto"   自動跨多卡切分大模型             手動只能整�
 | # | 症狀 | 真正原因 | 解法 |
 |---|------|---------|------|
 | 1 | `OSError: ... is not a local folder` | repo 是 gated，或 token 沒權限 | 到網頁上同意授權 → `hf auth login` |
-| 2 | `CUDA out of memory` | 用 fp32 載入，或忘了 `torch.no_grad()` | 加 `torch_dtype=torch.bfloat16`、包 `no_grad` |
+| 2 | `CUDA out of memory` | 用 fp32 載入，或忘了 `torch.no_grad()` | 加 `dtype=torch.bfloat16`、包 `no_grad` |
 | 3 | 模型自問自答、生成假對話 | 沒用 `apply_chat_template` | 一律用 template，不手拼字串 |
 | 4 | 系統碟被塞爆 | 快取在 `~/.cache` | 設 `HF_HOME`，定期 `hf cache scan` |
 | 5 | 線上行為突然改變，程式碼卻沒動 | `revision="main"` 被上游更新 | 釘死 commit SHA |

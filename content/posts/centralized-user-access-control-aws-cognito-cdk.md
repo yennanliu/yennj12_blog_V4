@@ -781,8 +781,11 @@ export class CognitoStack extends cdk.Stack {
           })
         : cognito.UserPoolEmail.withCognito(),
 
-      // Advanced security
-      advancedSecurityMode: cognito.AdvancedSecurityMode.ENFORCED,
+      // Threat protection (formerly "advanced security"). advancedSecurityMode is
+      // deprecated since the Nov 2024 Lite / Essentials / Plus feature plans;
+      // full-function threat protection requires the Plus plan (priced per MAU).
+      featurePlan: cognito.FeaturePlan.PLUS,
+      standardThreatProtectionMode: cognito.StandardThreatProtectionMode.FULL_FUNCTION,
 
       // Deletion protection
       deletionProtection: props.environment === 'production',

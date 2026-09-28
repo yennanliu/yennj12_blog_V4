@@ -174,6 +174,8 @@ The foundation layer implements production-grade Kubernetes with enterprise feat
 ```typescript
 // Essential EKS cluster configuration
 const cluster = new eks.Cluster(this, 'EKSCluster', {
+  // 1.31 is in paid EKS extended support as of 2026; use the newest version your
+  // aws-cdk-lib supports (and its matching kubectl layer) for a new cluster
   version: eks.KubernetesVersion.V1_31,
   defaultCapacity: 0, // Use managed node groups
   vpc: vpc,
@@ -644,7 +646,7 @@ Building a production-ready Kubernetes platform requires careful orchestration o
 
 The integrated approach provides several key advantages:
 
-- **Operational Simplicity**: Managed control plane reduces operational overhead by 70%
+- **Operational Simplicity**: Managed control plane removes etcd and control-plane operations from your team
 - **Built-in Scalability**: Auto-scaling handles traffic growth from 10 to 10,000+ requests/second  
 - **Comprehensive Observability**: Full-stack monitoring enables proactive issue detection
 - **Cost Optimization**: Pay-per-use model scales costs with actual usage
@@ -654,14 +656,14 @@ The integrated approach provides several key advantages:
 
 The key decisions that enable production success:
 
-1. **EKS over Self-Managed**: 60% reduction in operational overhead
+1. **EKS over Self-Managed**: No control plane to patch, back up or scale
 2. **CDK for Infrastructure**: Version-controlled, repeatable deployments  
 3. **Integrated Observability**: Prometheus + Grafana provide complete visibility
 4. **Multi-Service Architecture**: Each service optimized for its specific workload
 
-### **Real-World Performance**
+### **Design Targets (Illustrative, Not Measured)**
 
-At production scale, this platform delivers:
+These are the targets this platform is designed for, not measurements from the demo repository. Benchmark your own workload before quoting them:
 - **99.9% availability** with automatic failover and recovery
 - **Sub-second application startup** times with optimized container images
 - **30% cost reduction** vs traditional VM-based architectures  

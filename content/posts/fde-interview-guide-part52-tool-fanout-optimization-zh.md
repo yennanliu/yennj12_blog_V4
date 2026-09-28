@@ -663,7 +663,7 @@ circuit_breaker_state{state="OPEN"} count > 2 → PagerDuty
 
 - Jeff Dean & Luiz André Barroso, "The Tail at Scale" (2013) — Hedged Request 的原始論文
 - Python asyncio 官方文件：`asyncio.wait()` vs `asyncio.gather()` 語意差異
-- Martin Fowler, "Circuit Breaker" pattern — circuitbreaker.io
+- Martin Fowler, "CircuitBreaker"（2014）— martinfowler.com/bliki/CircuitBreaker.html
 - Netflix Hystrix → Resilience4j — JVM 生態的 Circuit Breaker 參考實作
 - OpenTelemetry Python SDK — 為 asyncio Tool Calls 加入 Trace Span
 

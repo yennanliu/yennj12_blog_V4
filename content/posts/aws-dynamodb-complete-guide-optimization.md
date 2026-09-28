@@ -1473,6 +1473,6 @@ Amazon DynamoDB is a powerful NoSQL database service that excels in high-scale, 
 - **High-scale web applications** requiring fast, predictable performance
 - **Gaming applications** with real-time leaderboards and session management
 - **IoT workloads** with massive write throughput requirements
-- **Mobile applications** needing offline sync capabilities
+- **Mobile applications** with simple, high-volume access patterns (offline sync itself comes from AppSync/Amplify DataStore on top of DynamoDB, not from DynamoDB)
 
 Understanding these concepts and implementing the optimization techniques discussed will help you build high-performance applications that can scale to millions of users while maintaining consistent, fast response times.

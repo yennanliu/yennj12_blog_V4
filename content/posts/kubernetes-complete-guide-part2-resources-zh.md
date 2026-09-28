@@ -848,6 +848,8 @@ kubectl delete svc nginx
 
 ## 🔀 Ingress 路由管理
 
+> **2026 年補充：** Kubernetes 社群已宣布退役 ingress-nginx 控制器（2026 年 3 月後停止維護），本節的 `nginx.ingress.kubernetes.io/*` 註解僅適用於既有叢集。新專案建議改用 Gateway API（`Gateway` / `HTTPRoute`）搭配支援它的控制器。
+
 ### Ingress 架構
 
 ```mermaid

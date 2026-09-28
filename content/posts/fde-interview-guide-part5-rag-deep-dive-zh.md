@@ -120,6 +120,8 @@ chunk_overlap = 50
 | `E5-mistral-7b` | Microsoft | 4096 | 開源裡效果最好之一 |
 | `bge-large-zh` | BAAI | 1024 | 中文專用，效能極佳 |
 
+> 模型清單以 2025 年撰文時為準：Google 現行的通用 embedding 模型已是 `gemini-embedding-001`，`text-embedding-004` 屬上一代；實際選型請以官方文件與 MTEB 最新排名為準。
+
 ---
 
 ### 選模型的考量維度

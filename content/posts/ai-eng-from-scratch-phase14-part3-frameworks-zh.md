@@ -176,6 +176,8 @@ Agent 框架的選型問題，表面上是技術選擇，本質上是**控制權
 
 AutoGen（Microsoft Research）的核心哲學：**把 Agent 協作建模成對話**。每個 Agent 是對話參與者，協作透過訊息傳遞完成，沒有顯式的「工作流程圖」。
 
+> 2026 年註記：Microsoft 於 2025 年 10 月發布 Microsoft Agent Framework，把 AutoGen 與 Semantic Kernel（§六）整合為同一個產品線，兩者後續以維護為主。本文對 AutoGen 與 SK 的分析仍適用於理解設計取捨，但新專案應評估 Agent Framework；同時也值得一併比較各模型廠商的 Agent SDK（如 OpenAI Agents SDK、Claude Agent SDK）與 Pydantic AI。
+
 ### 核心架構
 
 ```
@@ -205,6 +207,8 @@ AutoGen（Microsoft Research）的核心哲學：**把 Agent 協作建模成對�
 │  └────────────────────────────────────────────────┘     │
 └─────────────────────────────────────────────────────────┘
 ```
+
+上圖是 AutoGen 0.2 的 `UserProxyAgent` / `GroupChat` 模型；0.4 改寫為事件驅動的 Core + AgentChat 架構，概念相近但 API 不同。
 
 ### AutoGen 的優勢場景
 
@@ -365,6 +369,7 @@ Semantic Kernel（SK）的核心哲學：**把 AI 能力以「插件（Plugin）
 - **Planner**：自動把使用者目標分解成 Plugin 呼叫序列
 - **Memory**：內建向量記憶體抽象，接 Azure Cognitive Search 等企業級後端
 - **成熟度**：Azure 生態整合最佳，但社群活躍度遠低於 LangChain/LangGraph
+- **現況**：SK 的後續發展已併入 Microsoft Agent Framework（見 §三 註記）
 
 **適用規模**：企業 IT 系統整合。如果你的團隊不在 Microsoft 技術棧，遷移成本高，不建議採用。
 
@@ -547,7 +552,7 @@ AI 功能多樣性 Planner 強，記憶體抽象好        圖執行更靈活
 
 ## 九、系統效應
 
-各框架在真實生產環境的量化比較（基於公開 benchmark 與社群回報數據）：
+各框架的量化比較（示意估算，綜合社群經驗整理，非統一條件下的 benchmark 實測）：
 
 ```
 指標                   AutoGen 0.4   CrewAI      LangGraph   自建
@@ -569,7 +574,7 @@ Python 型別安全        中等          中等        高（TypedDict） 完�
 - LangGraph 在 **可靠性** 和 **可觀測性** 上領先，但學習成本最高
 - CrewAI 在 **可讀性** 和 **快速交付** 上領先，但生產靈活性不足
 - AutoGen 在 **研究型對話任務** 上最適合，但不適合高流量生產環境
-- 自建框架的 overhead < 5ms 對比 LangGraph 的 20–50ms，在高 QPS 場景（> 1K QPS）節省成本可達 30–50%
+- 自建框架的 overhead < 5ms 對比 LangGraph 的 20–50ms，但相對於動輒數秒的 LLM 呼叫，這點框架延遲幾乎可以忽略，不足以作為自建的成本理由；自建真正的收益在於升級風險可控、除錯路徑清楚等維運面
 
 ---
 

@@ -20,6 +20,8 @@ readTime: "16 min"
 
 ## 一、情境
 
+> 本案例為綜合多個專案改寫的情境示意，公司與數字皆為量級推估，非真實客戶資料。
+
 ```
 產品      Webhook 除錯與重送工具（開發者工具）
 團隊      3 人（2 工程 + 1 兼職行銷）
@@ -215,7 +217,7 @@ API Reference             （維持不變——這類頁面本來就是查表用
 ### 決策 5：Cloudflare Pages 的存取層檢查（第 1 天，30 分鐘）
 
 ```bash
-$ ./ai-crawler-check.sh https://hooklab.dev/
+$ ./ai-crawler-check.sh https://hooklab.example/
 USER-AGENT             CODE   BYTES
 GPTBot/1.0             200    18422
 OAI-SearchBot/1.0      200    18422

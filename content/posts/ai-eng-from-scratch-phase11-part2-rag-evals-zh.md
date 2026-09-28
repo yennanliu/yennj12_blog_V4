@@ -511,6 +511,8 @@ if p95_latency > 2000ms:
 | 客服轉人工率 | 38% | 14% | **−63%** |
 | 每月維護工時 | 20h（人工抽查）| 8h（自動化 + 偶發告警）| −60% |
 
+> 以上為示意估算，非實測數據。
+
 **重要 Trade-off**：Advanced RAG 的延遲比 Naive RAG 高（因為 Re-ranking），需要確保 P95 在 SLA 內（本案例 2 秒）。如果延遲預算緊張，可考慮跳過 Re-ranking，用 Hybrid Search + 好的 Chunking 也能達到 Faithfulness 0.82。
 
 ---
@@ -656,10 +658,13 @@ Embedding 模型的選擇直接影響召回品質和成本結構。
 | E5-large-v2 | 1,024 | 良 | $0（自部署）| 是 | 英文，低成本 |
 | Cohere embed-v3 | 1,024 | 優 | $0.0001/1K token | 否 | 多語言，含壓縮模式 |
 
+> 此表為 2024 年的模型與價格快照：Cohere 已推出 embed-v4，Qwen3-Embedding 等新一代開源模型也已進入 MTEB 前段。選型前請以當前 MTEB 排行與官方定價為準。
+
 **自部署 BGE-M3 成本估算**（中等規模）：  
 - 1 台 A10G GPU（4 vCPU, 24GB VRAM）：~$1.5/hr（AWS g5.xlarge）  
 - 日均 200K 次 Embedding 查詢：~$36/day vs text-embedding-3-small $4/day  
-- 建議：< 500K queries/day 用閉源 API 更划算；超過後自部署開始有優勢
+- 換算：API 每次約 $0.00002（$4 ÷ 200K），自部署是約 $36/day 的固定成本，損益平衡點約在 $36 ÷ $0.00002 ≈ 1.8M queries/day
+- 建議：< 約 1.8M queries/day 用閉源 API 更划算；超過後自部署才開始有成本優勢（隱私或資料落地要求則不受此門檻限制）
 
 ### Embedding 維度壓縮（Matryoshka Representation Learning）
 
@@ -697,10 +702,6 @@ OpenAI text-embedding-3 系列支援 MRL，可將 1,536 維向量壓縮為 256 �
 **成本控制**  
 - [ ] 每查詢成本上限設定（建議 $0.01/query 為警戒線）  
 - [ ] LLM API Rate Limit 監控，避免突發流量超限導致降級
-
----
-
-*本文為「AI 工程從零開始」系列第 23 篇。*
 
 ---
 

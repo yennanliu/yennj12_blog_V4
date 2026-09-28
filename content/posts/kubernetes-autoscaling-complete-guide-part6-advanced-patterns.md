@@ -60,6 +60,8 @@ Traditional HPA with StatefulSets:
 
 **Scenario:** PostgreSQL cluster with read replicas that scale based on read query load.
 
+> **Warning:** An HPA changing `replicas` on a database StatefulSet does not configure replication, rebalance data or promote/demote anything. Each new pod must bootstrap itself as a streaming replica (e.g. via an operator such as CloudNativePG, Zalando postgres-operator or Crunchy PGO), and a scale-down can delete a replica that clients are still reading from. Only scale **read replicas** this way, only behind an operator that handles replica bootstrap, and never let an HPA touch the primary.
+
 ```yaml
 # PostgreSQL StatefulSet
 apiVersion: apps/v1
@@ -981,7 +983,7 @@ data:
 ```yaml
 # Karpenter NodePool with spot + on-demand mix
 ---
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: cost-optimized-spot
@@ -1013,13 +1015,20 @@ spec:
         values: ["large", "xlarge", "2xlarge", "4xlarge"]
 
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: cost-optimized
+
+      # v1: expireAfter lives under spec.template.spec
+      expireAfter: 12h  # Refresh nodes every 12 hours
+
+  # Higher weight = tried first (Karpenter picks the highest-weight matching pool)
+  weight: 50
 
   # Aggressive consolidation
   disruption:
-    consolidationPolicy: WhenUnderutilized
+    consolidationPolicy: WhenEmptyOrUnderutilized
     consolidateAfter: 30s
-    expireAfter: 12h  # Refresh nodes every 12 hours
 
   limits:
     cpu: "500"
@@ -1027,7 +1036,7 @@ spec:
 
 ---
 # On-demand fallback NodePool
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: on-demand-fallback
@@ -1047,6 +1056,8 @@ spec:
         values: ["m", "c"]
 
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: cost-optimized
 
   weight: 10  # Lower priority, used when spot unavailable

@@ -403,6 +403,8 @@ export class MLPredictionConstruct extends Construct {
       environment: {
         PRICE_TABLE: props.priceTableName,
         ENABLED_MODELS: JSON.stringify(props.enabledModels),
+        // Claude 3 Sonnet (20240229) is retired on Bedrock; replace with a current
+        // Claude model ID (or inference profile) listed in your Bedrock console
         BEDROCK_MODEL_ID: 'anthropic.claude-3-sonnet-20240229-v1:0',
       },
     });
@@ -590,7 +592,12 @@ def predict_with_huggingface(data: pd.DataFrame) -> Dict:
         return None
 
 def predict_with_custom_model(data: pd.DataFrame) -> Dict:
-    """Use custom LSTM/GRU model for price prediction"""
+    """Placeholder for a custom LSTM/GRU model.
+
+    NOTE: this is NOT an ML model. It is an SMA-20/50 crossover plus momentum
+    heuristic with a hard-coded confidence, and it has not been backtested.
+    Swap in a trained, backtested model before relying on it.
+    """
 
     # Simple moving average + momentum-based prediction
     prices = data['price'].values

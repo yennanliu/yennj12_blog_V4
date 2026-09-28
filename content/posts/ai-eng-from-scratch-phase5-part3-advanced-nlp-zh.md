@@ -308,6 +308,8 @@ ALBERT-xxlarge: 235M 參數，4096 hidden（效果更好！）
 | 記憶體受限 | ALBERT-base | 參數共享，記憶體友善 |
 | 多語言 | XLM-RoBERTa | 100 語言預訓練 |
 
+> 2024 年 12 月發布的 ModernBERT（原生 8K context、推論更快）是目前較新的 encoder 基線，新專案選型時值得一併評估。
+
 ---
 
 ## 五、問答系統架構：Extractive vs Generative QA
@@ -352,7 +354,7 @@ ALBERT-xxlarge: 235M 參數，4096 hidden（效果更好！）
 代表模型：
 - **RAG（Retrieval-Augmented Generation）**：檢索相關段落後，用 seq2seq 模型生成答案
 - **FiD（Fusion-in-Decoder）**：多段落各自 encode，在 decoder 融合
-- **GPT-4 + RAG**：最新 LLM 作為 reader
+- **LLM + RAG**：用當代通用 LLM（GPT、Claude、Qwen 等系列）作為 reader
 
 **延遲比較：**
 - Extractive（RoBERTa-large）：~80ms
@@ -476,6 +478,7 @@ F1        = 兩者調和平均
 
 - **Exact Match（EM）**：生成答案是否完全等於參考答案（嚴格）
 - **F1（token overlap）**：答案 token 的重疊率（寬鬆）
+- **LLM-as-judge**：用強 LLM 依評分規準打分，是目前評估生成式答案最常用的方法；但它有位置偏誤、偏好冗長答案與自我偏好等問題，必須定期用人工標注校準
 - **Human Evaluation**：最終還是需要人工評估（Faithfulness、Coherence、Relevance）
 
 **實戰建議：** 自動指標用於快速迭代，每兩週做一次人工抽樣評估（100 筆），兩者數字要同步看。
@@ -560,6 +563,8 @@ Faiss           自架，資料不出境               Pinecone：managed servic
 
 ## 九、系統效應（傳統 NLP vs BERT vs LLM 全面對比）
 
+> 下表為示意估算，非實測數據。
+
 | 指標 | 傳統 NLP（TF-IDF + 規則） | BERT 微調 | LLM（GPT-4 class） |
 |------|--------------------------|-----------|---------------------|
 | SQuAD 2.0 F1 | ~40% | ~90% | ~95%+ |
@@ -574,7 +579,7 @@ Faiss           自架，資料不出境               Pinecone：managed servic
 | 冷啟動時間 | 小時（規則撰寫） | 天（資料標注+訓練） | 分鐘（API 串接）|
 
 **關鍵洞察：**
-1. **BERT 是工程甜蜜點**：在延遲、成本、準確率、可解釋性之間取得最佳平衡，適合 90% 的生產場景
+1. **BERT 是工程甜蜜點**：在有標注資料、延遲預算約 200ms 內、答案可從原文抽取的場景（如本篇的法律 QA），它在延遲、成本、準確率、可解釋性之間取得最佳平衡
 2. **LLM 適合探索階段**：快速驗證需求，但規模化成本 10x
 3. **傳統 NLP 仍有價值**：在延遲極端敏感（< 10ms）或資料匱乏的情境下
 

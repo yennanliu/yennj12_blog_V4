@@ -246,12 +246,12 @@ const metadata = {
 
 ### 4.4 語意快取:重複問題不再打 LLM
 
-企業客服有大量重複問題(「怎麼重設密碼」被問一千次)。**語意快取**把問題向量化,若跟快取裡某個問題夠相近(cosine > 0.95)且**在同一租戶/授權範圍**內,直接回快取答案。
+企業客服有大量重複問題(「怎麼重設密碼」被問一千次)。**語意快取**把問題向量化,若跟快取裡某個問題夠相近(例如 cosine > 0.95——這是起始假設,要用評測集調校)且**在同一租戶/授權範圍**內,直接回快取答案。
 
 ```typescript
 // lib/lambda/query/semantic-cache.ts 片段
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
-// 用 ElastiCache for Redis(啟用向量搜尋)或 MemoryDB 存快取向量
+// 用支援向量搜尋的 ElastiCache for Valkey 或 MemoryDB 存快取向量(引擎版本需求請見官方文件)
 
 async function tryCache(tenant: string, authzKey: string, question: string, redis: any) {
   const emb = await embed(question);                 // Titan Embeddings
@@ -324,7 +324,9 @@ OPA/Rego(自架)    生態強、跨雲                        要自己 host 與
 
 ## 六、成本估算
 
-以「200 租戶、每月 50 萬次問答、其中 30% 命中語意快取」估算(概略):
+以「200 租戶、每月 50 萬次問答、其中 30% 命中語意快取」估算(概略;30% 命中率是假設值,實際要用自己的流量量測):
+
+> us-east-1 公開定價概估(撰文時),實際以帳單為準。
 
 | 項目 | 用量 | 概略月費 |
 |------|------|---------|
@@ -338,7 +340,7 @@ OPA/Rego(自架)    生態強、跨雲                        要自己 host 與
 **成本洞察**:多租戶把 Part 1 的「固定成本大戶」問題放大了——**向量庫的固定成本現在要被 200 個租戶分攤**,這正是 Pool 模型省錢的來源(共享固定成本),也是 Silo 模型昂貴的原因(固定成本 × 租戶數)。三個降本槓桿:
 
 - **語意快取直接砍生成成本**:30% 命中 = 30% 的 LLM 費用消失,而且延遲更低。命中率是這套系統最值得優化的單一指標。
-- **Bridge 混合隔離**:讓長尾租戶共享固定成本,只有付得起的大客戶才獨享 silo。
+- **Bridge 混合隔離**:讓長尾租戶共享固定成本,只有付得起的大客戶才獨享 silo。若 silo 數量多,也可評估 S3 Vectors 這類按量計價、幾乎無固定成本的向量儲存(2025 年新服務,細節請見官方文件)。
 - **成本歸因驅動定價**:有了每租戶 token 數據,才能設計「用越多付越多」的定價,把虧錢的大戶轉成賺錢的。
 
 ---

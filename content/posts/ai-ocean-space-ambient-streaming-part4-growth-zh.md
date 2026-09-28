@@ -46,7 +46,7 @@ Shorts 的突破性優勢:
   │ 新頻道也能「一夜爆紅」           │
   └──────────────────────────────────┘
 
-實際案例（虛構但真實反映市場）:
+示意案例（虛構情境，數字僅供說明）:
 
 頻道 A（不用 Shorts）:
   Month 1-3: 0 → 150 訂閱
@@ -60,10 +60,10 @@ Shorts 的突破性優勢:
   Month 3: 8,500 → 25,000 訂閱
   → 2 個月達到貨幣化，成長速度 8-10 倍
 
-數據支持:
-  • YouTube 官方：Shorts 佔新增訂閱 60%+
-  • 創作者平均：1 支爆款 Short = 10,000-50,000 新訂閱
-  • 轉換率：5-10% 從 Shorts 進入直播間
+經驗假設（未經查證，請以自己頻道的 YouTube Studio 數據為準）:
+  • Shorts 常是新頻道的主要訂閱來源之一
+  • 爆款 Short 可能帶來大量新訂閱，但無法預期
+  • 轉換率：假設 5-10% 從 Shorts 進入直播間
 ```
 
 ---
@@ -400,7 +400,7 @@ ROI 分析:
 
 ### Shorts SEO 優化
 
-```yaml
+````yaml
 標題優化:
 
 ❌ 錯誤範例:
@@ -429,7 +429,7 @@ ROI 分析:
 
 Experience the calming sounds of the ocean depths. Our 24/7 stream features:
 • Scientifically-designed soundscapes
-• 4K/8K underwater visuals
+• 4K underwater visuals
 • No ads, no interruptions
 
 Perfect for:
@@ -460,7 +460,7 @@ Hashtags 策略:
 
 數量: 8-12 個
 放置: 描述最後（不影響可讀性）
-```
+````
 
 ---
 
@@ -722,7 +722,7 @@ Perfect for sleep, study, meditation, and relaxation.
 
 🎧 What You'll Experience:
 • Deep ocean soundscapes with natural ambience
-• 4K/8K high-quality underwater visuals
+• 4K high-quality underwater visuals
 • Binaural audio for immersive experience
 • No ads during playback (for members)
 • Calming frequencies for stress relief
@@ -877,7 +877,6 @@ Month 12+（規模化期）:
     ✓ 專屬徽章和表情符號（8 個海洋主題）
     ✓ Discord 會員身份組
     ✓ 會員專屬感謝影片（每月）
-    ✓ 無廣告體驗（YouTube Premium 功能）
     ✓ 投票權：下個月音景主題
 
   定位: 入門支持者
@@ -915,11 +914,14 @@ Month 12+（規模化期）:
   預期: 50,000 × 0.25% = 125 會員
   月收入: 125 × $14.99 = $1,873
 
-總會員收益（50K 訂閱）:
+總會員收益（50K 訂閱，示意估算，未扣除 YouTube 30% 分潤）:
   $2,242 + $2,271 + $1,873 = $6,386/月
 
 擴展到 150K 訂閱:
   × 3 = $19,158/月
+
+註: 以上轉換率偏樂觀，與前面收益時間軸（50K 訂閱約 50 會員）的
+    保守假設差距很大，做規劃時建議採用保守值
 
 會員成長策略:
 
@@ -1064,6 +1066,9 @@ Exclusive License - $2,999/首
   • 你不能再授權給他人
   • 包含原始檔案
   • 客製化服務
+
+  ⚠️ 注意: 純 AI 生成的音樂在部分司法管轄區（如美國）可能無法取得著作權，
+     「買斷所有權」未必成立；販售授權前請先確認 AI 工具的服務條款與當地法規
 
 銷售管道:
   1. 直接銷售
@@ -1693,7 +1698,7 @@ Month 7-12: 規模化
 ✅ **技術實作知識**（系列三）
 ✅ **增長與變現策略**（系列四）
 
-這不只是一套教學，而是一個**經過驗證、可執行、可獲利**的完整商業模式。
+這不只是一套教學，而是一個**可執行、可逐步驗證**的商業模式框架；本系列的數字多為示意估算，請以你自己的頻道數據為準。
 
 **接下來的旅程是你的。**
 

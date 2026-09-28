@@ -3,7 +3,7 @@ title: "用 AI Bot 打造顧問團隊（二）：三條路線的實作步驟與�
 date: 2026-04-30T10:00:00+08:00
 draft: false
 weight: 2
-description: "深入實作：分別用 Claude Code + AGENTS.md、Gemini CLI 與 LangGraph 建立 AI 顧問 Agent 團隊。包含完整設定步驟、System Prompt 設計、範例程式碼與關鍵注意事項。"
+description: "深入實作：分別用 Claude Code + CLAUDE.md、Gemini CLI 與 LangGraph 建立 AI 顧問 Agent 團隊。包含完整設定步驟、System Prompt 設計、範例程式碼與關鍵注意事項。"
 categories: ["all", "ai", "engineering"]
 tags: ["AI Agent", "Claude Code", "Gemini CLI", "LangGraph", "Python", "Multi-Agent", "繁體中文", "Agent"]
 authors: ["yen"]
@@ -21,7 +21,7 @@ readTime: "30 min"
 
 ---
 
-## 路線 A：Claude Code + AGENTS.md + Skills
+## 路線 A：Claude Code + CLAUDE.md + Skills
 
 ### 1. 環境設定
 
@@ -32,8 +32,9 @@ npm install -g @anthropic-ai/claude-code
 # 確認版本
 claude --version
 
-# 登入（需要 Anthropic 帳號）
-claude auth login
+# 登入（需要 Anthropic 帳號）：首次執行 claude 會引導登入，
+# 之後也可在互動介面中輸入 /login
+claude
 ```
 
 建立專案目錄：
@@ -42,9 +43,9 @@ claude auth login
 mkdir ai-consultant-team && cd ai-consultant-team
 ```
 
-### 2. 建立 AGENTS.md（團隊憲章）
+### 2. 建立 CLAUDE.md（團隊憲章）
 
-`AGENTS.md` 是整個 Agent 團隊的「組織架構圖」，定義各角色的職責與協作方式。
+`CLAUDE.md` 是 Claude Code 每次啟動都會讀入的專案說明，這裡拿來當整個 Agent 團隊的「組織架構圖」，定義各角色的職責與協作方式。
 
 ```markdown
 # AI 顧問團隊 - 組織架構
@@ -80,12 +81,18 @@ mkdir ai-consultant-team && cd ai-consultant-team
 ### 3. 建立各 Agent 的 Skill 檔案
 
 ```bash
-mkdir -p .claude/skills
+# Claude Code 的 Skill 是一個資料夾，裡面放帶 front matter 的 SKILL.md
+mkdir -p .claude/skills/intake .claude/skills/diagnose
 ```
 
-**`.claude/skills/intake.md`**
+**`.claude/skills/intake/SKILL.md`**
 
 ```markdown
+---
+name: intake
+description: 以結構化問答收集新客戶的 AI 導入需求，產出 JSON 需求摘要。
+---
+
 # Skill: 客戶需求收集
 
 你是 Intake Agent，AI 顧問公司的需求收集師。
@@ -120,9 +127,14 @@ mkdir -p .claude/skills
 ```
 ```
 
-**`.claude/skills/diagnose.md`**
+**`.claude/skills/diagnose/SKILL.md`**
 
 ```markdown
+---
+name: diagnose
+description: 讀取 Intake 產出的 JSON 需求摘要，診斷可用 AI 解決的核心問題與風險。
+---
+
 # Skill: 問題診斷分析
 
 你是 Analyst Agent，AI 顧問公司的問題分析師。
@@ -181,7 +193,7 @@ mkdir -p .claude/skills
         "hooks": [
           {
             "type": "command",
-            "command": "echo '[LOG] Agent 產出新文件: $CLAUDE_TOOL_OUTPUT' >> workspace/activity.log"
+            "command": "jq -r '\"[LOG] Agent 產出新文件: \" + .tool_input.file_path' >> workspace/activity.log"
           }
         ]
       }
@@ -190,12 +202,14 @@ mkdir -p .claude/skills
 }
 ```
 
+> Hook 不會拿到 `$CLAUDE_TOOL_OUTPUT` 這類環境變數；Claude Code 會把事件內容（含 `tool_input.file_path`）以 JSON 從 stdin 傳給 hook 指令，所以這裡用 `jq` 解析（需先安裝 jq）。
+
 ### 5. 實際執行
 
 ```bash
 # 啟動協調員，開始顧問流程
-claude "根據 AGENTS.md 的角色定義，你是 Coordinator。
-有一位新客戶想要諮詢 AI 導入。請先呼叫 Intake Agent（使用 /skills/intake skill）
+claude "根據 CLAUDE.md 的角色定義，你是 Coordinator。
+有一位新客戶想要諮詢 AI 導入。請先呼叫 Intake Agent（使用 intake skill）
 收集需求，再呼叫 Analyst Agent 進行診斷。"
 ```
 
@@ -241,6 +255,8 @@ In every response, you:
 ```
 
 ### 3. Python 整合腳本
+
+> 2026-09 補註：以下範例使用的 `google-generativeai` 套件已被官方的 `google-genai` SDK 取代，`gemini-2.0-flash` 也已不是現行模型。實際使用時請改用 `google-genai` 與目前的 Gemini 模型 ID；另外，這段是直接呼叫 Gemini API，並沒有透過上面安裝的 Gemini CLI。
 
 ```python
 # consultant_team.py
@@ -362,8 +378,8 @@ pip install psycopg2-binary redis  # 狀態持久化
 
 # 設定環境變數
 export ANTHROPIC_API_KEY="your-key"
-export LANGCHAIN_API_KEY="your-langsmith-key"  # 可觀測性
-export LANGCHAIN_TRACING_V2=true
+export LANGSMITH_API_KEY="your-langsmith-key"  # 可觀測性（舊名 LANGCHAIN_API_KEY）
+export LANGSMITH_TRACING=true                   # 舊名 LANGCHAIN_TRACING_V2
 ```
 
 ### 2. 定義狀態結構

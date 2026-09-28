@@ -239,7 +239,7 @@ class MarketResearchTool(BaseTool):
 
 def create_business_intelligence_crew():
     # 初始化 LLM
-    llm = ChatOpenAI(model="gpt-4")
+    llm = ChatOpenAI(model="gpt-4")  # 舊版模型名稱（截至 2026 年），請替換為目前可用的模型
     
     # 定義專業代理
     data_analyst = Agent(
@@ -388,6 +388,8 @@ def create_hierarchical_crew():
 ## 4. Model Context Protocol (MCP) 實作
 
 ### MCP 核心架構
+
+> 注意：以下程式碼只是「工具註冊與分派」的概念示意，並不是 MCP 協定本身。真正的 MCP 是基於 JSON-RPC 2.0 的協定，有 stdio / Streamable HTTP 等傳輸層與能力協商流程；實作 server 請使用官方 `mcp` Python SDK（例如其中的 FastMCP），不要照抄下面的 dict 分派寫法。
 
 **協定實作框架：**
 ```python
@@ -748,10 +750,20 @@ class SecureDataAgent:
         else:
             raise SecurityError("Potentially dangerous command blocked")
     
+    # 用允許清單（allowlist），不要用子字串黑名單：
+    # 黑名單會誤殺（"del" 也命中 "model"），又擋不住變形（單獨的 rm、rm -r -f）
+    ALLOWED_COMMANDS = {"ls", "cat", "grep", "wc"}
+
     def is_safe_command(self, command: str) -> bool:
-        """檢查命令是否安全"""
-        dangerous_commands = ["rm -rf", "del", "format", "shutdown"]
-        return not any(dangerous in command.lower() for dangerous in dangerous_commands)
+        """只允許清單內的指令；含 shell 控制字元一律拒絕"""
+        import shlex
+        if any(ch in command for ch in ";|&`$<>\n"):
+            return False
+        try:
+            argv = shlex.split(command)
+        except ValueError:
+            return False
+        return bool(argv) and argv[0] in self.ALLOWED_COMMANDS
 ```
 
 ## 總結

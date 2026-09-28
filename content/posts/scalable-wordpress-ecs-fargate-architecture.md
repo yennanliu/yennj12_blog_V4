@@ -28,7 +28,7 @@ Let's explore how containerized WordPress on ECS Fargate addresses these challen
 
 ## Architecture Overview
 
-Our scalable WordPress platform uses a microservices approach with these AWS components:
+Our scalable WordPress platform runs WordPress as a horizontally scaled monolith behind an ALB, using these AWS components:
 
 ```
 ┌─────────────┐    ┌──────────────┐    ┌─────────────┐    ┌─────────────┐
@@ -260,8 +260,11 @@ const wordpressContainer = taskDefinition.addContainer('wordpress', {
     WORDPRESS_TABLE_PREFIX: 'wp_',
     
     // WordPress configuration
+    // Note: there is no Redis on 'localhost' in a Fargate task, and this stack
+    // does not create one. Only set WP_REDIS_HOST once you add an ElastiCache
+    // (Valkey/Redis) cluster, pointing at its endpoint, e.g.
+    //   define('WP_REDIS_HOST', '<elasticache-primary-endpoint>');
     WORDPRESS_CONFIG_EXTRA: `
-      define('WP_REDIS_HOST', 'localhost');
       define('FORCE_SSL_ADMIN', true);
       define('WP_DEBUG', false);
       define('WP_DEBUG_LOG', false);
@@ -513,8 +516,10 @@ define('NONCE_SALT',       'your-nonce-salt');
 // WordPress Database Table prefix
 $table_prefix = getenv('WORDPRESS_TABLE_PREFIX') ?: 'wp_';
 
-// Redis Object Cache
-define('WP_REDIS_HOST', 'localhost');
+// Redis Object Cache: requires an ElastiCache (Valkey/Redis) cluster, which the
+// architecture above does not include. 'localhost' would silently fail on Fargate,
+// so read the endpoint from the environment and leave it unset without a cluster.
+define('WP_REDIS_HOST', getenv('WP_REDIS_HOST'));
 define('WP_REDIS_PORT', 6379);
 define('WP_REDIS_TIMEOUT', 1);
 define('WP_REDIS_READ_TIMEOUT', 1);

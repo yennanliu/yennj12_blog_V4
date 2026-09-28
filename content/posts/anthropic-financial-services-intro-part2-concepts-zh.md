@@ -106,7 +106,7 @@ Operations & onboarding  KYC Screener
 
 **翻轉條件**:如果一個 Command 的參數逐漸變得可以被上下文自動推斷(例如聊天裡已經提過公司名稱、時間範圍),它就有機會被重新設計成 Skill,降低使用者手動打字的負擔。
 
-## 五、Connector:11 個資料源,只在核心 plugin 定義一次
+## 五、Connector:12 個資料源,只在核心 plugin 定義一次
 
 所有 MCP 連接器集中寫在 `financial-analysis` plugin 的 `.mcp.json`,其他 vertical 共用,不重複宣告:
 
@@ -144,7 +144,7 @@ MCP(而非直接             資料商可以獨立於 Anthropic       自建 RES
 
 Cowork 是互動的,人可以隨時打斷、補充資訊。Headless 部署沒有這個機制,所以 Managed Agents API 多了兩個東西:
 
-- **`callable_agents`(子 Agent 委派)**:目前是 Research Preview 功能,讓主 Agent 在遇到超出自己範圍的子任務時,呼叫深度 1 的 leaf-worker 子 Agent,而不是卡住等人。
+- **`callable_agents`(子 Agent 委派)**:目前(2026-07 撰文時)是 Research Preview 功能,讓主 Agent 在遇到超出自己範圍的子任務時,呼叫深度 1 的 leaf-worker 子 Agent,而不是卡住等人。
 - **Steering events**:因為沒有人即時盯著,`agent.yaml` 裡會定義好在特定訊號出現時該怎麼處理(例如置信度過低時停下來排入人工佇列,而不是硬產出結果)。
 
 ```

@@ -422,6 +422,8 @@ graph TD
 
 #### 🛠️ Java Spring Boot Implementation
 
+> **Note:** For brevity these services use Spring's in-process `ApplicationEventPublisher` / `@EventListener`, which only delivers events inside one JVM. Real cross-service choreography publishes to a broker (e.g. the Kafka setup shown later) and consumes with `@KafkaListener` in each service. Also beware the dual-write problem: saving state and publishing an event in the same method is not atomic. Use a transactional outbox (write the event to an outbox table in the same DB transaction, then relay it to the broker) so a crash cannot lose or duplicate the event.
+
 **Event-Driven Order Service:**
 ```java
 @Service

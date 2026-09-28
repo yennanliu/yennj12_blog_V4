@@ -446,7 +446,7 @@ def temporal_consistency_loss(frames, optical_flow_net):
 | 4 秒影片（120 幀）| Wan 2.1 | 480p | ~180s | 80GB |
 | 即時影片（> 30fps）| 目前無解，需要串流 GAN | 256×256 | < 33ms/frame | 16GB |
 
-**工程結論**：影片生成在 2024 年仍以 Diffusion 為主流（Sora、Wan 2.1），GAN 在即時影片編輯（濾鏡、換臉）等低延遲場景仍有一席之地。
+**工程結論**：現代影片生成以 Diffusion 為主流，且主力已轉向 **Video DiT**（3D VAE 把影片壓成時空 latent，再以時空注意力的 Transformer 去噪，多搭配 flow matching；Sora、Wan 系列皆屬此類）；GAN 在即時影片編輯（濾鏡、換臉）等低延遲場景仍有一席之地。
 
 ---
 
@@ -499,9 +499,9 @@ def temporal_consistency_loss(frames, optical_flow_net):
 
 **系列文章：**
 
-← 上一篇：[Phase 8 Part 1：擴散模型與影像生成](/posts/ai-eng-from-scratch-phase8-part1-diffusion-models-zh/)
+← 上一篇：[Phase 8 Part 1：擴散模型 — 從雜訊到藝術的數學](/posts/ai-eng-from-scratch-phase8-part1-diffusion-models-zh/)
 
-→ 下一篇：Phase 9 Part 1：強化學習基礎（即將發布）
+→ 下一篇：[Phase 9：強化學習基礎 — RLHF 與遊戲 AI 的根基](/posts/ai-eng-from-scratch-phase9-part1-rl-fundamentals-zh/)
 
 ---
 

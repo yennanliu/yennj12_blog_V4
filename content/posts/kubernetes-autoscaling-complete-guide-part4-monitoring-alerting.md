@@ -1182,15 +1182,21 @@ kubectl top pods -l app=php-apache --watch > baseline-metrics.txt
 # macOS: brew install hey
 # Linux: wget https://hey-release.s3.us-east-2.amazonaws.com/hey_linux_amd64
 
-# Test different load levels
-# Light load: 10 req/s
-hey -z 5m -q 10 http://$(kubectl get svc php-apache -o jsonpath='{.spec.clusterIP}')
+# A ClusterIP is not reachable from your laptop. Port-forward for a quick test,
+# but note port-forward pins all traffic to ONE pod, so new replicas get no load.
+# For a real HPA test, run hey from a pod inside the cluster against http://php-apache/
+kubectl port-forward svc/php-apache 8080:80 &
 
-# Medium load: 50 req/s
-hey -z 5m -q 50 http://$(kubectl get svc php-apache -o jsonpath='{.spec.clusterIP}')
+# Note: hey's -q is a rate limit PER WORKER, and -c defaults to 50 workers.
+# Total rate = c x q, so pin -c explicitly.
+# Light load: 10 req/s  (1 worker x 10 QPS)
+hey -z 5m -c 1 -q 10 http://localhost:8080/
 
-# Heavy load: 200 req/s
-hey -z 5m -q 200 http://$(kubectl get svc php-apache -o jsonpath='{.spec.clusterIP}')
+# Medium load: 50 req/s  (5 workers x 10 QPS)
+hey -z 5m -c 5 -q 10 http://localhost:8080/
+
+# Heavy load: 200 req/s  (20 workers x 10 QPS)
+hey -z 5m -c 20 -q 10 http://localhost:8080/
 
 # Record CPU usage at each level
 kubectl top pods -l app=php-apache

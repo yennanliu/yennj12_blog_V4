@@ -696,7 +696,9 @@ export const notFoundHandler = (
   next(new AppError(`Route ${req.originalUrl} not found`, 404));
 };
 
-// ✅ GOOD: Async error wrapper
+// ✅ GOOD (Express 4): Async error wrapper
+// On Express 5, rejected promises from async handlers are forwarded to the
+// error middleware automatically, so this wrapper is no longer needed there.
 export const catchAsync = (
   fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
 ) => {
@@ -1411,6 +1413,8 @@ export default logger;
 
 ### 📦 Production Dependencies
 
+> **Version note (2026):** This manifest pins Express 4 and ESLint 8. Express 5 is now the default `latest` release on npm (it forwards async errors natively; see the `catchAsync` note), and ESLint 8 is end-of-life. On ESLint 9, replace `.eslintrc.json` with a flat `eslint.config.js`.
+
 ```json
 {
   "name": "express-api",
@@ -1466,7 +1470,8 @@ export default logger;
 
 ```dockerfile
 # Dockerfile
-FROM node:20-alpine AS builder
+# Node.js 20 reached end-of-life in April 2026; use a current LTS line
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -1483,7 +1488,7 @@ COPY . .
 RUN npm run build
 
 # Production image
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 

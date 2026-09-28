@@ -1256,23 +1256,24 @@ public class GatewayLoadBalancerService {
 | **OSI Layer** | Layer 7 (Application) | Layer 4 (Transport) | Layer 3 (Network) | Layer 4/7 |
 | **Protocols** | HTTP, HTTPS, WebSocket | TCP, UDP, TLS | GENEVE | HTTP, HTTPS, TCP, SSL |
 | **Target Types** | Instance, IP, Lambda | Instance, IP, ALB | Instance, IP | Instance |
-| **Static IP** | ❌ No | ✅ Yes | ❌ No | ❌ No |
+| **Static IP** | ⚠️ Via Global Accelerator or ALB-behind-NLB | ✅ Yes (Elastic IP per AZ) | ❌ No | ❌ No |
 | **Content Routing** | ✅ Yes | ❌ No | ❌ No | ❌ Limited |
 | **WebSocket Support** | ✅ Yes | ✅ Yes | ❌ No | ❌ No |
 | **HTTP/2 Support** | ✅ Yes | ❌ No | ❌ No | ❌ No |
 | **Connection Draining** | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
-| **Cross-Zone LB** | ✅ Always On | ⚠️ Optional | ❌ No | ⚠️ Optional |
+| **Cross-Zone LB** | ✅ On by default (can be disabled per target group) | ⚠️ Optional | ❌ No | ⚠️ Optional |
 | **Health Check Types** | HTTP, HTTPS | TCP, HTTP, HTTPS | TCP, HTTP, HTTPS | TCP, HTTP, HTTPS |
 | **SSL Termination** | ✅ Yes | ✅ Yes (TLS) | ❌ No | ✅ Yes |
-| **Source IP Preservation** | ✅ Yes (headers) | ✅ Yes (native) | ✅ Yes | ❌ No |
+| **Source IP Preservation** | ✅ Yes (headers) | ✅ Yes (native) | ✅ Yes | ⚠️ Via X-Forwarded-For (HTTP) or Proxy Protocol (TCP) |
 | **Integration with WAF** | ✅ Yes | ❌ No | ❌ No | ❌ No |
+| **Security Groups** | ✅ Yes | ✅ Yes (since 2023) | ❌ No | ✅ Yes |
 | **User Authentication** | ✅ Yes | ❌ No | ❌ No | ❌ No |
 | **Request Tracing** | ✅ Yes | ❌ Limited | ❌ No | ❌ Limited |
 | **Lambda Targets** | ✅ Yes | ❌ No | ❌ No | ❌ No |
 | **Container Support** | ✅ Excellent | ✅ Good | ✅ Good | ⚠️ Limited |
 | **Pricing Model** | Per hour + LCU | Per hour + NLCU | Per hour + GLCU | Per hour + data |
 | **Performance** | High | Ultra-High | High | Medium |
-| **Latency** | ~100ms | ~1ms | ~10ms | ~100ms |
+| **Added Latency (typical)** | Single-digit ms | Sub-ms to ~1ms | Low ms | Single-digit ms |
 
 ### 🎯 Use Case Decision Matrix
 
@@ -1615,7 +1616,7 @@ AWS Load Balancers are essential components for building resilient, scalable, an
 1. **For Web Applications**: Start with ALB for HTTP/HTTPS traffic and advanced routing
 2. **For High Performance**: Choose NLB when latency and throughput are critical
 3. **For Security Appliances**: Use GWLB for transparent traffic inspection
-4. **For Static IPs**: NLB is the only option that supports static IP addresses
+4. **For Static IPs**: NLB supports Elastic IPs natively; for an ALB, put it behind an NLB (ALB-type target group) or AWS Global Accelerator
 5. **For Containers/Lambda**: ALB provides the best integration with modern compute services
 
 ### 🚀 Best Practices:

@@ -1126,7 +1126,7 @@ spec:
   # Primary: S3 event notifications via SQS
   - type: aws-sqs-queue
     metadata:
-      queueURL: https://sqs.us-east-1.amazonaws.com/xxx/image-upload-queue
+      queueURL: https://sqs.us-east-1.amazonaws.com/<ACCOUNT_ID>/image-upload-queue
       queueLength: "10"
       awsRegion: us-east-1
     authenticationRef:

@@ -20,13 +20,13 @@ readTime: "18 min"
 
 - **測試點一：副作用的不可逆性。** 能否清楚區分「可重試的讀操作」與「不可重試的寫操作（發信、扣款、呼叫第三方 API）」，並說明為何後者必須有去重機制。面試官想知道你是否理解「at-least-once delivery」與「exactly-once semantics」的本質差異：前者是訊息系統的保證，後者是應用層必須自己實現的語意。
 
-- **測試點二：一致性模型的選擇。** 能否說明為何 Checkpoint 需要強一致性（Cloud Spanner external consistency）而非最終一致性（Firestore default mode），以及這個選擇的 latency 代價（~10ms vs ~1ms）。最終一致性在此場景下會造成新 Worker 讀到舊快照，誤判步驟未完成，重複執行已完成的工具。
+- **測試點二：一致性模型的選擇。** 能否說明為何 Checkpoint 需要強一致讀取加上條件寫入（CAS／交易），而不能放在最終一致的儲存（非同步複製的讀取副本、快取層）上；以及何時選 Cloud Spanner（跨區域 external consistency、大規模跨列交易）而非 Firestore（Native 模式的文件讀取與查詢本身就是強一致，差別在交易吞吐與跨區域語意），和這個選擇的 latency 代價（~10ms vs ~1ms）。最終一致性在此場景下會造成新 Worker 讀到舊快照，誤判步驟未完成，重複執行已完成的工具。
 
 - **測試點三：恢復路徑的完整性。** 能否說明 `StateGraph.update_state()` 如何注入已完成步驟的輸出、跳過重新執行，並在 split-brain 情境下靠 Compare-And-Swap 避免雙 Worker 各自推進狀態。
 
 **弱答案長相：** 「重試的時候我們就再跑一次，加個 try-catch 就好。」沒有提到去重 key、沒有提到 Checkpoint 持久化、沒有說明如何判斷哪些步驟已完成、也沒有提到下游服務如何識別重複呼叫。這個答案在面試官眼中等同於「不懂分佈式」。
 
-**強答案長相：** 從「寫 pending → 執行 → 寫 completed（CAS）」三段式出發，說明 CAS 防止 split-brain，Recovery 時透過 `StateGraph.update_state()` 重播 StateGraph，最後給出具體數字：Spanner 寫入 ~10ms、恢復時間 < 100ms、重複通知率 0.03%（99.97% 的 Pod 失敗可被正確恢復）。
+**強答案長相：** 從「寫 pending → 執行 → 寫 completed（CAS）」三段式出發，說明 CAS 防止 split-brain，Recovery 時透過 `StateGraph.update_state()` 重播 StateGraph，最後給出具體數字：Spanner 寫入 ~10ms、恢復時間 < 100ms、重複通知率目標 < 0.03%（示意數字，需以自己系統的量測為準）。
 
 ---
 
@@ -123,7 +123,7 @@ t=0ms: Worker A 在 us-central1 寫 completed（step-003）
 t=5ms: Worker A 崩潰
 t=8ms: Worker B（在 us-east1）啟動，讀取 step-003 的狀態
 
-使用最終一致性（Firestore default）：
+使用最終一致性儲存（例如非同步複製的讀取副本或快取層）：
   Worker B 可能讀到舊快照（status="pending"）← 觀察延遲 50–200ms
   Worker B 重跑 step-003 → 雙重副作用
 
@@ -230,7 +230,7 @@ sha256( user_id + ":" + step_id + ":" + version_id )
 | Checkpoint 快照讀取（N=10 步驟） | ~15ms | 含網路 RTT |
 | `StateGraph.update_state()` 重播 | ~2ms/step | LangGraph 內部 state merge |
 | 總恢復時間（10 步驟 Agent） | < 100ms | 讀快照 + 重播 state |
-| 重複通知率（5 次 retry 後） | 0.03% | 99.97% 的 Pod 失敗可被正確恢復 |
+| 重複通知率（5 次 retry 後） | 0.03%（示意目標） | 非量測值，需以自己系統驗證 |
 | DLT 積壓 SLO | < 30 分鐘 | 超過即觸發 P1 事件 |
 | Spanner read/write unit 成本 | $0.003 / $0.009 per million ops | 10 萬次/天執行 × 10 步驟 × 2 writes ≈ $0.18/天 |
 
@@ -415,7 +415,7 @@ Client ────────────▶│ Pub/Sub Topic                 
 | 錯誤模式 | 後果 | 正確做法 |
 |---------|------|---------|
 | 只做記憶體去重，不寫持久化 Checkpoint | Pod 崩潰後記憶體清空，所有步驟重跑，扣款/發信重複執行 | 每個 step 在 Spanner 寫 pending/completed，強一致性持久化 |
-| Checkpoint 使用最終一致性儲存（Firestore default） | 新 Worker 可能讀到 50–200ms 前的舊快照，誤判步驟未完成，重複執行 | Cloud Spanner strong read，或 Firestore `consistency=STRONG`（僅 Datastore 模式支援） |
+| Checkpoint 使用最終一致性儲存（非同步讀取副本、快取層） | 新 Worker 可能讀到 50–200ms 前的舊快照，誤判步驟未完成，重複執行 | Cloud Spanner strong read，或 Firestore（Native 模式讀取即為強一致）搭配交易做條件寫入 |
 | 忘記傳 `idempotency_key` 給外部 API | 第三方 API 無法去重：雙扣款、雙發信、雙出貨單 | 每個工具呼叫攜帶 `sha256(user_id + step_id + version_id)` 作為 idempotency key |
 | POST-WRITE CAS 失敗時視為工具執行失敗並重試 | 工具實際已完成，重試產生重複副作用；CAS 失敗通常是 split-brain，不是工具問題 | CAS 失敗 → 重新讀 Spanner 快照；若 status 已是 completed 則靜默跳過 |
 | `version_id` 使用時間戳（毫秒）而非遞增整數 | 時鐘偏移（clock skew）導致同一 version_id 被兩個 Worker 使用，CAS 失效 | version_id 用單調遞增整數（應用層計數器或 Spanner sequence），絕不用時間戳 |
@@ -426,7 +426,7 @@ Client ────────────▶│ Pub/Sub Topic                 
 
 ## 五、與其他核心主題的關聯
 
-- **Part 11（Async Event-Driven Pipeline）**：Pub/Sub 的 at-least-once delivery 是 State Recovery 的觸發機制——正是因為 Pub/Sub 會在 ACK 超時後重複投遞，才需要 Checkpoint 去重。若改為 exactly-once Pub/Sub（Kafka 語意），仍需 Checkpoint，因為 Worker 本身可能崩潰，與訊息系統的保證正交。兩者是不同層次的保證，必須同時存在。
+- **Part 11（Async Event-Driven Pipeline）**：Pub/Sub 的 at-least-once delivery 是 State Recovery 的觸發機制——正是因為 Pub/Sub 會在 ACK 超時後重複投遞，才需要 Checkpoint 去重。即使啟用 Pub/Sub 的 exactly-once delivery 選項（或 Kafka 的 exactly-once 語意），仍需 Checkpoint，因為 Worker 本身可能崩潰，與訊息系統的保證正交。兩者是不同層次的保證，必須同時存在。
 
 - **Part 10（CMEK / BYOK）**：Checkpoint 中可能包含敏感資料（inputs 欄位含用戶 PII、訂單金額）。Cloud Spanner Checkpoint 表應啟用 CMEK，確保靜態資料加密符合 GDPR / HIPAA 要求；同時需要 Cloud KMS key rotation 政策，避免長期 Checkpoint 使用過期金鑰。
 
@@ -460,7 +460,7 @@ SLA 要求？
 
 ## 六、面試一句話（Killer Phrase）
 
-> *「分佈式 Agent 最容易被忽略的問題是『部分執行』——Pod 可能在工具已產生副作用之後崩潰，導致重啟時無法判斷該步驟是否已完成。我的解法是三段式 Checkpoint 協議：執行前寫 pending 到 Cloud Spanner，執行後用 Compare-And-Swap 更新 completed；CAS 的 version_id 條件寫入同時解決 split-brain 問題，防止兩個 Worker 各自推進狀態。恢復時，新 Worker 讀最新快照，透過 LangGraph 的 `StateGraph.update_state()` 注入已完成步驟的輸出，精確從中斷點續傳。Spanner external consistency 保證跨區域故障下快照不會被錯過；5 次失敗後送 Dead Letter Topic 觸發人工介入。實測：Spanner 寫入 ~10ms，總恢復時間 < 100ms，99.97% 的 Pod 失敗可被無重複副作用地恢復。」*
+> *「分佈式 Agent 最容易被忽略的問題是『部分執行』——Pod 可能在工具已產生副作用之後崩潰，導致重啟時無法判斷該步驟是否已完成。我的解法是三段式 Checkpoint 協議：執行前寫 pending 到 Cloud Spanner，執行後用 Compare-And-Swap 更新 completed；CAS 的 version_id 條件寫入同時解決 split-brain 問題，防止兩個 Worker 各自推進狀態。恢復時，新 Worker 讀最新快照，透過 LangGraph 的 `StateGraph.update_state()` 注入已完成步驟的輸出，精確從中斷點續傳。Spanner external consistency 保證跨區域故障下快照不會被錯過；5 次失敗後送 Dead Letter Topic 觸發人工介入。以典型量級估算：Spanner 寫入 ~10ms，總恢復時間 < 100ms，絕大多數 Pod 失敗都能無重複副作用地恢復。」*
 
 ---
 

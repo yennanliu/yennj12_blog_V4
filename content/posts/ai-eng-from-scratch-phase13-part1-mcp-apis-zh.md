@@ -226,7 +226,7 @@ Step 5: LLM 整合結果，生成最終回應
 
 **關鍵設計決策**：
 
-1. **工具描述品質直接影響呼叫準確率**。Description 含有使用情境、參數說明、回傳格式，可使正確工具選擇率從 73% 提升至 94%（內部測試，n=1000 個查詢）。
+1. **工具描述品質直接影響呼叫準確率**。Description 含有使用情境、參數說明、回傳格式，可明顯提升正確工具選擇率（例如從七成多提升到九成以上，此為示意估算，請用自己的查詢集量測）。
 
 2. **Strict Mode（參數強制驗證）**：啟用後 LLM 只能生成符合 Schema 的 arguments，消除格式錯誤，但稍微增加首 token 延遲（+50–100ms）。大多數生產系統應啟用。
 
@@ -274,6 +274,8 @@ MCP（Model Context Protocol）是 Anthropic 於 2024 年末發布的開放協�
 **一個 MCP Server 的最小實作骨架**（Python SDK）：
 
 ```python
+import json
+
 from mcp.server import Server
 from mcp.types import Tool, TextContent
 
@@ -302,7 +304,9 @@ async def call_tool(name: str, arguments: dict):
         return [TextContent(type="text", text=json.dumps(result))]
 ```
 
-關鍵：`list_tools` 與 `call_tool` 是 MCP 協議強制要求的兩個端點。其餘（resources、prompts）視需求選用。
+關鍵：提供工具的 Server 必須實作 `list_tools` 與 `call_tool`；resources、prompts 視需求選用。以上是 SDK 的低階 `Server` API，便於看清協議結構；日常開發多半改用同一個 SDK 的 `FastMCP`，用 `@mcp.tool()` 裝飾器直接從函式簽名與 docstring 產生 schema。
+
+> 截至 2026 年，MCP 規格已比 2024 年末的初版擴充許多：傳輸層分為本機的 stdio 與遠端的 Streamable HTTP（取代舊的 HTTP+SSE 傳輸），遠端 Server 的授權以 OAuth 2.1 為基礎，另外也新增了結構化工具輸出等能力。實作前請對照最新的規格版本。
 
 ---
 
@@ -553,6 +557,8 @@ Prompt 限制       細粒度控制（金額上限等）             模型更�
 | 人工升級率 | 67% | 31% | 18% |
 | 工具層月成本 | $0 | $800 | $3,200 |
 | 每次解決成本 | $4.5（人工） | $0.08 | $0.05 |
+
+> 本節數字（含下方 ROI）為示意估算，非實測數據。
 
 **ROI 計算（Phase 3 vs 純人工）**：
 - 日處理 50,000 查詢 × $4.45 節省 = 日省 $222,500

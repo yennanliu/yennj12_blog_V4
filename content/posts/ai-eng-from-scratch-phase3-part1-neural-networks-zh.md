@@ -296,26 +296,45 @@ for name, param in model.named_parameters():
 **純 NumPy 實作核心（非框架）：**
 
 ```python
-# 反向傳播核心：這是框架背後在做的事
-def backward(self, x, y, cache):
-    a1, z1, a2, z2, out = cache
-    batch_size = x.shape[0]
+import numpy as np
 
-    # 輸出層梯度
-    delta_out = out - y                          # shape: (B, 1)
+class TwoLayerNet:
+    """x → Linear → ReLU → Linear → Sigmoid，二元分類，BCE loss"""
+    def __init__(self, d_in, d_hidden, seed=0):
+        rng = np.random.default_rng(seed)
+        self.W1 = rng.normal(0, np.sqrt(2 / d_in), (d_in, d_hidden))   # He 初始化
+        self.b1 = np.zeros(d_hidden)
+        self.W2 = rng.normal(0, np.sqrt(1 / d_hidden), (d_hidden, 1))
+        self.b2 = np.zeros(1)
 
-    # 第二層梯度
-    dW2 = a2.T @ delta_out / batch_size          # (H, 1)
-    db2 = delta_out.mean(axis=0)
+    def forward(self, x):
+        z1 = x @ self.W1 + self.b1                   # (B, H) 隱藏層 pre-activation
+        a1 = np.maximum(z1, 0)                       # (B, H) ReLU
+        out = 1 / (1 + np.exp(-(a1 @ self.W2 + self.b2)))  # (B, 1) Sigmoid
+        return out, (z1, a1, out)
 
-    # 通過 ReLU 反向
-    delta2 = (delta_out @ self.W2.T) * (z2 > 0) # ReLU 次梯度
+    # 反向傳播核心：這是框架背後在做的事
+    def backward(self, x, y, cache):
+        z1, a1, out = cache
+        batch_size = x.shape[0]
 
-    # 第一層梯度
-    dW1 = x.T @ delta2 / batch_size
-    db1 = delta2.mean(axis=0)
+        # 輸出層梯度（Sigmoid + BCE 合併後恰好是 out - y）
+        delta_out = out - y                          # (B, 1)
+        dW2 = a1.T @ delta_out / batch_size          # (H, 1)
+        db2 = delta_out.mean(axis=0)
 
-    return {'W1': dW1, 'b1': db1, 'W2': dW2, 'b2': db2}
+        # 通過 ReLU 反向到隱藏層
+        delta1 = (delta_out @ self.W2.T) * (z1 > 0)  # (B, H) ReLU 次梯度
+        dW1 = x.T @ delta1 / batch_size              # (D, H)
+        db1 = delta1.mean(axis=0)
+        return {'W1': dW1, 'b1': db1, 'W2': dW2, 'b2': db2}
+
+    def train(self, x, y, lr=0.1, epochs=500):
+        for _ in range(epochs):
+            out, cache = self.forward(x)
+            for name, g in self.backward(x, y, cache).items():
+                setattr(self, name, getattr(self, name) - lr * g)   # SGD 更新
+        return self
 ```
 
 ---
@@ -469,7 +488,7 @@ w_t = w_{t-1} - lr·v_t
 
 ```
 m_t = β₁·m_{t-1} + (1-β₁)·g_t          # 一階矩（梯度均值）
-v_t = β₂·v_{t-2} + (1-β₂)·g_t²          # 二階矩（梯度方差）
+v_t = β₂·v_{t-1} + (1-β₂)·g_t²          # 二階矩（梯度方差）
 m̂_t = m_t / (1-β₁ᵗ)                     # 偏差修正
 v̂_t = v_t / (1-β₂ᵗ)
 w_t = w_{t-1} - lr · m̂_t / (√v̂_t + ε)
@@ -499,11 +518,11 @@ w_t = w_{t-1} - lr · (sign(c_t) + λ·w_{t-1})
 m_t = β₂·m_{t-1} + (1-β₂)·g_t
 ```
 
-- 只使用梯度符號，記憶體佔用比 Adam 少 1/3（節省約 33%）
+- 只使用梯度符號，只需保存一個動量狀態：優化器狀態是 Adam 的一半（Adam 需保存 m 與 v 兩份）
 - 在 Vision Transformer 上比 AdamW 準確率高 0.5–1.1%
 - 對學習率更敏感（典型值比 Adam 小 3–10×）
 
-**量化對比（ResNet-50，ImageNet，100 epochs）：**
+**量化對比示意（ResNet-50，ImageNet，100 epochs；示意估算，非實測數據）：**
 
 | 最佳化器 | Top-1 準確率 | 訓練時間 | 記憶體（相對） | 超參數敏感度 |
 |---------|------------|---------|-------------|------------|
@@ -683,20 +702,19 @@ Flip Condition：
 
 ---
 
-**← Phase 2 Part 2**｜特徵工程與資料管線：從原始資料到可訓練特徵
+**← [Phase 2 Part 2](/posts/ai-eng-from-scratch-phase2-part2-ensemble-optimization-zh/)**｜集成學習與最佳化 — 超越單一模型的上限
 
-- 特徵選擇（SHAP、互資訊、Boruta）
-- 資料不平衡處理（SMOTE、Class Weight、Focal Loss）
-- 離線特徵管線（Spark）vs 線上特徵服務（Redis Feature Store）
+- Random Forest、XGBoost、LightGBM、CatBoost
+- Stacking 與模型融合
+- Bayesian 超參數最佳化
 
 ---
 
-**Phase 3 Part 2 →**｜卷積神經網路與視覺模型：從 LeNet 到 ResNet 的工程演化
+**[Phase 4 Part 1](/posts/ai-eng-from-scratch-phase4-part1-cnn-image-fundamentals-zh/) →**｜電腦視覺基礎 — 從像素到 CNN 特徵
 
 - 卷積操作的第一原理（感受野、步幅、填充）
 - ResNet 殘差連接解決梯度消失的數學原因
-- 遷移學習實戰：5,000 張圖片微調到 97% 準確率的完整流程
-- 部署：ONNX → TensorRT → 邊緣裝置推論
+- 遷移學習實戰
 
 ---
 

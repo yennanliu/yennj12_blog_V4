@@ -251,7 +251,7 @@ class SwarmPromptOptimizer:
         )
 ```
 
-**實測數字：** 在 MMLU 基準測試，群智 Prompt 優化在 200 次迭代後，相對基準 prompt 準確率提升 **4.3%**，且無需人工標注新訓練資料。
+**示意數字（非實測）：** 假設在 MMLU 類基準上，群智 Prompt 優化經 200 次迭代後，相對基準 prompt 準確率提升約 4%，且無需人工標注新訓練資料。注意：上面的實作本質上是一個 UCB 多臂賭博機（bandit），「費洛蒙」只是對成功率的指數平滑，把它當 bandit 來調參與評估更準確。
 
 ---
 
@@ -261,15 +261,15 @@ class SwarmPromptOptimizer:
 
 ### MoA 的實驗結果
 
-在 **AlpacaEval 2.0** 基準：
+在 **AlpacaEval 2.0** 基準（Length-Controlled win rate，對照基準為 GPT-4 Preview 1106；數字取自 Wang et al., 2024, *Mixture-of-Agents Enhances Large Language Model Capabilities*）：
 
-| 系統 | WinRate vs GPT-4 |
+| 系統 | LC WinRate |
 |---|---|
-| GPT-4 Turbo | 50.0%（基準） |
-| Claude 3 Opus | 40.5% |
-| MoA（6個中等模型） | **57.6%** |
+| GPT-4 Preview（1106） | 50.0%（基準） |
+| GPT-4o（2024-05-13） | 57.5% |
+| MoA（僅用 6 個開源模型提案 + 開源聚合器） | **65.1%** |
 
-MoA 以 6 個中等模型的組合，超越 GPT-4 Turbo **7.6 個百分點**，而每次查詢的模型成本接近。
+只用開源模型的 MoA 組合，超越當時的 GPT-4o 約 **7.6 個百分點**。
 
 ### MoA 為什麼有效？
 
@@ -319,7 +319,7 @@ async def mixture_of_agents(query: str, proposers: list, aggregator) -> str:
 
 ## 五、辯論機制：多 Agent 批判性思考提升準確率
 
-**辯論（Debate）** 是湧現集體智慧最直接的機制。MIT 與 OpenAI 的研究（2023）顯示，讓 LLM 互相辯論後，在高中數學競賽題的準確率從 56% 提升到 **76%**（+20 個百分點）。
+**辯論（Debate）** 是湧現集體智慧最直接的機制。MIT 與 OpenAI 的研究（2023）顯示，讓 LLM 互相辯論後，在高中數學競賽題的準確率從 56% 提升到 **76%**（+20 個百分點）。但後續研究也發現，在相同算力預算下，辯論常常贏不過單純的 self-consistency（多次取樣再投票），因此辯論要和同成本的 self-consistency 比較，而不是只和單次呼叫比較。
 
 ### 辯論架構設計
 
@@ -381,7 +381,7 @@ async def mixture_of_agents(query: str, proposers: list, aggregator) -> str:
 | Bayesian Updater | 「根據新論點更新機率估計」 | 保守，傾向中間立場 |
 | Domain Expert | 「從專業角度評估技術準確性」 | 技術細節優先 |
 
-**實測：** 使用 4 個不同角色的辯論，相比 4 個相同角色，在事實查核任務上減少 **63% 的 Echo Chamber 事件**（定義為所有 Agent 在第一輪就達成相同但錯誤的共識）。
+**示意（非實測）：** 使用 4 個不同角色的辯論，相比 4 個相同角色，在事實查核任務上減少 **63% 的 Echo Chamber 事件**（定義為所有 Agent 在第一輪就達成相同但錯誤的共識）。
 
 ### 辯論終止策略
 
@@ -470,6 +470,8 @@ def weighted_vote(answers: list, weights: dict) -> str:
 | 多數決（5 Agent） | 96.3% | 3.5s | $0.12 | 低 |
 | 加權投票（5 Agent） | 97.1% | 3.7s | $0.13 | 中 |
 | LLM 聚合（MoA） | **98.4%** | 6.2s | $0.09 | **高** |
+
+> 以上為示意估算，非實測數據。
 
 ---
 
@@ -625,7 +627,7 @@ class EmergenceMonitor:
 
 ## 九、系統效應：單 LLM vs. MoA 的量化比較
 
-以下數字來自醫療診斷輔助系統的 A/B 測試（10K 查詢樣本）：
+以下為醫療診斷輔助情境的**示意估算**（非真實 A/B 測試結果），用來說明各方案之間的相對取捨。MoA 的提案者假設為中型模型（每次約 $0.01），所以 7 次呼叫仍比 3 次 GPT-4o 多數決便宜：
 
 | 指標 | 單一 GPT-4o | 3-Agent 多數決 | MoA（6提案+1聚合） | Phase 3 智慧路由 |
 |---|---|---|---|---|
@@ -642,6 +644,7 @@ class EmergenceMonitor:
 2. **智慧路由是工程解法**：讓簡單查詢走快速路徑，只有複雜查詢用全 MoA，整體平均延遲降至 2.8 秒，成本接近單 Agent，準確率接近全 MoA。
 3. **每$的準確率（ROI）**：Phase 3 智慧路由的投資報酬比全 MoA 高出 **131%**。
 4. **幻覺率是醫療場景的關鍵指標**：從 4.2% 降到 1.4% 意味著每 1000 次診斷少出現 28 次錯誤引導。
+5. **沒有任何方案達到情境要求的 99.5%**：最好的 MoA 也只有 98.4%。剩下的差距無法單靠堆疊更多 Agent 補上，必須靠人工複核、限縮系統可回答的範圍，或在低信心時明確拒答。這個落差才是本篇最重要的一課。
 
 ---
 

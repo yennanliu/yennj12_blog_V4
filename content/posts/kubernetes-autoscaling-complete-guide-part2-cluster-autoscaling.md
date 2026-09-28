@@ -263,6 +263,7 @@ spec:
       priorityClassName: system-cluster-critical
       serviceAccountName: cluster-autoscaler
       containers:
+      # The CA minor version must match the cluster minor version (e.g. v1.28.x for EKS 1.28)
       - image: registry.k8s.io/autoscaling/cluster-autoscaler:v1.28.2
         name: cluster-autoscaler
         resources:
@@ -570,7 +571,9 @@ KARPENTER APPROACH:
 export CLUSTER_NAME=my-eks-cluster
 export AWS_REGION=us-west-2
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-export KARPENTER_VERSION=v0.32.1
+# Karpenter v1 API (GA since Aug 2024). Pin the latest 1.x release from
+# https://github.com/aws/karpenter-provider-aws/releases
+export KARPENTER_VERSION="<latest-1.x-release>"
 
 # Create Karpenter IAM role
 cat <<EOF > karpenter-controller-trust-policy.json
@@ -608,19 +611,15 @@ aws iam attach-role-policy \
 **Step 2: Install Karpenter via Helm**
 
 ```bash
-# Add Karpenter Helm repo
-helm repo add karpenter https://charts.karpenter.sh
-helm repo update
-
-# Install Karpenter
-helm upgrade --install karpenter karpenter/karpenter \
+# Karpenter v1 charts are published to the public ECR OCI registry
+# (the old https://charts.karpenter.sh repo only hosts pre-v0.17 charts)
+helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter \
   --namespace karpenter \
   --create-namespace \
   --version ${KARPENTER_VERSION} \
   --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=arn:aws:iam::${AWS_ACCOUNT_ID}:role/KarpenterControllerRole-${CLUSTER_NAME} \
-  --set settings.aws.clusterName=${CLUSTER_NAME} \
-  --set settings.aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${CLUSTER_NAME} \
-  --set settings.aws.interruptionQueueName=${CLUSTER_NAME} \
+  --set settings.clusterName=${CLUSTER_NAME} \
+  --set settings.interruptionQueue=${CLUSTER_NAME} \
   --set controller.resources.requests.cpu=1 \
   --set controller.resources.requests.memory=1Gi \
   --set controller.resources.limits.cpu=1 \
@@ -631,7 +630,7 @@ helm upgrade --install karpenter karpenter/karpenter \
 **Step 3: Create NodePool Configuration**
 
 ```yaml
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: default
@@ -657,36 +656,42 @@ spec:
         operator: Gt
         values: ["5"]
 
-      # Node configuration
+      # Node configuration (v1: group/kind/name are all required)
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: default
 
       # Taints for specialized workloads
       taints: []
 
-      # Kubelet configuration
-      kubelet:
-        clusterDNS: ["10.100.0.10"]
-        maxPods: 110
+      # v1: expireAfter moved from spec.disruption to spec.template.spec
+      expireAfter: 720h  # 30 days
 
   # Limits for this NodePool
   limits:
     cpu: "1000"
     memory: 1000Gi
 
-  # Disruption budget
+  # Disruption budget (v1 renamed WhenUnderutilized -> WhenEmptyOrUnderutilized)
   disruption:
-    consolidationPolicy: WhenUnderutilized
-    expireAfter: 720h  # 30 days
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 1m
 
 ---
-apiVersion: karpenter.k8s.aws/v1beta1
+apiVersion: karpenter.k8s.aws/v1
 kind: EC2NodeClass
 metadata:
   name: default
 spec:
-  # AMI selection
-  amiFamily: AL2
+  # AMI selection (v1: amiSelectorTerms is required; an alias pins the AMI family)
+  amiSelectorTerms:
+  - alias: al2023@latest
+
+  # v1: kubelet settings moved from the NodePool to the EC2NodeClass
+  kubelet:
+    clusterDNS: ["10.100.0.10"]
+    maxPods: 110
 
   # Subnet discovery
   subnetSelectorTerms:
@@ -701,10 +706,8 @@ spec:
   # IAM instance profile
   instanceProfile: KarpenterNodeInstanceProfile-${CLUSTER_NAME}
 
-  # User data for node initialization
-  userData: |
-    #!/bin/bash
-    /etc/eks/bootstrap.sh ${CLUSTER_NAME}
+  # No custom userData needed: Karpenter generates the AL2023 (nodeadm)
+  # bootstrap config itself. /etc/eks/bootstrap.sh only exists on AL2 AMIs.
 
   # Block device mappings
   blockDeviceMappings:
@@ -735,7 +738,7 @@ spec:
 
 ```yaml
 # General purpose workloads (spot-optimized)
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: general-spot
@@ -760,6 +763,8 @@ spec:
         operator: Gt
         values: ["5"]
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: general
 
   limits:
@@ -767,12 +772,12 @@ spec:
     memory: 500Gi
 
   disruption:
-    consolidationPolicy: WhenUnderutilized
+    consolidationPolicy: WhenEmptyOrUnderutilized
     consolidateAfter: 30s
 
 ---
 # On-demand for critical workloads
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: critical-ondemand
@@ -794,6 +799,8 @@ spec:
         operator: In
         values: ["large", "xlarge", "2xlarge"]
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: general
       taints:
       - key: workload
@@ -811,7 +818,7 @@ spec:
 
 ---
 # GPU workloads
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: gpu
@@ -833,13 +840,14 @@ spec:
         operator: In
         values: ["p3.2xlarge", "g5.xlarge", "g5.2xlarge"]
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: gpu
       taints:
       - key: nvidia.com/gpu
         value: "true"
         effect: NoSchedule
-      kubelet:
-        maxPods: 50
+      # v1: maxPods now lives in the "gpu" EC2NodeClass (spec.kubelet.maxPods: 50)
 
   limits:
     cpu: "100"
@@ -851,7 +859,7 @@ spec:
 
 ---
 # Memory-optimized for caching/databases
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
   name: memory-optimized
@@ -869,6 +877,8 @@ spec:
         operator: Gt
         values: ["32768"]  # > 32GB RAM
       nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
         name: general
       taints:
       - key: workload
@@ -879,7 +889,7 @@ spec:
     memory: 1000Gi
 
   disruption:
-    consolidationPolicy: WhenUnderutilized
+    consolidationPolicy: WhenEmptyOrUnderutilized
     consolidateAfter: 300s
 ```
 
@@ -901,11 +911,9 @@ spec:
         karpenter.sh/capacity-type: spot
         workload-type: general
 
-      # Tolerate spot interruptions
-      tolerations:
-      - key: karpenter.sh/disruption
-        operator: Exists
-        effect: NoSchedule
+      # No toleration needed for spot interruptions: Karpenter taints the node
+      # (karpenter.sh/disrupted:NoSchedule in v1) and drains it gracefully.
+      # Do NOT tolerate that taint, or pods get rescheduled onto nodes being removed.
 
       containers:
       - name: app
@@ -966,7 +974,7 @@ spec:
 ```yaml
 # Aggressive consolidation (cost-optimized)
 disruption:
-  consolidationPolicy: WhenUnderutilized
+  consolidationPolicy: WhenEmptyOrUnderutilized
   consolidateAfter: 30s
 
 # Conservative consolidation (stability-focused)
@@ -983,18 +991,14 @@ disruption:
 **2. Spot Interruption Handling:**
 
 ```yaml
-# Karpenter automatically handles spot interruptions
-# Enable interruption queue for graceful handling
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: karpenter-global-settings
-  namespace: karpenter
-data:
+# Karpenter automatically handles spot interruptions once it is pointed at
+# an SQS interruption queue. Since v0.32 the karpenter-global-settings
+# ConfigMap is gone; settings are Helm values / env vars on the controller.
+# Drift detection is always on in v1 (no feature gate).
+settings:
+  clusterName: ${CLUSTER_NAME}
   # AWS SQS queue for spot interruption notifications
-  aws.interruptionQueueName: ${CLUSTER_NAME}
-  # Timeout for draining nodes
-  featureGates.driftEnabled: "true"
+  interruptionQueue: ${CLUSTER_NAME}
 ```
 
 **3. Instance Diversification:**
@@ -1127,7 +1131,9 @@ const nodeGroup = cluster.addNodegroupCapacity('standard-nodes', {
 });
 ```
 
-### EKS Auto Mode (Preview)
+### EKS Auto Mode
+
+> EKS Auto Mode has been generally available since December 2024 (it was in preview when this section was first drafted). It runs a managed Karpenter for you, so treat it as a first-class alternative to self-managed Cluster Autoscaler or Karpenter.
 
 **Fully Managed Compute:**
 
@@ -1140,9 +1146,13 @@ const nodeGroup = cluster.addNodegroupCapacity('standard-nodes', {
 # - Capacity optimization
 
 # Enable during cluster creation
+# (Auto Mode requires compute, block storage and load balancing to be enabled together;
+#  role/subnet flags omitted for brevity)
 aws eks create-cluster \
   --name my-cluster \
-  --compute-config enabled=true
+  --compute-config enabled=true \
+  --kubernetes-network-config '{"elasticLoadBalancing":{"enabled":true}}' \
+  --storage-config '{"blockStorage":{"enabled":true}}'
 
 # Workload specifications drive capacity
 apiVersion: apps/v1

@@ -360,7 +360,7 @@ core 據此決定要不要提供中斷按鈕、要不要允許貼圖片、要不
 | 決策 | 選 X 的理由 | 不選 Y 的理由 | 反轉條件 |
 |---|---|---|---|
 | **Scope-first 多租戶**<br>vs 單人 Agent 加租戶欄位 | 記憶 / 檔案 / 憑證 / 排程七個維度都要隔離，事後加會處處漏 | 加欄位的做法會在「頻道裡回覆引用了私有檔案」這類地方破功 | 產品確定只服務單一使用者時 |
-| **小而固定的工具面**<br>vs 每個 SaaS 一組工具 | 能力上限是「任何能裝進 Linux 的東西」；權限只需一條命令政策 | 159 個工具 schema 吃 context，且新增整合要改 core | 需要細粒度稽核與參數級權限時 |
+| **小而固定的工具面**<br>vs 每個 SaaS 一組工具 | 能力上限是「任何能裝進 Linux 的東西」；權限只需一條命令政策 | OpenWorker 式的 159 個工具 schema 吃 context，且新增整合要改 core | 需要細粒度稽核與參數級權限時 |
 | **無頭核心 + plugin 介面**<br>vs 單體 App | Slack、Web、Admin、Portal 共用同一份身分與設定 | 單體會讓「同一個人在 Slack 與 Web 上是同一個身分」變得困難 | 只需要單一介面時 |
 | **TypeScript 直跑 Node**<br>vs 編譯後部署 | 開發迴圈短；`.ts` 匯入路徑就是真實路徑 | build 步驟會讓 stack trace 與原始碼錯位 | 需要極致啟動速度或打包發佈時 |
 | **Postgres 一把抓**<br>（session / memory / queue / audit / config） | 一個 store 就能做交易性一致；pg-boss 讓佇列免裝 Redis | 多套儲存要處理跨系統一致性 | 規模到需要專用佇列 / 向量庫時 |

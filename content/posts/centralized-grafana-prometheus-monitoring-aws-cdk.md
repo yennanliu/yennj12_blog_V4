@@ -208,7 +208,7 @@ Our centralized monitoring architecture uses Prometheus federation and remote wr
 │ 4. CENTRAL PROMETHEUS (ECS Fargate)                         │
 │    • Receive and deduplicate metrics                         │
 │    • Apply global recording rules                            │
-│    • Store in EFS-backed TSDB (30-90 days)                  │
+│    • Store locally, remote_write for 30-90 day retention    │
 │    • Evaluate global alerts                                  │
 │    • Expose unified query API                                │
 └──────────────────────┬───────────────────────────────────────┘
@@ -575,6 +575,8 @@ export class VpcStack extends cdk.Stack {
 
 ### **Prometheus Stack - Central Metrics Server**
 
+> **Warning: do not put the Prometheus TSDB on EFS.** The stack below mounts EFS at `/prometheus` because that is what the original project did, but the Prometheus docs state that non-POSIX / NFS filesystems (EFS is NFS) are not supported and can corrupt the TSDB unrecoverably. Running `desiredCount > 1` against the same directory makes it worse: each replica tries to own the same TSDB. For production, either (a) run Prometheus on ECS-on-EC2 or EKS with a dedicated EBS volume per replica, or (b) keep only a short local retention and `remote_write` to durable storage such as Amazon Managed Service for Prometheus, Thanos or Mimir. EFS is fine for Grafana's small SQLite/plugin data.
+
 ```typescript
 // lib/stacks/prometheus-stack.ts
 import * as cdk from 'aws-cdk-lib';
@@ -615,6 +617,8 @@ export class PrometheusStack extends cdk.Stack {
       containerInsights: true,
     });
 
+    // WARNING: EFS (NFS) is unsupported for the Prometheus TSDB and risks corruption.
+    // Prefer EBS per replica, or short local retention + remote_write (e.g. Amazon Managed Prometheus).
     // Create EFS for Prometheus data persistence
     this.fileSystem = new efs.FileSystem(this, 'PrometheusEfs', {
       vpc,
@@ -672,6 +676,7 @@ export class PrometheusStack extends cdk.Stack {
 
     // Add Prometheus container
     const prometheusContainer = taskDefinition.addContainer('prometheus', {
+      // Pin a specific release tag in production instead of :latest
       image: ecs.ContainerImage.fromRegistry('prom/prometheus:latest'),
       logging: ecs.LogDrivers.awsLogs({
         streamPrefix: 'prometheus',
@@ -924,6 +929,7 @@ export class GrafanaStack extends cdk.Stack {
 
     // Grafana container
     const grafanaContainer = taskDefinition.addContainer('grafana', {
+      // Pin a specific release tag in production instead of :latest
       image: ecs.ContainerImage.fromRegistry('grafana/grafana:latest'),
       logging: ecs.LogDrivers.awsLogs({
         streamPrefix: 'grafana',
@@ -1442,7 +1448,8 @@ prometheusConfig: {
   // Use consistent hashing for federation
 }
 
-// Use EFS for shared storage
+// Do NOT share one EFS TSDB between replicas: each replica needs its own
+// storage (EBS), or use remote_write to a managed backend for HA
 storageConfig: {
   efsPerformanceMode: 'maxIO',
   efsThroughputMode: 'provisioned',
@@ -1509,7 +1516,7 @@ This centralized Prometheus + Grafana architecture provides enterprise-grade obs
 
 1. **Federation** enables centralized metrics without changing application code
 2. **ECS Fargate** provides serverless, scalable infrastructure for Prometheus/Grafana
-3. **EFS storage** ensures data persistence and high availability
+3. **Durable storage** belongs in remote_write (Amazon Managed Prometheus / Thanos / Mimir) or per-replica EBS, not EFS, which Prometheus does not support for its TSDB
 4. **Recording rules** optimize query performance and reduce storage costs
 5. **Multi-tier alerting** prevents alert fatigue and ensures timely responses
 

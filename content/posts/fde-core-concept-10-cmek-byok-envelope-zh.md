@@ -24,7 +24,7 @@ readTime: "18 min"
 
 **弱答案長什麼樣：**「就用 KMS 加密就好了。」沒有提到信封加密的雙層結構（DEK + KEK）、DEK 不持久化的核心設計意圖，以及 KEK 調用頻率與推論延遲的量化關係。這種回答把 CMEK 等同於「把密鑰存在 KMS」，完全遺漏了密鑰控制權歸屬的問題。
 
-**強答案長什麼樣：**從信封加密的 DEK/KEK 分層講起，說明明文 DEK 只在 Confidential Computing enclave 的記憶體中存活、每小時輪換（= 24 次 KMS 呼叫 / 天），與數百萬次推論相比開銷不到 0.003%，推論 p99 延遲影響 < 50ms。再點出 BYOK 透過 Dedicated Interconnect（< 5ms）將 KEK 留在客戶 on-premise HSM，讓雲端平台完全無法接觸 KEK——即使面對法院命令也無法交出金鑰。最後說明三層密鑰階層（Root KEK → Regional KEK → DEK）如何隔離故障域，以及這個設計的代價：HSM 可用性進入了推論服務的關鍵路徑。
+**強答案長什麼樣：**從信封加密的 DEK/KEK 分層講起，說明明文 DEK 只在 Confidential Computing enclave 的記憶體中存活、每小時輪換（= 24 次 KMS 呼叫 / 天），與數百萬次推論相比開銷不到 0.003%，推論 p99 延遲影響 < 50ms。再點出 BYOK 透過 Dedicated Interconnect（< 5ms）將 KEK 留在客戶 on-premise HSM，讓雲端平台完全無法接觸 KEK——平台沒有技術能力單方解密（法律層面的義務仍需另行評估）。最後說明三層密鑰階層（Root KEK → Regional KEK → DEK）如何隔離故障域，以及這個設計的代價：HSM 可用性進入了推論服務的關鍵路徑。
 
 ---
 
@@ -121,7 +121,7 @@ BYOK / EKM 路徑（KEK 在客戶 HSM）
                                                   ▼
                                   Vertex AI Confidential VM
                                   （DEK 在記憶體，1hr TTL）
-  安全優勢：平台無法接觸 KEK，即使收到法院命令也無法交出
+  安全優勢：平台無法接觸 KEK，沒有技術能力單方解密
 ```
 
 ### 三層密鑰階層（Enterprise-Grade）
@@ -346,7 +346,7 @@ ELSE:
 - 密鑰使用策略版本控制，每次政策變更需要雙人審核（Four-eyes principle）
 
 **解決的問題：**
-- 雲端平台即使面對法院命令，也無法交出 KEK（KEK 從未離開客戶 HSM）
+- 雲端平台沒有技術能力單方交出或使用 KEK（KEK 從未離開客戶 HSM）
 - 達到 FedRAMP High、FIPS 140-2 Level 3、ISO 27001 Annex A.10 要求
 - 客戶可即時「拔插頭」：拒絕所有 unwrap 請求 = 雲端資料立即不可存取
 
@@ -489,7 +489,7 @@ AES-256-GCM  wrap/unwrap 速度極快（< 0.1ms）         需要安全信道預
 
 ## 七、面試一句話（Killer Phrase）
 
-> *「CMEK 的核心設計意圖是把密鑰控制權和資料控制權分開：雲端平台持有加密後的 DEK（encrypted_DEK），但只有客戶的 KEK 能解開它——明文 DEK 只在 Confidential Computing enclave 的記憶體中短暫存活（TTL 1 小時），解密完畢立即清零，永不落盤。BYOK 再進一步，把 KEK 本身也移到客戶 on-premise HSM，透過 Cloud EKM 和 Dedicated Interconnect（往返延遲 < 5ms）代理 unwrap 請求，讓雲端平台即使面對法院命令也無法交出 KEK。效能上，KEK 每小時只需調用一次（= 24 次 / 天），與數百萬次推論相比開銷不到 0.003%，推論 p99 延遲幾乎不受影響。最關鍵的取捨是：EKM 把密鑰主權還給客戶，但也把 HSM 可用性加入了推論服務的關鍵路徑——HSM 宕機等於整個推論管線無法解密新 DEK，因此 HSM Active-Active HA 設計和 DEK 快取 TTL 必須一起規劃，而不是分開考量。」*
+> *「CMEK 的核心設計意圖是把密鑰控制權和資料控制權分開：雲端平台持有加密後的 DEK（encrypted_DEK），但只有客戶的 KEK 能解開它——明文 DEK 只在 Confidential Computing enclave 的記憶體中短暫存活（TTL 1 小時），解密完畢立即清零，永不落盤。BYOK 再進一步，把 KEK 本身也移到客戶 on-premise HSM，透過 Cloud EKM 和 Dedicated Interconnect（往返延遲 < 5ms）代理 unwrap 請求，讓雲端平台沒有技術能力單方解密。效能上，KEK 每小時只需調用一次（= 24 次 / 天），與數百萬次推論相比開銷不到 0.003%，推論 p99 延遲幾乎不受影響。最關鍵的取捨是：EKM 把密鑰主權還給客戶，但也把 HSM 可用性加入了推論服務的關鍵路徑——HSM 宕機等於整個推論管線無法解密新 DEK，因此 HSM Active-Active HA 設計和 DEK 快取 TTL 必須一起規劃，而不是分開考量。」*
 
 ---
 

@@ -274,9 +274,12 @@ class BacktestEngine:
 
         pos = self.positions[order.symbol]
 
-        # Calculate P&L
+        # Calculate P&L net of BOTH legs' commission. The entry commission was
+        # already deducted from capital in _open_position, but it must also be
+        # charged to the trade, or per-trade P&L (and win rate) is overstated.
+        entry_commission = pos.entry_price * order.filled_quantity * self.commission_rate
         pnl = (order.filled_price - pos.entry_price) * order.filled_quantity
-        pnl -= order.commission
+        pnl -= (entry_commission + order.commission)
 
         # Create trade record
         trade = Trade(
@@ -1186,8 +1189,8 @@ In the final post, we'll focus on production deployment and optimization:
 # Combine multiple strategies with dynamic weighting
 ```
 
-**Continue to Part 3**: [Crypto Quantitative Trading Part 3: Optimization and Production Deployment](#)
+**Continue to Part 3**: [Crypto Quantitative Trading Part 3: Optimization and Production Deployment](/posts/crypto-quantitative-trading-part3-production-deployment/)
 
 ---
 
-*Questions about backtesting or strategies? Drop them in the comments! In Part 3, we'll deploy these strategies to production.*
+*In Part 3, we'll deploy these strategies to production.*

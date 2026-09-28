@@ -336,7 +336,7 @@ wins(v) = 此節點成功完成任務的次數
 visits(v) = 此節點被訪問次數
 ```
 
-在 Agent 規劃中，「wins」定義為子任務成功完成，「rollout」可以用 LLM 快速模擬（比真實執行便宜 10–100×）。
+在 Agent 規劃中，「wins」定義為子任務成功完成，「rollout」可以用 LLM 快速模擬（通常比真實執行便宜得多）。但要注意：模擬 rollout 正是幻覺「假成功」最容易混入的地方——LLM 會樂觀地假設工具呼叫成功，所以關鍵分支仍應以真實執行或可驗證的檢查確認。
 
 ---
 
@@ -496,6 +496,8 @@ Flip condition：任務步驟 ≤ 4 步、Planner 成本敏感時，CoT 足夠�
 Token 消耗：CoT 1×，ToT（Beam=3）約 3–4×。
 ```
 
+> 補充 flip condition：若 Planner 用的是推理模型（o 系列、extended thinking 這類會在內部先做長推理的模型），模型已在內部完成大量 CoT/ToT 式的探索，外部再顯式展開 ToT 通常不划算；此時 ReAct 與 Plan-and-Execute 的差距也會縮小。
+
 ### 決策三：BFS vs MCTS（搜尋策略）
 
 ```
@@ -555,7 +557,7 @@ Flip condition：Planner 無法穩定輸出合法 JSON（常見於較弱的模�
 
 ## 九、系統效應：ReAct vs Plan-and-Execute 數字比較
 
-以下數字來自 WebArena、ALFWorld、HotpotQA 等公開 benchmark，以及生產環境的實測數據：
+> 以下數字為示意估算，用來說明各架構的相對趨勢，並非 WebArena、ALFWorld 等公開 benchmark 的原始結果，也不是實測數據。要引用實際數字，請查閱 Plan-and-Solve、LLMCompiler 等論文的原表。
 
 ### 9.1 任務完成率
 

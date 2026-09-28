@@ -1083,63 +1083,65 @@ docker stats --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}"
 
 Docker Compose 是定義和運行多容器應用的工具。
 
+> 本節使用 Compose V2 的 `docker compose`（Docker CLI 外掛，第一篇安裝的 `docker-compose-plugin`）。舊版獨立執行檔 `docker-compose`（V1）已於 2023 年停止支援。
+
 ### 基本指令對照表
 
 | 指令 | 說明 | 範例 |
 |------|------|------|
-| `docker-compose up` | 啟動服務 | `docker-compose up -d` |
-| `docker-compose down` | 停止並刪除服務 | `docker-compose down` |
-| `docker-compose ps` | 列出服務 | `docker-compose ps` |
-| `docker-compose logs` | 查看日誌 | `docker-compose logs -f` |
-| `docker-compose exec` | 在服務中執行指令 | `docker-compose exec web bash` |
-| `docker-compose build` | 建立映像 | `docker-compose build` |
-| `docker-compose pull` | 拉取映像 | `docker-compose pull` |
-| `docker-compose restart` | 重啟服務 | `docker-compose restart` |
-| `docker-compose stop` | 停止服務 | `docker-compose stop` |
-| `docker-compose start` | 啟動服務 | `docker-compose start` |
+| `docker compose up` | 啟動服務 | `docker compose up -d` |
+| `docker compose down` | 停止並刪除服務 | `docker compose down` |
+| `docker compose ps` | 列出服務 | `docker compose ps` |
+| `docker compose logs` | 查看日誌 | `docker compose logs -f` |
+| `docker compose exec` | 在服務中執行指令 | `docker compose exec web bash` |
+| `docker compose build` | 建立映像 | `docker compose build` |
+| `docker compose pull` | 拉取映像 | `docker compose pull` |
+| `docker compose restart` | 重啟服務 | `docker compose restart` |
+| `docker compose stop` | 停止服務 | `docker compose stop` |
+| `docker compose start` | 啟動服務 | `docker compose start` |
 
 ### 常用 Compose 操作
 
 ```bash
 # 啟動所有服務（背景運行）
-docker-compose up -d
+docker compose up -d
 
 # 啟動特定服務
-docker-compose up -d web database
+docker compose up -d web database
 
 # 重新建立並啟動
-docker-compose up -d --build
+docker compose up -d --build
 
 # 擴展服務（運行多個實例）
-docker-compose up -d --scale web=3
+docker compose up -d --scale web=3
 
 # 查看服務狀態
-docker-compose ps
+docker compose ps
 
 # 查看服務日誌
-docker-compose logs -f
-docker-compose logs -f web  # 特定服務
+docker compose logs -f
+docker compose logs -f web  # 特定服務
 
 # 執行一次性指令
-docker-compose run web python manage.py migrate
+docker compose run web python manage.py migrate
 
 # 進入服務容器
-docker-compose exec web bash
+docker compose exec web bash
 
 # 停止所有服務
-docker-compose stop
+docker compose stop
 
 # 停止並刪除容器（保留資料卷）
-docker-compose down
+docker compose down
 
 # 刪除所有資源（包含資料卷）
-docker-compose down -v
+docker compose down -v
 
 # 查看配置
-docker-compose config
+docker compose config
 
 # 驗證配置檔
-docker-compose config --quiet
+docker compose config --quiet
 ```
 
 ## 🛠️ 進階實用技巧
@@ -1235,7 +1237,7 @@ docker inspect container-name | jq '.State, .HostConfig.Resources'
 
 # Docker 快捷指令
 alias d='docker'
-alias dc='docker-compose'
+alias dc='docker compose'
 alias dps='docker ps'
 alias dpsa='docker ps -a'
 alias di='docker images'
@@ -1247,11 +1249,11 @@ alias drmi='docker rmi $(docker images -q)'
 alias dprune='docker system prune -af --volumes'
 
 # Docker Compose 快捷指令
-alias dcup='docker-compose up -d'
-alias dcdown='docker-compose down'
-alias dclog='docker-compose logs -f'
-alias dcps='docker-compose ps'
-alias dcbuild='docker-compose up -d --build'
+alias dcup='docker compose up -d'
+alias dcdown='docker compose down'
+alias dclog='docker compose logs -f'
+alias dcps='docker compose ps'
+alias dcbuild='docker compose up -d --build'
 ```
 
 ## 📊 指令速查表

@@ -1350,7 +1350,7 @@ To be in the 1%:
 
 **Books:**
 - "Quantitative Trading" by Ernest Chan
-- "Algorithmic Trading" by Stefan Jansen
+- "Machine Learning for Algorithmic Trading" by Stefan Jansen
 - "Machine Learning for Asset Managers" by Marcos López de Prado
 
 **Online Courses:**
@@ -1375,5 +1375,3 @@ This series provided a complete foundation, but quantitative trading is a contin
 ---
 
 **Remember**: Quantitative trading is not a get-rich-quick scheme. It requires significant time investment, technical skills, capital, and most importantly—discipline. Start small, validate rigorously, and scale gradually.
-
-*Have you deployed your first trading strategy? Share your experience in the comments! What challenges did you face?*

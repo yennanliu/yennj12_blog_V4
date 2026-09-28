@@ -374,7 +374,7 @@ print(result.raw)
 
 ## 執行結果解讀
 
-CrewAI 執行時，你會看到每個 Agent 的思考過程（`verbose=True`）：
+CrewAI 執行時，你會看到每個 Agent 的思考過程（`verbose=True`）。以下為示意輸出，實際格式依 CrewAI 版本而異：
 
 ```
 [2024-01-15 10:00:01][DEBUG]: Working Agent: 內容研究員
@@ -424,4 +424,4 @@ print(result.token_usage)    # token 用量統計
 
 - **第一篇（本篇）**：入門與核心概念
 - [第二篇](/posts/crewai-series-part2-real-world-tasks-zh/)：真實場景實戰——競情分析、程式碼審查、客服自動化
-- [第三篇](/posts/crewai-series-part3-advanced-flows-zh/)：進階技巧——Flows、Memory、結構化輸出與生產部署
+- [第三篇](/posts/crewai-series-part3-advanced-flows-zh/)：進階技巧——Flows、Memory、錯誤處理與生產部署

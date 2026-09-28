@@ -175,6 +175,8 @@ Step 3: PPO 強化學習
 
 ### 使用 TRL 的 PPO 訓練
 
+> **版本注意**：下面是 TRL 舊版（0.11 以前）的 PPO API。TRL 0.12 起已移除 `AutoModelForCausalLMWithValueHead` 這套流程，`PPOConfig(model_name=…, optimize_cuda_cache=…, early_stopping=…, target_kl=…)` 等參數也不再存在；新版 `PPOTrainer` 改為傳入 `args`、`processing_class`、`model`、`ref_model`、`reward_model`、`value_model`、`train_dataset`。要照抄這段請固定 `pip install "trl<0.12"`，否則請改寫成新版 API。
+
 ```python
 from trl import PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead
 from transformers import pipeline
@@ -272,7 +274,7 @@ dpo_trainer = DPOTrainer(
     ref_model=ref_model,         # 參考模型（SFT 後的凍結版）
     args=dpo_config,
     train_dataset=dpo_dataset,
-    tokenizer=tokenizer,
+    processing_class=tokenizer,  # 新版 TRL 以 processing_class 取代 tokenizer=
 )
 dpo_trainer.train()
 ```
@@ -330,7 +332,7 @@ orpo_trainer = ORPOTrainer(
     model=model,           # 注意：不需要 ref_model！
     args=orpo_config,
     train_dataset=dataset,
-    tokenizer=tokenizer,
+    processing_class=tokenizer,  # 新版 TRL 以 processing_class 取代 tokenizer=
 )
 orpo_trainer.train()
 ```

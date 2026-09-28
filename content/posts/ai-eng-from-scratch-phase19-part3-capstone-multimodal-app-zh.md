@@ -26,7 +26,7 @@ series: ["ai-eng-from-scratch"]
 
 ## 一、專案目標：多模態商業智慧分析平台需求
 
-這個 Capstone 專案整合了本系列所有核心技術：語言模型（Phase 7–9）、RAG（Phase 11）、Agent（Phase 13）、效能優化（Phase 17–18）、語音處理（Phase 6）、視覺理解（Phase 19 Part 1–2），最終構建一個真實可用的多模態商業智慧分析平台。
+這個 Capstone 專案整合了本系列所有核心技術：Transformer 與 LLM（Phase 7、10）、推論與 RAG（Phase 11）、Agent 與工具整合（Phase 13–14）、推論服務與成本優化（Phase 17）、語音處理（Phase 6）、視覺與多模態理解（Phase 4、12），最終構建一個真實可用的多模態商業智慧分析平台。
 
 ### 1.1 功能需求
 
@@ -323,7 +323,7 @@ series: ["ai-eng-from-scratch"]
 總端對端（P99）：300+1100+400+620+200 = 2620ms
 ```
 
-**P99 2620ms 仍在 2.5s 可接受範圍邊緣**——需要優化。
+**P99 2620ms 已超出 2.5s 的可接受上限**——需要優化。
 
 ### 4.2 三項串流優化
 
@@ -356,6 +356,8 @@ LLM 輸出第一個完整句子（通常 3–5 個中文字，~40ms 後）立即
 | ASR 超時（> 3s） | 提示用戶改用文字輸入 | 輕微中斷 |
 | TTS 故障 | 返回純文字回應 | 功能降級，不報錯 |
 | 兩者均故障 | 靜默切換到文字模式，頁面提示 | 用戶可繼續使用 |
+
+**翻轉條件：** 本節只討論 ASR → LLM → TTS 的串接架構。若延遲是第一優先、且可以接受把語音理解與生成交給同一個供應商，直接使用語音對語音（speech-to-speech）的即時模型 API，可省掉兩次模態轉換與中間的文字往返，是壓低 2.5s 預算最直接的手段；代價是較難插入文字層的 guardrails、RAG 與逐段稽核。
 
 ---
 
@@ -498,116 +500,79 @@ class ModalRouter:
 
 ## 七、系列總結：19 個 Phase 的知識地圖與學習路線
 
-我們來到了「AI 工程從零開始」系列的最後一站。從 Phase 1 的環境設置，走到今天的多模態 Capstone，這是一段真正的工程師成長旅程。讓我們做一次完整的知識地圖回顧。
+我們來到了「AI 工程從零開始」系列的最後一站。從 Phase 1 的線性代數與機率，走到今天的多模態 Capstone，這是一段真正的工程師成長旅程。讓我們做一次完整的知識地圖回顧。
 
 ### 7.1 完整知識地圖
 
 ```
-AI 工程從零開始：19 Phase 知識地圖
+AI 工程從零開始：19 Phase 知識地圖（43 篇）
 ════════════════════════════════════════════════════════════
 
-  ╔══════════════════════════════════════╗
-  ║  【地基層】Phase 1–3：工程基礎       ║
-  ║  ┌─────────┐ ┌─────────┐ ┌────────┐ ║
-  ║  │Phase 1  │ │Phase 2  │ │Phase 3 │ ║
-  ║  │環境設置 │ │Python   │ │數學    │ ║
-  ║  │Dev Loop │ │資料結構 │ │線代/   │ ║
-  ║  │Docker   │ │函數式   │ │機率/   │ ║
-  ║  │Git/CI   │ │程式設計 │ │最優化  │ ║
-  ║  └─────────┘ └─────────┘ └────────┘ ║
-  ╚══════════════════════════════════════╝
+【地基層】Phase 1–3：數學與模型基礎
+  Phase 1   數學：線性代數與微積分、機率與統計
+  Phase 2   傳統機器學習、集成學習與最佳化
+  Phase 3   深度學習核心：從第一原理構建神經網路
               │
               ▼
-  ╔══════════════════════════════════════╗
-  ║  【模型層】Phase 4–6：ML 基礎        ║
-  ║  ┌─────────┐ ┌─────────┐ ┌────────┐ ║
-  ║  │Phase 4  │ │Phase 5  │ │Phase 6 │ ║
-  ║  │機器學習 │ │深度學習 │ │語音/   │ ║
-  ║  │監督/非  │ │CNN/RNN  │ │ASR/TTS │ ║
-  ║  │監督學習 │ │訓練技巧 │ │聲學模型│ ║
-  ║  └─────────┘ └─────────┘ └────────┘ ║
-  ╚══════════════════════════════════════╝
+【感知層】Phase 4–6：視覺、語言、語音
+  Phase 4   電腦視覺：CNN、偵測與分割、VLM / 3D / 世界模型
+  Phase 5   NLP：文字基礎、Seq2Seq 與注意力、BERT 與問答
+  Phase 6   語音：ASR、TTS 與音訊模型
               │
               ▼
-  ╔══════════════════════════════════════╗
-  ║  【LLM 層】Phase 7–9：大模型技術     ║
-  ║  ┌─────────┐ ┌─────────┐ ┌────────┐ ║
-  ║  │Phase 7  │ │Phase 8  │ │Phase 9 │ ║
-  ║  │Transform│ │擴散模型 │ │強化學習│ ║
-  ║  │架構原理 │ │GAN/影片 │ │RLHF/  │ ║
-  ║  │注意力   │ │生成模型 │ │PPO/DPO │ ║
-  ║  └─────────┘ └─────────┘ └────────┘ ║
-  ╚══════════════════════════════════════╝
+【生成層】Phase 7–9：Transformer、生成模型、強化學習
+  Phase 7   Transformer 架構、訓練策略與架構變體
+  Phase 8   擴散模型、GAN 與影片生成
+  Phase 9   強化學習基礎與 RLHF
               │
               ▼
-  ╔══════════════════════════════════════╗
-  ║  【生產層】Phase 10–12：系統工程     ║
-  ║  ┌─────────┐ ┌─────────┐ ┌────────┐ ║
-  ║  │Phase 10 │ │Phase 11 │ │Phase 12│ ║
-  ║  │API 設計 │ │RAG 架構 │ │評估體系│ ║
-  ║  │版本管理 │ │向量索引 │ │Evals/  │ ║
-  ║  │認證/限速│ │混合檢索 │ │基準測試│ ║
-  ║  └─────────┘ └─────────┘ └────────┘ ║
-  ╚══════════════════════════════════════╝
+【LLM 工程層】Phase 10–12：從頭構建到多模態
+  Phase 10  從頭構建 LLM：Tokenization、預訓練、微調
+  Phase 11  推論工程、RAG 系統與 LLM 評估
+  Phase 12  ViT 與多模態融合、多模態 Agent 與電腦操作
               │
               ▼
-  ╔══════════════════════════════════════╗
-  ║  【智慧層】Phase 13–15：Agent 技術   ║
-  ║  ┌─────────┐ ┌─────────┐ ┌────────┐ ║
-  ║  │Phase 13 │ │Phase 14 │ │Phase 15│ ║
-  ║  │單一Agent│ │多 Agent │ │Prompt  │ ║
-  ║  │工具使用 │ │協調編排 │ │Engineering│ ║
-  ║  │ReAct   │ │通信協議 │ │CoT/Few │ ║
-  ║  └─────────┘ └─────────┘ │Shot    │ ║
-  ║                           └────────┘ ║
-  ╚══════════════════════════════════════╝
+【Agent 層】Phase 13–16：工具、Agent、自主、多 Agent
+  Phase 13  MCP 與 API 整合、工作流程編排
+  Phase 14  Agent 迴圈與記憶、規劃、框架、生產化
+  Phase 15  長時程自主系統、自我改進與安全技術棧
+  Phase 16  多 Agent 協調、湧現與集體智慧
               │
               ▼
-  ╔══════════════════════════════════════╗
-  ║  【維運層】Phase 16–18：生產維運     ║
-  ║  ┌─────────┐ ┌─────────┐ ┌────────┐ ║
-  ║  │Phase 16 │ │Phase 17 │ │Phase 18│ ║
-  ║  │監控可觀 │ │推論服務 │ │安全    │ ║
-  ║  │測性     │ │vLLM/    │ │對齊/   │ ║
-  ║  │Tracing  │ │Triton   │ │防護欄  │ ║
-  ║  └─────────┘ └─────────┘ └────────┘ ║
-  ╚══════════════════════════════════════╝
+【生產層】Phase 17–18：基礎設施、安全與治理
+  Phase 17  推論服務架構、可觀測性、成本優化
+  Phase 18  AI 技術安全、AI 治理與倫理
               │
               ▼
-  ╔══════════════════════════════════════╗
-  ║  【整合層】Phase 19：多模態 Capstone ║
-  ║  ┌─────────┐ ┌─────────┐ ┌────────┐ ║
-  ║  │Part 1   │ │Part 2   │ │Part 3  │ ║
-  ║  │視覺理解 │ │語音整合 │ │端對端  │ ║
-  ║  │VLM/OCR  │ │串流語音 │ │系統設計│ ║
-  ║  │圖表分析 │ │多輪對話 │ │← 你在這│ ║
-  ║  └─────────┘ └─────────┘ └────────┘ ║
-  ╚══════════════════════════════════════╝
+【整合層】Phase 19：三個 Capstone
+  Part 1    企業級 RAG 知識庫系統
+  Part 2    生產級 AI Agent 產品
+  Part 3    多模態 AI 應用與系列總結  ← 你在這
 ```
 
 ### 7.2 技能矩陣：每個 Phase 建立了什麼能力
 
-| Phase | 技術領域 | 核心能力 | 關鍵輸出物 |
-|-------|---------|---------|----------|
-| 1 | 工程基礎 | 可重現的開發環境 | Dockerfile + CI Pipeline |
-| 2 | Python 工程 | 生產級 Python 程式設計 | 類型安全的資料處理模組 |
-| 3 | 數學基礎 | 理解梯度下降的直覺 | 從零手寫反向傳播 |
-| 4 | ML 基礎 | 監督 / 非監督學習全貌 | 特徵工程 + 模型選型決策 |
-| 5 | 深度學習 | CNN/RNN 架構設計 | 圖像分類 + 序列預測系統 |
-| 6 | 語音模型 | ASR/TTS 端對端理解 | 語音識別系統 |
-| 7 | Transformer | 注意力機制底層原理 | 從零實作 Transformer |
-| 8 | 生成模型 | 擴散模型 / GAN 應用 | 圖像生成 Pipeline |
-| 9 | RL / RLHF | 強化學習與 LLM 對齊 | PPO / DPO 訓練理解 |
-| 10 | API 設計 | 生產級 LLM API 工程 | 版本化 API + Rate Limiting |
-| 11 | RAG | 混合檢索增強生成 | 語意 + 關鍵字混合 RAG |
-| 12 | 評估 | 系統性 Eval 框架 | LLM 評測基準 Pipeline |
-| 13 | Agent | 工具使用 + ReAct | 能自主解決任務的 Agent |
-| 14 | Multi-Agent | 多智慧體協調 | Supervisor + Worker 編排 |
-| 15 | Prompt Eng. | 系統化提示工程 | CoT + Few-Shot 模板庫 |
-| 16 | 監控 | LLM 系統可觀測性 | Tracing + 指標 + 告警 |
-| 17 | 推論服務 | GPU 服務 + 自動擴縮 | vLLM 服務 + HPA 配置 |
-| 18 | 安全 | LLM 安全與對齊 | 防護欄 + PII 偵測 |
-| 19 | 多模態 | 端對端多模態系統 | 本文：完整 Capstone |
+| Phase | 技術領域 | 核心能力 | 文章 |
+|-------|---------|---------|------|
+| 1 | 數學基礎 | 線性代數、微積分與機率的工程直覺 | [Part 1](/posts/ai-eng-from-scratch-phase1-part1-linear-algebra-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase1-part2-probability-stats-zh/) |
+| 2 | 傳統 ML | 經典模型選型、集成學習與超參數最佳化 | [Part 1](/posts/ai-eng-from-scratch-phase2-part1-classical-ml-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase2-part2-ensemble-optimization-zh/) |
+| 3 | 深度學習 | 反向傳播、最佳化器與訓練穩定性 | [Phase 3](/posts/ai-eng-from-scratch-phase3-part1-neural-networks-zh/) |
+| 4 | 電腦視覺 | CNN、偵測與分割、視覺語言模型 | [Part 1](/posts/ai-eng-from-scratch-phase4-part1-cnn-image-fundamentals-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase4-part2-detection-segmentation-zh/)・[Part 3](/posts/ai-eng-from-scratch-phase4-part3-vlm-3d-worldmodels-zh/) |
+| 5 | NLP | 文字表示、注意力機制、BERT 與問答 | [Part 1](/posts/ai-eng-from-scratch-phase5-part1-text-fundamentals-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase5-part2-seq2seq-attention-zh/)・[Part 3](/posts/ai-eng-from-scratch-phase5-part3-advanced-nlp-zh/) |
+| 6 | 語音 | ASR 與 TTS 的端對端理解 | [Part 1](/posts/ai-eng-from-scratch-phase6-part1-asr-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase6-part2-tts-audio-models-zh/) |
+| 7 | Transformer | 注意力底層原理、訓練策略與架構變體 | [Part 1](/posts/ai-eng-from-scratch-phase7-part1-transformer-architecture-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase7-part2-training-variants-zh/) |
+| 8 | 生成模型 | 擴散模型、GAN 與影片生成 | [Part 1](/posts/ai-eng-from-scratch-phase8-part1-diffusion-models-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase8-part2-gan-video-generation-zh/) |
+| 9 | 強化學習 | RL 基礎與 LLM 對齊（RLHF） | [Phase 9](/posts/ai-eng-from-scratch-phase9-part1-rl-fundamentals-zh/) |
+| 10 | 從頭構建 LLM | Tokenization、預訓練、LoRA/QLoRA 微調 | [Part 1](/posts/ai-eng-from-scratch-phase10-part1-tokenization-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase10-part2-pretraining-zh/)・[Part 3](/posts/ai-eng-from-scratch-phase10-part3-finetuning-zh/) |
+| 11 | 推論與 RAG | 推論服務最佳化、RAG 與 LLM 評估 | [Part 1](/posts/ai-eng-from-scratch-phase11-part1-inference-serving-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/) |
+| 12 | 多模態 | ViT 與模態融合、多模態 Agent 與電腦操作 | [Part 1](/posts/ai-eng-from-scratch-phase12-part1-vit-fusion-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase12-part2-agents-computer-use-zh/) |
+| 13 | 工具與編排 | MCP / API 整合、工作流程編排 | [Part 1](/posts/ai-eng-from-scratch-phase13-part1-mcp-apis-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase13-part2-orchestration-zh/) |
+| 14 | Agent | 迴圈與記憶、規劃、框架選型、生產化 | [Part 1](/posts/ai-eng-from-scratch-phase14-part1-loop-memory-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase14-part2-planning-zh/)・[Part 3](/posts/ai-eng-from-scratch-phase14-part3-frameworks-zh/)・[Part 4](/posts/ai-eng-from-scratch-phase14-part4-production-zh/) |
+| 15 | 自主系統 | 長時程任務、自我改進與安全 | [Part 1](/posts/ai-eng-from-scratch-phase15-part1-long-horizon-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase15-part2-self-improvement-safety-zh/) |
+| 16 | 多 Agent | 分工、通訊與共識、集體智慧 | [Part 1](/posts/ai-eng-from-scratch-phase16-part1-coordination-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase16-part2-emergence-collective-zh/) |
+| 17 | AI 基礎設施 | 推論服務架構、可觀測性、成本優化 | [Part 1](/posts/ai-eng-from-scratch-phase17-part1-serving-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase17-part2-observability-zh/)・[Part 3](/posts/ai-eng-from-scratch-phase17-part3-cost-scale-zh/) |
+| 18 | 安全與治理 | 技術安全、治理與倫理 | [Part 1](/posts/ai-eng-from-scratch-phase18-part1-technical-safety-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase18-part2-governance-zh/) |
+| 19 | Capstone | RAG、Agent、多模態三個端對端系統 | [Part 1](/posts/ai-eng-from-scratch-phase19-part1-capstone-rag-system-zh/)・[Part 2](/posts/ai-eng-from-scratch-phase19-part2-capstone-agent-product-zh/)・本文 |
 
 ### 7.3 給每一位走到這裡的工程師
 

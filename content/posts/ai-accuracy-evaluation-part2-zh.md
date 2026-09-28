@@ -234,7 +234,7 @@ def judge_response(question, response_a, response_b):
     """
     
     response = openai.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o",  # 僅為示例，可換成任何你信任的評審模型
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"}
     )
@@ -250,6 +250,8 @@ def judge_response(question, response_a, response_b):
 | **MMLU** | 選擇題準確率 | 知識廣度 |
 | **HumanEval** | 程式碼執行正確率 | 程式生成能力 |
 | **TruthfulQA** | 事實性檢查 | 減少幻覺能力 |
+
+> 注意：上表多是 2023 年前後的基準。到 2026 年，MMLU、HumanEval 等已接近飽和，且有訓練資料污染的疑慮，前沿模型之間很難再拉開差距；實務上更常看 Chatbot Arena 這類持續更新的人類偏好排名，以及較新、較難的基準。挑選模型時，仍以自己任務上的評估集為準。
 
 ### LLM-as-a-Judge 的注意事項
 

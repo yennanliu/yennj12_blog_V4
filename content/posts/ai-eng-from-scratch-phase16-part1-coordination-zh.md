@@ -147,7 +147,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-### ╔══ Phase 3：Scale（200K–1M+ 任務/天）══╗
+### ╔══ Phase 3：Scale（> 200 個並發任務）══╗
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -469,8 +469,8 @@ decision = majority_vote(votes)  # → "sufficient"（3:1）
 **方法二：加權投票（Weighted Voting）**
 ```python
 weighted_votes = {
-    "agent_domain_expert": ("sufficient", weight=3.0),
-    "agent_generalist":    ("need_more",  weight=1.0),
+    "agent_domain_expert": ("sufficient", 3.0),   # (投票, 權重)
+    "agent_generalist":    ("need_more",  1.0),
 }
 # 加權後：sufficient=3.0, need_more=1.0 → sufficient
 ```
@@ -590,6 +590,8 @@ vs 全體一致  容忍單 Agent 錯誤（噪聲）         全體一致：任�
 | 月成本（1K 任務/天） | $450 | $540 | $360 |
 | 除錯時間/incident | 30 分鐘 | 2 小時 | 45 分鐘 |
 | 水平擴展能力 | 無 | 部分 | 線性 |
+
+> 以上為示意估算，非實測數據。
 
 **關鍵洞察：** 「多 Agent 無協調」是最差選項——比單 Agent 更貴、更不可靠。協調機制本身帶來的開銷（約 20% token overhead）遠小於它消除的重複工作和衝突損失（節省 33% token）。
 

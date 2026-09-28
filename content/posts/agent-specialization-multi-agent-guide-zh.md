@@ -178,7 +178,7 @@ class AgentCapability:
     core_skills: list[str]
     tools_needed: list[str]
     typical_output: str
-    recommended_model: str = "claude-sonnet-4-20250514"
+    recommended_model: str = "claude-sonnet-5"
     max_system_tokens: int = 3000
 
 # 預定義的 Agent 能力庫
@@ -189,7 +189,7 @@ AGENT_CAPABILITIES = {
         core_skills=["需求提取", "使用者故事撰寫", "驗收標準定義"],
         tools_needed=["read_document"],
         typical_output="結構化需求文件",
-        recommended_model="claude-sonnet-4-20250514",
+        recommended_model="claude-sonnet-5",
         max_system_tokens=2500
     ),
 
@@ -199,7 +199,7 @@ AGENT_CAPABILITIES = {
         core_skills=["Python/Go/Node.js", "API 設計", "資料庫操作"],
         tools_needed=["read_file", "write_file", "run_command"],
         typical_output="可執行的後端程式碼",
-        recommended_model="claude-sonnet-4-20250514",
+        recommended_model="claude-sonnet-5",
         max_system_tokens=3500
     ),
 
@@ -209,7 +209,7 @@ AGENT_CAPABILITIES = {
         core_skills=["程式碼分析", "問題識別", "改進建議"],
         tools_needed=["read_file"],
         typical_output="審查報告和建議",
-        recommended_model="claude-3-5-haiku-20241022",  # 輕量任務用 Haiku
+        recommended_model="claude-haiku-4-5-20251001",  # 輕量任務用 Haiku
         max_system_tokens=2000
     ),
 
@@ -219,7 +219,7 @@ AGENT_CAPABILITIES = {
         core_skills=["任務分解", "Agent 調度", "結果整合"],
         tools_needed=["delegate_task"],
         typical_output="整合後的最終結果",
-        recommended_model="claude-sonnet-4-20250514",
+        recommended_model="claude-sonnet-5",
         max_system_tokens=2000
     ),
 }
@@ -680,7 +680,7 @@ class ToolMinimizedAgent:
         self,
         role: AgentRole,
         system_prompt: str,
-        model: str = "claude-sonnet-4-20250514"
+        model: str = "claude-sonnet-5"
     ):
         self.role = role
         self.system_prompt = system_prompt
@@ -805,21 +805,22 @@ class ModelConfig:
 MODEL_CONFIGS = {
     ModelTier.FAST: ModelConfig(
         tier=ModelTier.FAST,
-        model_id="claude-3-5-haiku-20241022",
+        model_id="claude-haiku-4-5-20251001",
+        # 價格為撰文時的舊版示意值，請以 Anthropic 官方定價頁為準
         input_cost_per_1m=0.80,
         output_cost_per_1m=4.0,
         best_for=["分類", "摘要", "格式化", "簡單審查", "路由決策"]
     ),
     ModelTier.BALANCED: ModelConfig(
         tier=ModelTier.BALANCED,
-        model_id="claude-sonnet-4-20250514",
+        model_id="claude-sonnet-5",
         input_cost_per_1m=3.0,
         output_cost_per_1m=15.0,
         best_for=["程式碼生成", "分析", "一般任務", "協調"]
     ),
     ModelTier.POWERFUL: ModelConfig(
         tier=ModelTier.POWERFUL,
-        model_id="claude-opus-4-20250514",
+        model_id="claude-opus-5-5",
         input_cost_per_1m=15.0,
         output_cost_per_1m=75.0,
         best_for=["複雜架構", "創意設計", "深度分析", "關鍵決策"]
@@ -1372,7 +1373,7 @@ if __name__ == "__main__":
 │ 5 次呼叫總固定成本 │ 105,000 tok   │ 16,500 tok    │ 84%            │
 └────────────────────┴───────────────┴───────────────┴────────────────┘
 
-成本計算（假設 Sonnet $3/1M input）：
+成本計算（假設 Sonnet $3/1M input，未啟用 Prompt Caching；價格以撰文時為準）：
 
 5 個任務的固定成本：
 - 通用 Agent: 105,000 × $3 / 1M = $0.315

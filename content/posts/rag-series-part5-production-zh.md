@@ -92,8 +92,10 @@ Step 3: Context Recall = 有支持的陳述數 / 總陳述數
 
 ### 用 RAGAS 評估你的 RAG
 
+> **版本注意**：這段是 RAGAS 0.1.x 的寫法（`question` / `contexts` / `answer` / `ground_truth` 欄位 + `datasets.Dataset`）。RAGAS 0.2 起改用 `EvaluationDataset` / `SingleTurnSample`，欄位改名為 `user_input` / `retrieved_contexts` / `response` / `reference`，指標也改成類別實例（如 `Faithfulness()`）。照抄請固定 `pip install "ragas<0.2"`，或依官方遷移指南改寫。
+
 ```python
-# pip install ragas langchain-openai
+# pip install "ragas<0.2" langchain-openai
 from ragas import evaluate
 from ragas.metrics import (
     faithfulness,

@@ -335,6 +335,10 @@ public class WebhookController {
 
 ### 2. Webhook Security and Validation
 
+> **Two practical notes before the code:**
+> - **Sign over the exact raw bytes.** The provider computes the HMAC over the request body exactly as sent. Binding `@RequestBody String payload` works only if nothing upstream re-parses or re-serialises the JSON (a filter, a logging wrapper, a gateway that pretty-prints). Any change in whitespace or key order breaks verification. If in doubt, read the raw body as `byte[]` and verify before deserialising.
+> - **Prefer the provider's SDK where one exists.** For Stripe, `com.stripe.net.Webhook.constructEvent(payload, sigHeader, endpointSecret)` handles header parsing, multiple `v1` signatures and the timestamp tolerance for you. The hand-rolled validator below shows what that call does.
+
 **Signature Validation Service:**
 
 ```java
@@ -361,8 +365,8 @@ public class WebhookValidator {
         // GitHub configuration
         webhookConfigs.put("github", new WebhookConfig(
             "github_webhook_secret",
-            "sha1",
-            "X-Hub-Signature",
+            "sha256",
+            "X-Hub-Signature-256",  // legacy X-Hub-Signature (SHA-1) is kept only for compatibility
             null
         ));
 
@@ -413,13 +417,14 @@ public class WebhookValidator {
             WebhookConfig config = webhookConfigs.get("github");
             String secret = getSecretFromConfig(config.getSecretKey());
 
-            // GitHub signature format: sha1=<signature>
-            if (!signatureHeader.startsWith("sha1=")) {
+            // GitHub signature format (X-Hub-Signature-256): sha256=<hex signature>
+            // GitHub recommends this header over the legacy SHA-1 X-Hub-Signature.
+            if (!signatureHeader.startsWith("sha256=")) {
                 return false;
             }
 
-            String signature = signatureHeader.substring(5);
-            String expectedSignature = computeHmacSha1(payload, secret);
+            String signature = signatureHeader.substring(7);
+            String expectedSignature = computeHmacSha256(payload, secret);
 
             return MessageDigest.isEqual(signature.getBytes(), expectedSignature.getBytes());
 
@@ -602,7 +607,7 @@ public class WebhookController {
     @PostMapping("/github/repository")
     public ResponseEntity<Void> handleGitHubWebhook(
             @RequestBody String payload,
-            @RequestHeader("X-Hub-Signature") String signature,
+            @RequestHeader("X-Hub-Signature-256") String signature,
             @RequestHeader("X-GitHub-Event") String eventType,
             @RequestHeader(value = "X-GitHub-Delivery", required = false) String deliveryId,
             HttpServletRequest request) {
@@ -1715,7 +1720,7 @@ class WebhookControllerIntegrationTest {
         String signature = createGitHubSignature(payload, "test_secret");
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Hub-Signature", signature);
+        headers.set("X-Hub-Signature-256", signature);
         headers.set("X-GitHub-Event", "push");
         headers.set("X-GitHub-Delivery", "test-delivery-id");
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -1783,12 +1788,13 @@ class WebhookControllerIntegrationTest {
     }
 
     private String createGitHubSignature(String payload, String secret) throws Exception {
-        Mac sha1Hmac = Mac.getInstance("HmacSHA1");
-        SecretKeySpec secretKey = new SecretKeySpec(secret.getBytes(), "HmacSHA1");
-        sha1Hmac.init(secretKey);
-        byte[] hash = sha1Hmac.doFinal(payload.getBytes());
+        Mac sha256Hmac = Mac.getInstance("HmacSHA256");
+        SecretKeySpec secretKey = new SecretKeySpec(
+                secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        sha256Hmac.init(secretKey);
+        byte[] hash = sha256Hmac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
 
-        return "sha1=" + Hex.encodeHexString(hash);
+        return "sha256=" + Hex.encodeHexString(hash);
     }
 }
 ```

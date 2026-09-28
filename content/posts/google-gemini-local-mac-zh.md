@@ -6,11 +6,11 @@ authors: ["yen"]
 categories: ["all", "ai"]
 tags: ["Gemini", "本地部署", "Mac", "開源模型", "私有化", "推理", "local-deployment"]
 summary: "詳細講解如何在 Mac 上本地運行 Google Gemini 4 模型，涵蓋環境配置、模型下載、優化技巧和實際應用，幫助你在不依賴雲服務的情況下使用強大的 Gemini 模型。"
-description: "詳細講解如何在 Mac 上本地運行 Google Gemini 4 模型，涵蓋環境配置、模型下載、優化技巧和實際應用，幫助你在不依賴雲服務的情況下使用強大的 Gemini 模型。"
+description: "Gemini 本身不開放權重；本文講解如何在 Mac 上本地運行 Google 開放權重的 Gemma 模型，涵蓋環境配置、模型下載、優化技巧和實際應用，幫助你在不依賴雲服務的情況下使用本地模型。"
 readTime: "38 min"
 ---
 
-Google Gemini 是目前最先進的多模態 AI 模型之一。雖然官方 API 需要網絡連接，但通過開源社區的努力，我們現在可以在 Mac 本地運行 Gemini 級別的開源模型。本文介紹如何在 Mac 上實現完全本地、隱私優先的 Gemini 體驗。
+Google Gemini 是目前最先進的多模態 AI 模型之一，但 **Gemini 本身不開放權重，只能透過 API 使用**。Google 開放權重、可以下載到本地的是同源的 **Gemma** 系列。本文介紹如何在 Mac 上用 Gemma（以及其他開源模型）實現完全本地、隱私優先的體驗。
 
 ---
 
@@ -25,7 +25,7 @@ Google Gemini 是目前最先進的多模態 AI 模型之一。雖然官方 API 
 └─ 隱私：中等
 
 本地 Gemini：
-├─ 優點：隱私、無延遲、無成本、完全控制
+├─ 優點：隱私、無網路往返、無 API 費用、完全控制
 ├─ 缺點：需要本地資源、可能稍弱於最新版本
 └─ 隱私：最高（數據永不離開本地）
 ```
@@ -53,16 +53,14 @@ Google Gemini 是目前最先進的多模態 AI 模型之一。雖然官方 API 
 ### 1. Gemini 相關開源模型
 
 ```
-Google 官方開源：
-├─ Gemma 2B / 7B / 27B
+Google 官方開放權重：
+├─ Gemma（第一代 2B / 7B；Gemma 2 起有 27B，更新世代請見官方頁面）
 │  └─ 輕量級，適合 Mac
-├─ Gemini Flash（非官方蒸餾）
-│  └─ 平衡性能和質量
 └─ CodeGemma
-   └─ 代碼生成優化
+   └─ 程式碼生成優化
 
-第三方蒸餾版本：
-├─ Nous Hermes（基於 Llama 但風格相似）
+其他可在 Mac 本地運行的開源模型（與 Gemini 無關，並非其蒸餾版）：
+├─ Nous Hermes（基於 Llama 微調）
 ├─ Mistral（高效能）
 └─ Phi-3（微軟，輕量但強大）
 ```
@@ -73,7 +71,7 @@ Google 官方開源：
 |------|------|------|------|--------|
 | Gemma-2B | 2GB | 🚀🚀🚀 | ⭐⭐⭐ | ✅ |
 | Gemma-7B | 7GB | 🚀🚀 | ⭐⭐⭐⭐ | ✅ |
-| Gemma-27B | 27GB | 🚀 | ⭐⭐⭐⭐⭐ | ✅（需要 GPU） |
+| Gemma-27B | 27GB | 🚀 | ⭐⭐⭐⭐⭐ | ✅（需 32GB+ 統一記憶體） |
 | Mistral-7B | 7GB | 🚀🚀 | ⭐⭐⭐⭐ | ✅ |
 | Phi-3 | 3.8GB | 🚀🚀🚀 | ⭐⭐⭐⭐ | ✅ |
 
@@ -89,7 +87,7 @@ Google 官方開源：
 Mac 配置建議：
 
 基礎配置（Gemma 2B）：
-├─ Mac mini M1/M2 2GB RAM
+├─ Mac mini M1/M2 8GB 統一記憶體（Apple Silicon Mac 的最低配置）
 ├─ 5GB 可用存儲
 └─ 主要受網絡限制
 
@@ -103,7 +101,7 @@ Mac 配置建議：
 ├─ Mac Studio / MacBook Pro M2 Max
 ├─ 32GB+ 統一內存
 ├─ 50GB 可用存儲
-└─ 需要 GPU 加速
+└─ Apple Silicon 的 GPU（Metal）會自動使用，不需要獨立顯卡
 ```
 
 ### 軟件準備
@@ -137,7 +135,7 @@ Ollama 是針對 Mac 優化的本地模型運行工具。
 # 1. 安裝 Ollama
 brew install ollama
 
-# 或從官網下載：https://ollama.ai
+# 或從官網下載：https://ollama.com
 
 # 2. 啟動 Ollama 後台服務
 ollama serve
@@ -196,8 +194,9 @@ curl http://localhost:1234/v1/chat/completions \
 git clone https://github.com/ggerganov/llama.cpp.git
 cd llama.cpp
 
-# 2. 編譯（針對 Mac 優化）
-make
+# 2. 編譯（新版 llama.cpp 使用 CMake；macOS 上預設啟用 Metal）
+cmake -B build
+cmake --build build --config Release
 
 # 3. 下載 Gemma 模型（GGUF 格式）
 # 從 Hugging Face 下載：
@@ -206,10 +205,10 @@ make
 wget https://huggingface.co/TheBloke/Gemma-7B-Instruct-GGUF/resolve/main/gemma-7b-instruct.Q4_K_M.gguf
 
 # 4. 運行
-./main -m gemma-7b-instruct.Q4_K_M.gguf -p "你好" -n 256 -c 2048
+./build/bin/llama-cli -m gemma-7b-instruct.Q4_K_M.gguf -p "你好" -n 256 -c 2048
 
-# 5. 啟動服務器（API 模式）
-./server -m gemma-7b-instruct.Q4_K_M.gguf --listen 127.0.0.1 -p 8000
+# 5. 啟動伺服器（OpenAI 相容 API 模式）
+./build/bin/llama-server -m gemma-7b-instruct.Q4_K_M.gguf --host 127.0.0.1 --port 8000
 ```
 
 **優點**：
@@ -368,14 +367,14 @@ print(response.choices[0].message.content)
 ollama run gemma:7b-q4_K_M  # 4-bit 量化版本
 
 # llama.cpp 的量化版本
-./main -m gemma-7b.Q4_K_M.gguf ...
+./build/bin/llama-cli -m gemma-7b.Q4_K_M.gguf ...
 ```
 
 **量化選項**：
 - Q2_K：最小（2GB），質量下降
 - Q4_K_M：推薦（4GB），質量-速度最優
 - Q5_K_M：高質量（6GB），略慢
-- Q8_K：最高質量（13GB），很慢
+- Q8_0：最高品質（13GB），很慢
 
 ### 2. 批處理
 
@@ -402,27 +401,22 @@ results = [tokenizer.decode(output, skip_special_tokens=True) for output in outp
 ### 3. 內存優化
 
 ```python
+import torch
 from transformers import AutoModelForCausalLM
 
+# 注意：load_in_8bit / load_in_4bit 依賴 bitsandbytes，只支援 NVIDIA CUDA，在 Mac 上無法使用。
+# Mac 上改用半精度載入到 MPS；要再省記憶體，請用 GGUF 量化模型（Ollama / llama.cpp）或 MLX 的量化模型。
 model = AutoModelForCausalLM.from_pretrained(
     "google/gemma-7b-it",
-    load_in_8bit=True,      # 8-bit 量化
-    device_map="auto"
-)
-
-# 或使用更激進的優化
-model = AutoModelForCausalLM.from_pretrained(
-    "google/gemma-7b-it",
-    load_in_4bit=True,      # 4-bit 量化（更激進）
-    device_map="auto"
-)
+    torch_dtype=torch.float16,
+).to("mps")
 ```
 
 ### 4. GPU 加速（M1/M2 Mac）
 
 ```bash
-# llama.cpp 編譯時啟用 Metal（Apple GPU）
-LLAMA_METAL=1 make
+# 新版 llama.cpp 在 macOS 上預設啟用 Metal（Apple GPU），照上面的 CMake 步驟編譯即可
+cmake -B build && cmake --build build --config Release
 
 # 在 Python 中使用
 import torch
@@ -607,36 +601,24 @@ docker run -d \
   gemini-local
 ```
 
-### systemd 服務
+### 開機自動啟動（macOS）
 
-```ini
-[Unit]
-Description=Ollama Gemini Service
-After=network-online.target
-
-[Service]
-Type=simple
-User=user
-ExecStart=/usr/local/bin/ollama serve
-Restart=always
-RestartSec=5
-
-[Install]
-WantedBy=multi-user.target
-```
+macOS 沒有 systemd（`systemctl` 是 Linux 的工具），背景服務由 launchd 管理。用 Homebrew 安裝的 Ollama 最簡單的做法是：
 
 ```bash
-# 安裝服務
-sudo cp ollama.service /etc/systemd/system/
-sudo systemctl enable ollama
-sudo systemctl start ollama
+# 以 launchd 服務方式在背景常駐、登入後自動啟動
+brew services start ollama
+
+# 查看狀態 / 停止
+brew services list
+brew services stop ollama
 ```
 
 ---
 
 ## 總結
 
-在 Mac 本地運行 Gemini 級別的模型現在非常簡單：
+在 Mac 本地運行 Gemma 等開放權重模型現在非常簡單：
 
 **快速開始**：
 ```bash
@@ -652,9 +634,9 @@ ollama run gemma:7b
 
 **核心優勢**：
 ✅ 隱私優先（數據不離開本地）
-✅ 零延遲和成本
+✅ 無 API 費用、無網路往返（實際速度取決於你的 Mac 硬體與模型大小）
 ✅ 完全控制和可定制
 ✅ 離線可用
-✅ 無限制使用
+✅ 不受 API 配額限制
 
-現在就開始在你的 Mac 上運行強大的 Gemini 模型吧！
+現在就開始在你的 Mac 上運行 Gemma 模型吧！

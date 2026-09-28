@@ -422,7 +422,9 @@ CLIP          →  BLIP          →  Flamingo / LLaVA
 **工程選型建議**：
 - 搜尋/排序任務 → CLIP fine-tune（推理快，embedding 可預計算）
 - 圖片問答/描述生成 → BLIP-2 或 LLaVA
-- 多輪多圖對話 → Flamingo 系列
+- 多輪多圖對話 → LLaVA 式「視覺編碼器 + projector + LLM」開源 VLM（如 Qwen-VL、InternVL 系列），或原生多模態的商用 API。Flamingo 的官方權重從未公開，它的價值在於 Perceiver Resampler + Gated Cross-Attention 的設計思路，而不是可直接部署的模型
+
+> 2023 年之後的主流演進：視覺編碼器多改用 SigLIP（sigmoid loss 取代 CLIP 的 softmax 對比損失），連接方式從 cross-attention 收斂到較簡單的 projector，前沿商用模型則走向原生多模態。
 
 ---
 
@@ -494,7 +496,7 @@ CLIP          →  BLIP          →  Flamingo / LLaVA
 |------|----------|---------------|
 | 向量規模 > 1000 萬 | Shard 水平擴展，單 Shard 500 萬向量 | FAISS 單機 16 GB 記憶體上限約 500 萬 × 512 dim |
 | 高可用需求 | 主副本自動 failover，SLA 99.9% | FAISS 無內建 HA，機器重啟索引需重建（約 20 分鐘） |
-| 動態更新 | 支援實時向量插入/刪除 | FAISS 增量更新需重建索引（批次作業） |
+| 動態更新 | 支援實時向量插入/刪除 | FAISS 可用 `add()` 增量加入向量，但刪除與資料分佈漂移後的重新分群（IVF 需重新 train）較麻煩，通常靠批次重建 |
 | 監控可觀測性 | 內建 Prometheus metrics、查詢延遲 P99 監控 | FAISS 需自行包裝監控 |
 
 **Flip Condition**：向量數 < 500 萬且團隊 Infra 人力有限時，FAISS + Redis 快取是更簡單的選擇，維護成本低 3–5×；Milvus 叢集運維複雜度不可低估。
@@ -515,6 +517,8 @@ CLIP          →  BLIP          →  Flamingo / LLaVA
 | 細粒度屬性識別準確率 | 48% | 63% | 79% | +65% |
 | 使用者點擊率（CTR）| 3.2% | 5.1% | 6.4% | +100% |
 | NDCG@10 | 0.41 | 0.62 | 0.77 | +88% |
+
+> 以上為電商情境的示意估算，非實測數據。
 
 **關鍵洞察**：
 - **新品類 Zero-Shot** 是最大躍升點（+525%）：這代表業務可以在不補標注的情況下，CLIP 就能對新上架商品形成基本召回能力

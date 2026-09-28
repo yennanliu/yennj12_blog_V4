@@ -68,6 +68,8 @@ readTime: "27 min"
 
 ## 二、四個 Platform 專屬能力，以及 OSS 的補法
 
+> 注意：Platform 是閉源託管服務，本節對這四個能力的機制描述來自官方文件（`docs/platform/`），不是原始碼閱讀；OSS 補法的部分才是對照原始碼。
+
 ### 2.1 Graph Memory：從外接圖庫變成內建
 
 **變更歷史**：v2 的 OSS 可以接 Neo4j / Memgraph / Kuzu / Apache AGE，用 `enable_graph` + `graph_store` 設定。v3 **把這個整合從 OSS 移除**，改成 Platform 內建、永遠開啟。

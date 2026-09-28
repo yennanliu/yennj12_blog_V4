@@ -45,6 +45,10 @@ type CircuitSettings struct {
     SuccessThreshold int64
 }
 
+// WARNING: simplified for illustration. State is read under RLock and then
+// acted on after the lock is released (check-then-act), so concurrent callers
+// can race, e.g. several goroutines all entering half-open at once. For
+// production use a tested library such as sony/gobreaker (Go) or resilience4j (Java).
 func (cb *CircuitBreaker) Execute(operation func() error) error {
     cb.mutex.RLock()
     state := cb.state

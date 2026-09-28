@@ -20,6 +20,8 @@ series: ["ai-eng-from-scratch"]
 
 **工程情境**：「你正在設計一個英中機器翻譯系統，句子長度最長 200 個 token。請說明你會選擇哪種架構，為什麼不直接用純 RNN，LSTM 與 GRU 在這個場景下如何選擇，以及如果引入注意力機制，架構上需要做哪些改變？」
 
+> 註：這是 2014–2017 年的歷史情境。2026 年從零建構英中翻譯，預設答案是 Transformer——更常見的是微調預訓練模型或直接使用 LLM。本篇借這個情境說明注意力機制為什麼會被發明。
+
 ---
 
 ## 一、核心問題：序列資料的特殊挑戰
@@ -406,7 +408,7 @@ Step 3：繼續展開，直到所有候選產生 <EOS>
 最終選擇累積對數機率最高的序列
 ```
 
-**Beam Size 對品質與速度的影響：**
+**Beam Size 對品質與速度的影響（示意估算，非實測數據）：**
 
 | Beam Size | BLEU（WMT En→De） | 推理時間（相對） | 記憶體 |
 |-----------|-------------------|----------------|--------|
@@ -514,7 +516,7 @@ score(Y, X) = log P(Y|X) / |Y|^α
 部署                  模型小，latency 低              需要 KV cache 等優化
 ```
 
-**翻轉條件：** 資料量 < 50K 且資源有限 → Seq2Seq；資料充足、追求 SOTA → Transformer。
+**翻轉條件：** 資料量 < 50K 且只能從零訓練、資源有限 → Seq2Seq；但只要能取得預訓練模型，小資料場景下微調預訓練 Transformer（如 mBART、NLLB）幾乎總是更好；資料充足、追求 SOTA → Transformer。
 
 ---
 
@@ -535,19 +537,22 @@ score(Y, X) = log P(Y|X) / |Y|^α
 
 ## 九、系統效應：RNN 家族 vs Transformer
 
-### 精度對比（WMT 英德翻譯 BLEU 分數）
+### 精度對比（WMT 2014 英德翻譯 BLEU 分數）
 
-| 模型 | BLEU | 備註 |
+數字取自《Attention Is All You Need》（Vaswani et al., 2017）Table 2：
+
+| 模型 | BLEU（En→De） | 備註 |
 |------|------|------|
-| RNN（Seq2Seq 無 Attention） | 14.5 | 2014 年基準 |
-| LSTM + Bahdanau Attention | 28.3 | 2015 年基準 |
-| 雙向 LSTM + Attention | 30.1 | 2016 常見配置 |
-| Transformer（base） | 38.1 | 2017 年 SOTA |
-| Transformer（big） | 41.0 | 2017 年 SOTA |
+| GNMT + RL（LSTM + Attention） | 24.6 | Google NMT，2016 |
+| ConvS2S | 25.16 | 卷積 Seq2Seq，2017 |
+| Transformer（base） | 27.3 | 2017 |
+| Transformer（big） | 28.4 | 2017 年 SOTA |
 
-LSTM+Attention 到 Transformer：**BLEU +10**，這不是小幅改進，是本質性突破。
+（常被引用的 41.x 是 WMT 2014 **英法** 的 Transformer big 成績，不是英德。）
 
-### 訓練效率對比
+LSTM+Attention 到 Transformer：**BLEU 約 +3.8**，而且訓練計算量只有前者的一小部分——品質與成本同時改善，才是真正的突破。
+
+### 訓練效率對比（示意估算；Transformer base 約 12 小時／8 張 P100 取自原論文）
 
 | 指標 | LSTM（2-layer, H=512） | Transformer（base） |
 |------|----------------------|-------------------|
@@ -570,7 +575,7 @@ Transformer（100 token 序列）的梯度路徑：
   這是 Transformer 在長序列上碾壓 LSTM 的根本原因
 ```
 
-### Before/After：引入 Attention 的工程效益
+### Before/After：引入 Attention 的工程效益（示意估算，非實測數據）
 
 | 指標 | Before（無 Attention） | After（有 Attention） |
 |------|----------------------|---------------------|
@@ -589,7 +594,7 @@ Transformer（100 token 序列）的梯度路徑：
 | 方向 | 連結 |
 |------|------|
 | ← 上一篇 | [Phase 5 Part 1：NLP 基礎 — 文字是智慧的介面](/posts/ai-eng-from-scratch-phase5-part1-text-fundamentals-zh/) |
-| → 下一篇 | Phase 5 Part 3：Transformer 深度解析（Multi-Head Attention / Positional Encoding / Pre-LN）（即將發布）|
+| → 下一篇 | [Phase 5 Part 3：進階 NLP — BERT、問答系統與語言理解](/posts/ai-eng-from-scratch-phase5-part3-advanced-nlp-zh/) |
 
 ---
 

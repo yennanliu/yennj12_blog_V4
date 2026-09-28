@@ -56,13 +56,16 @@ src/main/resources/
 └── application-prod.yml              # 生產環境專屬配置
 ```
 
-**配置優先級順序**：
+**配置優先級順序**（由高到低，上面的會覆蓋下面的）：
 ```
-1. application-{profile}.yml (最高優先級)
-2. application.yml (基礎配置)
-3. 環境變數
-4. 命令列參數 (最高優先級，可覆蓋所有)
+1. 命令列參數（--server.port=9090）         ← 最高優先級
+2. SPRING_APPLICATION_JSON
+3. 作業系統環境變數（SERVER_PORT=9090）
+4. application-{profile}.yml（jar 外優先於 jar 內）
+5. application.yml（基礎配置，jar 外優先於 jar 內） ← 最低
 ```
+
+也就是說，環境變數會覆蓋 `application-prod.yml` 裡的同名設定，這正是在容器或 K8s 中用環境變數注入正式環境密碼的原理。
 
 ### 🎨 配置文件結構設計
 
@@ -212,6 +215,8 @@ spring:
         format_sql: false
 
   # Redis 部分啟用（測試快取功能）
+  # 注意：以下 spring.redis.* 為 Spring Boot 2.x 的寫法。Spring Boot 3.x 已改為
+  # spring.data.redis.*（例如 spring.data.redis.host），舊的 key 會被直接忽略、不會報錯。
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
@@ -289,6 +294,7 @@ spring:
         order_updates: true
 
   # Redis 完整啟用（生產環境必須）
+  # Spring Boot 3.x 請改用 spring.data.redis.*（SSL 為 spring.data.redis.ssl.enabled: true）
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT:6379}
@@ -545,6 +551,7 @@ import java.util.Map;
 @Slf4j
 public class RedisConfig {
 
+    // Spring Boot 3.x：改為 ${spring.data.redis.host:localhost} 等 spring.data.redis.* key
     @Value("${spring.redis.host:localhost}")
     private String redisHost;
 

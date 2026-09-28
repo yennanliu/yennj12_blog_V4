@@ -157,14 +157,14 @@ export ANTHROPIC_API_KEY=sk-ant-...
 scripts/deploy-managed-agent.sh gl-reconciler
 ```
 
-這個腳本會解析 `managed-agent-cookbooks/gl-reconciler/` 底下的檔案引用、上傳 skill、建立 leaf-worker 子 Agent,再把整個 orchestrator POST 到 `/v1/agents`。子 Agent 委派(`callable_agents`)目前是 Research Preview 功能,`scripts/orchestrate.py` 提供了一個參考事件迴圈,示範怎麼把 Agent 之間的 `handoff_request` 事件路由到你自己的工作流引擎——這一段是需要你自己接的部分,repo 不會幫你跑起一個完整的排程系統。
+這個腳本會解析 `managed-agent-cookbooks/gl-reconciler/` 底下的檔案引用、上傳 skill、建立 leaf-worker 子 Agent,再把整個 orchestrator POST 到 `/v1/agents`。子 Agent 委派(`callable_agents`)目前(2026-07 撰文時)是 Research Preview 功能,`scripts/orchestrate.py` 提供了一個參考事件迴圈,示範怎麼把 Agent 之間的 `handoff_request` 事件路由到你自己的工作流引擎——這一段是需要你自己接的部分,repo 不會幫你跑起一個完整的排程系統。
 
 ## 六、系統效應:上線前後對照
 
 ```
                      上線前(人工/半自動)         上線後(GL Reconciler)
 ─────────────────────────────────────────────────────────────────
-月底對帳耗時          2–3 個工作天                  高置信度斷點當天出報告,
+月底對帳耗時          2–3 個工作天(假設值)        高置信度斷點當天出報告,
                                                   人力集中在低置信度複核
 根因追溯               憑經驗猜,容易漏看跨期模式      聚類展示,根因假設附
                                                   置信度分數

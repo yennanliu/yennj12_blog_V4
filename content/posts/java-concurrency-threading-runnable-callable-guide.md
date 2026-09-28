@@ -1607,12 +1607,14 @@ graph TD
     A --> D[Java 7: Fork-Join Framework]
     A --> E[Java 8: CompletableFuture]
     A --> F[Java 9+: Reactive Streams]
+    A --> L[Java 21: Virtual Threads]
 
     B --> G[Thread, Runnable]
     C --> H[ExecutorService, Callable]
     D --> I[ForkJoinPool, RecursiveTask]
     E --> J[CompletableFuture, Stream.parallel]
-    F --> K[Flow API, Virtual Threads]
+    F --> K[Flow API]
+    L --> M[Thread.ofVirtual, Executors.newVirtualThreadPerTaskExecutor]
 
     style E fill:#4ecdc4
     style F fill:#feca57

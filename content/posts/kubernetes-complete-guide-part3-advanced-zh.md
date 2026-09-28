@@ -212,7 +212,8 @@ spec:
     spec:
       serviceAccountName: cluster-autoscaler
       containers:
-      - image: k8s.gcr.io/autoscaling/cluster-autoscaler:v1.27.0
+      # k8s.gcr.io 已凍結，請改用 registry.k8s.io；CA 的次版本號必須與叢集版本一致
+      - image: registry.k8s.io/autoscaling/cluster-autoscaler:v1.27.0
         name: cluster-autoscaler
         command:
         - ./cluster-autoscaler

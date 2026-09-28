@@ -210,16 +210,19 @@ Trace: user_request_abc123
 │   │   ├── attr: context_tokens=1840
 │   │   └── attr: system_tokens=256
 │   │
-│   └── Span: llm_completion [890ms]
-│       ├── attr: model=claude-3-5-sonnet
-│       ├── attr: input_tokens=2096, output_tokens=312
-│       ├── attr: cost_usd=0.00847
-│       ├── attr: finish_reason=stop
-│       ├── attr: temperature=0.3
-│       └── Span: tool_call:search_web [340ms]
-│           ├── attr: tool_name=search_web
-│           ├── attr: tool_input={"query": "..."}
-│           └── attr: tool_output_tokens=580
+│   ├── Span: chat claude-sonnet-4-5 [890ms]   ← LLM 呼叫
+│   │   ├── attr: gen_ai.system=anthropic
+│   │   ├── attr: gen_ai.request.model=claude-sonnet-4-5
+│   │   ├── attr: gen_ai.usage.input_tokens=2096
+│   │   ├── attr: gen_ai.usage.output_tokens=312
+│   │   ├── attr: gen_ai.request.temperature=0.3
+│   │   ├── attr: gen_ai.response.finish_reasons=["tool_calls"]
+│   │   └── attr: cost_usd=0.00847（自訂屬性）
+│   │
+│   └── Span: execute_tool search_web [340ms]  ← 模型回傳後才執行，
+│       ├── attr: gen_ai.tool.name=search_web       是 LLM Span 的兄弟節點
+│       ├── attr: tool_input={"query": "..."}
+│       └── attr: tool_output_tokens=580
 ```
 
 **關鍵設計決策：Span 屬性的標準化**
@@ -228,14 +231,17 @@ Trace: user_request_abc123
 
 ```python
 # 非明顯實作：用 context manager 確保屬性一致性
+from contextlib import contextmanager
 from opentelemetry import trace
-from opentelemetry.semconv.ai import SpanAttributes  # AI 語意慣例
 
+# 使用 OpenTelemetry 官方 GenAI 語意慣例（gen_ai.*）的屬性名稱；
+# opentelemetry.semconv.ai 是第三方 OpenLLMetry 套件，不是官方規範。
 @contextmanager
 def llm_span(tracer, model: str, prompt_version: str):
-    with tracer.start_as_current_span("llm_completion") as span:
-        span.set_attribute(SpanAttributes.LLM_SYSTEM, "anthropic")
-        span.set_attribute(SpanAttributes.LLM_REQUEST_MODEL, model)
+    with tracer.start_as_current_span(f"chat {model}") as span:
+        span.set_attribute("gen_ai.operation.name", "chat")
+        span.set_attribute("gen_ai.system", "anthropic")
+        span.set_attribute("gen_ai.request.model", model)
         span.set_attribute("ai.prompt.version", prompt_version)
         span.set_attribute("ai.prompt.hash", compute_hash(prompt_version))
         try:
@@ -262,7 +268,7 @@ def llm_span(tracer, model: str, prompt_version: str):
 ```
 症狀：CSAT 下降，但 Traces 顯示 latency p99=920ms（正常）
 ↓
-查 Spans：llm_completion 的 finish_reason 分佈
+查 Spans：LLM Span 的 gen_ai.response.finish_reasons 分佈
 → 發現 finish_reason=length 佔比從 2% 升到 18%（截斷！）
 ↓
 查 prompt_construction Span：context_tokens 從平均 1800 增到 2900
@@ -424,8 +430,8 @@ AI 系統的成本結構跟傳統服務完全不同——**同一個功能，不
 │  chat_assistant: $0.0062/req × 80K = $496/day   │
 ├─────────────────────────────────────────────────┤
 │  Level 1：模型層（model_id）                     │
-│  claude-3-5-sonnet: 68% of total cost           │
-│  claude-3-haiku: 28% of total cost              │
+│  claude-sonnet-4-5: 68% of total cost           │
+│  claude-haiku-4-5: 28% of total cost            │
 │  embedding model: 4% of total cost              │
 └─────────────────────────────────────────────────┘
 ```

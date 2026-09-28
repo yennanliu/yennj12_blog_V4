@@ -82,6 +82,8 @@ for ent in doc.ents:
 # 李奧納多          → PERSON
 ```
 
+> 注意：`zh_core_web_trf` 以簡體中文語料（OntoNotes）訓練，直接處理繁體中文時辨識品質會下降；建議先用 OpenCC 轉成簡體再跑 NER。
+
 傳統 NER 模型（spaCy、BERT-NER）的限制是**只能辨識預先訓練過的類別**。遇到「導演」「主演」這種領域關係，或冷門實體類型，往往力不從心。這也是後面我們轉向 LLM 抽取的動機。
 
 ---
@@ -106,7 +108,9 @@ for ent in doc.ents:
 ENTITY_REGISTRY = {
     "諾蘭":          "Q25191",   # Christopher Nolan
     "克里斯多福·諾蘭": "Q25191",
+    "Nolan":         "Q25191",
     "全面啟動":       "Q25188",   # Inception
+    "Inception":     "Q25188",
 }
 
 def canonicalize(mention: str) -> str:
@@ -181,17 +185,24 @@ triples = [
     ("Nolan",    "Person", "DIRECTED", "Inception", "Movie"),
     ("DiCaprio", "Person", "ACTED_IN", "Inception", "Movie"),
     ("DiCaprio", "Person", "ACTED_IN", "TheRevenant", "Movie"),
+    ("Nolan",    "Person", "DIRECTED", "Oppenheimer", "Movie"),
+    ("RDJ",      "Person", "ACTED_IN", "Oppenheimer", "Movie"),
     ("RDJ",      "Person", "ACTED_IN", "IronMan", "Movie"),
     ("IronMan",  "Movie",  "PART_OF",  "Marvel",   "Franchise"),
 ]
 
+# Label 與關係型別無法參數化，只能拼進字串，所以先用白名單擋掉非預期值
+ALLOWED_LABELS = {"Person", "Movie", "Franchise"}
+ALLOWED_RELS   = {"DIRECTED", "ACTED_IN", "PART_OF"}
+
 def upsert_triple(tx, s, s_type, rel, o, o_type):
-    # MERGE 確保同一實體不會被重複建立（依賴前面的消歧結果）
+    assert {s_type, o_type} <= ALLOWED_LABELS and rel in ALLOWED_RELS
+    # MERGE 依消歧後的權威 ID 比對，確保同一實體不會被重複建立
     tx.run(f"""
-        MERGE (s:{s_type} {{name: $s}})
-        MERGE (o:{o_type} {{name: $o}})
+        MERGE (s:{s_type} {{id: $sid}}) SET s.name = $s
+        MERGE (o:{o_type} {{id: $oid}}) SET o.name = $o
         MERGE (s)-[:{rel}]->(o)
-    """, s=s, o=o)
+    """, s=s, o=o, sid=canonicalize(s), oid=canonicalize(o))
 
 with driver.session() as session:
     for s, s_type, rel, o, o_type in triples:
@@ -201,7 +212,7 @@ driver.close()
 print("知識圖譜建構完成 ✅")
 ```
 
-`MERGE` 是這裡的關鍵字：它「有則用、無則建」，避免同一個 `Nolan` 被建成多個節點——這也是為什麼 Part 5 的消歧那麼重要，因為 `MERGE` 是靠 `name` 比對的。
+`MERGE` 是這裡的關鍵字：它「有則用、無則建」，避免同一個 `Nolan` 被建成多個節點——這也是為什麼 §四 的消歧那麼重要，因為 `MERGE` 是靠 `canonicalize()` 產生的 `id` 比對的。
 
 ---
 
@@ -216,7 +227,7 @@ MATCH (actor)-[:ACTED_IN]->(other:Movie)-[:PART_OF]->(:Franchise {name: "Marvel"
 RETURN DISTINCT actor.name
 ```
 
-Cypher 的語法幾乎就是「把圖畫出來」：`(節點)-[:關係]->(節點)`。對照 Part 1 的 SQL 七重 JOIN，這裡的可讀性差距一目了然。
+Cypher 的語法幾乎就是「把圖畫出來」：`(節點)-[:關係]->(節點)`。對照 Part 1 的 SQL 六重 JOIN，這裡的可讀性差距一目了然。
 
 幾個常用查詢模式：
 
@@ -265,8 +276,8 @@ RETURN a.name, count(*) AS bridges ORDER BY bridges DESC;
 MATCH (n) WHERE NOT (n)--() RETURN n LIMIT 25;
 
 -- 找可能的重複實體（名稱相似但分屬不同節點）
-MATCH (a), (b)
-WHERE a.name CONTAINS b.name AND id(a) <> id(b)
+MATCH (a:Person), (b:Person)
+WHERE a.name CONTAINS b.name AND elementId(a) <> elementId(b)
 RETURN a.name, b.name LIMIT 25;
 ```
 

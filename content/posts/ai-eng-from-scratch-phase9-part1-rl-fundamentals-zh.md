@@ -55,8 +55,9 @@ RLHF 訓練流程：
 ```
 
 InstructGPT（ChatGPT 前身）論文的核心數字：
-- 1.3B RLHF 模型 vs 175B SFT 模型：人類偏好 **RLHF 模型勝出 ~85% 的時間**
-- 代表強化學習讓 100 倍小的模型贏過純監督訓練的大模型
+- 1.3B InstructGPT 的輸出，人類評估者偏好程度高於 175B **GPT-3**（未經指令對齊的原始模型）
+- 同為 175B 時，InstructGPT 對 GPT-3 的勝率約 **85%**
+- 代表「對齊訓練（SFT + RLHF）」讓 100 倍小的模型贏過未對齊的大模型
 
 ---
 
@@ -461,6 +462,8 @@ L_DPO = -E_{(x,y_w,y_l)} [
 
 **DPO 的核心限制：** 它是「離線」方法——無法在訓練中生成新的探索資料，在分佈外 prompt 上的泛化較弱。
 
+> **2025 年後的主流補充：GRPO 與 RLVR。** DeepSeek-R1（2025 年 1 月）之後，推理模型的 RL 主力變成 **RLVR（Reinforcement Learning from Verifiable Rewards）**：數學答案、程式碼單元測試等可自動驗證的任務，直接用規則判分當獎勵，不需要學出來的 RM，也就少了獎勵黑客的主要來源。演算法多用 **GRPO（Group Relative Policy Optimization）**：對同一 prompt 取樣一組回答，以組內平均分當 baseline 計算優勢，省掉 PPO 的 critic 網路與其記憶體。因此本文的「SFT → RM → PPO」只是幾條對齊管線之一；對可驗證任務，「SFT → GRPO + 規則獎勵」往往更簡單也更有效。
+
 ---
 
 ## 八、為什麼選 X 不選 Y
@@ -555,6 +558,8 @@ Flip condition：若有大量絕對品質標注資料（如考試題目答案）
 
 ### 9.1 量化對齊改善
 
+> 以下 9.1、9.2 兩表為示意估算，用來說明量級與趨勢，非特定論文的實測數據。
+
 | 指標 | SFT Baseline | RLHF 後 | 改善幅度 |
 |------|-------------|---------|---------|
 | 人類偏好 WinRate | 50%（基準）| 68–85% | **+18–35%** |
@@ -593,4 +598,4 @@ Flip condition：若有大量絕對品質標注資料（如考試題目答案）
 
 ---
 
-*本文為「AI 工程從零開始」系列第 Phase 9 第 1 篇，聚焦強化學習基礎理論與 RLHF 工程實踐。系列完整索引請見 [Phase 8 Part 2：GAN 與影片生成 — 對抗的藝術](/posts/ai-eng-from-scratch-phase8-part2-gan-video-generation-zh/)。*
+*本文為「AI 工程從零開始」系列第 Phase 9 第 1 篇，聚焦強化學習基礎理論與 RLHF 工程實踐。系列完整索引請見 [ai-eng-from-scratch 標籤頁](/tags/ai-eng-from-scratch/)。*

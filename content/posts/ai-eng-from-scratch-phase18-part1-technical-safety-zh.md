@@ -557,7 +557,7 @@ series: ["ai-eng-from-scratch"]
 
 ## 九、系統效應（Before / After 比較表）
 
-以下數字來自實際部署 Phase 2 → Phase 3 安全架構的典型案例：
+以下為部署 Phase 2 → Phase 3 安全架構的**示意估算**（非實測數據），用來說明各階段的相對改善幅度：
 
 ### 關鍵安全指標
 
@@ -592,7 +592,7 @@ series: ["ai-eng-from-scratch"]
 
 ## 十、系列導航
 
-[← Phase 17 Part 3](../ai-eng-from-scratch-phase17-part3-advanced-rag-techniques-zh) | [Phase 18 Part 2 →](../ai-eng-from-scratch-phase18-part2-ai-governance-zh)
+[← Phase 17 Part 3：AI 成本優化與規模化](/posts/ai-eng-from-scratch-phase17-part3-cost-scale-zh/) | [Phase 18 Part 2：AI 治理與倫理 →](/posts/ai-eng-from-scratch-phase18-part2-governance-zh/)
 
 ---
 
