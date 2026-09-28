@@ -284,20 +284,6 @@ TTFT 改善（示意估算，非實測）：
 
 ---
 
-## 七、面試答題要點
-
-> *「這個問題的核心是：用最少的 token 讓 LLM 感覺上記得三個月的對話。我的設計是三層記憶體：*
->
-> *Layer 1，Working Memory：最近 5~10 輪完整對話存在 Redis，固定前綴夠長、達到可快取門檻時，再用 Vertex AI Context Caching 降低這部分的 token 費用。*
->
-> *Layer 2，Semantic Long-term Memory：對話結束後，異步用 Gemini Flash 壓縮成摘要、向量化後存入 Vertex AI Vector Search。下次對話時，用當前 Query 做語意搜尋，召回最相關的 3~5 條歷史摘要（約 2,000 tokens）。*
->
-> *Layer 3，Profile Memory：Extraction Agent 從對話中提煉結構化的 Key-Value 客戶資訊，存入 Firestore，每次對話固定帶入（約 300 tokens，成本完全可預測）。*
->
-> *三層合計約 5,900 tokens，對比全部塞入的 450,000 tokens，成本估計可降低約 98%，TTFT 也從秒級降到 1 秒內（示意估算）。」*
-
----
-
 **系列導航**
 
 ← [Part 17：RKK 實戰——MCP 伺服器、Tool-Calling 安全與 OAuth 授權](/posts/fde-interview-guide-part17-mcp-tool-oauth-zh/) | [Part 19：RKK 實戰——Multi-Agent 系統的統計評估與細粒度追蹤](/posts/fde-interview-guide-part19-multiagent-eval-tracing-zh/) →

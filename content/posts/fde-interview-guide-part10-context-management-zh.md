@@ -345,14 +345,6 @@ P → Pick      選哪個？說出 trade-off
 E → Edge      你的策略在什麼情況下會失效？
 ```
 
-**完整範例回答：**
-
-> *「這個客服 Agent，每輪 300 tokens，100 輪就是 30K。加上 system prompt 和 RAG context，約 50K。Gemini Flash 雖然有 1M，但 50K 的每次推理成本和延遲是有感的。*
->
-> *我會用 Summary Buffer + Structured State 混合：保留最近 10 輪完整對話（3K tokens），把早期對話壓縮成 case summary（500 tokens）。同時維護結構化 state 記錄關鍵欄位：product_id、error_code、resolution_status。*
->
-> *失效場景：壓縮時可能丟掉關鍵的錯誤碼。所以壓縮 prompt 要明確標記「以下欄位必須保留」，並在 structured state 同步儲存關鍵數值。另外加 token 監控，超過 80% 自動觸發壓縮。」*
-
 ---
 
 **系列導航**

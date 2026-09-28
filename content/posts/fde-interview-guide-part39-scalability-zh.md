@@ -707,18 +707,6 @@ Phase 3 架構投入的 ROI 計算（示意估算）：
 
 ---
 
-## 十一、面試答題要點
-
-> *「這道題的核心不是『加幾台機器』，而是找出哪些架構假設在 10K 時成立、在 1M 時失效——然後系統性地替換它們。*
->
-> *我會用三個演進階段來回答：Phase 1 是 POC，接受有狀態設計；Phase 2 是生產試點，核心改動是無狀態化（Session 移到 Redis）+ 讀寫分離；Phase 3 是規模化，加入語意快取、非同步佇列和三層速率限制。*
->
-> *四個關鍵技術決策：第一，用 Redis 做 Session 儲存而不是 DB，因為 < 1ms 延遲 + 原生 TTL 是 Session 場景的必要條件。第二，語意快取而不是 Exact-match，因為用戶自然語言查詢的字面多樣但語義重複，Exact-match 命中率 < 5%，語意快取可達 40-60%。第三，Token Bucket Rate Limiting 而不是 Fixed Window，因為 Fixed Window 有跨邊界的 2x 漏洞。第四，用 Concurrency 而不是 CPU 作為 Auto-scaling 指標，因為 AI 服務等 LLM 時 CPU 幾乎是 0，但連接槽可能已滿。*
->
-> *成本視角：在 1M MAU 規模，Phase 3 架構每月額外架構成本約 $4,000，但 55% 的快取命中率讓 LLM 成本降低超過 $800,000/月。這個架構投入的 ROI 超過 200x。」*
-
----
-
 **系列導航**
 
 ← [Part 38：RKK 實戰——從 POC 到 Production：AI 系統的五個生產化差距與 Rollback 設計](/posts/fde-interview-guide-part38-prototype-to-production-zh/) | [Part 40：RKK 實戰——AI 系統的 PII 保護：假名化設計、最小存取原則與合規稽核](/posts/fde-interview-guide-part40-pii-security-zh/) →

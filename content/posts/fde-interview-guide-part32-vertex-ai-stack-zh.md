@@ -502,41 +502,6 @@ A：Vertex AI 提供 Supervised Fine-Tuning（SFT）服務，
 
 ---
 
-## 八、面試回答完整示範
-
-```
-面試官問：「Agent Builder、Vertex AI Search、自建 RAG——三條路怎麼選？」
-
-框架先行（30 秒）：
-「這不是三選一的問題，而是根據客戶的需求和能力選的。
- 我的框架是：要多快上線？要多高的 Retrieval 準確率？
- 客戶有沒有 AI 工程師維護？」
-
-三條路的條件（2 分鐘）：
-「Agent Builder：最快，2 週可以上線，
- 但 Retrieval 邏輯是 black box，品質不能深度調整。
- 適合：沒有 AI 工程師、先驗證業務價值的 POC。
-
- Vertex AI Search + Gemini Grounding：中間路線，
- 不需要管 Embedding 和 Vector DB，但搜尋邏輯還是 black box。
- 適合：資料量大、不需要特殊 domain 優化、
- 客戶願意接受 Google 的搜尋品質標準。
-
- 自建 RAG（ADK + Vertex AI Embedding + pgvector）：最慢，
- 但每個環節都可以優化——Embedding 選型、Chunking 策略、Hybrid Search、Reranker。
- 適合：Retrieval 準確率要求高、domain 特殊（法律/醫療/金融）、
- 有 AI 工程師維護的長期系統。」
-
-建議路徑（30 秒）：
-「我的建議是：先用 Agent Builder 做 POC，
- 2 週內驗證業務價值。
- 如果客戶對品質滿意，就繼續在 Agent Builder 上擴展。
- 如果 Retrieval 品質不達標，再遷移到 Vertex AI Search 或自建 RAG，
- 那時候我們也有了真實的測試資料，遷移有具體的優化方向。」
-```
-
----
-
 **Google FDE 的核心價值不是說「Google 的東西最好」，**  
 **而是說「在你的場景下，Google 的哪個選項給你最好的 ROI，以及為什麼。」**
 

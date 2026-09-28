@@ -340,39 +340,6 @@ ADK 天然整合 Google Cloud 服務：
 
 ---
 
-## 八、面試回答完整示範
-
-```
-面試官期待聽到的回答：
-
-釐清需求（1 分鐘）：
-「在設計之前，我想先確認幾個需求。
- 這個客服系統的日均查詢量大概是多少？
- 訂單查詢需要驗證用戶身分嗎？
- 轉人工的觸發條件是什麼——是用戶主動說『我要找人工』，
- 還是 AI 判斷自己不確定時就要轉？」
-
-架構（2 分鐘）：
-「我的設計是單一 Orchestrator Agent，帶三個 Tool：
- CRM Tool（只讀，查訂單和客戶資料），
- Knowledge Base Tool（RAG，查 FAQ 和退款政策），
- Escalation Tool（轉接人工或建工單）。
- 不用 Multi-Agent，因為這三個任務是順序的、不需要並行，
- 單一 context window 夠裝，Multi-Agent 只會增加複雜度。」
-
-失控防禦（2 分鐘）：
-「防失控我設計四道護欄：
- 第一道是 Hard Limits——最大 20 步、60 秒 timeout，
- 任何一個觸發就強制終止並通知用戶。
- 第二道是 Progress Detection——每 5 步比較最近的 Observation，
- 相似度超過 90% 就視為停滯，強制進入 Reflection 模式。
- 第三道是 Cost Budget——設定每個 session 的 token 上限。
- 第四道是 Human-in-the-Loop——退款等高風險操作，
- Agent 不自己決定，暫停等人工確認，5 分鐘沒回應就取消。」
-```
-
----
-
 **Agent 系統設計考的不是你記了多少框架 API，**  
 **而是你知道它什麼時候會出問題，以及你的架構如何讓問題可控。**
 

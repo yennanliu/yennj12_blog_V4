@@ -287,20 +287,6 @@ LLM 可能輸出：
 
 ---
 
-## 八、面試答題要點
-
-> *「這道題的核心是：識別哪些工具可以並行，哪些有依賴關係，然後設計執行引擎最大化並行度。*
->
-> *架構設計：LLM 輸出 tool_calls 後，中間層先建立 DAG 依賴圖。無依賴的工具分為同一個 Execution Tier，並行執行（asyncio.gather() 或 Google ADK 的並行框架）；有依賴的工具等上游完成後才啟動，並自動注入上游的輸出結果。*
->
-> *延遲改善量化：原本 T₁+T₂+T₃=850ms，並行後 max(T₁,T₂,T₃)=400ms，降低 53%。在多輪對話中效果更顯著。*
->
-> *Google ADK 的優點：Tool Registry 可以讓工具顯式宣告依賴關係，Orchestrator 自動管理並行和輸出傳遞，省去手動 DAG 解析的工程量。*
->
-> *錯誤策略：依業務需求選 Fail-fast（缺任何工具都不行）或 Partial Success（部分工具失敗可降級處理），並有 Retry with Fallback 機制。」*
-
----
-
 **系列導航**
 
 ← [Part 21：RKK 實戰——長任務 Agent 的異步分散式架構](/posts/fde-interview-guide-part21-async-longrunning-agent-zh/) | [Part 23：RKK 實戰——多租戶 Agent 的限流、Fair-Share 與 Token 預算控制](/posts/fde-interview-guide-part23-ratelimit-fairshare-zh/) →

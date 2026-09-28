@@ -623,18 +623,6 @@ Embed. Model       版本綁定機制，CI 檢查               靠人記得
 
 ---
 
-## 十一、面試答題要點
-
-> *「聽到『慢了』和『奇怪的答案』，我的第一反應是：這是兩個獨立問題，還是同一個根因？我不會同時追兩個方向。AI 系統有一個特殊的診斷模式：品質問題的根因往往是 Retrieval 失敗（vector_search result_count=0），而不是 LLM 本身的問題——LLM 在沒有 Context 的情況下靠自己猜，症狀是「答非所問」，但 Error Log 完全沒有錯誤，只有 Trace 才能發現。*
->
-> *診斷流程：五步驟——釐清症狀（2 分鐘，把模糊描述轉化為具體數字）→ 查可觀測性資料（3 分鐘，先 Metrics 確認問題存在，再 Trace 瀑布圖定位到哪個 Span）→ 建立假說 → 測試假說 → 確認根因後修復並用指標驗證。*
->
-> *可觀測性設計：我會按三個階段推進。Phase 1（上線前必備）：結構化日誌 + 基本告警。Phase 2（正式上線後）：OTel Distributed Tracing，每個 LLM 呼叫、Tool 呼叫、Vector Search 都有獨立 Span，帶 result_count、input_tokens、finish_reason 等 Attribute。Phase 3（企業級）：SLO + Error Budget，讓部署決策量化，Shadow Eval 主動監控品質退化。*
->
-> *為什麼選 OTel 不選廠商專有 SDK：OTel 是業界標準，換 Trace 後端不需要改代碼。為什麼選 P95 不選 P50 或 P99：P95 在代表大多數用戶和排除極端異常值之間最平衡，是 AI 系統 SLO 的最佳指標。」*
-
----
-
 **系列導航**
 
 ← [Part 40：RKK 實戰——AI 系統的 PII 保護：假名化設計、最小存取原則與合規稽核](/posts/fde-interview-guide-part40-pii-security-zh/) | [Part 42：RKK 實戰——顧問技能：從「要 AI」到 POC 範圍定義的 Discovery 框架](/posts/fde-interview-guide-part42-consulting-discovery-zh/) →

@@ -352,35 +352,6 @@ Self-Consistency    有效       多次呼叫，成本高
 
 ---
 
-## 九、面試回答完整示範
-
-```
-面試官期待的回答（ML 基礎確認題）：
-
-Self-Attention：
-「Self-Attention 讓每個 token 能直接和句子中所有其他 token
- 計算相關性，解決了 RNN 遠距離依賴難學的問題。
- 核心是 Q、K、V 三個矩陣——
- Q 問「我需要什麼資訊」，K 說「我有什麼資訊」，
- 兩者相乘得到相關性分數，再乘 V 得到加權的資訊。」
-
-Fine-tuning vs RAG：
-「我會先問客戶：你的知識需要頻繁更新嗎？需要引用文件來源嗎？
- 如果是，選 RAG——改 DB 就更新知識，不需要重新訓練。
- 如果客戶需要固定的輸出格式或特定語氣，
- 或者有大量標注資料，才考慮 Fine-tuning。
- 兩者的根本差異是：RAG 是知識外部化，Fine-tuning 是知識內化。」
-
-Overfitting 偵測：
-「Fine-tuning 時同時監控 Train Loss 和 Validation Loss。
- 如果 Train Loss 持續下降但 Val Loss 開始上升，
- 就是 Overfitting 的信號。
- 標準做法是 Early Stopping——
- Val Loss 上升超過 5% 時停止，使用最低 Val Loss 的 checkpoint。」
-```
-
----
-
 ML 基礎在 FDE 面試中是「過濾題」。  
 答不出來直接被扣分，答得好不是加分，是**建立你有工程判斷力的基礎印象**。
 

@@ -325,18 +325,6 @@ LangGraph Graph 結構設計：
 
 ---
 
-## 七、面試答題要點
-
-> *「問題有兩個層面。第一層是架構設計問題：法務 Agent 和財務 Agent 的職責邊界沒有明確定義，導致兩者互相等待，形成循環依賴。根本解法是讓每個 Agent 能獨立輸出確定性結果，由 Router 負責綜合判斷，而不是讓子 Agent 互相協調。*
->
-> *第二層是 State Management 問題：多個 Agent 同時寫入 Global State 會有 Race Condition。解法是用 Append-only Reducer，每個 Agent 只能寫入自己的 substate，確保互相隔離。*
->
-> *護欄設計：在每條 Conditional Edge 上加 iteration_count >= 5 的硬性跳出，超過就轉 Fallback，觸發 Alert，等待人工處理。*
->
-> *狀態持久化：用 Redis 存 Hot Path 的 Checkpoint，用 Firestore 存完整任務歷史，確保 Worker 崩潰後能從斷點續傳。」*
-
----
-
 **系列導航**
 
 ← [Part 15：RKK 實戰——AI Agent 規模化與 Cache 策略](/posts/fde-interview-guide-part15-scale-cache-zh/) | [Part 17：RKK 實戰——MCP 伺服器、Tool-Calling 安全與 OAuth 授權](/posts/fde-interview-guide-part17-mcp-tool-oauth-zh/) →

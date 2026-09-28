@@ -661,13 +661,7 @@ Trace: task_id=ORD-2026-00431
 
 ---
 
-## 十、面試答題要點
-
-> *「我會在 LangGraph 中引入 Compiler-Validator Pattern：每個工具輸出都綁定一個 Pydantic BaseModel，Validator Node 做強型別硬校驗，成功走下一節點，失敗導向 Critic Agent。Critic Agent 拿到三份上下文——原始意圖、失敗日誌、備用工具清單——重新推理修正參數或切換工具，修正後回到 Worker 重試。State 機器設定 max_retries=3 護欄防無限循環，這一層預估能覆蓋約七成的自動修復場景（示意估算）。底層我還會部署 Circuit Breaker（Redis 共享狀態），連續 5 次失敗自動隔離問題 API，防止雪崩。若 3 次修復全部失敗，Dead Letter State 發布事件到 Cloud Pub/Sub，依訂單金額決定升級至 Slack 或 PagerDuty。這套架構的核心價值是：把「偵測」和「推理」分離，讓反思循環成為架構一等公民，而不是在業務邏輯裡散落一堆 try-catch，預期可將 MTTD 從數小時降到分鐘級，並在寫入前攔截資料庫污染。」*
-
----
-
-## 十一、面試常見追問與應對
+## 十、面試常見追問與應對
 
 **Q：Critic Agent 自己呼叫 LLM 會不會也出錯？你如何確保 Critic Agent 的輸出可靠？**
 

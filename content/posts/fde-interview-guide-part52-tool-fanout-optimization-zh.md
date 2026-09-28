@@ -651,14 +651,6 @@ circuit_breaker_state{state="OPEN"} count > 2 → PagerDuty
 
 ---
 
-## 十一、面試答題要點
-
-**面試官問**：「asyncio.gather() 有什麼問題？你會如何設計一個生產級的 Tool Fan-Out 引擎？」
-
-> *「asyncio.gather() 的根本問題是『木桶短板』語意：它等待所有 coroutine 完成，一個慢 API 就能拖垮全部。我的解法分三層：第一，用 asyncio.wait() 替代 gather，它的 done/pending 分離讓我能在硬截止時間（1500ms）到達時，立刻取走已完成的結果，不等剩餘的；第二，在 800ms 閾值觸發 Speculative Execution，對超時的 API 同時向備用節點發起複製請求賽跑，誰先回傳用誰，P99 延遲從 1500ms 降至 900ms；第三，Redis-backed Circuit Breaker 追蹤各 API 節點的失敗狀態，連續失敗 3 次立即熔斷 30 秒，讓後續請求不再傻等已知壞節點的超時；最後，前端用 SSE 實現 Partial Rendering，每完成一個股票立刻推送，用戶在 180ms 後就看到第一個結果，整體從用戶等 30 秒變成 1.5 秒內交出 12 檔高品質分析——20 倍的延遲改善，成本僅增加 5%。」*
-
----
-
 ## 延伸閱讀
 
 - Jeff Dean & Luiz André Barroso, "The Tail at Scale" (2013) — Hedged Request 的原始論文

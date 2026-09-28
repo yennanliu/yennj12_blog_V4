@@ -314,18 +314,6 @@ Rollback 時間 < 5 分鐘（環境變數切換）    30-60 分鐘（改代碼�
 
 ---
 
-## 八、面試答題要點
-
-> *「這道題考的是：知道 POC 和 Production 之間有哪些具體差距，以及如何系統性地填補它們——而不只是說『還需要測試』。*
->
-> *五個差距：Token Budget 失控（需要截斷策略和 Cost Alert）；延遲 SLA 差距（需要 min-instances 和 Tool Timeout）；Session State 消失（需要 Firestore 持久化）；錯誤處理不完整（需要 Graceful Fallback 和全域 Exception Handler）；Rollback 機制缺席（需要 Prompt 版本控制、模型版本釘選、Canary 部署）。*
->
-> *和客戶 CTO 的溝通方式：不說「還沒準備好」，說「下個月上線可以，但建議先做 2 週 Internal Pilot，同時並行處理這 5 件事，8 個工作天可以完成。Pilot 讓我們在真實流量下驗證，把影響範圍控制在 50 個內部用戶，而不是第一天就開放給所有用戶出問題。」*
->
-> *Rollback 的設計邏輯：Prompt 版本控制讓我在 1 分鐘內 Rollback，不需要改代碼重新部署。模型版本釘選防止 Google 的更新悄悄改變系統行為。Canary 部署讓我在 10% 流量上驗證 24 小時，確認沒問題再全量。」*
-
----
-
 **系列導航**
 
 ← [Part 37：RKK 實戰——企業 AI 的「連接組織」：Legacy 系統整合、API 橋接與安全邊界設計](/posts/fde-interview-guide-part37-legacy-integration-zh/) | [Part 39：RKK 實戰——從 10,000 到百萬用戶：AI 系統的橫向擴展架構設計](/posts/fde-interview-guide-part39-scalability-zh/) →

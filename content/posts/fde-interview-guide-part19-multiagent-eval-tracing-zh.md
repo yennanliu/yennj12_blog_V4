@@ -321,20 +321,6 @@ Step 5：Verify
 
 ---
 
-## 八、面試答題要點
-
-> *「Multi-Agent 的評估需要比 RAG 多一個維度：不只看最終答案，也要看每個 Agent 的個別表現。*
->
-> *追蹤架構：用 OpenTelemetry 為 Graph 中的每個 Node 和每次 Tool Call 注入 Span，統一收集到 Cloud Trace。每個 Span 記錄：延遲、token 用量、輸入輸出、錯誤原因。*
->
-> *評估指標四層：Routing Accuracy（Router 分派對不對）、Tool Execution Accuracy（工具呼叫成功率）、Trajectory Exact Match（執行路徑效率）、Cost/Token Efficiency（成本效率）。*
->
-> *診斷方法：從 Aggregate 視圖找到哪個 Agent 分數低，再 drill down 到那個 Agent 的 Trace，找到是哪類 Query、哪個 Tool Call 出問題，最後追到 Root Cause（可能是 Tool Schema 描述不清、API 格式不符等具體問題）。*
->
-> *Eval Pipeline 整合進 CI/CD，每次部署前跑完整評估，和 Baseline 比較，任何 Agent 指標下降超過 5% 就阻止部署並觸發 Alert。」*
-
----
-
 **系列導航**
 
 ← [Part 18：RKK 實戰——三層記憶體架構與 LLM 成本調優](/posts/fde-interview-guide-part18-memory-cost-tuning-zh/) | [Part 20：RKK 實戰——間接 Prompt Injection 與 Dual-LLM 防禦架構](/posts/fde-interview-guide-part20-indirect-prompt-injection-zh/) →
