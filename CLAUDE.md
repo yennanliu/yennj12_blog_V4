@@ -41,6 +41,7 @@ This is a **Hugo static site** using a custom theme called `uber-style` (in `the
 - `static/` — Unprocessed assets (favicon, author avatars at `static/images/authors/`).
 - `scripts/generate_nvidia_blog.py` — Python script that fetches NVIDIA Developer Blog via RSS, translates to Traditional Chinese using GPT-4, and writes a new post. Requires `OPENAI_API_KEY` and `feedparser`/`requests` packages. Its daily workflow was removed because the output was fabricated rather than translated; any post it generates must be reviewed by hand before publishing.
 - `.github/workflows/` — Three Hugo build/deploy workflows (`hugo-latest.yml` is the recommended one).
+- `.claude/skills/` — Project skills: `tech-blog-writer`, `finance-blog-writer`, `blog-reviewer`, plus the InvestSkill `10k-digest` and `industry-map`. See "Writing and reviewing posts" below.
 
 ### Post front matter
 
@@ -84,6 +85,38 @@ lists in `hugo.toml` or `footer.html`**.
 Adding a category means creating `content/categories/<slug>/_index.md` with a `title`, `weight`
 (ordering) and `description`. A term used by posts but lacking an `_index.md` has weight 0 and
 shows up under "Uncurated" on `/categories/` — that page is the drift alarm; it should stay empty.
+
+### Writing and reviewing posts
+
+Three project skills in `.claude/skills/` cover the post lifecycle:
+
+- **`tech-blog-writer`** — software / AI / architecture / infra / tools posts. Thesis-first, the
+  intuition → mechanism → example → numbers → limits ladder, 2–4 ASCII or Mermaid diagrams.
+- **`finance-blog-writer`** — company analysis, valuation, sector, macro and earnings posts.
+  Sourced and recomputed numbers, date-stamped market data, bull *and* bear case, disclaimer.
+  For 10-K deep dives it defers to `docs/10K_DEEP_DIVE_WORKFLOW.md`.
+- **`blog-reviewer`** — scores accuracy, clarity, depth, visuals, structure and format (1–5) and
+  returns line-referenced findings. Both writer skills run it on their own draft before handing back.
+
+Series rules in this file (fde-interview-guide, ai-eng-from-scratch, 10-K) override the writer
+skills' defaults.
+
+The mechanical half of the review is `scripts/review_posts.py`: front matter completeness, the
+closed category set and author slugs (both read from `content/`), unclosed code fences, images
+missing from `static/`, and the series house rules. Errors fail; house-style **warnings** only fail
+under `--strict`, because most older posts predate those rules.
+
+```bash
+python3 scripts/review_posts.py content/posts/my-post.md
+python3 scripts/review_posts.py --changed-from origin/main
+python3 scripts/review_posts.py            # all posts — must stay at 0 errors
+```
+
+`.github/workflows/post-review.yml` runs on every PR that touches `content/posts/`: the
+`mechanical` job gates the PR on `review_posts.py` errors, and the `ai-review` job runs the
+`blog-reviewer` skill through `anthropics/claude-code-action` and posts one sticky PR comment.
+The AI job is advisory (`continue-on-error`) and only runs when the `ANTHROPIC_API_KEY`
+repository secret is set — it skips itself otherwise, including on fork PRs.
 
 ### Site metadata and social preview cards
 
