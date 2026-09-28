@@ -7,6 +7,7 @@ authors: ["yen"]
 categories: ["all", "business", "creative"]
 tags: ["賽博龐克", "霓虹燈", "視覺設計", "Midjourney", "80年代", "復古美學", "After Effects", "streaming", "visual-design"]
 summary: "系列第三篇：掌握賽博龐克視覺設計精髓、使用 AI 生成霓虹燈美學場景、復刻 80 年代經典設計元素，以及創造沉浸式的直播視覺體驗。"
+description: "系列第三篇：掌握賽博龐克視覺設計精髓、使用 AI 生成霓虹燈美學場景、復刻 80 年代經典設計元素，以及創造沉浸式的直播視覺體驗。"
 readTime: "32 min"
 ---
 
@@ -590,7 +591,7 @@ Prompt 12: 街機遊戲畫面
 
 ### 方法 B：After Effects（專業級）
 
-```markdown
+````markdown
 適合進階用戶，完全掌控
 
 專案架構:
@@ -748,7 +749,7 @@ Render Settings:
 時長建議:
   製作 10 分鐘版本
   在 OBS 中循環播放
-```
+````
 
 ---
 
@@ -1036,6 +1037,6 @@ Scene List:
 
 - [Synthwave 讀書會串流實戰（一）：市場分析與受眾定位](/posts/synthwave-study-streaming-part1-market-culture-zh/)
 - [Synthwave 讀書會串流實戰（二）：AI 音樂生成](/posts/synthwave-study-streaming-part2-music-production-zh/)
-- [AI 深海/太空環境音串流實戰（二）：8K 視覺製作](/posts/ai-ocean-space-ambient-streaming-part2-visual-zh/)
+- [AI 深海/太空環境音串流實戰（二）：4K 視覺製作](/posts/ai-ocean-space-ambient-streaming-part2-visual-zh/)
 
 **標籤**: #賽博龐克 #霓虹燈 #視覺設計 #Midjourney #80年代 #復古美學 #Synthwave #After Effects

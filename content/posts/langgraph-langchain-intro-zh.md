@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai"]
 tags: ["LangChain", "LangGraph", "AI", "Agent", "工作流", "RAG", "介紹"]
 summary: "全面介紹 LangChain 和 LangGraph 的核心概念、架構和實戰應用，涵蓋從簡單的 Chain 到複雜的多 Agent 工作流，幫助開發者快速掌握現代 AI 應用開發框架。"
+description: "全面介紹 LangChain 和 LangGraph 的核心概念、架構和實戰應用，涵蓋從簡單的 Chain 到複雜的多 Agent 工作流，幫助開發者快速掌握現代 AI 應用開發框架。"
 readTime: "50 min"
 ---
 
@@ -29,12 +30,14 @@ LangChain 的核心目標：
 #### 1. Models（模型）
 
 ```python
+import os
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
 
-# 初始化不同的模型
-claude = ChatAnthropic(model="claude-3-5-sonnet-20241022")
-gpt4 = ChatOpenAI(model="gpt-4-turbo")
+# 初始化不同的模型（模型 ID 從環境變數讀取，請填各家文件上目前可用的模型；
+# 舊的 claude-3-5-sonnet-20241022 已退役）
+claude = ChatAnthropic(model=os.environ["ANTHROPIC_MODEL"])
+gpt = ChatOpenAI(model=os.environ["OPENAI_MODEL"])
 
 # 發送消息
 response = claude.invoke("What is LangChain?")
@@ -71,11 +74,11 @@ formatted = chat_prompt.format(
 Chain 是一系列組件的組合，按順序執行。
 
 ```python
-from langchain_core.runnables import RunnableSequence
+from langchain_core.output_parsers import StrOutputParser
 
 # 構建簡單的 Chain
 prompt = ChatPromptTemplate.from_template("解釋 {concept}")
-model = ChatAnthropic()
+model = ChatAnthropic(model=os.environ["ANTHROPIC_MODEL"])   # model 為必填參數
 output_parser = StrOutputParser()
 
 chain = prompt | model | output_parser
@@ -102,26 +105,20 @@ print(f"例子: {result['examples']}")
 #### 4. Memory（記憶）
 
 ```python
-from langchain.memory import ConversationBufferMemory, ConversationSummaryMemory
+# 注意：舊版的 ConversationBufferMemory / ConversationSummaryMemory 在 LangChain 1.0
+# 已移到 langchain-classic 套件。新程式碼建議直接保存訊息列表；
+# 需要跨請求持久化時，改用 LangGraph 的 checkpointer + thread_id（見下文「持久化和檢查點」）。
+from langchain_core.chat_history import InMemoryChatMessageHistory
 
-# 簡單的緩衝記憶
-memory = ConversationBufferMemory(
-    memory_key="chat_history",
-    return_messages=True
-)
+history = InMemoryChatMessageHistory()
 
 # 添加對話
-memory.chat_memory.add_user_message("你好")
-memory.chat_memory.add_ai_message("你好！有什麼我可以幫助的嗎？")
+history.add_user_message("你好")
+history.add_ai_message("你好！有什麼我可以幫助的嗎？")
 
-# 獲取記憶
-print(memory.load_memory_variables({}))
-
-# 基於摘要的記憶（適合長對話）
-summary_memory = ConversationSummaryMemory(
-    llm=model,
-    buffer="最近對話摘要..."
-)
+# 把歷史訊息帶進下一次呼叫
+response = model.invoke(history.messages + [("human", "我剛剛說了什麼？")])
+print(response.content)
 ```
 
 #### 5. Tools（工具）
@@ -219,7 +216,7 @@ print(answer)
 
 ### 什麼是 LangGraph？
 
-LangGraph 是在 LangChain 基礎上構建的框架，用於構建**可狀態追蹤、有向無環圖（DAG）結構**的工作流。相比 Chain 的線性執行，LangGraph 提供了：
+LangGraph 是在 LangChain 基礎上構建的框架，用於構建**可狀態追蹤、以圖結構編排、並且允許循環**的工作流（agent 迴圈正是 LangGraph 存在的主要理由，所以它不只是 DAG）。相比 Chain 的線性執行，LangGraph 提供了：
 
 1. **狀態管理**：跨步驟保持狀態
 2. **條件轉移**：根據狀態決定下一步
@@ -427,10 +424,10 @@ main_graph.add_node("analysis", create_analysis_subgraph())
 #### 2. 持久化和檢查點
 
 ```python
-from langgraph.checkpoint import MemorySaver
+from langgraph.checkpoint.memory import InMemorySaver
 
-# 創建帶檢查點的工作流
-checkpointer = MemorySaver()
+# 創建帶檢查點的工作流（InMemorySaver 只適合開發；production 用 Postgres 等持久化 checkpointer）
+checkpointer = InMemorySaver()
 workflow = graph.compile(checkpointer=checkpointer)
 
 # 執行並保存狀態
@@ -460,6 +457,7 @@ for output in workflow.stream(initial_state):
 ```python
 from dataclasses import dataclass, field
 from typing import Annotated, Optional
+import os
 from langgraph.graph import StateGraph, START, END
 from langchain_core.runnables import RunnablePassthrough
 
@@ -475,7 +473,7 @@ class ResearchState:
 
 class ResearchAgents:
     def __init__(self):
-        self.model = ChatAnthropic(model="claude-3-5-sonnet-20241022")
+        self.model = ChatAnthropic(model=os.environ["ANTHROPIC_MODEL"])   # 目前可用的 Claude 模型 ID
         self.research_tool = self._create_research_tool()
     
     def _create_research_tool(self):
@@ -685,7 +683,7 @@ def log_node_execution(state: State, node_name: str):
 | 方面 | LangChain | LangGraph |
 |------|----------|----------|
 | 用途 | 構建 LLM 應用組件 | 編排複雜工作流 |
-| 結構 | 線性 Chain | DAG 圖結構 |
+| 結構 | 線性 Chain | 圖結構（支援循環） |
 | 狀態管理 | 隱式 | 顯式 |
 | 適用場景 | 簡單應用 | 複雜、多步驟應用 |
 | 學習曲線 | 平緩 | 中等 |

@@ -443,7 +443,7 @@ Phase 3 啟動全新的 validator agents，這些 agents 的指令是：
 | 先去重再驗證 | 避免重複驗證同一 root cause | 需要 dedup 邏輯 |
 | Structured output + validator | 輸出可被程式消費 | 需要維護 schema |
 | Phase 6 獨立驗證 | 事實宣稱的準確性 | 額外一輪 agent |
-| 多次 run 累積 | 單次 run ~50% 覆蓋率 | 需要狀態管理 |
+| 多次 run 累積 | 單次 run 無法涵蓋所有攻擊面（覆蓋率有限） | 需要狀態管理 |
 
 **翻轉條件**（什麼時候可以簡化）：
 - 快速 triage：可以省略 Phase 6，但標注「事實未獨立驗證」

@@ -6,7 +6,7 @@ weight: 4
 description: "當問題本身就是問題：深入三大 RAG 優化技術——Step-Back Prompting、Self-RAG 自我反思、以及 Context Compression。了解它們的核心原理、實作方式、優缺點與最佳使用場景。"
 categories: ["all", "ai", "engineering"]
 tags: ["RAG", "Self-RAG", "Context Compression", "Query Transformation", "LangChain", "Python", "繁體中文"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "28 min"
 ---
 
@@ -207,6 +207,8 @@ Naive RAG 盲目地把所有檢索到的 chunk 塞給 LLM，不管它們是否�
 ```
 
 ### 簡化版 Self-RAG 實作
+
+> 這裡是**用 prompt 模擬的近似版**。原始 Self-RAG 論文的做法是微調一個會輸出反思 token（reflection tokens，例如「需不需要檢索」「片段是否相關」「回答是否有依據」）的模型；下面的程式碼只用一般 LLM 加上判斷 prompt 來重現類似的流程，並不是論文的方法本身。
 
 ```python
 import openai

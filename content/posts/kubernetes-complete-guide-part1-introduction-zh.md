@@ -6,7 +6,7 @@ weight: 1
 description: "深入淺出介紹 Kubernetes 容器編排平台，涵蓋核心概念、架構設計、元件功能、與 Docker 的關係，以及完整的安裝配置教學。從零開始掌握 K8S 基礎知識。"
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "容器編排", "雲原生", "微服務", "Docker", "DevOps", "叢集管理", "基礎教學"]
-authors: ["yennj12 team"]
+authors: ["yen"]
 readTime: "60 min"
 ---
 
@@ -129,8 +129,8 @@ graph TB
 | **學習曲線** | 低 | 低 | 高 |
 
 **關係說明：**
-- Docker 提供容器運行時
-- Kubernetes 使用 Docker（或其他容器運行時）作為底層
+- Docker 主要用於建置映像檔與本機開發
+- Kubernetes 透過 CRI 介面呼叫 containerd 或 CRI-O 作為底層容器執行環境；dockershim 已於 1.24（2022 年）移除，K8s 不再直接使用 Docker Engine 執行容器（Docker 建置的映像檔符合 OCI 標準，仍可照常使用）
 - Kubernetes 不是 Docker 的替代品，而是編排層
 
 ## 🏗️ Kubernetes 核心架構
@@ -206,7 +206,7 @@ graph TB
 |------|------|----------|
 | **Kubelet** | 節點代理 | • 管理 Pod 生命週期<br/>• 執行容器健康檢查<br/>• 回報節點狀態<br/>• 掛載 Volume |
 | **Kube-proxy** | 網路代理 | • 維護網路規則<br/>• 實現 Service 抽象<br/>• 負載均衡<br/>• 支援 iptables/IPVS |
-| **Container Runtime** | 容器運行時 | • 運行容器<br/>• 拉取映像<br/>• 支援 CRI 介面<br/>• containerd、CRI-O、Docker |
+| **Container Runtime** | 容器運行時 | • 運行容器<br/>• 拉取映像<br/>• 支援 CRI 介面<br/>• containerd、CRI-O（Docker Engine 需透過 cri-dockerd，dockershim 已於 1.24 移除） |
 
 ### 元件通訊流程
 
@@ -908,7 +908,7 @@ graph TB
 | **定位** | 容器運行時 | 容器編排平台 |
 | **作用** | 運行單個容器 | 管理多個容器 |
 | **範圍** | 單機 | 叢集 |
-| **關係** | K8s 使用 Docker 作為底層運行時之一 | |
+| **關係** | Docker 建置的 OCI 映像檔可直接部署到 K8s；K8s 執行時使用 containerd / CRI-O，而非 Docker Engine | |
 
 ### Q2: 什麼時候需要使用 Kubernetes？
 

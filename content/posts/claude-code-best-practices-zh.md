@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "claude-code", "最佳實踐", "開發效率", "提示工程", "工作流程", "生產力", "development-tools"]
 summary: "完整的 Claude Code 最佳實踐指南：從基礎使用到進階技巧，涵蓋提示工程、檔案管理、錯誤處理與團隊協作，幫助開發者充分發揮 AI 輔助開發的潛力。"
+description: "完整的 Claude Code 最佳實踐指南：從基礎使用到進階技巧，涵蓋提示工程、檔案管理、錯誤處理與團隊協作，幫助開發者充分發揮 AI 輔助開發的潛力。"
 readTime: "18 min"
 ---
 
@@ -35,7 +36,7 @@ Claude: [一次性理解問題背景，高效解決]
 **效率差異：**
 - 錯誤方式：5-10 次對話來回，耗時 10-15 分鐘
 - 最佳實踐：1-2 次對話，耗時 2-3 分鐘
-- **效率提升：5 倍以上**
+- **效率提升：以上述情境粗估約 5 倍**（示意估算，非實測數據，實際依任務而異）
 
 ## 📋 最佳實踐總覽
 
@@ -368,67 +369,30 @@ const hasError = ...
 const userCount = ...
 ```
 
-### 8. 適時使用 .claudeignore
+### 8. 用 permissions.deny 排除不需讀取的檔案
 
-**範例 .claudeignore 檔案：**
+Claude Code 沒有 `.claudeignore` 這種檔案；要阻止 Claude 讀取特定檔案（尤其是機密），請在專案的 `.claude/settings.json` 設定 `permissions.deny`：
 
-```bash
-# .claudeignore
+**範例 `.claude/settings.json`：**
 
-# 依賴套件
-node_modules/
-.pnp/
-.pnp.js
-
-# 建置產物
-dist/
-build/
-.next/
-out/
-
-# 快取
-.cache/
-.parcel-cache/
-.eslintcache
-
-# 環境變數（敏感資訊）
-.env
-.env.local
-.env.*.local
-
-# 日誌
-*.log
-npm-debug.log*
-
-# IDE 設定
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# 測試覆蓋率報告
-coverage/
-.nyc_output/
-
-# 大型資料檔案
-*.csv
-*.json.large
-data/raw/
-
-# 圖片和媒體（通常不需要 Claude 讀取）
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.mp4
-*.pdf
-
-# 編譯後的檔案
-*.min.js
-*.bundle.js
+```json
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./node_modules/**)",
+      "Read(./dist/**)",
+      "Read(./build/**)",
+      "Read(./coverage/**)",
+      "Read(./data/raw/**)"
+    ]
+  }
+}
 ```
 
-**何時使用 .claudeignore：**
+**哪些檔案該排除：**
 
 ```
 ✅ 應該忽略：
@@ -642,69 +606,33 @@ Step 4: 驗證
 
 **建立自訂 Skill 範例：**
 
-```typescript
-// 範例：建立元件的 Skill
+Skill 是放在 `.claude/skills/<name>/` 的資料夾，核心是一份帶 YAML front matter 的 `SKILL.md`；Claude 會依 `description` 判斷何時載入：
 
-// ~/.config/claude-code/skills/create-component.ts
-export const createComponentSkill: Skill = {
-  name: 'create-react-component',
-  description: '建立標準的 React 元件（含測試和故事書）',
+```markdown
+<!-- .claude/skills/create-react-component/SKILL.md -->
+---
+name: create-react-component
+description: 建立標準的 React 元件（含測試和 Storybook 故事）。當使用者要求新增 React 元件時使用。
+---
 
-  arguments: {
-    componentName: {
-      type: 'string',
-      required: true,
-      description: '元件名稱（PascalCase）'
-    },
-    hasState: {
-      type: 'boolean',
-      default: false,
-      description: '是否需要狀態管理'
-    }
-  },
+# 建立 React 元件
 
-  async execute(args, context) {
-    const { componentName, hasState } = args;
+給定元件名稱（PascalCase），在 `src/components/<Name>/` 下建立：
 
-    // 1. 建立元件檔案
-    await context.write(
-      `src/components/${componentName}/${componentName}.tsx`,
-      generateComponentCode(componentName, hasState)
-    );
+1. `<Name>.tsx`：函式元件；使用者要求狀態管理時才加入 `useState`
+2. `<Name>.test.tsx`：至少一個 render 測試
+3. `<Name>.stories.tsx`：預設 story
+4. `index.ts`：`export { <Name> } from './<Name>';`
 
-    // 2. 建立測試檔案
-    await context.write(
-      `src/components/${componentName}/${componentName}.test.tsx`,
-      generateTestCode(componentName)
-    );
-
-    // 3. 建立 Storybook 故事
-    await context.write(
-      `src/components/${componentName}/${componentName}.stories.tsx`,
-      generateStoryCode(componentName)
-    );
-
-    // 4. 建立 index.ts
-    await context.write(
-      `src/components/${componentName}/index.ts`,
-      `export { ${componentName} } from './${componentName}';\n`
-    );
-
-    return {
-      success: true,
-      message: `✅ 元件 ${componentName} 建立完成！`
-    };
-  }
-};
+完成後執行 `npm test -- <Name>` 確認測試通過。
 ```
 
 **使用 Skill：**
 
-```bash
-# 使用自訂 Skill
-/create-react-component UserAvatar --hasState=true
+```text
+使用者: 幫我建立一個有狀態的 UserAvatar 元件
 
-# 結果：自動產生
+# 結果：Claude 載入 create-react-component Skill，自動產生
 # - UserAvatar.tsx
 # - UserAvatar.test.tsx
 # - UserAvatar.stories.tsx
@@ -718,14 +646,6 @@ export const createComponentSkill: Skill = {
 ```json
 // .vscode/settings.json
 {
-  // Claude Code 相關設定
-  "claude.autoSave": true,
-  "claude.contextFiles": [
-    "package.json",
-    "tsconfig.json",
-    ".env.example"
-  ],
-
   // 編輯器設定
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
@@ -736,7 +656,7 @@ export const createComponentSkill: Skill = {
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
 
-  // 檔案排除（與 .claueignore 同步）
+  // 檔案排除（與 .claude/settings.json 的 permissions.deny 同步）
   "files.exclude": {
     "**/node_modules": true,
     "**/dist": true,
@@ -1204,7 +1124,7 @@ docs/api-documentation
 ```markdown
 ☐ 專案結構清晰且合邏輯
 ☐ 檔案命名具描述性
-☐ .claudeignore 正確設定
+☐ `.claude/settings.json` 的 permissions.deny 已排除機密與產物
 ☐ README 文檔完整
 ☐ 編輯器整合已設定
 ```
@@ -1323,10 +1243,10 @@ src/
 
 ```markdown
 ☐ 檢視並更新專案的 README.md
-☐ 建立 .claudeignore 檔案
+☐ 在 `.claude/settings.json` 設定 permissions.deny
 ☐ 設定編輯器整合
 ☐ 與團隊分享使用規範
-☐ 建立常用 Skills
+☐ 建立常用 Skills（`.claude/skills/<name>/SKILL.md`）
 ☐ 定期進行 Code Review
 ☐ 持續學習新功能和最佳實踐
 ```

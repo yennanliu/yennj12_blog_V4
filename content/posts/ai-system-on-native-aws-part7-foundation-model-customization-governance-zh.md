@@ -123,7 +123,7 @@ readTime: "27 min"
 
 ### 3.3 兩條訓練路線:Bedrock 託管 vs SageMaker 自訂
 
-- **Bedrock 客製模型**:提供託管的 fine-tuning(對支援的基礎模型)與 **model distillation**。你上傳訓練資料、選基礎模型、設超參數,Bedrock 幫你訓、產出一個私有的客製模型,用 **Provisioned Throughput** 部署。適合「不想碰訓練基礎設施」的團隊。
+- **Bedrock 客製模型**:提供託管的 fine-tuning(對支援的基礎模型)與 **model distillation**。你上傳訓練資料、選基礎模型、設超參數,Bedrock 幫你訓、產出一個私有的客製模型,用 **Provisioned Throughput** 部署(部分模型,如客製 Amazon Nova,也支援 on-demand 部署)。適合「不想碰訓練基礎設施」的團隊。
 - **SageMaker 自訂訓練**:完全掌控——自帶容器、自訂訓練腳本、PEFT/LoRA、任意開源模型。適合需要深度客製或訓練非 Bedrock 模型時。
 
 企業通常兩者並用:能用 Bedrock 託管就用,需要極致控制才落到 SageMaker。
@@ -316,6 +316,8 @@ new events.Rule(this, 'OnModelApproved', {
 
 以「一次 fine-tune 迭代(含資料準備、訓練、評估),客製模型月部署」估算(概略):
 
+> us-east-1 公開定價概估(撰文時),實際以帳單為準;model unit 時價依基礎模型差異很大,請以 Bedrock 定價頁為準。
+
 | 項目 | 用量 | 概略成本 |
 |------|------|---------|
 | 資料準備(Glue/SageMaker Processing + Comprehend PII) | 一次性 | ~$50–200 /次 |
@@ -325,7 +327,7 @@ new events.Rule(this, 'OnModelApproved', {
 | Model Registry / Model Cards | 幾乎免費 | ~$0 |
 | **迭代一次的一次性成本** | | **~$300–1,300** |
 
-**成本洞察**:fine-tune 的隱藏成本不在「訓練」而在「**部署**」。Bedrock 客製模型必須用 **Provisioned Throughput** 託管(不能用 on-demand 隨用隨付),等於你要**常駐付一整套產能的月費**——這往往比訓練貴一個數量級。這帶來一個嚴肅的成本判斷:
+**成本洞察**:fine-tune 的隱藏成本不在「訓練」而在「**部署**」。許多 Bedrock 客製模型只能用 **Provisioned Throughput** 託管,等於你要**常駐付一整套產能的月費**——這往往比訓練貴一個數量級。(AWS 在 2025 年開始讓部分客製模型——例如 fine-tune 過的 Amazon Nova——改用 on-demand 隨用隨付部署;若你的基礎模型支援,下面的 break-even 論證就大幅放寬,細節請見官方文件。)這帶來一個嚴肅的成本判斷:
 
 - **低頻使用的客製模型不划算**:如果客製模型每天只被呼叫幾千次,常駐 Provisioned 的月費攤下來每次呼叫貴得離譜。此時「RAG + 好的 prompt」幾乎一定更省。
 - **只有高頻、且 fine-tune 帶來的效果/成本改善能覆蓋常駐月費時**,客製模型才是對的。**先算清楚 break-even 流量,再決定要不要 fine-tune**——這是 Part 5 成本母題在模型層的具體化。
@@ -347,7 +349,7 @@ new events.Rule(this, 'OnModelApproved', {
 2. **沒有回歸集**:只測新任務、沒守住舊能力,災難性遺忘上線才發現。
 3. **訓練資料帶 PII**:模型會把它背出來,是嚴重的資料外洩。訓練前必須去識別化並留紀錄。
 4. **模型可以直接上線**:沒有「PendingManualApproval」的預設狀態與審批關卡,等於沒有治理。
-5. **忽略 Provisioned Throughput 的常駐月費**:訓完很興奮,帳單來了才發現部署比訓練貴十倍。先算 break-even。
+5. **忽略 Provisioned Throughput 的常駐月費**:訓完很興奮,帳單來了才發現部署比訓練貴十倍。先確認基礎模型是否支援 on-demand 部署,不支援的話先算 break-even。
 6. **lineage 斷掉**:三個月後沒人能回答「這個 prod 模型是用哪版資料訓的」,稽核直接不合格。lineage 要從資料準備第一步就記。
 
 ---

@@ -324,9 +324,10 @@ vertexai.init(
 「每次 AI 調用要有 Audit Log」  Cloud Audit Logs（Data Access）
                                Log Sink → BigQuery / SIEM
 
-「模型必須是我們自己的，        Vertex AI Custom Model Deploy
-  不能用 Google 的 SaaS 模型」  (Gemini 可 Fine-tune + 部署)
-                               或 GKE 上自建推論服務
+「模型必須是我們自己的，        開源模型（如 Gemma）+ Vertex AI
+  不能用 Google 的 SaaS 模型」  Custom Model Deploy，或 GKE 上自建推論服務
+                               （注意：Fine-tune 過的 Gemini 仍跑在
+                                 供應商的服務堆疊上，不算自己的模型）
 
 「所有通訊必須加密」            默認 TLS 1.2+
                                CMEK（Customer Managed Encryption Keys）

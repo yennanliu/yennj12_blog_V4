@@ -1342,8 +1342,8 @@ symbols = ['BTC/USDT', 'ETH/USDT', 'BNB/USDT', 'SOL/USDT']
 # Build a system that alerts when RSI < 30 or RSI > 70
 ```
 
-**Continue to Part 2**: [Crypto Quantitative Trading Part 2: Advanced Strategies and Backtesting](#)
+**Continue to Part 2**: [Crypto Quantitative Trading Part 2: Advanced Strategies and Backtesting](/posts/crypto-quantitative-trading-part2-strategies-backtesting/)
 
 ---
 
-*Have questions about the fundamentals? Share them in the comments below! In Part 2, we'll turn this analysis framework into actual trading strategies.*
+*In Part 2, we'll turn this analysis framework into actual trading strategies.*

@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "claude-code", "multi-agent", "token-optimization", "cost-optimization", "prompt-engineering", "API", "效能調優", "agent-orchestration", "development-tools"]
 summary: "多 Agent Token 優化系列總覽：深入解析 Token 用量優化策略，涵蓋 Prompt Caching、Context 壓縮、Agent 專責化、模型分層、選擇性 Context 傳遞等方法，幫助你建構高效且低成本的多 Agent 系統。"
+description: "多 Agent Token 優化系列總覽：深入解析 Token 用量優化策略，涵蓋 Prompt Caching、Context 壓縮、Agent 專責化、模型分層、選擇性 Context 傳遞等方法，幫助你建構高效且低成本的多 Agent 系統。"
 readTime: "25 min"
 ---
 
@@ -144,7 +145,7 @@ print(f"快取狀態: {result2.usage}")
 **快取效益計算：**
 
 ```
-Claude Sonnet 的計費比較（參考定價）：
+Claude Sonnet 4.6 的計費比較（撰文時參考定價，請以 Anthropic 官方定價頁為準）：
 
 未快取：
   輸入 tokens：$3 / 1M tokens
@@ -168,8 +169,8 @@ Claude Sonnet 的計費比較（參考定價）：
 | ✅ 成本降低 | System Prompt 讀取費用降低最多 90% |
 | ✅ 延遲降低 | 快取命中時首 token 延遲顯著減少 |
 | ✅ 實作簡單 | 只需在 API 呼叫中加入 `cache_control` |
-| ❌ 最小快取大小 | 需要 ≥ 1,024 tokens 才能啟用快取 |
-| ❌ 快取有效期 | 預設 5 分鐘後過期（頻繁呼叫才划算） |
+| ❌ 最小快取大小 | 前綴需達最低 token 數才能快取（門檻依模型而異） |
+| ❌ 快取有效期 | 預設 5 分鐘後過期（頻繁呼叫才划算；另有寫入成本較高的 1 小時 TTL） |
 | ❌ 快取不可自訂 | 只能快取前綴，無法快取中間段落 |
 
 ---

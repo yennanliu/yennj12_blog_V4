@@ -10,7 +10,7 @@ authors: ["yen"]
 readTime: "18 min"
 ---
 
-**核心定義：向量索引的「健康度」不等於資料存在，而是指 HNSW 圖的連結品質——增量插入累積後圖結構失衡，recall 靜默下滑；Blue-Green 重建搭配 Lambda 雙索引架構，是兼顧零停機與高精度的唯一根治手段。**
+**核心定義：向量索引的「健康度」不等於資料存在，而是指 HNSW 圖的連結品質——增量插入累積後圖結構失衡，recall 靜默下滑；Blue-Green 重建搭配 Lambda 雙索引架構，是兼顧零停機與高精度最穩健的做法（部分引擎也提供線上圖修復或定期 compaction）。**
 
 ---
 
@@ -49,7 +49,7 @@ HNSW（Hierarchical Navigable Small World）是目前最主流的 ANN 索引結�
 2. **長尾節點形成**：早期插入的節點在當時的圖中連結度良好，但後來的新節點繞過它們建立更短路徑；舊節點的入度（in-degree）下降，在貪心導航中被跳過的機率升高，形同孤立。
 3. **圖直徑（diameter）增長**：健康圖的平均搜尋跳數約 6–8 跳（1M 向量規模）。漂移後平均跳數可增至 12–15 跳，每跳需要計算鄰居的餘弦距離，搜尋延遲線性上升。
 
-**實測衰退數字**（1M 維度 768 的向量索引，`M=16, efSearch=100`）：
+**示意衰退數字**（假設 1M 筆、768 維向量索引，`M=16, efSearch=100`；數字為說明趨勢的估算量級，非量測值，實際衰退幅度依資料分布與引擎而異）：
 
 | 增量插入量 | recall@10 | P50 搜尋延遲 | P99 搜尋延遲 |
 |-----------|-----------|------------|------------|
@@ -59,7 +59,7 @@ HNSW（Hierarchical Navigable Small World）是目前最主流的 ANN 索引結�
 | 20,000 筆 | 87% | 18ms | 41ms |
 | 50,000 筆 | 78% | 24ms | 58ms |
 
-**每 5,000 筆增量，recall@10 約下滑 1 個百分點**。超過 50,000 筆後曲線加速惡化，原因是高層（Layer 2+）的導航錯誤開始累積——頂層的錯誤鄰居會把整條搜尋路徑帶偏，底層再怎麼細搜都無法彌補。
+**前 5,000 筆增量，recall@10 約下滑 1 個百分點，之後曲線逐步加速惡化**（20,000 筆時已下滑約 7 個百分點），原因是高層（Layer 2+）的導航錯誤開始累積——頂層的錯誤鄰居會把整條搜尋路徑帶偏，底層再怎麼細搜都無法彌補。
 
 ### HNSW 圖失衡的機制示意
 
@@ -422,10 +422,10 @@ Step 4: blue_green_swap（漸進切換）
 
 ## 七、面試一句話（Killer Phrase）
 
-> *「向量索引的精度不是靜態保證——HNSW 圖在每 5,000 次增量插入後 recall@10 約下滑 1%，累積 50,000 筆時從 94% 跌至 78%，且這個衰退完全靜默、監控面板上不會出現任何紅燈。我的標準做法是 Lambda 架構：Base Index 每晚全量重建，Delta Index 接收實時寫入，查詢時雙索引並行 ANN、merge 結果、過 Firestore Blacklist 濾掉已刪除向量、再 cross-encoder rerank 回傳 Top-K；重建完成後不直接切流量，先對 500 個 golden queries 驗證 recall@10 ≥ 90%，通過後才以 10% → 50% → 100% 的漸進 Blue-Green 切換上線，舊索引保留 24 小時作為回滾窗口，切換期間額外引入 < 5ms 延遲，對用戶完全透明。」*
+> *「向量索引的精度不是靜態保證——HNSW 圖在增量插入累積後 recall@10 會加速下滑，以示意量級來說，累積 50,000 筆時可能從 94% 跌至 78%，且這個衰退完全靜默、監控面板上不會出現任何紅燈。我的標準做法是 Lambda 架構：Base Index 每晚全量重建，Delta Index 接收實時寫入，查詢時雙索引並行 ANN、merge 結果、過 Firestore Blacklist 濾掉已刪除向量、再 cross-encoder rerank 回傳 Top-K；重建完成後不直接切流量，先對 500 個 golden queries 驗證 recall@10 ≥ 90%，通過後才以 10% → 50% → 100% 的漸進 Blue-Green 切換上線，舊索引保留 24 小時作為回滾窗口，切換期間額外引入 < 5ms 延遲，對用戶完全透明。」*
 
 ---
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-14-embedding-versioning-zh/) | [後一篇](/posts/fde-interview-core-topic-16-multimodal-retrieval-zh/) →
+← [前一篇](/posts/fde-core-concept-14-speculative-tool-fanout-zh/) | [後一篇](/posts/fde-core-concept-16-ttft-throughput-optimization-zh/) →

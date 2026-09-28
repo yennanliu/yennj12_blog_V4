@@ -5,7 +5,7 @@ draft: false
 weight: 28
 description: "深入解析 AI Agent 工程基礎：ReAct/Reflexion 思考迴圈、記憶系統四層架構（感官/工作/情節/語意）、上下文管理與 Agent 狀態機設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Memory", "ReAct", "LLM", "Autonomous", "RKK", "Interview"]
+tags: ["AI", "Agent", "Memory", "ReAct", "LLM", "Autonomous", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：**  
+**工程情境：**  
 你是某電商平台的 AI 基礎設施 Lead。PM 要求將現有的「單次 GPT 呼叫客服」升級為「可自主完成退款、查單、更換地址」的 Agent，日均對話量 80K，P99 回應時間需在 8 秒以內。請問你如何設計 Agent 迴圈、記憶系統與上下文管理策略，並說明在 MVP 和 Scale 兩個階段的架構差異？
 
 ---
@@ -292,7 +292,7 @@ AI Agent 的核心是一個**無限迴圈**，每次迭代稱為一個「step」
 
 **Reflexion** 在 ReAct 基礎上增加「反思」步驟：任務失敗後，Agent 生成一段自我批評（self-reflection），存入情節記憶，下次執行相似任務時注入 context，避免重複同樣錯誤。
 
-實測數據：在 HotpotQA 任務上，ReAct 成功率約 **58%**，加入 Reflexion 後提升至 **71%**（+13pp），代價是每次失敗多消耗約 800 tokens 的反思生成。
+Reflexion 論文（Shinn et al., 2023）在 HotpotQA 上報告了相對 ReAct 基線的明顯提升；具體數字依模型與設定而異，請以論文原表為準。代價是每次失敗都要多花一段反思生成的 tokens（示意：數百 tokens 量級）。
 
 ---
 
@@ -583,16 +583,20 @@ vs                狀態機確保同一 session 不可            "好的隨便"
 | 用戶滿意度（CSAT） | 3.1 / 5 | 4.2 / 5 | **+35%** |
 | 退款錯誤率 | 2.1% | 0.08% | **-96%** |
 
+> 以上為示意估算，非實測數據。
+
 ### 成本效益分析
 
-月額外基礎設施成本：$3,000  
+月對話量：80K × 30 = 2.4M  
 每避免一次人工接管節省：~$2.5（人工客服成本）  
-月減少人工接管次數：80K × 0.36 = 28,800 次  
-月節省人工成本：28,800 × $2.5 = **$72,000**
+月減少人工接管次數：2.4M × 0.36 = 864,000 次  
+月節省人工成本：864,000 × $2.5 = **$2,160,000**
 
-**ROI = ($72,000 - $3,000) / $3,000 = 2,300%**
+月額外成本：基礎設施 $3,000 + LLM API 增量（$0.09 × 2.4M = $216,000）= $219,000
 
-即使把 LLM API 成本算進去（月 $0.09 × 80K × 30 = $216,000），整體客服成本相比純人工方案（80K × 30 × $2.5 = $6M）仍降低 **64%**。
+**ROI = ($2,160,000 − $219,000) / $219,000 ≈ 886%**
+
+與純人工方案（2.4M × $2.5 = $6M）相比，完整記憶系統的月總成本約為 LLM $288,000（$0.12 × 2.4M）+ 基礎設施 $3,200 + 剩餘 21% 人工接管 $1,260,000 ≈ $1.55M，整體客服成本降低約 **74%**。
 
 ---
 
@@ -600,10 +604,10 @@ vs                狀態機確保同一 session 不可            "好的隨便"
 
 本文是 **AI 工程從零開始** 系列 Phase 14 Part 1。
 
-← [Phase 13 Part 2：RAG 進階優化與生產部署](/posts/ai-eng-from-scratch-phase13-part2-rag-advanced-zh/)
+← [Phase 13 Part 2：AI 工作流程編排 — LangChain、LlamaIndex 與生產管線](/posts/ai-eng-from-scratch-phase13-part2-orchestration-zh/)
 
-→ [Phase 14 Part 2：Multi-Agent 協作與 Tool Use 進階設計](/posts/ai-eng-from-scratch-phase14-part2-multi-agent-zh/)
+→ [Phase 14 Part 2：Agent 規劃系統 — 從目標到行動計畫](/posts/ai-eng-from-scratch-phase14-part2-planning-zh/)
 
 ---
 
-*系列索引：[AI 工程從零開始 — 完整系列](/tags/ai/)*
+*系列索引：[AI 工程從零開始 — 完整系列](/tags/ai-eng-from-scratch/)*

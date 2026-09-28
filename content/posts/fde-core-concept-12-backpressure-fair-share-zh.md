@@ -457,4 +457,4 @@ Redis 記憶體使用（500 租戶）   N/A                         ~50 MB（每
 ---
 
 **系列導航**
-← [前一篇：Async Event-Driven Pipeline](/posts/fde-interview-core-topic-11-async-event-driven-pipeline-zh/) | [後一篇：Part 13](/posts/fde-interview-core-topic-13-zh/) →
+← [前一篇：Async Event-Driven Pipeline：解耦同步 HTTP 與保護後端連線池](/posts/fde-core-concept-11-async-event-driven-pipeline-zh/) | [後一篇：Idempotency & State Recovery：分佈式 Agent 的精確一次斷點續傳](/posts/fde-core-concept-13-idempotency-state-recovery-zh/) →

@@ -195,7 +195,7 @@ model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto")
   請求 D     ██████████████████
          └─── GPU 使用率 > 85% ───┘
 
-  實測差異（7B 模型、A10G、50 並發）：
+  量級差異示意（7B 模型、A10G、50 並發，非實測）：
     pipeline + Flask   ：  8 req/s，P99 12,000 ms
     vLLM               ： 62 req/s，P99  1,400 ms
 ```
@@ -205,8 +205,7 @@ model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto")
 ```bash
 pip install vllm
 
-python -m vllm.entrypoints.openai.api_server \
-  --model Qwen/Qwen2.5-7B-Instruct-AWQ \
+vllm serve Qwen/Qwen2.5-7B-Instruct-AWQ \
   --served-model-name my-chat \
   --max-model-len 8192 \
   --gpu-memory-utilization 0.90 \
@@ -228,7 +227,7 @@ resp = client.chat.completions.create(
 print(resp.choices[0].message.content)
 ```
 
-**TGI（Text Generation Inference）是 Hugging Face 官方的方案，Docker 一行啟動：**
+**TGI（Text Generation Inference）是 Hugging Face 官方的方案，Docker 一行啟動。** 注意：TGI 官方 README 已宣布進入維護模式（只接受小型修正），並建議改用 vLLM、SGLang（本機則是 llama.cpp、MLX）；新專案請優先考慮 vLLM，以下僅供既有部署參考：
 
 ```bash
 docker run --gpus all --shm-size 1g -p 8080:80 \
@@ -336,7 +335,7 @@ MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 tok = AutoTokenizer.from_pretrained(MODEL_ID)
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_ID,
-    torch_dtype=torch.bfloat16,
+    dtype=torch.bfloat16,
     device_map="auto",
 )
 model.eval()
@@ -659,7 +658,7 @@ from transformers import pipeline
 
 pipe = pipeline("text-generation",
                 model="your-username/qwen2.5-1.5b-support-zh",
-                torch_dtype="bfloat16", device_map="auto")
+                dtype="bfloat16", device_map="auto")
 print(pipe([{"role": "user", "content": "我上週三下的單到現在還沒出貨"}],
            max_new_tokens=256)[0]["generated_text"][-1]["content"])
 ```
@@ -742,7 +741,7 @@ vLLM              吞吐通常較高（PagedAttention）    Docker 開箱即用�
 ──────────────────────────────────────────────────────────────────────
 翻轉條件：已經在用 HF Inference Endpoints → TGI（就是它在跑）。
           要自架且吞吐是首要指標 → vLLM。
-          兩者差距在 2026 年已經不大，選團隊熟悉的那個
+          TGI 已進入維護模式，新專案預設選 vLLM（或 SGLang）
 ```
 
 ### 6.3 bitsandbytes vs AWQ / GPTQ
@@ -788,9 +787,11 @@ pipeline 批次      離線工作負載（一次跑 10 萬筆）    線上請求
 
 ---
 
-## 七、系統效應：三種架構的實測對比
+## 七、系統效應：三種架構的對比
 
 情境：7B 模型、繁中客服問答、平均輸入 300 token / 輸出 200 token。
+
+> 以下為示意估算，非實測數據。「+ 語意快取 + 路由」一欄對應 Phase 3 架構圖中的元件，本文並未實作。
 
 | 指標 | Gradio + transformers | FastAPI + vLLM (A10G) | + 語意快取 + 路由 |
 |------|----------------------|----------------------|------------------|

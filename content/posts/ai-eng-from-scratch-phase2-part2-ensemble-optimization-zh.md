@@ -5,7 +5,7 @@ draft: false
 weight: 4
 description: "深入解析 Random Forest、Gradient Boosting、XGBoost、超參數調優與 AutoML，理解集成方法為何在表格資料競賽與生產系統持續稱霸"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Machine Learning", "XGBoost", "Random Forest", "Gradient Boosting", "Optimization", "RKK", "Interview"]
+tags: ["AI", "Machine Learning", "XGBoost", "Random Forest", "Gradient Boosting", "Optimization", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,9 +18,9 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
-> **面試官：** 你們公司的信用風險模型已上線，目前用單一 XGBoost，AUC 0.84。產品希望 AUC 提升到 0.88 以上，但訓練資料不能增加、特徵工程已飽和。請說明你會採取哪些策略，並解釋為什麼選擇這些方法而非其他替代方案？推論延遲需維持在 50ms 以內，每日預測量約 500 萬次。
+> **技術主管：** 你們公司的信用風險模型已上線，目前用單一 XGBoost，AUC 0.84。產品希望 AUC 提升到 0.88 以上，但訓練資料不能增加、特徵工程已飽和。請說明你會採取哪些策略，並解釋為什麼選擇這些方法而非其他替代方案？推論延遲需維持在 50ms 以內，每日預測量約 500 萬次。
 
 ---
 
@@ -272,7 +272,7 @@ Boosting 是序列集成：每個新模型專注於前面模型犯錯的樣本�
 最終預測 = 加權投票（M1, M2, ... MT）
 ```
 
-### 4.2 AdaBoost（2001）
+### 4.2 AdaBoost（Freund & Schapire，1995–1997）
 
 **核心機制：** 調整樣本權重，讓後續模型專注困難樣本。
 **優點：** 理論優美，可以證明訓練誤差指數衰減。
@@ -350,8 +350,8 @@ model.fit(X_train, y_train,
 - 把互斥的稀疏特徵（同時非零的機率低）捆綁在一起
 - 效果：特徵數量從 M 降到 O(M/k)，k 為平均互斥組大小
 
-**實測數字：**
-- 在 1000 萬筆資料上，LightGBM 訓練速度比 XGBoost 快 **10–20x**
+**早期基準數字（2017 年前後，XGBoost 仍以 exact 演算法為主）：**
+- 在 1000 萬筆資料上，LightGBM 訓練速度比 XGBoost 快 **10–20x**；XGBoost 2.0（2023）起預設 `hist` 演算法後，兩者速度差距已大幅縮小
 - 記憶體使用量約為 XGBoost 的 **40–60%**
 - AUC 差異通常在 0.001–0.003 之間（可忽略）
 
@@ -664,7 +664,7 @@ XGBoost          文件成熟，社群龐大              LightGBM：
 vs LightGBM      中小資料集（<100萬筆）穩定      數據 < 50 萬筆時速度差距不顯著
                  GPU 加速更成熟                  記憶體效率優勢小資料集不明顯
 
-LightGBM         10M+ 筆資料時快 10–20x          XGBoost：
+LightGBM         10M+ 筆資料時仍常較快           XGBoost：
 vs XGBoost       記憶體用量少 40–60%              大資料集訓練瓶頸在 I/O，不在計算
                  類別特徵 native 支援             調參範圍較廣、社群資源較少
 
@@ -725,7 +725,7 @@ vs 直接部署       模型文件從 200MB 降至 20MB        精度損失 1–
 
 ### AUC 提升的業務轉化
 
-以信用風險預測為例（100 萬件申請/年，平均貸款 $5,000，壞帳率 3%）：
+以信用風險預測為例（100 萬件申請/年，平均貸款 $5,000，壞帳率 3%；以下為假設模型的示意計算，非實際案例）：
 
 | AUC | 每年避免損失 | 差額（vs 0.84 基準）|
 |-----|------------|-------------------|
@@ -744,13 +744,13 @@ vs 直接部署       模型文件從 200MB 降至 20MB        精度損失 1–
 
 | | 文章 | 主題 |
 |--|------|------|
-| ← 上一篇 | [Phase 2 Part 1：監督學習基礎](/posts/ai-eng-from-scratch-phase2-part1-supervised-learning-zh/) | 線性回歸、決策樹、SVM、模型評估 |
+| ← 上一篇 | [Phase 2 Part 1：傳統機器學習 — 生產 AI 的骨幹](/posts/ai-eng-from-scratch-phase2-part1-classical-ml-zh/) | 線性回歸、決策樹、SVM、模型評估 |
 | 本篇 | **Phase 2 Part 2：集成學習與最佳化** | Random Forest、XGBoost、Stacking、Bayesian HPO |
-| → 下一篇 | [Phase 3 Part 1：深度學習基礎](/posts/ai-eng-from-scratch-phase3-part1-deep-learning-zh/) | 神經網路、反向傳播、CNN、RNN |
+| → 下一篇 | [Phase 3：深度學習核心 — 從第一原理構建神經網路](/posts/ai-eng-from-scratch-phase3-part1-neural-networks-zh/) | 神經網路、反向傳播、CNN、RNN |
 
 ---
 
-> **系列說明：** 本系列基於 [AI Engineering from Scratch](https://github.com/rohitg00/ai-engineering-from-scratch) 課程架構，以繁體中文撰寫，針對每個主題加入生產系統的工程視角、具體數字、以及面試導向的決策框架。
+> **系列說明：** 本系列基於 [AI Engineering from Scratch](https://github.com/rohitg00/ai-engineering-from-scratch) 課程架構，以繁體中文撰寫，針對每個主題加入生產系統的工程視角、具體數字、以及可落地的決策框架。
 
 ---
 

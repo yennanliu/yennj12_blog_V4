@@ -5,7 +5,7 @@ draft: false
 description: "Master MySQL sharding strategies with detailed comparisons of horizontal partitioning, range-based sharding, hash-based sharding, and directory-based approaches. Learn implementation patterns, pros/cons, and real-world use cases for scaling databases."
 categories: ["all", "engineering", "architecture"]
 tags: ["MySQL", "Database Sharding", "Horizontal Scaling", "Database Architecture", "Distributed Systems", "Performance Optimization", "Data Partitioning", "Scalability", "Database"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "45 min"
 ---
 
@@ -338,6 +338,7 @@ public class HashBasedShardingStrategy implements ShardingStrategy {
         this.shardKeys = Arrays.asList("shard0", "shard1", "shard2", "shard3");
         this.dataSources = new HashMap<>();
         initializeShards();
+        buildRing();
     }
 
     private void initializeShards() {
@@ -350,7 +351,8 @@ public class HashBasedShardingStrategy implements ShardingStrategy {
     @Override
     public String determineShardKey(Object shardingValue) {
         int hash = hashFunction(shardingValue);
-        int shardIndex = Math.abs(hash) % numberOfShards;
+        // Math.floorMod, not Math.abs(hash) % n: Math.abs(Integer.MIN_VALUE) is negative
+        int shardIndex = Math.floorMod(hash, numberOfShards);
         return shardKeys.get(shardIndex);
     }
 
@@ -359,34 +361,45 @@ public class HashBasedShardingStrategy implements ShardingStrategy {
             return 0;
         }
 
-        // Use consistent hashing for better distribution
+        // Plain modulo hashing (see determineShardKeyConsistent for a hash ring)
         return value.hashCode();
     }
 
-    // Consistent hashing implementation for better resharding
+    // Real consistent hashing: a hash ring with virtual nodes. When a shard is
+    // added, only ~1/N of the keys move. (MD5 followed by "% numberOfShards" is
+    // still modulo hashing: changing N remaps almost every key.)
+    private static final int VIRTUAL_NODES_PER_SHARD = 160;
+    private final TreeMap<Long, String> ring = new TreeMap<>();
+
+    private void buildRing() {
+        for (String shardKey : shardKeys) {
+            for (int v = 0; v < VIRTUAL_NODES_PER_SHARD; v++) {
+                ring.put(md5Hash(shardKey + "#vn" + v), shardKey);
+            }
+        }
+    }
+
     public String determineShardKeyConsistent(Object shardingValue) {
         if (shardingValue == null) {
             return shardKeys.get(0);
         }
+        long hash = md5Hash(String.valueOf(shardingValue));
+        // First virtual node clockwise from the key's position; wrap around at the end
+        Map.Entry<Long, String> entry = ring.ceilingEntry(hash);
+        return (entry != null ? entry : ring.firstEntry()).getValue();
+    }
 
-        // Use MD5 hash for better distribution
-        String input = String.valueOf(shardingValue);
+    private static long md5Hash(String input) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] hashBytes = md.digest(input.getBytes());
-
-            // Convert to positive integer
-            int hash = 0;
-            for (int i = 0; i < 4; i++) {
-                hash = (hash << 8) + (hashBytes[i] & 0xff);
+            byte[] digest = MessageDigest.getInstance("MD5")
+                    .digest(input.getBytes(StandardCharsets.UTF_8));
+            long hash = 0;
+            for (int i = 0; i < 8; i++) {
+                hash = (hash << 8) | (digest[i] & 0xff);
             }
-
-            int shardIndex = Math.abs(hash) % numberOfShards;
-            return shardKeys.get(shardIndex);
-
+            return hash;
         } catch (NoSuchAlgorithmException e) {
-            // Fallback to simple hash
-            return determineShardKey(shardingValue);
+            throw new IllegalStateException("MD5 not available", e);
         }
     }
 
@@ -1252,8 +1265,10 @@ public class ShardingMonitor {
 
 ### 1. Cross-Shard Transactions
 
+> **Warning:** The code below is **not** a distributed transaction. It commits each shard in sequence, so if shard 2's commit fails after shard 1 has already committed, shard 1's changes stay and the data is inconsistent; the rollback in the `catch` block can no longer undo them. For real atomicity across shards use XA (MySQL supports `XA START/PREPARE/COMMIT`, driven by a JTA manager such as Atomikos or Narayana, or by Apache ShardingSphere's XA mode). More commonly, design to avoid cross-shard writes and use a SAGA or transactional outbox with compensating actions. Treat this as a best-effort sketch only.
+
 ```java
-// Distributed transaction coordinator
+// Best-effort multi-shard commit (NOT atomic, see warning above)
 @Service
 public class DistributedTransactionManager {
 
@@ -1263,7 +1278,7 @@ public class DistributedTransactionManager {
         Map<String, Connection> connections = new HashMap<>();
 
         try {
-            // Phase 1: Prepare all connections
+            // Step 1: Open a connection per shard (this is not an XA "prepare")
             for (ShardOperation operation : operations) {
                 String shardKey = operation.getShardKey();
                 DataSource dataSource = shardDataSources.get(shardKey);
@@ -1272,13 +1287,14 @@ public class DistributedTransactionManager {
                 connections.put(shardKey, connection);
             }
 
-            // Phase 2: Execute operations
+            // Step 2: Execute operations
             for (ShardOperation operation : operations) {
                 Connection connection = connections.get(operation.getShardKey());
                 operation.execute(connection);
             }
 
-            // Phase 3: Commit all transactions
+            // Step 3: Commit shard by shard. A failure here after an earlier
+            // commit succeeded leaves the shards inconsistent.
             for (Connection connection : connections.values()) {
                 connection.commit();
             }

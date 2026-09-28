@@ -22,6 +22,8 @@ series: ["qm-deep-dive"]
 的最後一篇，涵蓋 `src/sandbox/`（3,226 行）、`src/skills/`（1,904 行）、
 `src/cron/`（699 行）、`src/memory/`（1,247 行）與部署層。
 
+> 本篇引用的程式碼中，`// ★ …` 開頭的註解是筆者加上的導讀說明，不在原始碼內（QM 採零註解政策，見 Part 1）。
+
 ---
 
 ## 一、Agent Computer：不是容器，是電腦

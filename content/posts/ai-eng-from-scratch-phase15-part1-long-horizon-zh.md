@@ -5,7 +5,7 @@ draft: false
 weight: 32
 description: "深入解析長時程 Agent 工程挑戰：跨會話記憶持久化、多步驟任務分解、進度恢復、人機協作設計與長時程 Agent 的可靠性保障"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Autonomous Systems", "Long Horizon", "Persistent Memory", "RKK", "Interview"]
+tags: ["AI", "Agent", "Autonomous Systems", "Long Horizon", "Persistent Memory", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -13,12 +13,12 @@ series: ["ai-eng-from-scratch"]
 
 > 大多數人把 Agent 設計成「一問一答」的延伸版本——輸入一個任務，等待一個輸出。
 > 長時程任務打破了這個假設：任務可能跨越數小時、數天、數十個 LLM 呼叫。
-> 短時程 Agent 的容錯率是 5%，長時程 Agent 的錯誤會複利累積，五十步後完成率可能跌到 5%。
+> 短時程 Agent 的容錯率是 5%，長時程 Agent 的錯誤會複利累積，每步 98% 成功率，五十步後完成率只剩 36%；每步 95%，更只剩 7.7%。
 > 真正的長時程 Agent 工程，是在不確定性中建立可恢復、可審計、可協作的執行系統。
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你的團隊正在建構一個自動化程式碼審查 Agent，需要在 72 小時內分析一個大型 monorepo 的 3000 個 PR，並針對每個 PR 產出安全性報告、效能建議與合規性評估。這個 Agent 在執行到第 800 個 PR 時崩潰重啟，你如何設計系統確保任務能從斷點繼續、不重複分析已完成的 PR、且最終報告的品質不會因為長時間執行而漂移？
 
@@ -629,7 +629,7 @@ vs 固定間隔        符合 AWS / GCP 等主流雲端服務的 SLA   固定間
 
 | 指標 | Before（短時程模式） | After（長時程架構） | 改善幅度 |
 |-----|---------------------|---------------------|---------|
-| **50 步任務完成率** | 36%（0.98^50） | 94%（含 Checkpoint 恢復） | +161% |
+| **50 步任務完成率** | 36%（0.98^50） | 94%（逐步驗證 + 漂移偵測把單步成功率拉到約 99.88%，0.9988^50 ≈ 94%；Checkpoint 負責崩潰後不必重做） | +161% |
 | **崩潰後恢復時間** | 需手動重啟，2–8 小時 | 自動恢復，< 30 秒 | -99.9% |
 | **重複執行浪費** | 崩潰後從頭重跑，100% 浪費 | 從 Checkpoint 繼續，< 5% 浪費 | -95% |
 | **LLM API 費用（1000 個 PR 分析）** | $45（重跑浪費 ~60%） | $18（Checkpoint 避免重複呼叫） | -60% |
@@ -639,15 +639,17 @@ vs 固定間隔        符合 AWS / GCP 等主流雲端服務的 SLA   固定間
 | **P99 單任務延遲** | 不穩定，5–20 分鐘 | 穩定，6–8 分鐘（Checkpoint 開銷 ~3%） | -60% (P99) |
 | **3000 PR 任務端對端時間** | 無法完成（中途失敗） | 72 小時內完成，SLA 達成 | 0% → 100% |
 
+> 以上為示意估算，非實測數據。
+
 ### 關鍵洞察
 
-**最大的改善點**是「可恢復性」而非「速度」。長時程 Agent 的工程挑戰本質上是**可靠性工程**，而非效能工程。在不增加 LLM 能力的情況下，純粹通過工程手段（Checkpoint、冪等設計、漂移偵測），可以將 50 步任務完成率從 36% 提升到 94%。
+**最大的改善點**是「可恢復性」而非「速度」。長時程 Agent 的工程挑戰本質上是**可靠性工程**，而非效能工程。在不增加 LLM 能力的情況下，純粹通過工程手段，可以將 50 步任務完成率從 36% 提升到 94%。但要分清兩種失敗：Checkpoint 與冪等設計解決的是**崩潰**——讓任務重啟時不必重做已完成的步驟，它本身不會降低單步的邏輯錯誤率；完成率從 36% 到 94% 的提升，主要來自逐步驗證（pre/post-condition 檢查）與漂移偵測把**單步錯誤**攔下並修正。
 
 ---
 
 ## 十、系列導航
 
-← [Phase 14 Part 4：多模態 Agent 的工具選擇策略](/posts/ai-eng-from-scratch-phase14-part4-multimodal-tools-zh/) | [Phase 15 Part 2：長時程 Agent 的成本控制與 Token 預算管理](/posts/ai-eng-from-scratch-phase15-part2-token-budget-zh/) →
+← [Phase 14 Part 4：Agent 生產化 — 可靠性、可觀測性與成本控制](/posts/ai-eng-from-scratch-phase14-part4-production-zh/) | [Phase 15 Part 2：自我改進與 2026 安全技術棧](/posts/ai-eng-from-scratch-phase15-part2-self-improvement-safety-zh/) →
 
 ---
 

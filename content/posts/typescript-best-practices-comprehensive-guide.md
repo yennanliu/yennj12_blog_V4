@@ -5,7 +5,7 @@ draft: false
 description: "Master TypeScript development with comprehensive best practices covering configuration, type system, design patterns, code style, and advanced techniques. Learn to write type-safe, maintainable, and scalable TypeScript applications."
 categories: ["all", "ai", "engineering"]
 tags: ["TypeScript", "JavaScript", "Type Safety", "Design Patterns", "Code Quality", "Best Practices", "Software Architecture", "AI", "Frontend"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "45 min"
 ---
 
@@ -54,7 +54,7 @@ A properly configured `tsconfig.json` is the foundation of a type-safe TypeScrip
 
     // Module Resolution
     "module": "ESNext",                      // Specify module code generation
-    "moduleResolution": "node",              // Use Node.js module resolution
+    "moduleResolution": "bundler",           // For bundled apps; use "nodenext" (with "module": "nodenext") for Node.js. "node" (node10) is deprecated
     "resolveJsonModule": true,               // Include modules imported with .json
     "esModuleInterop": true,                 // Enable interop between CommonJS and ES Modules
     "allowSyntheticDefaultImports": true,    // Allow default imports from modules
@@ -419,7 +419,10 @@ function process(data: unknown): void {
 ### 🏷️ Enum vs Union Types
 
 ```typescript
-// ✅ GOOD: Use const enum for compile-time constants
+// ⚠️ AVOID in modern setups: const enum is inlined across files, which breaks
+// under isolatedModules / verbatimModuleSyntax, per-file transpilers (esbuild,
+// swc, Babel) and Node's built-in type stripping (erasableSyntaxOnly).
+// Prefer a string-literal union or an `as const` object (both shown below).
 const enum Direction {
   Up,
   Down,

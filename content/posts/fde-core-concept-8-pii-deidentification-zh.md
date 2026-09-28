@@ -454,4 +454,4 @@ Token 攜帶同意狀態元資料 `consent_status: {active | withdrawn | expired
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-7-vector-search-optimization-zh/) | [後一篇](/posts/fde-interview-core-topic-9-rag-evaluation-metrics-zh/) →
+← [前一篇](/posts/fde-core-concept-7-indirect-prompt-injection-zh/) | [後一篇](/posts/fde-core-concept-9-data-residence-sovereign-ai-zh/) →

@@ -3,7 +3,7 @@ title: "FDE 面試準備指南（三）：你不能忽略的 ML 基礎"
 date: 2026-05-30T11:00:00+08:00
 draft: false
 weight: 3
-description: "以 Google AI 工程師兼面試官的視角，整理 FDE 面試中仍然高頻的傳統 ML / AI 基礎知識，包含 Transformer、Embedding、評估指標與 Fine-tuning 的工程視角"
+description: "從面試官的視角，整理 FDE 面試中仍然高頻的傳統 ML / AI 基礎知識，包含 Transformer、Embedding、評估指標與 Fine-tuning 的工程視角"
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Machine Learning", "Transformer", "Embedding", "Evaluation", "Fine-tuning", "Interview", "Google"]
 authors: ["yen"]
@@ -107,6 +107,8 @@ Positional Encoding 用週期函數（sin/cos）給每個位置一個唯一的�
 | text-embedding-3-small（OpenAI） | 1536 | 成本低 | 混合雲場景 |
 | BGE-M3（開源） | 1024 | 多語言、中文強 | 中文為主的知識庫 |
 | bge-large-zh（開源） | 1024 | 中文專用，效能極佳 | 純中文場景 |
+
+> 模型清單以 2025 年撰文時為準：Google 現行的通用 embedding 模型已是 `gemini-embedding-001`，`text-embedding-004` 屬上一代；實際選型請以官方文件與 MTEB 最新排名為準。
 
 **選型關鍵問題：**
 

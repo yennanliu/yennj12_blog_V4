@@ -19,7 +19,7 @@ readTime: "28 min"
 
 ## 前言
 
-[Part 3](../ragflow-intro-part3-embedding-indexing-zh) 把資料放進了索引。本篇是反向操作：**一句人話進來，一組帶引用的答案出去。**
+[Part 3](/posts/ragflow-intro-part3-embedding-indexing-zh/) 把資料放進了索引。本篇是反向操作：**一句人話進來，一組帶引用的答案出去。**
 
 主戰場是兩個檔案：
 
@@ -882,7 +882,7 @@ RAGFlow 檢索管線裡所有可調的數字，以及它們的預設值與影響
 
 - **Part 5 — 系統與程式碼結構**：服務分層、Task Executor、Agent Canvas 與 Go 遷移
 
-← [Part 3 — Encode 與 Save — 向量化、索引 Schema 與雙引擎抽象](../ragflow-intro-part3-embedding-indexing-zh) | [Part 5 — 系統與程式碼結構 — 服務分層、Task Executor 與 Go 遷移 →](../ragflow-intro-part5-system-code-structure-zh)
+← [Part 3 — Encode 與 Save — 向量化、索引 Schema 與雙引擎抽象](/posts/ragflow-intro-part3-embedding-indexing-zh/) | [Part 5 — 系統與程式碼結構 — 服務分層、Task Executor 與 Go 遷移 →](/posts/ragflow-intro-part5-system-code-structure-zh/)
 
 ---
 

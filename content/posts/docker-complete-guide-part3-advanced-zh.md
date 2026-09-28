@@ -6,7 +6,7 @@ weight: 3
 description: "深入探討 Docker 進階主題，包含 Dockerfile 最佳實踐、多階段建立、Docker Compose 編排、網路進階配置、安全性強化、效能優化與生產環境部署策略。"
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Docker", "Dockerfile", "Docker Compose", "容器編排", "微服務", "CI/CD", "容器安全", "效能優化", "生產部署", "DevOps"]
-authors: ["yennj12 team"]
+authors: ["yen"]
 readTime: "70 min"
 ---
 
@@ -501,8 +501,6 @@ ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
 ### Docker Compose 檔案結構
 
 ```yaml
-version: "3.8"  # Compose 檔案版本
-
 services:       # 服務定義
   service-name:
     build:      # 建立配置
@@ -524,8 +522,6 @@ secrets:        # 密鑰定義
 ### 完整的生產級 Compose 範例
 
 ```yaml
-version: "3.8"
-
 # ========== 服務定義 ==========
 services:
 
@@ -802,46 +798,46 @@ TZ=Asia/Taipei
 
 ```bash
 # 啟動所有服務（背景運行）
-docker-compose up -d
+docker compose up -d
 
 # 查看服務狀態
-docker-compose ps
+docker compose ps
 
 # 查看日誌（實時）
-docker-compose logs -f
+docker compose logs -f
 
 # 查看特定服務日誌
-docker-compose logs -f web
+docker compose logs -f web
 
 # 進入服務容器
-docker-compose exec web bash
+docker compose exec web bash
 
 # 擴展服務
-docker-compose up -d --scale worker=3
+docker compose up -d --scale worker=3
 
 # 重新建立並啟動
-docker-compose up -d --build
+docker compose up -d --build
 
 # 停止並刪除所有資源
-docker-compose down
+docker compose down
 
 # 停止並刪除（包含資料卷）
-docker-compose down -v
+docker compose down -v
 
 # 驗證配置檔
-docker-compose config
+docker compose config
 
 # 只建立映像
-docker-compose build
+docker compose build
 
 # 拉取所有映像
-docker-compose pull
+docker compose pull
 
 # 重啟特定服務
-docker-compose restart web
+docker compose restart web
 
 # 查看資源使用
-docker-compose top
+docker compose top
 ```
 
 ## 🔐 容器安全性最佳實踐
@@ -907,7 +903,6 @@ RUN apk del apk-tools && \
 echo "my_secret_password" | docker secret create db_password -
 
 # 在 Compose 中使用
-version: "3.8"
 services:
   app:
     image: myapp
@@ -994,8 +989,8 @@ graph TB
 ### 建立優化技巧
 
 ```dockerfile
-# 1. 使用 BuildKit（Docker 18.09+）
-# export DOCKER_BUILDKIT=1
+# 1. 使用 BuildKit（Docker Engine 23.0 起已是預設建置器，無須再設定）
+# 舊版 Docker 才需要：export DOCKER_BUILDKIT=1
 
 # 2. 使用快取掛載（BuildKit）
 FROM golang:1.21-alpine
@@ -1023,8 +1018,6 @@ COPY --from=deps-stage2 /app/node_modules ./
 
 ```yaml
 # docker-compose.yml 效能配置
-version: "3.8"
-
 services:
   app:
     image: myapp:latest
@@ -1127,8 +1120,6 @@ graph TB
 ### 高可用性配置
 
 ```yaml
-version: "3.8"
-
 services:
   # 應用服務（多實例）
   app:
@@ -1198,11 +1189,11 @@ docker service update \
   myapp
 
 # 使用 Compose
-docker-compose up -d --no-deps --build app
+docker compose up -d --no-deps --build app
 
 # 藍綠部署
 # 1. 部署綠色環境
-docker-compose -f docker-compose.green.yml up -d
+docker compose -f docker-compose.green.yml up -d
 
 # 2. 測試綠色環境
 curl http://green.example.com/health
@@ -1211,15 +1202,13 @@ curl http://green.example.com/health
 docker exec nginx nginx -s reload
 
 # 4. 停止藍色環境
-docker-compose -f docker-compose.blue.yml down
+docker compose -f docker-compose.blue.yml down
 ```
 
 ### 監控與日誌
 
 ```yaml
 # Prometheus 配置
-version: "3.8"
-
 services:
   prometheus:
     image: prom/prometheus:latest
@@ -1326,8 +1315,8 @@ deploy-dev:
   script:
     - ssh $DEV_USER@$DEV_SERVER_IP "
         cd /app &&
-        docker-compose pull app &&
-        docker-compose up -d app
+        docker compose pull app &&
+        docker compose up -d app
       "
   environment:
     name: development
@@ -1346,8 +1335,8 @@ deploy-prod:
   script:
     - ssh $PROD_USER@$PROD_SERVER_IP "
         cd /app &&
-        docker-compose pull app &&
-        docker-compose up -d --no-deps app
+        docker compose pull app &&
+        docker compose up -d --no-deps app
       "
   environment:
     name: production
@@ -1450,8 +1439,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /app
-            docker-compose pull
-            docker-compose up -d --no-deps app
+            docker compose pull
+            docker compose up -d --no-deps app
             docker system prune -f
 ```
 

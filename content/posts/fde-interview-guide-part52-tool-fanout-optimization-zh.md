@@ -663,7 +663,7 @@ circuit_breaker_state{state="OPEN"} count > 2 → PagerDuty
 
 - Jeff Dean & Luiz André Barroso, "The Tail at Scale" (2013) — Hedged Request 的原始論文
 - Python asyncio 官方文件：`asyncio.wait()` vs `asyncio.gather()` 語意差異
-- Martin Fowler, "Circuit Breaker" pattern — circuitbreaker.io
+- Martin Fowler, "CircuitBreaker"（2014）— martinfowler.com/bliki/CircuitBreaker.html
 - Netflix Hystrix → Resilience4j — JVM 生態的 Circuit Breaker 參考實作
 - OpenTelemetry Python SDK — 為 asyncio Tool Calls 加入 Trace Span
 
@@ -671,4 +671,4 @@ circuit_breaker_state{state="OPEN"} count > 2 → PagerDuty
 
 **系列導航**
 
-← [Part 51：多模態 Agent 的 RAG 混合檢索架構設計](/posts/fde-interview-guide-part51-multimodal-rag-retrieval-zh/) | [Part 53：下一篇主題](/posts/fde-interview-guide-part53-agent-memory-architecture-zh/) →
+← [Part 51：百萬級多輪對話的 KV Cache 驅逐機制與記憶體架構優化](/posts/fde-interview-guide-part51-kv-cache-memory-zh/)

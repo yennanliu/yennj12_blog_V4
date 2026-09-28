@@ -5,7 +5,7 @@ draft: false
 weight: 34
 description: "深入解析多 Agent 系統協調工程：Supervisor/Peer-to-Peer/Market 協調模式、Agent 間通訊協議、衝突解決、任務分配與共識機制"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multi-Agent", "Coordination", "Swarm", "Agent Communication", "RKK", "Interview"]
+tags: ["AI", "Multi-Agent", "Coordination", "Swarm", "Agent Communication", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你負責設計一個研究助理平台：使用者輸入一個複雜問題，系統要自動拆解子任務、分派給不同專業 Agent（搜尋、摘要、數據分析、引用驗證），最後整合回一份報告。規模目標是 2,000 個並發研究任務，每個任務平均涉及 8 個子 Agent。請說明協調架構如何設計，以及當兩個 Agent 搶同一份外部資源時你怎麼處理衝突？
 
@@ -147,7 +147,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-### ╔══ Phase 3：Scale（200K–1M+ 任務/天）══╗
+### ╔══ Phase 3：Scale（> 200 個並發任務）══╗
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -469,8 +469,8 @@ decision = majority_vote(votes)  # → "sufficient"（3:1）
 **方法二：加權投票（Weighted Voting）**
 ```python
 weighted_votes = {
-    "agent_domain_expert": ("sufficient", weight=3.0),
-    "agent_generalist":    ("need_more",  weight=1.0),
+    "agent_domain_expert": ("sufficient", 3.0),   # (投票, 權重)
+    "agent_generalist":    ("need_more",  1.0),
 }
 # 加權後：sufficient=3.0, need_more=1.0 → sufficient
 ```
@@ -591,6 +591,8 @@ vs 全體一致  容忍單 Agent 錯誤（噪聲）         全體一致：任�
 | 除錯時間/incident | 30 分鐘 | 2 小時 | 45 分鐘 |
 | 水平擴展能力 | 無 | 部分 | 線性 |
 
+> 以上為示意估算，非實測數據。
+
 **關鍵洞察：** 「多 Agent 無協調」是最差選項——比單 Agent 更貴、更不可靠。協調機制本身帶來的開銷（約 20% token overhead）遠小於它消除的重複工作和衝突損失（節省 33% token）。
 
 **規模臨界點：**
@@ -602,9 +604,9 @@ vs 全體一致  容忍單 Agent 錯誤（噪聲）         全體一致：任�
 
 ## 十、系列導航
 
-← [Phase 15 Part 2：Agent 記憶體與長期狀態管理](/posts/ai-eng-from-scratch-phase15-part2-memory-zh/)
+← [Phase 15 Part 2：自我改進與 2026 安全技術棧](/posts/ai-eng-from-scratch-phase15-part2-self-improvement-safety-zh/)
 
-→ [Phase 16 Part 2：多 Agent 系統的可觀測性與除錯](/posts/ai-eng-from-scratch-phase16-part2-observability-zh/)
+→ [Phase 16 Part 2：湧現與集體智慧 — 群體行為的工程設計](/posts/ai-eng-from-scratch-phase16-part2-emergence-collective-zh/)
 
 ---
 

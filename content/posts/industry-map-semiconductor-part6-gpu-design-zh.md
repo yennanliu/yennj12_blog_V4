@@ -104,6 +104,8 @@ CSP 自研 + 其他 █░░░░░░░░░░░░░░░░░░░
 
 **AMD 的角色**是「可信的第二供應商」:它的存在讓 CSP 有議價籌碼、有備援,ROCm 的開放路線也吸引想擺脫 CUDA 稅的客戶。**CSP 自研 ASIC**(Amazon Trainium、Alphabet TPU、Meta MTIA、Microsoft Maia)則多半委由 Broadcom / Marvell 協同設計、台積電代工,專為自家模型優化,在**推論**場景已具成本優勢(詳見 Part 13)。
 
+> 📅 2026-09 註:2025 年 10 月 OpenAI 與 AMD 簽下多代 Instinct GPU、合計約 6 GW 的供應協議(附認股權證),是 AMD「第二供應商」地位迄今最大的驗證;出貨自 2026 下半年起算。
+
 > 延伸:本站有 [NVIDIA (NVDA) 2026 10-K 深度解析](/posts/nvda-2026-10k-deep-dive-zh/) 與 [AMD 2025 10-K 深度解析](/posts/amd-2025-10k-deep-dive-zh/),可搭配本層結構圖,先看格局、再拆個股。
 
 ---

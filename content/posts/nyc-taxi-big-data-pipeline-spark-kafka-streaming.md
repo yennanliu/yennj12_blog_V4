@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering"]
 tags: ["AI", "apache-spark", "kafka", "hadoop", "hive", "aws", "pipeline", "stream-processing", "batch-processing", "elk-stack", "data-engineering", "big-data", "streaming"]
 summary: "Complete guide to building a production-ready data engineering pipeline for processing NYC taxi trip records using Apache Spark, Kafka streaming, Hadoop ecosystem, and AWS cloud infrastructure."
+description: "Complete guide to building a production-ready data engineering pipeline for processing NYC taxi trip records using Apache Spark, Kafka streaming, Hadoop ecosystem, and AWS cloud infrastructure."
 readTime: "22 min"
 ---
 
@@ -15,7 +16,7 @@ readTime: "22 min"
 
 New York City's taxi system generates massive amounts of data every day - millions of trip records containing pickup locations, drop-off points, fare amounts, trip durations, and passenger counts. Processing this data at scale presents numerous technical challenges:
 
-- **Volume**: Millions of taxi trips daily, generating terabytes of data monthly
+- **Volume**: Millions of trip records per month (the public TLC monthly trip-record files are on the order of hundreds of MB each)
 - **Velocity**: Real-time trip events requiring sub-second processing for operational insights
 - **Variety**: Mixed data types from GPS coordinates to payment methods and traffic patterns
 - **Veracity**: Data quality issues from sensor errors, GPS drift, and missing records
@@ -60,12 +61,12 @@ This project demonstrates a **modern, hybrid data processing pipeline** that add
 ```text
 Data Sources
 ├── NYC TLC Trip Records (Batch)
-├── Real-time Taxi Events (Stream)
+├── Real-time Taxi Events (Stream, simulated: TLC publishes no real-time feed)
 ├── Weather Data (External API)
 └── Traffic Patterns (IoT Sensors)
 
 Batch Processing Layer
-├── Apache Spark 2.4.3
+├── Apache Spark 3.1 (ships with EMR 6.3.0, used below)
 ├── Hadoop HDFS 3.x
 ├── Apache Hive 3.x
 ├── Python 3.8 / Scala 2.12
@@ -73,7 +74,7 @@ Batch Processing Layer
 
 Stream Processing Layer
 ├── Apache Kafka 2.8
-├── Spark Streaming 2.4.3
+├── Spark Structured Streaming 3.1
 ├── Apache Zookeeper 3.7
 ├── AWS Kinesis Data Streams
 └── Flink (Alternative Processing)
@@ -2646,14 +2647,15 @@ if __name__ == "__main__":
 
 ### 📊 Project Achievements & Business Value
 
-**Technical Performance Results**:
-- **Data Volume**: Successfully processed 50TB+ of NYC taxi trip data
+> **Note:** The figures below are illustrative design targets for this architecture, not measured results. They come from no benchmark run, and the public TLC dataset is far smaller than tens of terabytes.
+
+**Technical Performance Targets (illustrative)**:
 - **Real-Time Processing**: <50ms latency for 99% of streaming events
 - **Batch Throughput**: 170GB/hour processing capacity with auto-scaling
 - **System Availability**: 99.95% uptime with automated failover
 - **Cost Efficiency**: 40% reduction in processing costs vs traditional methods
 
-**Business Impact Measurement**:
+**Business Impact Goals (illustrative)**:
 - **Analytics Accessibility**: 10x faster query response times for business analysts
 - **Real-Time Insights**: Sub-second alerting for operational anomalies
 - **Scalability**: Linear scaling from 1K to 50K events/second
@@ -2775,7 +2777,7 @@ if __name__ == "__main__":
 **Growth Trajectory Support**:
 
 ```
-Current Capacity:    50K events/sec,  50TB batch processing
+Design Target:       50K events/sec (illustrative, not measured)
 6-Month Target:     200K events/sec, 200TB batch processing
 1-Year Vision:      1M events/sec,   1PB batch processing
 Enterprise Scale:   10M events/sec,  10PB batch processing

@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
 tags: ["AI", "serverless", "aws", "cdk", "dynamodb", "lambda", "api-gateway"]
 summary: "Deep dive into designing and building a production-ready URL shortener using AWS serverless services, exploring architectural tradeoffs, and implementing with AWS CDK."
+description: "Deep dive into designing and building a production-ready URL shortener using AWS serverless services, exploring architectural tradeoffs, and implementing with AWS CDK."
 readTime: "18 min"
 ---
 
@@ -217,7 +218,7 @@ const urlTable = new dynamodb.Table(this, 'UrlTable', {
 });
 
 const shortenFunction = new lambda.Function(this, 'ShortenFunction', {
-  runtime: lambda.Runtime.NODEJS_18_X,
+  runtime: lambda.Runtime.NODEJS_22_X, // Node.js 18 is deprecated on Lambda
   handler: 'shorten.handler',
   environment: { TABLE_NAME: urlTable.tableName }
 });
@@ -324,6 +325,8 @@ console.log(JSON.stringify(analyticsData));
 - **Scalable**: Uses CloudWatch Logs for aggregation and analysis
 - **Cost-effective**: No additional infrastructure required
 
+> **Caveat: edge caching and Lambda-side analytics conflict.** The endpoint table below caches `GET /{code}` redirects at CloudFront for an hour. A cached redirect is answered by the edge and never reaches Lambda, so the `console.log` above (and any DynamoDB click counter) only sees cache misses, and click counts will be badly undercounted. Pick one: either don't cache redirects (or cache for seconds) and count in Lambda, or keep the edge cache and derive click analytics from CloudFront standard/real-time logs instead.
+
 ## API Design & Security
 
 The API follows RESTful principles with built-in security and validation:
@@ -333,7 +336,7 @@ The API follows RESTful principles with built-in security and validation:
 | Endpoint | Method | Purpose | Caching Strategy |
 |----------|--------|---------|------------------|
 | `/urls` | POST | Create shortened URL | No caching (dynamic) |
-| `/{code}` | GET | Redirect to original | Edge caching (1 hour) |
+| `/{code}` | GET | Redirect to original | Edge caching (1 hour) — bypasses Lambda analytics, see caveat above |
 | `/analytics/{code}` | GET | Get usage stats | Cache (5 minutes) |
 
 ### **Security & Validation Features**
@@ -754,7 +757,7 @@ The serverless approach excels for URL shorteners because:
 - **Traffic Patterns Align**: Highly variable traffic maps perfectly to serverless auto-scaling
 - **Cost Model Matches Usage**: Pay-per-request eliminates idle resource waste  
 - **Global Scale Built-in**: CloudFront and DynamoDB Global Tables provide worldwide performance
-- **Operational Excellence**: Managed services reduce operational overhead by 90%
+- **Operational Excellence**: Managed services remove server patching and capacity planning
 
 ### **Architecture Decision Framework**
 
@@ -765,10 +768,10 @@ The key decisions that make this system production-ready:
 3. **API Gateway Integration**: Built-in security, throttling, and validation
 4. **CDK for Infrastructure**: Version-controlled, repeatable deployments
 
-### **Real-World Performance**
+### **Design Targets (Illustrative, Not Measured)**
 
-At production scale, this architecture delivers:
-- **Sub-10ms P99 latency** for URL resolution
+These are the targets this architecture is designed for, not measurements from the demo repository. Benchmark your own workload before quoting them:
+- **Low redirect latency**: single-digit ms for CloudFront cache hits; cache misses through API Gateway + Lambda typically add tens of ms
 - **99.99% availability** with multi-AZ redundancy
 - **$0.0063 cost per 1000 requests** at 10M monthly volume
 - **Zero operational maintenance** for core infrastructure

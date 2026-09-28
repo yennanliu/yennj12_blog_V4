@@ -6,7 +6,7 @@ weight: 4
 description: "實戰案例：一家 10 人軟體外包公司如何用 AI Agent 團隊自動化需求評估、報價、專案追蹤與客戶溝通，包含完整 Prompt、Skill 設計與執行步驟。"
 categories: ["all", "ai", "business"]
 tags: ["AI Agent", "外包公司", "Claude Code", "LangGraph", "Multi-Agent", "繁體中文", "實戰案例", "Agent", "Case Study"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "28 min"
 ---
 
@@ -53,7 +53,7 @@ readTime: "28 min"
 
 ## 技術選型
 
-本案例使用 **Claude Code + AGENTS.md**（路線 A）為核心，理由：
+本案例使用 **Claude Code + CLAUDE.md + Skills**（路線 A）為核心，理由：
 - 公司沒有全職工程師，PM 兼任技術評估
 - 需求相對線性（收集→評估→報價→提案）
 - 希望 1 週內上線 MVP
@@ -66,20 +66,20 @@ readTime: "28 min"
 mkdir techbridge-ai-team && cd techbridge-ai-team
 
 # 目錄結構
-mkdir -p .claude/skills workspace/proposals workspace/logs prompts
+mkdir -p .claude/skills/{intake,scope,estimate,proposal} workspace/proposals workspace/logs prompts
 ```
 
 最終結構：
 ```
 techbridge-ai-team/
-├── AGENTS.md                  ← 團隊架構定義
+├── CLAUDE.md                  ← 團隊架構定義
 ├── .claude/
 │   ├── settings.json          ← 工具權限與 Hook
-│   └── skills/
-│       ├── intake.md          ← 需求收集
-│       ├── scope.md           ← 範圍評估
-│       ├── estimate.md        ← 報價估算
-│       └── proposal.md        ← 提案產出
+│   └── skills/                ← 每個 Skill 是一個資料夾 + SKILL.md
+│       ├── intake/SKILL.md    ← 需求收集
+│       ├── scope/SKILL.md     ← 範圍評估
+│       ├── estimate/SKILL.md  ← 報價估算
+│       └── proposal/SKILL.md  ← 提案產出
 ├── prompts/
 │   └── price_table.md         ← 公司價目表（Agent 參考用）
 └── workspace/
@@ -89,7 +89,7 @@ techbridge-ai-team/
 
 ---
 
-## Step 2：建立 AGENTS.md
+## Step 2：建立 CLAUDE.md
 
 ```markdown
 # TechBridge AI 顧問團隊
@@ -143,9 +143,14 @@ Intake → Scope → Estimator → Proposal → [PM Review] → Follow-up（3天
 
 ## Step 3：建立 Skills 檔案
 
-### `.claude/skills/intake.md`
+### `.claude/skills/intake/SKILL.md`
 
 ```markdown
+---
+name: intake
+description: 收集外包專案詢問的完整需求，產出 JSON 需求摘要。
+---
+
 # Skill: 需求收集（Intake）
 
 你是 TechBridge Studio 的需求收集師。你的目標是用友善、有條理的對話
@@ -203,9 +208,14 @@ Intake → Scope → Estimator → Proposal → [PM Review] → Follow-up（3天
 ```
 ```
 
-### `.claude/skills/scope.md`
+### `.claude/skills/scope/SKILL.md`
 
 ```markdown
+---
+name: scope
+description: 根據需求摘要評估開發範圍、模糊點與風險。
+---
+
 # Skill: 範圍評估（Scope Analysis）
 
 你是 TechBridge Studio 的範圍評估師。你會收到 Intake Agent 的 JSON 需求，
@@ -266,9 +276,14 @@ Intake → Scope → Estimator → Proposal → [PM Review] → Follow-up（3天
 輸出 JSON 後，用繁體中文簡短說明模糊點和風險。
 ```
 
-### `.claude/skills/estimate.md`
+### `.claude/skills/estimate/SKILL.md`
 
 ```markdown
+---
+name: estimate
+description: 依範圍評估與公司價目表估算工時與報價。
+---
+
 # Skill: 報價估算（Estimation）
 
 你是 TechBridge Studio 的報價估算師。根據 Scope Agent 的功能清單，
@@ -333,9 +348,14 @@ Intake → Scope → Estimator → Proposal → [PM Review] → Follow-up（3天
 ```
 ```
 
-### `.claude/skills/proposal.md`
+### `.claude/skills/proposal/SKILL.md`
 
 ```markdown
+---
+name: proposal
+description: 整合前面各步驟的輸出，撰寫給客戶的正式提案。
+---
+
 # Skill: 提案撰寫（Proposal Writing）
 
 你是 TechBridge Studio 的提案撰寫師。整合 Intake、Scope、Estimate 三個 Agent
@@ -433,7 +453,7 @@ Intake → Scope → Estimator → Proposal → [PM Review] → Follow-up（3天
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"$(date '+%Y-%m-%d %H:%M:%S') - 產出檔案: $CLAUDE_TOOL_INPUT_FILE_PATH\" >> workspace/logs/activity.log"
+            "command": "echo \"$(date '+%Y-%m-%d %H:%M:%S') - 產出檔案: $(jq -r .tool_input.file_path)\" >> workspace/logs/activity.log"
           }
         ]
       }
@@ -441,6 +461,8 @@ Intake → Scope → Estimator → Proposal → [PM Review] → Follow-up（3天
   }
 }
 ```
+
+> Hook 的事件內容（含 `tool_input.file_path`）是以 JSON 從 stdin 傳入，沒有 `$CLAUDE_TOOL_INPUT_FILE_PATH` 這類環境變數，所以用 `jq` 解析（需先安裝 jq）。
 
 ---
 
@@ -463,6 +485,8 @@ claude "你是 TechBridge AI 顧問團隊的協調員。
 ```
 
 ### 啟動方式 2：Python 腳本（LINE Bot 整合）
+
+> 2026-09 補註：以下範例使用 line-bot-sdk v2 的 `linebot` / `linebot.models` API，官方已將其標為棄用，新專案請改用 v3 的 `linebot.v3.messaging` / `linebot.v3.webhook`。
 
 ```python
 # line_integration.py
@@ -529,7 +553,7 @@ def handle_message(event):
 
 ### 踩坑 3：Agent 直接答應客戶要求
 
-在 AGENTS.md 中明確說：
+在 CLAUDE.md 中明確說：
 
 ```markdown
 ## 禁止事項（所有 Agent 都適用）
@@ -647,7 +671,7 @@ def handle_message(event):
 | PM 每天花在報價的時間 | 3-4 小時 | 30-45 分鐘（只需審核）|
 | 每月可處理詢問量 | 40 件 | 80+ 件 |
 | 報價文件一致性 | 低（各 PM 格式不同） | 高（標準化模板） |
-| 漏掉需求確認的比率 | ~40% | <5% |
+| 漏掉需求確認的比率 | 常發生（未量測） | 明顯降低（上線後再量測） |
 
 ---
 

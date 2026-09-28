@@ -5,7 +5,7 @@ draft: false
 description: "Comprehensive guide to Java concurrency and threading mechanisms. Learn Runnable vs Callable, ExecutorService, CompletableFuture, and advanced threading patterns with practical examples and performance analysis."
 categories: ["all", "ai", "engineering", "architecture"]
 tags: ["Java", "Concurrency", "Threading", "Runnable", "Callable", "ExecutorService", "CompletableFuture", "Performance", "AI"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "35 min"
 ---
 
@@ -1607,12 +1607,14 @@ graph TD
     A --> D[Java 7: Fork-Join Framework]
     A --> E[Java 8: CompletableFuture]
     A --> F[Java 9+: Reactive Streams]
+    A --> L[Java 21: Virtual Threads]
 
     B --> G[Thread, Runnable]
     C --> H[ExecutorService, Callable]
     D --> I[ForkJoinPool, RecursiveTask]
     E --> J[CompletableFuture, Stream.parallel]
-    F --> K[Flow API, Virtual Threads]
+    F --> K[Flow API]
+    L --> M[Thread.ofVirtual, Executors.newVirtualThreadPerTaskExecutor]
 
     style E fill:#4ecdc4
     style F fill:#feca57

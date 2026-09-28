@@ -78,6 +78,8 @@ claude plugin install investment-banking@claude-for-financial-services
 claude plugin install equity-research@claude-for-financial-services
 ```
 
+> 註:plugin 名稱、marketplace id 與連接器清單以 2026-07 撰文時的 repo 為準,更新頻繁,安裝前請對照 repo 最新 README。
+
 裝完之後:
 - Agent 會出現在 Cowork 的 dispatch 選單裡(如果你也開了 Cowork)
 - Skill 會在相關情境下**自動觸發**,不用手動呼叫
@@ -115,7 +117,7 @@ Ops / 合規         financial-analysis         kyc-screener
                   + operations
 ```
 
-**永遠先裝 `financial-analysis`**——它是核心,帶著 comps、DCF、LBO、3-statement 這些共用建模 skill,以及全部 11 個資料連接器(Daloopa、FactSet、Moody's、PitchBook 等)。其他 vertical 和 Agent 都假設這個核心已經在。
+**永遠先裝 `financial-analysis`**——它是核心,帶著 comps、DCF、LBO、3-statement 這些共用建模 skill,以及全部 12 個資料連接器(Daloopa、FactSet、Moody's、PitchBook 等)。其他 vertical 和 Agent 都假設這個核心已經在。
 
 ## 六、裝完第一次怎麼用
 
@@ -136,7 +138,7 @@ Claude 會依照 `pitch-agent` 底下打包好的 skill(comps-analysis、lbo-mod
 
 ## 七、資料連接器需要什麼
 
-`financial-analysis` 核心 plugin 集中管理所有 MCP 連接器,寫在 `.mcp.json` 裡,包括 Daloopa、Morningstar、S&P Global、FactSet、Moody's、PitchBook、Chronograph、Egnyte、Box、LSEG、Aiera、MT Newswires 共 11 個。
+`financial-analysis` 核心 plugin 集中管理所有 MCP 連接器,寫在 `.mcp.json` 裡,包括 Daloopa、Morningstar、S&P Global、FactSet、Moody's、PitchBook、Chronograph、Egnyte、Box、LSEG、Aiera、MT Newswires 共 12 個。
 
 > 大部分連接器需要你自己有該資料商的訂閱或 API Key——這個 repo 只負責把 Claude 接上去,不附贈資料授權。沒有訂閱的連接器,對應的 skill 一樣能用,只是缺少即時資料查詢能力,得靠你手動貼資料進去。
 

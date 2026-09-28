@@ -159,6 +159,8 @@ readTime: "16 min"
 └──────────────────────────────────────────────────────────────┘
 ```
 
+> 注意這個例子只省了約 14%（1,050 → 900ms）：總延遲的下限是 DAG 最長依賴鏈（關鍵路徑）的長度，而不是 max(T₁,T₂,T₃)。依賴層數越深，並行能省的越少；只有大多數工具彼此獨立時，才接近開頭說的 max(...) 效果。
+
 ---
 
 ## 四、執行引擎的設計選型
@@ -168,24 +170,29 @@ readTime: "16 min"
 
                 asyncio.gather()     ThreadPoolExecutor    Google ADK
 ──────────────────────────────────────────────────────────────────────
-適用場景         I/O 密集型工具       CPU 密集型 / 阻塞呼叫  ADK 整合的工具
+適用場景         I/O 密集型工具       阻塞式 I/O 呼叫        ADK 整合的工具
                 （HTTP API 呼叫）     （舊版同步 SDK）
-GIL 影響         不受影響             受影響（Python GIL）   不受影響
+GIL 影響         不受影響             I/O 等待時會釋放 GIL； 不受影響
+                                     CPU 密集工作會被 GIL 序列化，
+                                     應改用 ProcessPoolExecutor
 延遲              最低                有線程切換開銷          ADK 管理
-DAG 支援         需自建               需自建                 內建
-Tool Registry    需自建               需自建                 內建
+DAG 支援         需自建               需自建                 需自建（可用 Sequential/ParallelAgent 組合）
+Tool Registry    需自建               需自建                 需自建（見第五節設計提案）
 錯誤隔離         需手動              需手動                  內建
 可觀測性         需手動加 Trace       需手動加 Trace          內建 Trace
 
 推薦策略：
   └── 新建系統、在 Google Cloud 上：Google ADK（最省開發成本）
   └── 已有 LangChain/LangGraph 系統：asyncio.gather() 為主
-  └── 有大量同步遺留 SDK：ThreadPoolExecutor（但注意 GIL）
+  └── 有大量同步遺留 SDK：ThreadPoolExecutor（只適合阻塞 I/O）
+  └── 真正 CPU 密集的工具：ProcessPoolExecutor
 ```
 
 ---
 
-## 五、Google ADK 的 Tool Registry 架構
+## 五、在 ADK 上自建 Tool Registry（設計提案）
+
+> 以下是建議自行實作的設計，不是 ADK 現成功能：ADK 的工具定義並沒有 `depends_on` 這類依賴宣告欄位，也不會自動解析工具依賴圖。ADK 原生提供的是 SequentialAgent / ParallelAgent 等工作流 Agent，以及模型層的平行 function calling；依賴圖解析需要自己在 Orchestrator 層實作。
 
 ```
 ADK Tool Registry 解決什麼問題：
@@ -195,7 +202,7 @@ ADK Tool Registry 解決什麼問題：
   依賴關係靠 LLM 自行推斷或手動 hardcode
   每次新增工具都要修改 Agent 邏輯
 
-ADK Tool Registry：
+自建 Tool Registry（提案）：
 
   ┌─────────────────────────────────────────────────────┐
   │  Tool Registry（工具目錄）                           │
@@ -210,7 +217,7 @@ ADK Tool Registry：
            │ LLM 查詢 Registry，自動理解依賴關係
            ▼
   ┌─────────────────────────────────────────────────────┐
-  │  ADK Orchestrator                                    │
+  │  自建 Orchestrator（包在 ADK Agent 外層）            │
   │  ├── 自動解析依賴圖                                  │
   │  ├── 自動並行執行獨立工具                            │
   │  └── 自動將上游工具輸出注入下游工具輸入              │

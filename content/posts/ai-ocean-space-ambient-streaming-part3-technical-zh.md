@@ -7,6 +7,7 @@ authors: ["yen"]
 categories: ["all", "business", "creative"]
 tags: ["OBS", "串流", "技術設定", "自動化", "監控", "YouTube直播", "24/7", "streaming"]
 summary: "系列第三篇：完整的 OBS Studio 設定指南、YouTube 串流配置、自動化腳本開發，以及 24/7 穩定運行的監控系統。從技術小白到專業串流者的完整路徑。"
+description: "系列第三篇：完整的 OBS Studio 設定指南、YouTube 串流配置、自動化腳本開發，以及 24/7 穩定運行的監控系統。從技術小白到專業串流者的完整路徑。"
 readTime: "32 min"
 ---
 
@@ -61,12 +62,14 @@ GPU:
   • Raspberry Pi 5（8GB）
   • 價格: $80
   • 優勢: 功耗極低（<15W）
-  • 劣勢: 效能有限，僅 720p
+  • 劣勢: 效能有限，僅 720p（能否穩定執行 OBS 需自行驗證）
   • 適合: 驗證概念階段
 
 方案 C: 雲端串流（AWS/GCP）
   • EC2 t3.medium（2 vCPU, 4GB RAM）
-  • 價格: ~$35/月
+  • 價格: ~$35/月（僅執行個體費用）
+  • 注意: t3 為突發型 CPU 且無 GPU，24/7 x264 編碼會耗盡 CPU 額度；
+    24/7 推流每月約 1.9 TB 對外流量，流量費可能遠高於主機費，請先用官方計價工具試算
   • 優勢: 不佔用家用電腦、穩定性高
   • 適合: 月收入 >$500 後投資
 ```
@@ -82,7 +85,7 @@ GPU:
 階段 2（4-6 個月，月收入 $500+）:
   購買二手工作站專用串流
   或訂閱雲端服務
-  總成本: $400-600 或 $35/月
+  總成本: $400-600 或 $35/月起（未含流量費）
 
 階段 3（7-12 個月，月收入 $2000+）:
   建置專業伺服器
@@ -266,7 +269,7 @@ OBS 主介面區域:
 
 #### Step 4: 添加即時時鐘
 
-```markdown
+````markdown
 1. 創建 HTML 時鐘檔案
 
 開啟文字編輯器，貼上:
@@ -326,7 +329,7 @@ Sources → "+" → "Browser"
   FPS: 30（不需要太高）
 
 3. 定位到右上角
-```
+````
 
 #### Step 5: 添加標題文字
 
@@ -768,7 +771,7 @@ Step 4: 開始串流！
 
 ### 自動重啟系統（避免長時間運行崩潰）
 
-```markdown
+````markdown
 為什麼需要?
   • OBS 長時間運行可能記憶體洩漏
   • 定期重啟保持穩定
@@ -785,9 +788,6 @@ Step 1: 創建批次檔案
 echo Stopping OBS...
 taskkill /IM obs64.exe /F
 timeout /t 10
-
-echo Clearing temp files...
-del /q "%TEMP%\*"
 
 echo Restarting OBS...
 start "" "C:\Program Files\obs-studio\bin\64bit\obs64.exe" --startstreaming --profile "Ocean Space" --scene "Deep Ocean"
@@ -840,26 +840,24 @@ sleep 10
 ```bash
 chmod +x restart_obs.sh
 ```
-```
+````
 
 ---
 
 ### 健康監控系統（Python）
 
-```markdown
+````markdown
 目標: 即時監控直播狀態，異常時發送通知
 
 需求:
   • Python 3.8+
-  • obs-websocket 外掛
+  • obs-websocket（OBS 28 起已內建，無需另外安裝）
   • Discord Webhook（通知管道）
 
-Step 1: 安裝 obs-websocket
+Step 1: 啟用 obs-websocket（OBS 28 起已內建）
 
-1. 下載: https://github.com/obsproject/obs-websocket/releases
-2. 安裝到 OBS
-3. 重啟 OBS
-4. 工具 → WebSocket Server Settings
+1. 確認 OBS 版本為 28 或更新
+2. 工具 → WebSocket Server Settings
    • ☑ Enable WebSocket server
    • Server Port: 4455（預設）
    • ☑ Enable Authentication
@@ -877,7 +875,7 @@ Step 2: 設定 Discord Webhook
 Step 3: 安裝 Python 套件
 
 ```bash
-pip install obs-websocket-py requests
+pip install obsws-python requests
 ```
 
 Step 4: 監控腳本
@@ -1000,7 +998,7 @@ Linux/macOS:
   ```
 
   或使用 systemd（開機自動啟動）
-```
+````
 
 ---
 
@@ -1299,6 +1297,6 @@ YouTube 健康:
 ## 延伸閱讀
 
 - [AI 深海/太空環境音串流實戰（一）：市場分析、科學原理與 AI 工具選擇](/posts/ai-ocean-space-ambient-streaming-part1-foundation-zh/)
-- [AI 深海/太空環境音串流實戰（二）：8K 視覺製作與動態場景生成](/posts/ai-ocean-space-ambient-streaming-part2-visual-zh/)
+- [AI 深海/太空環境音串流實戰（二）：4K 視覺製作與動態場景生成](/posts/ai-ocean-space-ambient-streaming-part2-visual-zh/)
 
 **標籤**: #OBS #串流 #技術設定 #自動化 #YouTube直播 #監控系統 #24/7

@@ -6,7 +6,8 @@ weight: 1
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "mcp", "claude-code", "development-tools", "automation", "python", "typescript", "tooling"]
-summary: "Complete guide to setting up Model Control Protocol (MCP) servers for Claude Code, from basic configuration to building custom tools that enhance your AI-powered development workflow."
+summary: "Complete guide to setting up Model Context Protocol (MCP) servers for Claude Code, from basic configuration to building custom tools that enhance your AI-powered development workflow."
+description: "Complete guide to setting up Model Context Protocol (MCP) servers for Claude Code, from basic configuration to building custom tools that enhance your AI-powered development workflow."
 readTime: "18 min"
 ---
 
@@ -14,7 +15,7 @@ readTime: "18 min"
 
 ### 📋 What is MCP and Why It Matters
 
-**Model Control Protocol (MCP)** is a revolutionary framework that allows Large Language Models like Claude to interact with external systems, tools, and data sources in a secure, standardized way. Think of it as a bridge that connects Claude's intelligence with your development environment, databases, APIs, and custom tools.
+**Model Context Protocol (MCP)** is a revolutionary framework that allows Large Language Models like Claude to interact with external systems, tools, and data sources in a secure, standardized way. Think of it as a bridge that connects Claude's intelligence with your development environment, databases, APIs, and custom tools.
 
 For **Claude Code** users, MCP servers unlock powerful capabilities:
 - **Custom Tool Integration**: Connect Claude to your proprietary tools and systems
@@ -548,7 +549,14 @@ Create a configuration file to manage server settings:
 
 Now configure Claude Code to use your MCP server:
 
-**Claude Code Settings (settings.json):**
+The quickest way is the `claude mcp add` command (everything after `--` is the command that launches the server):
+
+```bash
+claude mcp add basic-tools --env PYTHONPATH=/path/to/your/project -- python /path/to/your/server.py
+```
+
+To share the server with your team, commit a project-scoped **`.mcp.json`** at the repository root instead:
+
 ```json
 {
   "mcpServers": {
@@ -557,10 +565,7 @@ Now configure Claude Code to use your MCP server:
       "args": ["/path/to/your/server.py"],
       "env": {
         "PYTHONPATH": "/path/to/your/project"
-      },
-      "description": "Basic utility tools for development",
-      "enabled": true,
-      "timeout": 30000
+      }
     }
   }
 }
@@ -572,10 +577,7 @@ Now configure Claude Code to use your MCP server:
   "mcpServers": {
     "basic-tools-ts": {
       "command": "npm",
-      "args": ["run", "start:mcp"],
-      "cwd": "/path/to/your/typescript/project",
-      "description": "TypeScript MCP server with basic tools",
-      "enabled": true
+      "args": ["--prefix", "/path/to/your/typescript/project", "run", "start:mcp"]
     }
   }
 }
@@ -586,7 +588,7 @@ Now configure Claude Code to use your MCP server:
 ### 🔍 Manual Testing with Claude Code
 
 1. **Start Claude Code** with your MCP server configuration
-2. **Verify Connection** - You should see your MCP server listed in the status bar
+2. **Verify Connection** - Run `/mcp` inside Claude Code (or `claude mcp list` in your shell) to confirm the server is connected
 3. **Test Basic Tools** - Try these example prompts:
 
 **Test Prompt Examples:**
@@ -645,7 +647,7 @@ tail -f mcp-server.log
 ```
 
 **Problem: Claude Code Can't Connect**
-- Verify the `command` path in settings.json
+- Verify the `command` path in `.mcp.json` (or re-add it with `claude mcp add`)
 - Ensure Python/Node.js is in PATH
 - Check file permissions on server script
 - Validate JSON syntax in configuration files

@@ -6,7 +6,7 @@ weight: 2
 description: "CrewAI 不只是玩具：用三個完整的生產級範例說明如何建立競爭對手情報分析系統、自動化程式碼審查流程、以及智慧客服分類與回覆系統，包含工具整合與 Hierarchical Process 實作。"
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "Multi-Agent", "AI Automation", "Code Review", "Customer Service", "Python", "繁體中文", "Agent"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "35 min"
 ---
 
@@ -212,9 +212,9 @@ print(f"建議行動：{report.recommended_actions}")
 
 工程團隊的 PR review 常常是瓶頸：資深工程師花大量時間在基本的程式碼品質問題上（命名、安全性、效能），沒時間做架構層級的討論。
 
-### 系統設計：Hierarchical Process
+### 系統設計：多專家審查（Sequential，可升級為 Hierarchical）
 
-這個範例展示 **Hierarchical Process**（階層式流程），由一個 Manager Agent 動態分配任務：
+下圖是 **Hierarchical Process**（階層式流程）的目標形態：由一個 Manager Agent 動態分配任務。為了讓範例好懂、好除錯，下面的程式碼先用 `Process.sequential` 實作：三位審查員依序執行，最後由品質工程師彙整。要改成真正的階層式，需改用 `process=Process.hierarchical`、設定 `manager_llm`，並拿掉各 Task 的 `agent=`，交給 manager 分派。
 
 ```
 PR 內容（diff）
@@ -388,7 +388,7 @@ summary_task = Task(
     output_pydantic=PRReview,
 )
 
-# ---- 建立 Crew（Hierarchical 模式）----
+# ---- 建立 Crew（Sequential 模式）----
 
 code_review_crew = Crew(
     agents=[security_reviewer, performance_reviewer, quality_reviewer],
@@ -655,7 +655,7 @@ result2 = support_crew.kickoff(inputs={
 ✅ 線性流程 → Process.sequential（大多數場景）
 ✅ 需要動態分工 → Process.hierarchical + manager_llm
 ✅ 有獨立子任務可並行 → async_execution=True
-✅ 一定要設 memory=True（讓 Agent 能參考過去的上下文）
+✅ 需要跨任務／跨執行參考上下文時才設 memory=True（會多出 embedding 呼叫與成本；像場景三這種無狀態分類可以不開）
 ```
 
 ---
@@ -665,7 +665,7 @@ result2 = support_crew.kickoff(inputs={
 這篇用三個真實場景展示了 CrewAI 的生產級應用：
 
 - **競情分析**：多 Agent 協作 + Pydantic 結構化輸出
-- **程式碼審查**：多個專業審查員並行 + 最終彙整
+- **程式碼審查**：多個專業審查員依序審查 + 最終彙整
 - **客服自動化**：分類 + 個性化回覆 + 動態升級機制
 
 下一篇我們進入進階技術：**CrewAI Flows（事件驅動工作流程）、Long-term Memory、以及如何把 CrewAI 部署到生產環境**。
@@ -676,4 +676,4 @@ result2 = support_crew.kickoff(inputs={
 
 - [第一篇](/posts/crewai-series-part1-introduction-zh/)：入門與核心概念
 - **第二篇（本篇）**：真實場景實戰——競情分析、程式碼審查、客服自動化
-- [第三篇](/posts/crewai-series-part3-advanced-flows-zh/)：進階技巧——Flows、Memory、結構化輸出與生產部署
+- [第三篇](/posts/crewai-series-part3-advanced-flows-zh/)：進階技巧——Flows、Memory、錯誤處理與生產部署

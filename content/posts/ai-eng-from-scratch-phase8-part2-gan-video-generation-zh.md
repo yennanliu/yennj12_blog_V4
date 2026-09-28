@@ -5,7 +5,7 @@ draft: false
 weight: 17
 description: "深入解析 GAN 訓練動態、StyleGAN/CycleGAN 架構、影片生成系統設計，以及 GAN vs 擴散模型的工程選型決策"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Generative AI", "GAN", "Video Generation", "StyleGAN", "Image Synthesis", "RKK", "Interview"]
+tags: ["AI", "Generative AI", "GAN", "Video Generation", "StyleGAN", "Image Synthesis", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "20 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**面試情境：** 你的團隊需要為電商平台建立「商品圖片風格轉換」系統，目標是把用戶上傳的素人照自動轉成專業棚拍風格，日處理量 50 萬張，延遲要求 < 200ms。請問你會選 GAN 還是擴散模型？架構如何設計？
+**工程情境：** 你的團隊需要為電商平台建立「商品圖片風格轉換」系統，目標是把用戶上傳的素人照自動轉成專業棚拍風格，日處理量 50 萬張，延遲要求 < 200ms。請問你會選 GAN 還是擴散模型？架構如何設計？
 
 ---
 
@@ -446,7 +446,7 @@ def temporal_consistency_loss(frames, optical_flow_net):
 | 4 秒影片（120 幀）| Wan 2.1 | 480p | ~180s | 80GB |
 | 即時影片（> 30fps）| 目前無解，需要串流 GAN | 256×256 | < 33ms/frame | 16GB |
 
-**工程結論**：影片生成在 2024 年仍以 Diffusion 為主流（Sora、Wan 2.1），GAN 在即時影片編輯（濾鏡、換臉）等低延遲場景仍有一席之地。
+**工程結論**：現代影片生成以 Diffusion 為主流，且主力已轉向 **Video DiT**（3D VAE 把影片壓成時空 latent，再以時空注意力的 Transformer 去噪，多搭配 flow matching；Sora、Wan 系列皆屬此類）；GAN 在即時影片編輯（濾鏡、換臉）等低延遲場景仍有一席之地。
 
 ---
 
@@ -499,10 +499,10 @@ def temporal_consistency_loss(frames, optical_flow_net):
 
 **系列文章：**
 
-← 上一篇：[Phase 8 Part 1：擴散模型與影像生成](/posts/ai-eng-from-scratch-phase8-part1-diffusion-models-zh/)
+← 上一篇：[Phase 8 Part 1：擴散模型 — 從雜訊到藝術的數學](/posts/ai-eng-from-scratch-phase8-part1-diffusion-models-zh/)
 
-→ 下一篇：Phase 9 Part 1：強化學習基礎（即將發布）
+→ 下一篇：[Phase 9：強化學習基礎 — RLHF 與遊戲 AI 的根基](/posts/ai-eng-from-scratch-phase9-part1-rl-fundamentals-zh/)
 
 ---
 
-**Phase 8 小結**：生成式 AI 的工程選型從來不是「最新 = 最好」。GAN 在低延遲、特定域、資料效率等場景仍不可取代；Diffusion 在通用性、多樣性、文字控制上全面領先。優秀的 AI 工程師需要理解兩者的技術本質，根據業務約束做出正確決策——這正是面試官真正在考察的能力。
+**Phase 8 小結**：生成式 AI 的工程選型從來不是「最新 = 最好」。GAN 在低延遲、特定域、資料效率等場景仍不可取代；Diffusion 在通用性、多樣性、文字控制上全面領先。優秀的 AI 工程師需要理解兩者的技術本質，根據業務約束做出正確決策——這正是 AI 工程師最核心的能力。

@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering", "business"]
 tags: ["AI", "stripe", "payment-gateway", "jwt-authentication", "rest-api", "vue.js", "mysql", "full-stack", "spring-boot", "ecommerce"]
 summary: "A complete e-commerce shopping cart system built with Spring Boot backend and Vue.js frontend, featuring Stripe payment integration, JWT authentication, and full CRUD operations for products, categories, and cart management."
+description: "A complete e-commerce shopping cart system built with Spring Boot backend and Vue.js frontend, featuring Stripe payment integration, JWT authentication, and full CRUD operations for products, categories, and cart management."
 readTime: "18 min"
 ---
 
@@ -54,6 +55,8 @@ This project addresses these challenges through a **modern microservices-inspire
 ## 🏗️ System Architecture Overview
 
 ### 🔧 Technology Stack
+
+> **Update (2026):** Spring Boot 2.7 reached end of open-source support in November 2023. The same codebase has since been upgraded to Spring Boot 3.2 and JDK 21; see [High-Concurrency Shopping Cart, Part 1](/posts/shopping-cart-high-concurrency-part1-zh/) for the upgrade and the performance work built on it.
 
 ```text
 Frontend (Client)
@@ -1787,7 +1790,7 @@ If this were a production system, we would measure success through:
 - **Performance**: <200ms API response times, <3s page load times
 - **Security**: Zero payment data breaches, successful penetration testing
 - **Reliability**: 99.9% uptime, graceful handling of traffic spikes
-- **User Experience**: <2% cart abandonment rate, positive user feedback
+- **User Experience**: Cart abandonment tracked against industry baselines (the average is roughly 70%), positive user feedback
 - **Maintainability**: <4 hours mean time to implement new features
 
 This project showcases that **modern e-commerce platforms require more than just functional code**—they need thoughtful architecture, comprehensive security, performance optimization, and maintainable design patterns that can evolve with business needs.

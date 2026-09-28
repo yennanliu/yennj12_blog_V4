@@ -3,10 +3,11 @@ title: "Kubernetes Autoscaling Complete Guide (Part 3): Hands-On HPA Demo with A
 date: 2025-11-09T16:00:00+08:00
 draft: false
 weight: 3
-authors: ["yennj12 team"]
+authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "HPA", "Autoscaling", "AWS", "EKS", "CDK", "TypeScript", "Tutorial", "Demo", "Apache", "PHP", "Load Testing", "devops"]
 summary: "Part 3 of the Kubernetes Autoscaling series: Hands-on tutorial demonstrating Horizontal Pod Autoscaler with a real Apache-PHP application. Includes complete AWS CDK infrastructure code, Kubernetes manifests, load testing, and step-by-step deployment guide."
+description: "Part 3 of the Kubernetes Autoscaling series: Hands-on tutorial demonstrating Horizontal Pod Autoscaler with a real Apache-PHP application. Includes complete AWS CDK infrastructure code, Kubernetes manifests, load testing, and step-by-step deployment guide."
 readTime: "25 min"
 ---
 
@@ -35,7 +36,7 @@ We'll provision an EKS cluster using AWS CDK (TypeScript), deploy a sample PHP a
 │  │                                                           │  │
 │  │  VPC → EKS Cluster → Managed Node Group                 │  │
 │  │   ↓        ↓               ↓                             │  │
-│  │  3 AZs   v1.28      t3.medium (1-5 nodes)               │  │
+│  │  3 AZs   v1.33      t3.medium (1-5 nodes)               │  │
 │  └──────────────────────────────────────────────────────────┘  │
 │                          ↓                                      │
 │  ┌──────────────────────────────────────────────────────────┐  │
@@ -66,7 +67,7 @@ Before starting, ensure you have:
 # Required tools
 - AWS CLI v2.x
 - Node.js v18+ and npm
-- kubectl v1.28+
+- kubectl within one minor version of the cluster
 - AWS CDK v2.x
 - Docker (optional, for local testing)
 
@@ -116,7 +117,10 @@ mkdir cdk && cd cdk
 cdk init app --language=typescript
 
 # Install dependencies
-npm install @aws-cdk/aws-eks @aws-cdk/aws-ec2 @aws-cdk/aws-iam
+# `cdk init` already installs aws-cdk-lib (CDK v2) and constructs.
+# Do NOT install the @aws-cdk/aws-* packages: those are CDK v1 (end-of-support June 2023).
+# eks.Cluster needs a kubectl Lambda layer that matches the cluster version:
+npm install @aws-cdk/lambda-layer-kubectl-v33
 ```
 
 ### Step 2: Create EKS Stack
@@ -129,6 +133,7 @@ import * as eks from 'aws-cdk-lib/aws-eks';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
+import { KubectlV33Layer } from '@aws-cdk/lambda-layer-kubectl-v33';
 
 export class EksHpaDemoStack extends cdk.Stack {
   public readonly cluster: eks.Cluster;
@@ -164,7 +169,11 @@ export class EksHpaDemoStack extends cdk.Stack {
 
     // Create EKS cluster
     this.cluster = new eks.Cluster(this, 'EksHpaCluster', {
-      version: eks.KubernetesVersion.V1_28,
+      // EKS versions leave standard support ~14 months after release (1.28 is no longer
+      // creatable). Pick the newest version your aws-cdk-lib supports and bump the
+      // matching @aws-cdk/lambda-layer-kubectl-vXX package together with it.
+      version: eks.KubernetesVersion.V1_33,
+      kubectlLayer: new KubectlV33Layer(this, 'KubectlLayer'),
       clusterName: 'hpa-demo-cluster',
       vpc: vpc,
       defaultCapacity: 0, // We'll add managed node group separately
@@ -399,8 +408,8 @@ kubectl get nodes
 
 # Expected output:
 # NAME                          STATUS   ROLES    AGE   VERSION
-# ip-10-0-1-xxx.ec2.internal    Ready    <none>   5m    v1.28.x
-# ip-10-0-2-xxx.ec2.internal    Ready    <none>   5m    v1.28.x
+# ip-10-0-1-xxx.ec2.internal    Ready    <none>   5m    v1.33.x
+# ip-10-0-2-xxx.ec2.internal    Ready    <none>   5m    v1.33.x
 
 # Verify Metrics Server is running
 kubectl get pods -n kube-system | grep metrics-server

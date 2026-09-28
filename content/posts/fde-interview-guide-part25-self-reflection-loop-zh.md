@@ -72,6 +72,8 @@ Reflexion 的三個核心洞察：
   結構化的錯誤原因 → 生成者能有針對性地修正
 ```
 
+> 名詞說明：嚴格來說，Reflexion（Shinn et al., 2023）是指跨多次嘗試、把語言回饋存入情節記憶後再重試的方法；本文在單次請求內做「生成 → 評估 → 修正」迴圈，更接近 Self-Refine（Madaan et al., 2023）或 generator-critic 模式。本文沿用「Reflexion Pattern」泛指這類自我反思設計。
+
 ---
 
 ## 三、Generator-Evaluator 架構設計

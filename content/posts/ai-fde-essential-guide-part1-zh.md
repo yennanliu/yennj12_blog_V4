@@ -279,8 +279,16 @@ def process_embeddings(
 
 **測試策略：**
 ```python
+import time
+
 import pytest
 import torch
+
+def create_test_model():
+    # 範例用的小模型；實務上換成你要測試的模型
+    return torch.nn.Sequential(
+        torch.nn.Linear(512, 256), torch.nn.ReLU(), torch.nn.Linear(256, 10)
+    ).eval()
 
 class TestModelPerformance:
     @pytest.fixture
@@ -297,11 +305,14 @@ class TestModelPerformance:
         inference_time = time.time() - start_time
         assert inference_time < 0.1  # 100ms 內完成推理
     
+    @pytest.mark.skipif(not torch.cuda.is_available(), reason="需要 GPU")
     def test_memory_usage(self, sample_model):
+        sample_model = sample_model.cuda()
         initial_memory = torch.cuda.memory_allocated()
         
         inputs = torch.randn(32, 512).cuda()
-        outputs = sample_model(inputs)
+        with torch.no_grad():
+            outputs = sample_model(inputs)
         
         peak_memory = torch.cuda.max_memory_allocated()
         memory_increase = peak_memory - initial_memory

@@ -5,7 +5,7 @@ draft: false
 weight: 7
 description: "深入解析 YOLO/Faster-RCNN 目標偵測架構、Mask R-CNN 語義分割、IoU/mAP 評估框架與工業部署的延遲優化策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Computer Vision", "Object Detection", "YOLO", "Segmentation", "mAP", "RKK", "Interview"]
+tags: ["AI", "Computer Vision", "Object Detection", "YOLO", "Segmentation", "mAP", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你負責一套工廠自動化視覺系統，需要在產線 conveyor belt 上即時偵測瑕疵零件（< 1cm² 小缺陷），相機 30fps，邊緣 GPU 只有 RTX 3060（12GB VRAM），允許誤報率 ≤ 2%，漏報率 ≤ 0.5%。請說明你會選擇什麼模型架構、訓練策略與部署優化方案。
 
@@ -181,7 +181,7 @@ YOLOv8 起採用 anchor-free + TAL（Task Aligned Learning）動態分配正樣�
 
 | 版本 | 年份 | Backbone | 特色 | COCO mAP@0.5:0.95 | RTX 3090 延遲 |
 |------|------|----------|------|-------------------|---------------|
-| YOLOv1 | 2016 | Custom CNN | 第一個端對端偵測 | ~63.4（VOC） | - |
+| YOLOv1 | 2016 | Custom CNN | 第一個端對端偵測 | n/a（未報告 COCO；VOC 2007 mAP@0.5 為 63.4） | - |
 | YOLOv3 | 2018 | Darknet-53 | FPN 多尺度輸出 | 33.0 | ~20ms |
 | YOLOv5s | 2020 | CSPNet | 工程友善，易部署 | 37.4 | ~6ms |
 | YOLOv8n | 2023 | C2f-CSPNet | Anchor-free，TAL | 37.3 | **6ms** |
@@ -197,13 +197,16 @@ YOLOv8 起採用 anchor-free + TAL（Task Aligned Learning）動態分配正樣�
          精度要求
          低        中         高
 延遲  低  YOLOv8n   YOLOv8s    YOLOv8m
-要求  中  YOLOv5s   YOLOv8m    YOLOv8l
-     高  YOLOv8n   YOLOv8l    YOLOv8x/v11x
+容忍  中  YOLOv5s   YOLOv8m    YOLOv8l
+度    高  YOLOv8n   YOLOv8l    YOLOv8x/v11x
+（「延遲容忍度高」＝可接受較慢的推論）
 ```
 
 - **邊緣部署（Jetson Nano，<15ms）**：YOLOv8n INT8，約 8–10ms
 - **工廠品管（RTX 3060，<30ms，高精度）**：YOLOv8l FP16，約 18ms
 - **雲端批次（A100，throughput 優先）**：YOLOv8x FP16，batch=16
+
+> **授權提醒**：Ultralytics 的 YOLOv5/v8/v11 採 AGPL-3.0 授權，閉源商業產品（例如工廠內部部署但不開源的系統）需購買 Ultralytics 企業授權，或改用 Apache-2.0 等寬鬆授權的偵測器。
 
 ---
 
@@ -417,8 +420,8 @@ IoU 閾值的工程含義：
 
 | | 文章 | 主題 |
 |--|------|------|
-| ← | [Phase 4 Part 1：影像分類與卷積神經網路](/posts/ai-eng-from-scratch-phase4-part1-cnn-classification-zh/) | CNN 架構、Transfer Learning、EfficientNet |
-| → | Phase 4 Part 3：視覺 Transformer 與多模態基礎模型 | ViT、CLIP、SAM、基礎模型工程化 |
+| ← | [Phase 4 Part 1：電腦視覺基礎 — 從像素到 CNN 特徵](/posts/ai-eng-from-scratch-phase4-part1-cnn-image-fundamentals-zh/) | CNN 架構、Transfer Learning、EfficientNet |
+| → | [Phase 4 Part 3：視覺語言模型、3D 視覺與世界模型](/posts/ai-eng-from-scratch-phase4-part3-vlm-3d-worldmodels-zh/) | VLM、3D 視覺、世界模型 |
 
 ---
 
@@ -426,4 +429,4 @@ IoU 閾值的工程含義：
 
 ---
 
-*本文屬於「AI 工程從零開始」系列，以 RKK（Reasoning × Knowledge × Knowledge application）架構呈現，每篇均附有面試答題框架與可直接使用的工程數字。*
+*本文屬於「AI 工程從零開始」系列，以 RKK（Reasoning × Knowledge × Knowledge application）架構呈現，每篇均附有架構決策框架與可直接使用的工程數字。*

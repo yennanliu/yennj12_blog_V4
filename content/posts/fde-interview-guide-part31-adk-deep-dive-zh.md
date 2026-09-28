@@ -62,7 +62,7 @@ FDE 的判斷原則：
 模型綁定          Gemini 原生（可接其他）         任何 LLM
 抽象層次          高（有 Agent 類型概念）          低（Node + Edge 圖）
 狀態管理          Session State（框架管理）        StateGraph（你定義 schema）
-Multi-Agent       AgentTeam + sub_agents          自己設計節點間通信
+Multi-Agent       sub_agents + Workflow Agents    自己設計節點間通信
 部署              Vertex AI Agent Engine 原生     需要自己包 Container
 Google Cloud 整合 原生（GCS、BigQuery、Search）    需要額外配置
 學習曲線          低（比 LangGraph 少 boilerplate）高（但控制粒度更細）
@@ -71,7 +71,8 @@ Google Cloud 整合 原生（GCS、BigQuery、Search）    需要額外配置
 關鍵判斷點：
   客戶在 GCP + 用 Google Workspace + 需要快速 POC → ADK
   客戶需要複雜的條件分支 + 不同步驟用不同 LLM → LangGraph
-  客戶想混用 GPT-4o 和 Gemini → LangGraph（ADK 對非 Gemini 模型支援有限）
+  客戶想混用 GPT-4o 和 Gemini → 兩者都可行（ADK 可透過 LiteLLM wrapper 接其他模型，
+                                但 Gemini 以外的模型在 ADK 生態的整合度較低）
 ```
 
 ---
@@ -301,21 +302,23 @@ ADK 的狀態模型：
   所有 Agent 和 Tool 都可以讀寫
   框架管理持久化（支援 in-memory / Cloud Firestore / Cloud SQL）
 
-Session State 的三個 scope：
+Session State 的 key 前綴（scope）：
 
-  user:xxx    → 跨 session 持久化（用戶偏好、歷史）
-  session:xxx → 在當前 session 內共享（本次任務的中間結果）
-  temp:xxx    → 當前 Agent 執行週期內有效（暫時計算結果）
+  xxx（無前綴）→ 在當前 session 內共享（本次任務的中間結果）
+  user:xxx    → 同一用戶跨 session 持久化（用戶偏好、歷史）
+  app:xxx     → 整個應用程式所有用戶共享（全域設定）
+  temp:xxx    → 只在當前這次呼叫（invocation）內有效，不會持久化
+  （ADK 沒有 session: 前綴，session 範圍就是不加前綴的 key）
 
 實際設計範例（理賠審核）：
 
   Step 1：ParallelAgent 執行三個查詢
-    policy_agent → 寫入 session:policy_data
-    medical_agent → 寫入 session:medical_data
-    fraud_agent → 寫入 session:fraud_score
+    policy_agent → 寫入 policy_data
+    medical_agent → 寫入 medical_data
+    fraud_agent → 寫入 fraud_score
 
   Step 2：Aggregator Agent 讀取並決策
-    讀 session:policy_data + session:medical_data + session:fraud_score
+    讀 policy_data + medical_data + fraud_score（皆為 session 範圍）
     → 輸出最終審核結論
 
   注意：不要把敏感資料（PII）存入 user: scope
@@ -400,26 +403,26 @@ ADK Agent → Container → Cloud Run
     例如 Generator-Evaluator 模式，評估通過才退出。
 ```
 
-**地雷 3：「Session State 的 user: scope 和 session: scope 怎麼選？」**
+**地雷 3：「Session State 的 user: scope 和 session scope 怎麼選？」**
 
 ```
 答：關鍵問題是「這個資料需要跨 session 存活嗎？」
     user: scope → 跨 session 持久化，適合用戶偏好、長期設定
-    session: scope → 只在當前 session 有效，適合任務的中間狀態
+    無前綴（session scope）→ 只在當前 session 有效，適合任務的中間狀態
     
     安全原則：PII（姓名、身份證、帳號）不能存 user: scope，
     因為它會持久化，增加資料洩漏的攻擊面。
-    中間計算結果用 temp: scope，任務結束就清除。
+    只在單次呼叫內用到的暫時結果用 temp: scope，不會被持久化。
 ```
 
 **地雷 4：「你什麼時候放棄 ADK，改用 LangGraph？」**
 
 ```
 答：三個主要情況：
-    1. 需要混用多個 LLM 廠商（部分任務用 Gemini，部分用 GPT-4o）
-       → ADK 對非 Gemini 模型的支援有限
+    1. 需要大量混用多個 LLM 廠商（部分任務用 Gemini，部分用 GPT-4o）
+       → ADK 雖可透過 LiteLLM 接其他模型，但非 Gemini 模型的整合度較低
     2. 需要極其複雜的條件控制流程（例如：某個條件成立時要回退到前面的節點）
-       → LangGraph 的 DAG 更適合複雜條件分支
+       → LangGraph 的圖原生支援循環與條件邊（不只是 DAG），更適合複雜條件分支
     3. 客戶的部署環境不在 GCP
        → ADK 的 Vertex AI 整合是優勢，但也是強依賴
     如果三個都不是 → ADK 通常是更快、更少維護成本的選擇。
@@ -445,7 +448,7 @@ ADK Agent → Container → Cloud Run
    policy_agent 查核保資料庫，
    medical_agent 查醫療記錄，
    fraud_agent 跑詐欺偵測模型。
- 三個結果都寫入 session: scope 的 State。
+ 三個結果都寫入 session 範圍（不加前綴）的 State。
  步驟二：decision_agent（LlmAgent），
    讀取 session State 裡的三份資料，
    用 Gemini Pro 做最終審核決策。

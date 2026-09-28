@@ -3,7 +3,7 @@ title: "FDE core topic - Re-ranking & Cross-Encoder：向量粗召回後的精�
 date: 2026-06-08T10:00:00+08:00
 draft: false
 weight: 5
-description: "深入拆解兩階段檢索架構——ANN 快速粗召回搭配 Cross-Encoder 精準重排，如何將 RAG 系統的 MRR@5 從 0.61 提升至 0.79、幻覺率降低 40%。"
+description: "深入拆解兩階段檢索架構——ANN 快速粗召回搭配 Cross-Encoder 精準重排，如何將 RAG 系統的 MRR@5 從 0.61 提升至 0.79，並可望明顯降低幻覺率。"
 categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "CrossEncoder", "Reranking"]
 authors: ["yen"]
@@ -19,7 +19,7 @@ readTime: "18 min"
 面試官實際測試的能力：
 
 - **你知道「快」和「準」之間的工程取捨嗎？** Bi-Encoder 可預計算、延遲低，Cross-Encoder 不可預計算但精準——能不能說清楚這兩者的差異，是區分背了課文還是真正理解原理的關鍵。
-- **你能把數字說出來嗎？** 弱答：「Re-ranking 可以提升準確率。」強答：「ANN-only MRR@5 約 0.61，加上 Cross-Encoder 重排後升至 0.79，提升約 30%，幻覺率同步下降約 40%。」
+- **你能把數字說出來嗎？** 弱答：「Re-ranking 可以提升準確率。」強答：「ANN-only MRR@5 約 0.61，加上 Cross-Encoder 重排後升至 0.79，提升約 30%，幻覺率也可望同步下降（示意量級約 40%，需以自己的人工標注評估集驗證）。」
 - **你知道什麼時候不該用嗎？** 盲目加 Cross-Encoder 在延遲 SLA < 200ms 的場景會直接違反 SLA。強答必須包含 skip 條件。
 
 **弱答 vs 強答對比：**
@@ -105,6 +105,8 @@ Cross-Encoder（交互模型）
 ### 為什麼重排能降低幻覺
 
 LLM 幻覺率與上下文品質高度相關。當 context 包含不相關文件時，LLM 被迫在「有用資訊」和「雜訊」之間混合生成，錯誤率上升。
+
+以下為示意量級，實際數字依資料集與模型而異：
 
 | 指標 | ANN-only Top-50 | Cross-Encoder Top-5 | 差異 |
 |------|----------------|---------------------|------|
@@ -295,10 +297,10 @@ Query ──▶ ANN Top-50
 
 ## 六、面試一句話（Killer Phrase）
 
-> *「Re-ranking 的本質是用兩階段架構平衡召回效率與精排品質：Bi-Encoder 因為 query 和 doc 獨立編碼，可離線預計算向量並在 ANN 索引中 10ms 內召回 Top-50 候選；Cross-Encoder 則把 query 和 doc 拼接成 `[CLS] q [SEP] d [SEP]` 後過完整 BERT 注意力層，query 的每個 token 都能和 doc 的每個 token 交互，精準度遠高於 Bi-Encoder，但無法預計算、延遲約 150ms。兩階段合計 ANN 10ms + CE 150ms + LLM 800ms ≈ 960ms，多數 RAG 場景可接受。引入 Cross-Encoder 後 MRR@5 從 0.61 升至 0.79（+30%），LLM 幻覺率因高品質 context 降低約 40%——代價是每 query 增加約 $0.002。對延遲 SLA < 200ms 的場景，我會改用 ColBERT 的 token 級 Late Interaction，延遲壓至 30–50ms，品質介於兩者之間。」*
+> *「Re-ranking 的本質是用兩階段架構平衡召回效率與精排品質：Bi-Encoder 因為 query 和 doc 獨立編碼，可離線預計算向量並在 ANN 索引中 10ms 內召回 Top-50 候選；Cross-Encoder 則把 query 和 doc 拼接成 `[CLS] q [SEP] d [SEP]` 後過完整 BERT 注意力層，query 的每個 token 都能和 doc 的每個 token 交互，精準度遠高於 Bi-Encoder，但無法預計算、延遲約 150ms。兩階段合計 ANN 10ms + CE 150ms + LLM 800ms ≈ 960ms，多數 RAG 場景可接受。引入 Cross-Encoder 後 MRR@5 從 0.61 升至 0.79（+30%），LLM 幻覺率也可望因高品質 context 而下降（示意量級約 40%）——代價是每 query 增加約 $0.002。對延遲 SLA < 200ms 的場景，我會改用 ColBERT 的 token 級 Late Interaction，延遲壓至 30–50ms，品質介於兩者之間。」*
 
 ---
 
 **系列導航**
 
-← [前一篇：RAG Pipeline 整體架構設計](/posts/fde-interview-core-topic-4-rag-pipeline-zh/) | [後一篇：Embedding Model 選型與 Fine-tuning](/posts/fde-interview-core-topic-6-embedding-model-zh/) →
+← [前一篇：Hybrid Search & RRF：混合檢索與倒數排名融合演算法](/posts/fde-core-concept-4-hybrid-search-rrf-zh/) | [後一篇：Prompt Injection & Jailbreak Defense：生產環境零信任 AI 防禦體系](/posts/fde-core-concept-6-prompt-injection-jailbreak-zh/) →

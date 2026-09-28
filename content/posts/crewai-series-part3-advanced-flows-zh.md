@@ -6,7 +6,7 @@ weight: 3
 description: "CrewAI 進階篇：用 @start/@listen/@router 建立事件驅動的複雜工作流程、三種記憶體機制的實際應用、錯誤處理與成本控制，以及如何把 CrewAI Crew 包成 API 服務部署到生產環境。"
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "Flows", "Memory", "Multi-Agent", "Production", "FastAPI", "Python", "繁體中文", "Agent"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "35 min"
 ---
 
@@ -245,36 +245,38 @@ print(f"文章已就緒：{flow.state.publish_ready}")
 ### 平行執行多個 Crew
 
 ```python
+from crewai.flow.flow import Flow, listen, start, and_
+
 class ParallelResearchFlow(Flow):
     """同時研究多個子主題，最後彙整"""
 
     @start()
     def begin(self):
-        self.subtopics = ["技術面", "市場面", "法規面"]
+        self.state["subtopics"] = ["技術面", "市場面", "法規面"]
+
+    # 同一個觸發點的多個 listener 會被一起排程；宣告成 async，才能真正同時執行
+    @listen(begin)
+    async def research_technical(self):
+        self.state["tech"] = await self._run_research_crew("技術面")
 
     @listen(begin)
-    def research_technical(self):
-        """研究技術面（與其他研究平行執行）"""
-        return self._run_research_crew("技術面")
+    async def research_market(self):
+        self.state["market"] = await self._run_research_crew("市場面")
 
     @listen(begin)
-    def research_market(self):
-        """與 research_technical 同時執行"""
-        return self._run_research_crew("市場面")
+    async def research_regulatory(self):
+        self.state["reg"] = await self._run_research_crew("法規面")
 
-    @listen(begin)
-    def research_regulatory(self):
-        """與前兩個同時執行"""
-        return self._run_research_crew("法規面")
-
-    @listen(research_technical, research_market, research_regulatory)
-    def synthesize(self, tech, market, reg):
+    # 等三個都完成要用 and_()；listener 只收到一個觸發輸出，其餘結果從 state 讀
+    @listen(and_(research_technical, research_market, research_regulatory))
+    def synthesize(self):
         """等所有研究完成後彙整"""
         print("所有子研究完成，開始彙整...")
+        tech, market, reg = self.state["tech"], self.state["market"], self.state["reg"]
         # 整合三個研究結果
 
-    def _run_research_crew(self, aspect: str) -> str:
-        # ... 實作 Crew 邏輯
+    async def _run_research_crew(self, aspect: str) -> str:
+        # ... 實作 Crew 邏輯，例如 await crew.kickoff_async(inputs={...})
         return f"{aspect} 的研究結果"
 ```
 
@@ -293,6 +295,8 @@ CrewAI 提供三種記憶機制，各有不同的用途：
 | **Entity Memory** | 特定實體的知識 | 是 | 記住「關於 X 公司的所有事情」 |
 
 ### 啟用完整記憶體
+
+> 注意：CrewAI 的記憶體 API 在 2025 年後經過多次改版，下面的 import 路徑與類別名稱以撰文時版本為準；若 import 失敗，請對照你安裝版本的官方 Memory 文件。
 
 ```python
 from crewai import Crew, Process
@@ -481,7 +485,7 @@ print(f"本次執行：")
 print(f"  輸入 tokens：{usage.prompt_tokens}")
 print(f"  輸出 tokens：{usage.completion_tokens}")
 print(f"  總計：{usage.total_tokens}")
-# 假設 gpt-4o-mini: $0.15/1M input, $0.60/1M output
+# 假設 gpt-4o-mini: $0.15/1M input, $0.60/1M output（撰文時價格，以官方定價頁為準）
 cost_estimate = (usage.prompt_tokens * 0.15 + usage.completion_tokens * 0.60) / 1_000_000
 print(f"  估計費用：${cost_estimate:.4f} USD")
 ```
@@ -813,4 +817,4 @@ CrewAI 的核心價值是讓「多角色協作」這個複雜的概念，變得�
 
 - [第一篇](/posts/crewai-series-part1-introduction-zh/)：入門與核心概念
 - [第二篇](/posts/crewai-series-part2-real-world-tasks-zh/)：真實場景實戰——競情分析、程式碼審查、客服自動化
-- **第三篇（本篇）**：進階技巧——Flows、Memory、結構化輸出與生產部署
+- **第三篇（本篇）**：進階技巧——Flows、Memory、錯誤處理與生產部署

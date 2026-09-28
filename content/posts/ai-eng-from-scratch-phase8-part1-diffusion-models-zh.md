@@ -5,20 +5,20 @@ draft: false
 weight: 16
 description: "深入解析擴散模型工程原理：DDPM/DDIM 前向與反向過程、Stable Diffusion 潛在空間架構、ControlNet/LoRA 微調、生產推論優化"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Generative AI", "Diffusion Models", "Stable Diffusion", "ControlNet", "Image Generation", "RKK", "Interview"]
+tags: ["AI", "Generative AI", "Diffusion Models", "Stable Diffusion", "ControlNet", "Image Generation", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
 ---
 
 > *大多數人認為擴散模型「就是反覆去雜訊」。*
-> *面試官想聽到的是：你能說明前向過程的閉合解、DDIM 的隱式馬可夫假設、以及為什麼潛在空間能讓 1024×1024 生成在消費級 GPU 上跑起來。*
+> *真正的關鍵是：你能說明前向過程的閉合解、DDIM 的隱式馬可夫假設、以及為什麼潛在空間能讓 1024×1024 生成在消費級 GPU 上跑起來。*
 > *差距不在知道有 Stable Diffusion，而在能精確量化每個設計決策的成本與效益。*
 > *本文帶你從數學推導到生產部署，一次打通。*
 
 ---
 
-**面試情境**：你負責為一個電商平台設計商品圖片自動生成系統，需要在 3 秒內生成 512×512 的商品展示圖，每日峰值 10 萬張，成本預算每張 $0.002。請描述你選擇的模型架構、推論優化策略，以及如何處理風格一致性問題。
+**工程情境**：你負責為一個電商平台設計商品圖片自動生成系統，需要在 3 秒內生成 512×512 的商品展示圖，每日峰值 10 萬張，成本預算每張 $0.002。請描述你選擇的模型架構、推論優化策略，以及如何處理風格一致性問題。
 
 ---
 
@@ -370,7 +370,7 @@ TensorRT INT8 + CUDA : 0.7s / 20步  (-91%)
 3. 命中：直接返回（< 10ms）
 4. 未命中：執行生成，存入快取
 
-實測電商場景命中率：
+電商場景命中率（示意估算，非實測）：
   完全相同 prompt：30% 流量
   語義相似（>0.95）：額外 25% 流量
   總快取命中率：~55%
@@ -438,11 +438,11 @@ Flip：純創意生成（無需精確結構）時，ControlNet 增加約 30% 推
 ### 決策 5：INT8 量化 vs. FP16
 
 ```
-選擇        選 INT8 的理由                  不選 FP32 全精度的理由
+選擇        選 INT8 的理由                  不選 FP16 的理由
 ──────────────────────────────────────────────────────────────
-INT8        比 fp16 再快 35%，同等 GPU      fp32：推論 8s/張，成本 4× fp16
-            記憶體降低 50%，可跑更大 batch  fp32：A10G 單張 512×512 佔 10GB VRAM
-            FID 損失 < 0.5，視覺無差異      
+INT8        比 fp16 快約 30%（0.7s vs 1.0s）fp16：每張成本高約 40%（見九的表）
+            權重記憶體減半，可跑更大 batch  fp16：VRAM 3GB vs INT8 2.5GB
+            FID 損失 < 0.5，視覺無差異      （fp32 更不考慮：比 fp16 慢 2–3 倍）
 
 Flip：極高保真需求（醫療影像、衛星圖像）時，量化誤差不可接受，保留 fp16
 ```
@@ -458,6 +458,8 @@ SDXL        原生 1024×1024，細節更豐富      v1.5 最佳解析度 512×5
 
 Flip：成本敏感場景，v1.5 模型小（865M vs 3.5B），推論快 4×，LoRA 生態更成熟
 ```
+
+> **2026 補充**：SD 1.5 / SDXL 都是 U-Net 架構的 LDM。2024 年後的主流開源影像模型（如 SD3、FLUX）改用 **DiT（Diffusion Transformer）** 骨幹，並以 **flow matching / rectified flow** 取代 DDPM 式的雜訊預測目標——學習從雜訊到資料的近似直線路徑，因此用更少步數就能取樣。今天新專案的真正決策更接近「U-Net LDM vs DiT/flow 模型」，上表的 SDXL vs v1.5 主要適用於既有系統。
 
 ---
 
@@ -486,7 +488,7 @@ Flip：成本敏感場景，v1.5 模型小（865M vs 3.5B），推論快 4×，L
   選配：TensorRT INT8，0.7s/張
   所需 GPU-hr：100,000 × 0.7s / 3600 = 19.4 GPU-hr/日
   費用：19.4 × $0.75 = $14.6/日（基本負載）
-  加上峰值 2× buffer + 語義快取 50% hit rate：
+  加上峰值 2× buffer + 語義快取（等效節省 ~50%）：
   實際費用 ≈ $14.6 × 2 × 0.5 = $14.6/日
   
   ✓ 遠低於 $200/日 預算
@@ -498,28 +500,29 @@ Flip：成本敏感場景，v1.5 模型小（865M vs 3.5B），推論快 4×，L
 ```
 日成本優化路徑（10萬張/日基準）
 
-  原始 DDPM fp32          $1,050/日
-        │ DDIM 20步         ÷ 50
+  原始 DDPM 1000步 fp32（50s/張）      $1,050/日
+        │ DDIM 20步 + fp16 + xFormers（1.0s/張）÷ 50
         ▼
-  DDIM 20步 fp32           $21/日
-        │ fp16              ÷ 2.5
+  DDIM 20步 fp16                        $21/日
+        │ TensorRT INT8（0.7s/張）       ÷ 1.4
         ▼
-  DDIM 20步 fp16           $8.4/日
-        │ xFormers + INT8   ÷ 1.4
+  TRT INT8                              $14.6/日
+        │ 語義快取（等效節省 ~50%）       × 0.5
         ▼
-  TRT INT8                 $6/日
-        │ 語義快取 55% hit  × 0.45
+  快取後                                $7.3/日
+        │ 峰值 2× buffer                  × 2
         ▼
-  最終實際成本             ~$2.7/日  ← $0.000027/張
+  最終實際成本                          ~$14.6/日  ← $0.000146/張
+  （與上方預算驗算一致；皆為示意估算）
 ```
 
 ---
 
 ## 十、系列導航
 
-**← 上一篇**：[Phase 7 Part 2：RAG 系統設計——向量資料庫與混合搜尋架構](/posts/ai-eng-from-scratch-phase7-part2-rag-vector-db-zh/)
+**← 上一篇**：[Phase 7 Part 2：Transformer 訓練策略與架構變體](/posts/ai-eng-from-scratch-phase7-part2-training-variants-zh/)
 
-**→ 下一篇**：[Phase 8 Part 2：影像生成微調——DreamBooth、LoRA 訓練工程與評估指標](/posts/ai-eng-from-scratch-phase8-part2-finetuning-zh/)
+**→ 下一篇**：[Phase 8 Part 2：GAN 與影片生成 — 對抗的藝術](/posts/ai-eng-from-scratch-phase8-part2-gan-video-generation-zh/)
 
 ---
 

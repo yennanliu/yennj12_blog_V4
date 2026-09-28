@@ -2,7 +2,7 @@
 title: "AI System on Native AWS - Part 8 - 即時串流 ML 與詐欺偵測"
 date: 2026-07-25T09:00:00+08:00
 draft: false
-description: "詐欺偵測是即時 ML 的極限測試:要在幾十毫秒內對每筆交易做出放行或攔截的決定,特徵要用『此刻及過去幾秒』的行為即時算出,對手還會主動規避你的規則。本篇用純 AWS 原生服務打造即時串流風控:Kinesis 收交易流、Managed Service for Apache Flink 做串流特徵、SageMaker/Fraud Detector 毫秒級評分、Neptune 圖資料庫抓詐欺團夥、DynamoDB 當線上特徵與決策存放,全部用 CDK(CloudFormation)描述,深入談串流特徵一致性、時間窗、圖偵測與規則+ML 混合決策。"
+description: "詐欺偵測是即時 ML 的極限測試:要在幾十毫秒內對每筆交易做出放行或攔截的決定,特徵要用『此刻及過去幾秒』的行為即時算出,對手還會主動規避你的規則。本篇用純 AWS 原生服務打造即時串流風控:Kinesis 收交易流、Managed Service for Apache Flink 做串流特徵、SageMaker 毫秒級評分、Neptune 圖資料庫抓詐欺團夥、DynamoDB 當線上特徵與決策存放,全部用 CDK(CloudFormation)描述,深入談串流特徵一致性、時間窗、圖偵測與規則+ML 混合決策。"
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Kinesis", "Managed Flink", "Fraud Detection", "Neptune", "SageMaker", "Streaming", "AI Engineering"]
 authors: ["yen"]
@@ -70,12 +70,16 @@ readTime: "27 min"
 ### 3.1 整體架構
 
 ```
-┌──────────┐  交易事件   ┌──────────────┐
-│ 交易/登入  │ ─────────▶ │   Kinesis     │
-│  來源     │            │  Data Stream  │
-└──────────┘            └───┬───────┬───┘
-                            │       │
-        ①串流特徵計算         ▼       ▼ ②同步評分路徑
+┌──────────┐  ②同步授權請求(API 呼叫,等待放行/挑戰/攔截)
+│ 交易/登入  │ ──────────────────────────────────────┐
+│  來源     │                                        │
+└────┬─────┘                                         │
+     │ 交易事件(非同步寫入串流)                      │
+     ▼                                               │
+┌──────────────┐                                     │
+│   Kinesis     │ ①串流特徵計算                      │
+│  Data Stream  │────────┐                           │
+└──────────────┘        ▼                            ▼
               ┌──────────────────┐  ┌──────────────────────────────────┐
               │ Managed Service   │  │  Lambda / API(同步決策 < 50ms)    │
               │ for Apache Flink   │  │  ┌────────┐ ┌────────┐ ┌───────┐ │
@@ -265,7 +269,7 @@ new neptune.CfnDBInstance(this, 'FraudGraphInstance', {
 Managed Flink     有狀態時間窗、exactly-once、    學習曲線陡、有基礎成本
                   遲到事件處理,串流特徵首選
 Lambda 自聚合      簡單、無新服務                 無狀態,窗口要外部存放,易錯且慢
-Kinesis SQL(舊)  上手快                        表達力有限,複雜特徵吃力
+Kinesis SQL(已停用) 上手快                     表達力有限;Kinesis Data Analytics for SQL 已於 2026 年初停止服務,新專案請勿選用
 ```
 
 **翻盤條件**:特徵極簡(只需「這筆金額 > 門檻」這種單點判斷、不需跨事件窗口)→ Lambda 就夠,不必引入 Flink。一旦需要「近 N 秒的聚合、去重、會話」這類有狀態計算,Flink 幾乎是唯一不痛的選擇。
@@ -281,7 +285,9 @@ Kinesis SQL(舊)  上手快                        表達力有限,複雜特徵�
 即時特徵整合       自己接 Flink                   內建部分即時能力
 ```
 
-**翻盤條件**:團隊沒有 ML 人力、要快速上線、詐欺型態常見(卡不當使用、註冊濫用)→ **Fraud Detector** 是「詐欺版的 Personalize」,直接用。要深度客製特徵、整合自家串流、或詐欺型態特殊 → 自建 SageMaker。本篇示範自建以講清原理;許多團隊的務實起點是 Fraud Detector。
+> **注意**:Amazon Fraud Detector 已於 2025 年底停止接受新客戶,既有客戶可繼續使用;新專案請不要以它為起點。
+
+**翻盤條件**:團隊沒有 ML 人力、要快速上線、詐欺型態常見(卡不當使用、註冊濫用)→ 過去的答案是 Fraud Detector;現在新團隊的替代方案是 SageMaker Autopilot / Canvas 這類低程式碼訓練,或 AWS Marketplace 上的第三方風控服務。要深度客製特徵、整合自家串流、或詐欺型態特殊 → 自建 SageMaker。本篇示範自建以講清原理。
 
 ### 5.3 為什麼一定要圖資料庫
 
@@ -301,6 +307,8 @@ Kinesis SQL(舊)  上手快                        表達力有限,複雜特徵�
 ## 六、成本估算
 
 以「日均 500 萬筆交易、尖峰 2,000 TPS」估算(概略):
+
+> us-east-1 公開定價概估(撰文時),實際以帳單為準。
 
 | 項目 | 用量 | 概略月費 |
 |------|------|---------|

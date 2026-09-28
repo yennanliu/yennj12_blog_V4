@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai"]
 tags: ["LangGraph", "代碼實現", "生產級", "範本", "最佳實踐"]
 summary: "提供可直接用於生產環境的 LangGraph AI 後端核心代碼實現，包括完整的 FastAPI 集成、持久化層、錯誤處理、監控日誌等，幫助開發者快速構建產品級應用。"
+description: "提供可直接用於生產環境的 LangGraph AI 後端核心代碼實現，包括完整的 FastAPI 集成、持久化層、錯誤處理、監控日誌等，幫助開發者快速構建產品級應用。"
 readTime: "48 min"
 ---
 
@@ -114,7 +115,9 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     
     # 模型配置
-    LLM_MODEL: str = "claude-3-5-sonnet-20241022"
+    # 必填，從環境變數 LLM_MODEL 讀取：請填目前可用的 Claude 模型 ID（見 Anthropic 模型文件）。
+    # 不要寫死舊 ID——claude-3-5-sonnet-20241022 已退役。
+    LLM_MODEL: str
     LLM_TEMPERATURE: float = 0.7
     LLM_MAX_TOKENS: int = 4096
     
@@ -288,6 +291,7 @@ from datetime import datetime
 import logging
 from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
+from config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -298,9 +302,9 @@ class BaseAgent(ABC):
         self.name = name
         self.description = description
         self.model = ChatAnthropic(
-            model="claude-3-5-sonnet-20241022",
-            temperature=0.7,
-            max_tokens=4096
+            model=settings.LLM_MODEL,          # 由設定檔 / 環境變數決定，不寫死
+            temperature=settings.LLM_TEMPERATURE,
+            max_tokens=settings.LLM_MAX_TOKENS
         )
         self.execution_count = 0
         self.total_duration_ms = 0
@@ -367,10 +371,11 @@ class ClassificationAgent(BaseAgent):
         返回 JSON：
         {{
             "category": "technical|billing|account|feature_request|bug_report|other",
-            "confidence": 0.0-1.0,
+            "confidence": 0.85,
             "key_issues": ["issue1", "issue2"],
             "severity": "low|medium|high|critical"
         }}
+        confidence 為 0 到 1 之間的小數。
         """)
     
     def parse_response(self, response: str) -> Dict[str, Any]:
@@ -396,8 +401,9 @@ class AnalysisAgent(BaseAgent):
             "analysis": "詳細分析...",
             "affected_systems": ["sys1", "sys2"],
             "suggested_solution": "...",
-            "confidence": 0.0-1.0
+            "confidence": 0.85
         }}
+        confidence 為 0 到 1 之間的小數。
         """)
     
     def parse_response(self, response: str) -> Dict[str, Any]:
@@ -425,6 +431,8 @@ class ResponseGeneratorAgent(BaseAgent):
     def parse_response(self, response: str) -> Dict[str, Any]:
         return {"response": response}
 ```
+
+> **注意**：上面的 `json.loads(response)` 直接解析 LLM 的原始文字，只要模型多說一句話或包上 ```json code fence 就會拋錯，不適合 production。建議改用 `self.model.with_structured_output(ClassificationResult)`（`ClassificationResult` 為 Pydantic model），由 LangChain 透過 tool calling 取回已驗證的結構化結果。
 
 ---
 
@@ -900,6 +908,7 @@ services:
       DATABASE_URL: postgresql://ai_user:ai_password@postgres:5432/ai_backend
       REDIS_URL: redis://redis:6379/0
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      LLM_MODEL: ${LLM_MODEL}   # 目前可用的 Claude 模型 ID
     depends_on:
       - postgres
       - redis

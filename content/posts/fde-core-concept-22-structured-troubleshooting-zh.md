@@ -18,13 +18,13 @@ readTime: "18 min"
 
 面試官測試的不是你背了多少 Cloud 工具名稱，而是你在凌晨三點 PagerDuty 響起時**思考的順序**是否可預測、可重複、可教給初級工程師。
 
-- **測試診斷紀律**：弱答案是「我會先看 logs」或「我會重啟服務」——沒有層次、沒有假說優先順序、沒有消除邏輯。強答案明確說出「Layer 4 quota 佔 80% 的 Agent 慢案例，我的第一個動作是打開 Vertex AI quota dashboard 看 TPM 消耗曲線，而不是翻 application log」。這句話背後是數據，不是直覺。
+- **測試診斷紀律**：弱答案是「我會先看 logs」或「我會重啟服務」——沒有層次、沒有假說優先順序、沒有消除邏輯。強答案明確說出「Agent 變慢最常見的根因是 Layer 4 quota 耗盡，而且檢查成本最低，所以我的第一個動作是打開 Vertex AI quota dashboard 看 TPM 消耗曲線，而不是翻 application log」。這句話背後是「先查最常見、最便宜的假說」的排序邏輯。
 - **測試可觀測性設計意識**：面試官想知道你是否在架構設計時就預埋了排錯所需的 trace / metric / log，而不是等到出事才臨時加 `print()`。可觀測性是一個設計決策，需要在 Day 1 就被納入 API 規格、tool wrapper 合約、和部署 checklist。
 - **測試成本意識**：每一層的排錯工具有不同的費用曲線（Cloud Trace ingestion $0.20/百萬 spans、外部 HTTP check 每分鐘觸發一次約 $0.01/check/月）。強候選人知道在什麼層次停下來，不做過度觀測，也知道哪些 error path 值得 100% 採樣。
 
 > 弱回答：「我會看 error logs，然後試著在本地重現問題。」
 >
-> 強回答：「我先確認 TTFT 是否超過 3 秒的 SLO 閾值。如果是，立刻拉 Vertex AI quota dashboard 看 TPM 消耗曲線——因為 80% 的 slow-agent 案例根因在 Layer 4 quota 耗盡。確認 quota 正常後，我才打開 Cloud Trace，找哪個 tool call span 攜帶 `status_code=429` 或 `latency_ms > 3000`，這樣平均 15 分鐘內可以隔離根因。」
+> 強回答：「我先確認 TTFT 是否超過 3 秒的 SLO 閾值。如果是，立刻拉 Vertex AI quota dashboard 看 TPM 消耗曲線——因為依經驗 slow-agent 案例最常見的根因是 Layer 4 quota 耗盡，而且確認只要幾分鐘。確認 quota 正常後，我才打開 Cloud Trace，找哪個 tool call span 攜帶 `status_code=429` 或 `latency_ms > 3000`，這樣平均 15 分鐘內可以隔離根因。」
 
 ---
 
@@ -157,9 +157,9 @@ root span: handle_user_request          [總延遲: 8,247ms]
                                                   SSL / auth 錯誤
 ```
 
-### 根因分布統計（生產歸因數據）
+### 根因分布（經驗法則排序，示意）
 
-依據對多個生產 AI Agent 系統的故障後分析：
+以下比例是用來決定「先查哪一層」的經驗法則與示意量級，並非統計過的生產資料；請用自己系統的事後檢討（postmortem）紀錄校正：
 
 | 根因層 | 佔比 | 典型症狀 | 平均診斷時間（有 OTel）| 平均診斷時間（無 OTel）|
 |--------|------|---------|-------------------|-------------------|
@@ -168,7 +168,7 @@ root span: handle_user_request          [總延遲: 8,247ms]
 | Layer 2 — Agent 無限迴圈 | **4%** | Trace span 深度 > 50，CPU 持續 95%+ | 8 分鐘 | 120 分鐘 |
 | Layer 1 — Gateway 設定錯誤 | **1%** | 全站 5xx，CDN cache miss 率 100% | 2 分鐘 | 15 分鐘 |
 
-**關鍵洞察**：有完整 OTel instrumentation 的系統，平均 MTTR（Mean Time to Recover）從 60 分鐘降至 8 分鐘，降幅 87%。這個數字是「預埋觀測成本」的最佳商業論證。
+**關鍵洞察**：以上表的示意量級來看，有完整 OTel instrumentation 的系統，平均 MTTR（Mean Time to Recover）可從約 60 分鐘降至約 8 分鐘。這個數字是「預埋觀測成本」的最佳商業論證。
 
 ---
 
@@ -433,7 +433,7 @@ resource "google_monitoring_uptime_check_config" "search_api_check" {
 
 | 錯誤模式 | 後果 | 正確做法 |
 |---------|------|---------|
-| 排錯第一步翻 application log，跳過 quota 檢查 | 花 30–60 分鐘找不存在的 bug，根因是 TPM 耗盡（80% 案例） | 第一步永遠是 Vertex AI quota dashboard，15 秒可確認 |
+| 排錯第一步翻 application log，跳過 quota 檢查 | 花 30–60 分鐘找不存在的 bug，根因常是 TPM 耗盡（最常見的情況） | 第一步永遠是 Vertex AI quota dashboard，15 秒可確認 |
 | 只設 error rate 告警，不設 latency SLO | 用戶體驗惡化（p99 從 1s 升至 8s）但不觸發 alert，因為請求最終仍成功 | 加 p99 latency SLO（閾值 3s），配合 burn rate 多級告警 |
 | OTel span 不設 `error: true` attribute | Trace 看起來全部 OK，Cloud Trace 的 error 過濾器失效，無法快速定位失敗 span | 在所有 non-2xx 和 exception 路徑顯式設 `span.set_attribute("error", True)` |
 | Agent 無限迴圈沒有 `max_iterations` 保護 | Layer 2 trace span 深度失控（>200 spans），TPM 被迴圈耗盡，Layer 4 quota 被誤診為根因 | ADK / LangGraph 設 `max_iterations=25`，並在每次迭代用 span attribute 記錄 `loop_count` |
@@ -454,10 +454,10 @@ resource "google_monitoring_uptime_check_config" "search_api_check" {
 
 ## 六、面試一句話（Killer Phrase）
 
-> *「當用戶回報 Agent 很慢，我的第一步不是翻 application log，而是打開 Vertex AI quota dashboard 確認 TPM 消耗率——因為生產數據顯示 80% 的 slow-agent 案例根因是 Layer 4 quota 耗盡，而非程式碼 bug，先看 quota 平均 3 分鐘就能確認或排除。確認 quota 正常後，我才按照決策樹往上走：看 Cloud Trace 找哪個 tool call span 攜帶 status_code=429 或 retry_after 屬性，這樣覆蓋了另外 15% 的 Layer 3 案例。這個自上而下、逐層消除的方法讓 MTTR 從沒有 OTel 時的 60 分鐘降至 8 分鐘，前提是架構設計階段就要求每個 tool wrapper 攜帶結構化 OTel span，把可觀測性成本從事後採集轉移到事前設計。」*
+> *「當用戶回報 Agent 很慢，我的第一步不是翻 application log，而是打開 Vertex AI quota dashboard 確認 TPM 消耗率——因為依經驗 slow-agent 案例最常見的根因是 Layer 4 quota 耗盡，而非程式碼 bug，先看 quota 平均 3 分鐘就能確認或排除。確認 quota 正常後，我才按照決策樹往上走：看 Cloud Trace 找哪個 tool call span 攜帶 status_code=429 或 retry_after 屬性，這樣覆蓋了次常見的 Layer 3 案例。這個自上而下、逐層消除的方法讓 MTTR 從沒有 OTel 時的 60 分鐘降至 8 分鐘，前提是架構設計階段就要求每個 tool wrapper 攜帶結構化 OTel span，把可觀測性成本從事後採集轉移到事前設計。」*
 
 ---
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-21-cost-attribution-quota-management-zh/) | [後一篇](/posts/fde-interview-core-topic-23-chaos-engineering-resilience-zh/) →
+← [前一篇](/posts/fde-core-concept-21-discovery-to-constraints-zh/) | [後一篇](/posts/fde-core-concept-23-stakeholder-mapping-zh/) →

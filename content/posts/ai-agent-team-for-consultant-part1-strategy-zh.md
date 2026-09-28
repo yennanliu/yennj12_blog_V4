@@ -6,7 +6,7 @@ weight: 1
 description: "想用純 AI Bot 建立一支 AI 顧問團隊？本文從商業角度出發，分析三條技術路線（Claude Code + agent.md、Gemini CLI、LangGraph + LLM），比較優缺點與適用場景，幫助你在動手之前先想清楚架構。"
 categories: ["all", "ai", "business"]
 tags: ["AI Agent", "Claude Code", "Gemini CLI", "LangGraph", "AI Consultant", "Multi-Agent", "繁體中文", "Agent"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "15 min"
 ---
 
@@ -45,20 +45,22 @@ readTime: "15 min"
 
 ## 三條技術路線
 
-### 路線 A：Claude Code + Skills / AGENTS.md
+### 路線 A：Claude Code + Skills / Subagents
 
-**核心概念：** 利用 Claude Code CLI 的原生 multi-agent 機制，透過 `AGENTS.md`（或 `CLAUDE.md`）定義每個 Agent 的角色、工具權限與行為邊界，搭配 **Skills**（可重複呼叫的 slash command 腳本）讓 Agent 之間能互相協作。
+**核心概念：** 利用 Claude Code CLI 的原生 multi-agent 機制：用 `CLAUDE.md` 寫團隊共用的規則與分工，用 `.claude/agents/<name>.md`（subagent，含 front matter 的 name、description、tools）定義每個 Agent 的角色、工具權限與行為邊界，再搭配 **Skills**（`.claude/skills/<name>/SKILL.md`，帶 front matter 的可重用指令包，可由模型自動載入或用 `/<name>` 呼叫）讓 Agent 之間能互相協作。
 
 ```
 專案目錄結構
-├── AGENTS.md          ← 定義整個團隊的角色分工
+├── CLAUDE.md                 ← 定義整個團隊的角色分工與共用規則
 ├── .claude/
-│   └── settings.json  ← 工具權限、hook 設定
-├── skills/
-│   ├── intake.md      ← 客戶需求收集 Agent
-│   ├── diagnose.md    ← 問題診斷 Agent
-│   └── report.md      ← 報告產出 Agent
-└── workspace/         ← Agent 的工作區
+│   ├── settings.json         ← 工具權限、hook 設定
+│   ├── agents/
+│   │   ├── intake.md         ← 客戶需求收集 Agent（subagent）
+│   │   ├── diagnose.md       ← 問題診斷 Agent（subagent）
+│   │   └── report.md         ← 報告產出 Agent（subagent）
+│   └── skills/
+│       └── <name>/SKILL.md   ← 可重用的流程 / 範本（Skill）
+└── workspace/                ← Agent 的工作區
 ```
 
 **優點：**
@@ -94,12 +96,12 @@ Gmail        (客戶溝通)
 
 **優點：**
 - 與 Google Workspace 原生整合，客戶易於接受
-- Gemini 1.5/2.0 有超長 context window（100 萬 tokens），適合處理大型文件
+- Gemini 系列有超長 context window（百萬 tokens 等級），適合處理大型文件
 - Google 生態圈工具成熟，權限控管清楚
 - 適合以文件為核心的顧問工作流
 
 **缺點：**
-- Gemini CLI 成熟度不如 Claude Code（截至 2026 年 Q1）
+- Gemini CLI 成熟度不如 Claude Code（作者 2026 年 Q1 的主觀判斷，工具迭代快，請自行重新評估）
 - 需要管理 Google Cloud 權限，設定成本較高
 - 程式碼撰寫能力相對 Claude 弱一些
 
@@ -112,7 +114,7 @@ Gmail        (客戶溝通)
 
 ### 路線 C：LangGraph + LLM（程式碼驅動）
 
-**核心概念：** 用 [LangGraph](https://github.com/langchain-ai/langgraph) 建立有向圖（DAG）狀態機，明確定義每個 Agent 節點、轉換條件、錯誤處理與狀態持久化，底層 LLM 可以是 Claude、GPT-4o、Gemini 或本地模型。
+**核心概念：** 用 [LangGraph](https://github.com/langchain-ai/langgraph) 建立可含迴圈的狀態圖（state graph），明確定義每個 Agent 節點、轉換條件、錯誤處理與狀態持久化，底層 LLM 可以是 Claude、GPT、Gemini 或本地模型。
 
 ```python
 # 簡化示意

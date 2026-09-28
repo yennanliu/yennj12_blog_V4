@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "claude-code", "multi-agent", "context-passing", "token-optimization", "agent-orchestration", "API", "development-tools"]
 summary: "多 Agent Token 優化系列 pt.5：深入探索選擇性 Context 傳遞策略，從依賴關係映射、結構化輸出到相關性過濾，提供完整實作範例，幫助你大幅降低 Agent 間通訊的 Token 消耗。"
+description: "多 Agent Token 優化系列 pt.5：深入探索選擇性 Context 傳遞策略，從依賴關係映射、結構化輸出到相關性過濾，提供完整實作範例，幫助你大幅降低 Agent 間通訊的 Token 消耗。"
 readTime: "35 min"
 ---
 
@@ -469,7 +470,7 @@ class StructuredOutputAgent:
         agent_name: str,
         system_prompt: str,
         output_class: Type[AgentOutput] = AgentOutput,
-        model: str = "claude-sonnet-4-20250514"
+        model: str = "claude-sonnet-5"
     ):
         self.agent_name = agent_name
         self.system_prompt = system_prompt
@@ -722,7 +723,7 @@ class ContextExtractor:
 請只輸出提取後的內容，保持簡潔。"""
 
         response = client.messages.create(
-            model="claude-3-5-haiku-20241022",  # 使用便宜模型做提取
+            model="claude-haiku-4-5-20251001",  # 使用便宜模型做提取
             max_tokens=1000,
             messages=[{"role": "user", "content": prompt}]
         )
@@ -897,7 +898,7 @@ class RelevanceFilter:
 
     def __init__(
         self,
-        model: str = "claude-3-5-haiku-20241022",
+        model: str = "claude-haiku-4-5-20251001",
         relevance_threshold: float = 0.5
     ):
         self.model = model
@@ -1135,7 +1136,7 @@ class AgentConfig:
     role: str
     system_prompt: str
     output_class: type = AgentOutput
-    model: str = "claude-sonnet-4-20250514"
+    model: str = "claude-sonnet-5"
     max_output_tokens: int = 4096
 
 @dataclass
@@ -1463,7 +1464,7 @@ def create_development_pipeline() -> SelectiveContextOrchestrator:
 審查程式碼的品質、安全性、效能和可維護性。
 提供具體的改進建議。""",
         output_class=CodeReviewerOutput,
-        model="claude-3-5-haiku-20241022"  # 審查用較輕量模型
+        model="claude-haiku-4-5-20251001"  # 審查用較輕量模型
     ))
 
     orchestrator.register_agent(AgentConfig(
@@ -1472,7 +1473,7 @@ def create_development_pipeline() -> SelectiveContextOrchestrator:
         system_prompt="""你是技術文件撰寫專家。
 撰寫清晰、完整的技術文件。
 包括 API 文件、使用說明、架構說明。""",
-        model="claude-3-5-haiku-20241022"
+        model="claude-haiku-4-5-20251001"
     ))
 
     return orchestrator
@@ -1616,7 +1617,7 @@ def create_adaptive_orchestrator(task: str) -> SelectiveContextOrchestrator:
 │ 簡單任務         │ 30,000 tok   │ 8,000 tok    │ 73%               │
 └──────────────────┴──────────────┴──────────────┴───────────────────┘
 
-成本節省計算（假設 Sonnet $3/1M input tokens）：
+成本節省計算（模型推算而非實測；假設 Sonnet $3/1M input tokens、未啟用 Prompt Caching，價格以撰文時為準）：
 
 場景：每日 100 個 5-Agent 管線任務
 

@@ -158,6 +158,8 @@ api.root.addResource('invoke').addMethod('POST', new apigw.LambdaIntegration(gat
 });
 ```
 
+> **限制**:Lambda 的 `timeout` 設 60 秒沒有用——API Gateway REST 的整合逾時預設是 29 秒,長回應會先被 API Gateway 切斷;這個寫法也是「整包回傳」,無法把 token 串流回呼叫端。公司級 LLM 入口通常需要串流,可改用 Lambda response streaming(Function URL)或 Fargate + ALB 版本;API Gateway 的逾時上限與串流支援請以官方文件目前狀態為準。
+
 Gateway Lambda 的核心邏輯:認證 → 配額 → 快取 → 路由 → 呼叫 → 計量 → 日誌。
 
 ```typescript
@@ -266,6 +268,8 @@ new budgets.CfnBudget(this, 'TeamCsBudget', {
 
 **翻盤條件**:公司只有一兩個 AI 團隊、還沒有治理與分帳的痛 → 直連 Bedrock 更簡單,別過早平台化。**平台化是規模的產物**——團隊數過了某個門檻(通常 5–10 個),Gateway 的治理收益才超過它的複雜度與單點風險(單點用多區 + 直連 fallback 緩解)。
 
+**先看 Bedrock 原生能力能省掉多少**:application inference profile 可以直接掛團隊 cost tag、做分帳,不需要代理;AgentCore Gateway 是 AWS 原生的 MCP/工具閘道(2025 年新服務,細節請見官方文件)。這些都用上之後,自建 Gateway 剩下的職責主要是跨團隊語意快取、自訂配額與計量邏輯、以及統一的 prompt/輸出政策——如果你不需要這些,直連 + application inference profile 就夠。
+
 ### 5.2 Service Catalog(低程式碼) vs CDK Construct 庫(程式碼) vs 兩者
 
 - **Service Catalog**:給非工程或想要極簡自助的團隊,點選填參數即得。
@@ -285,6 +289,8 @@ new budgets.CfnBudget(this, 'TeamCsBudget', {
 ## 六、成本與價值
 
 平台本身的營運成本(概略,不含各團隊的業務系統):
+
+> us-east-1 公開定價概估(撰文時),實際以帳單為準。
 
 | 項目 | 用量 | 概略月費 |
 |------|------|---------|

@@ -20,7 +20,7 @@ series: ["knowledge-graph"]
 
 ## 接續前文
 
-[Part 1](/posts/knowledge-graph-part1-fundamentals-zh/) 講概念、[Part 2](/posts/knowledge-graph-part2-construction-zh/) 動手建。這一篇要把知識圖譜放到擂台上，和四種常見的資料儲存技術正面比較，幫你建立清楚的選型判斷力。
+[Part 1](/posts/knowledge-graph-part1-fundamentals-zh/) 講概念、[Part 2](/posts/knowledge-graph-part2-construction-zh/) 動手建。這一篇要把知識圖譜放到擂台上，和三種常見的資料儲存技術（關聯式、向量、文件資料庫）正面比較，幫你建立清楚的選型判斷力。
 
 ---
 
@@ -223,7 +223,7 @@ RETURN DISTINCT c3.name;
 | 跨資料源實體整合 | 手工 ETL 對齊 | 本體 + 實體對齊 |
 | 隱含關係發現 | 不支援 | 本體推理自動推導 |
 
-數字會因系統而異，但方向是穩定的：**當「關係」是問題的核心，知識圖譜帶來的是數量級的差異**，而非邊際改善。
+以上延遲數字為示意估算，非實測，會因系統、索引與資料量而大幅變動；但方向是穩定的：**當「關係」是問題的核心，知識圖譜帶來的是結構性的差異**，而非邊際改善。
 
 ---
 

@@ -404,7 +404,7 @@ Gemma-2B（$0.00003/q）→ Gemma-9B（$0.0001/q）→ Gemini Pro（$0.015/q）
   醫療/法律：強制雲端（無論熵值，高風險領域）
 ```
 
-**CMEK 加密**：on-premise 到 Vertex AI 的 payload 使用 Cloud KMS 客戶管理金鑰加密，金鑰輪換策略 90 天，滿足金融、醫療合規要求。（參考 Part 10：CMEK/BYOK）
+**CMEK 加密**：Vertex AI 端靜態儲存的資料（快取、日誌、微調資料等）使用 Cloud KMS 客戶管理金鑰加密，金鑰輪換策略 90 天，滿足金融、醫療合規要求；傳輸中則靠 TLS。注意 CMEK 保護的是靜態資料，不是推論過程——託管模型推論時仍必須看到明文。（參考 Part 10：CMEK/BYOK）
 
 **A/B 路由實驗**：以 user_id hash 做 traffic split，對照不同閾值配置對使用者滿意度（CSAT、thumbs-up rate）的影響，數據驅動閾值決策。
 
@@ -438,7 +438,7 @@ Gemma-2B（$0.00003/q）→ Gemma-9B（$0.0001/q）→ Gemini Pro（$0.015/q）
 
 - **Part 8（PII 去識別化）**：隱私路由層的 NER + Regex 直接依賴 Part 8 的 PII 偵測模式；兩者共用 token budget 評估與 Redis 快取策略，實作時可共享同一個 PII scanner service。
 - **Part 9（資料主權 / Sovereign AI）**：熵值路由的「強制本地」分支是資料主權合規的實作手段；Part 9 的資料分類等級（機密/敏感/公開）可直接對應路由決策：機密強制本地，公開允許全熵值路由。
-- **Part 10（CMEK/BYOK）**：Layer 3 的 Cloud KMS 加密 payload 需要 Part 10 的金鑰管理架構；客戶管理金鑰確保雲端模型無法在 Anthropic/其他廠商端解密推理內容。
+- **Part 10（CMEK/BYOK）**：Layer 3 的 Cloud KMS 加密 payload 需要 Part 10 的金鑰管理架構；客戶管理金鑰保護的是靜態儲存的資料；託管模型在推論時仍會看到明文，CMEK 無法阻止廠商端處理推理內容。
 - **Part 12（背壓與 Fair-Share）**：本地 GPU 滿載時，熵值路由需配合背壓機制決定：排隊等本地，還是直接升級雲端？這個決策需要兩者協同，過早升級增加成本，過度排隊增加延遲。
 
 ---
@@ -451,4 +451,4 @@ Gemma-2B（$0.00003/q）→ Gemma-9B（$0.0001/q）→ Gemini Pro（$0.015/q）
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-17-zh/) | [後一篇](/posts/fde-interview-core-topic-19-zh/) →
+← [前一篇](/posts/fde-core-concept-17-context-caching-eviction-zh/) | [後一篇](/posts/fde-core-concept-19-llm-judge-bias-mitigation-zh/) →

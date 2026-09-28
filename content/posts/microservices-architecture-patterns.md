@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
 tags: ["AI", "microservices", "distributed-systems", "scalability", "patterns"]
 summary: "Deep dive into proven microservices architecture patterns that help organizations scale their systems effectively while maintaining reliability and developer productivity."
+description: "Deep dive into proven microservices architecture patterns that help organizations scale their systems effectively while maintaining reliability and developer productivity."
 readTime: "12 min"
 ---
 

@@ -18,7 +18,7 @@ readTime: "18 min"
 
 FDE 面試官問 Memory Architecture，實際測的是三件事：
 
-- **你是否理解 context window 的硬限制**：LLM 的 context window 有限（Gemini 1.5 Pro 為 1M tokens，但實際可用的 coherent window 遠小於此），無法把整個對話歷史塞進 prompt。候選人必須說明如何在 window 之外持久化並選擇性地召回記憶。
+- **你是否理解 context window 的硬限制**：LLM 的 context window 有限（即使是 1M tokens 等級的長視窗，實際可用的 coherent window 也遠小於此），無法把整個對話歷史塞進 prompt。候選人必須說明如何在 window 之外持久化並選擇性地召回記憶。
 - **你是否知道三類記憶體的技術差異**：Episodic（短期、高寫入頻率）、Semantic（長期、需壓縮）、Procedural（靜態、系統層）三者的存儲介質、延遲要求和失效策略截然不同。只會說「存到資料庫」的候選人會被立刻追問「什麼資料庫？TTL 怎麼設？」。
 - **你是否考慮到企業級需求**：多租戶隔離、RBAC、CMEK 加密。在 B2B SaaS 場景下，記憶體洩漏到其他租戶是 P0 事故。
 
@@ -100,7 +100,7 @@ User Turn N 完成
            │
            ▼
 ┌──────────────────────┐
-│  3. Semantic Memory  │  將 User 最新訊息 embed（text-embedding-004）
+│  3. Semantic Memory  │  將 User 最新訊息 embed（text-embedding-005）
 │     ANN 檢索         │  在 Vertex AI Vector Search 做 top-K ANN 查詢
 └──────────┬───────────┘  延遲：< 15ms（p99）
            │              K = 5（預設），distance metric = cosine
@@ -121,7 +121,7 @@ Vertex AI Vector Search 使用 **ScaNN（Scalable Nearest Neighbors）** 演算�
 2. **分割（Partitioning）**：用 k-means 把向量空間切成 N 個分區，查詢時只掃描最近的幾個分區（beam_size 控制）。
 
 **關鍵參數**：
-- Embedding 維度：768（text-embedding-004）
+- Embedding 維度：768（text-embedding-005）
 - 每個 User 上限：5,000 個 semantic memories（超過觸發月度 eviction）
 - ANN 查詢延遲：< 15ms（p99），< 8ms（p50）
 - 精確度（recall@10）：> 0.95
@@ -139,7 +139,7 @@ Cloud Run Job（Gemini Flash 驅動）
   每個 turn 的處理：
     1. 萃取關鍵事實（Fact Extraction prompt）
     2. 去重（dedup 已存在的 semantic memories，cosine > 0.92 視為重複）
-    3. 產生 embedding（text-embedding-004）
+    3. 產生 embedding（text-embedding-005）
     4. Upsert 至 Vertex AI Vector Search
   平均處理速率：~500 turns/min
   每日費用估計：~$2–5（依 user 活躍數）
@@ -189,7 +189,7 @@ Score < 0.1 → 直接 evict（hard delete from Vector Search）
 
 **在 Layer 1 基礎上新增**：
 - **Redis Cluster**（3 shard × 2 replica）：HA，無單點故障
-- **Semantic Memory**：Vertex AI Vector Search + text-embedding-004
+- **Semantic Memory**：Vertex AI Vector Search + text-embedding-005
 - **Write-through 非同步寫入**：用 Cloud Tasks 在 turn 結束後 async 觸發 fact extraction
 - **Consolidation Job**：Cloud Run Job，每日執行，Gemini Flash 處理
 - **Procedural Memory**：System Prompt 存入 Firestore，版本化管理，熱更新不需 redeploy
@@ -288,4 +288,4 @@ Score < 0.1 → 直接 evict（hard delete from Vector Search）
 
 **系列導航**
 
-← [前一篇：Context Window Management](/posts/fde-interview-core-topic-1-context-window-zh/) | [後一篇：Tool Use & Function Calling](/posts/fde-interview-core-topic-3-tool-use-zh/) →
+← [前一篇：Context Management：Token 預算管理與上下文修剪策略](/posts/fde-core-concept-1-context-management-zh/) | [後一篇：State Machine & DAG：確定性圖結構與 Agent 反思迴圈收斂](/posts/fde-core-concept-3-state-machine-dag-zh/) →

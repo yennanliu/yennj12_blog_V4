@@ -5,7 +5,7 @@ draft: false
 description: "Comprehensive guide to implementing data consistency patterns in Java applications, including optimistic locking, pessimistic locking, and distributed transactions with real-world case studies and trade-off analysis."
 categories: ["all", "ai", "engineering", "architecture"]
 tags: ["Java", "Spring Boot", "Data Consistency", "Concurrency", "Distributed Systems", "JPA", "Two-Phase Commit", "AI"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "25 min"
 ---
 
@@ -576,6 +576,8 @@ graph TD
 
 #### 🛠️ Java Implementation
 
+> **Note:** The coordinator below is a teaching sketch of the 2PC protocol flow. It runs under a single local `@Transactional` and does not give real atomicity across databases or services. In production, 2PC across resources is done through XA with a JTA transaction manager (e.g. Atomikos or Narayana), and most teams avoid 2PC entirely in favour of the SAGA pattern with a transactional outbox.
+
 **Transaction Coordinator:**
 ```java
 @Component
@@ -819,6 +821,8 @@ graph TD
 ```
 
 ### 📊 Performance Benchmarks
+
+> **Note:** These numbers are illustrative, meant to show relative trends between strategies. They are not measurements from a documented benchmark (no hardware, dataset or load tool behind them). Benchmark your own workload before choosing on throughput alone.
 
 **Throughput Comparison (Requests/Second):**
 

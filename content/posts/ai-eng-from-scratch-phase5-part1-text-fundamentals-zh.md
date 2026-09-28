@@ -5,7 +5,7 @@ draft: false
 weight: 9
 description: "從詞袋到詞嵌入，掌握 NLP 工程師必備的文字前處理、TF-IDF、Word2Vec/GloVe/FastText 嵌入技術與文字分類生產架構"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "Word2Vec", "Text Classification", "Embeddings", "TF-IDF", "RKK", "Interview"]
+tags: ["AI", "NLP", "Word2Vec", "Text Classification", "Embeddings", "TF-IDF", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你被指派設計一個電商評論分析系統：每天新增 50 萬則中文評論，需支援情感分類（正/負/中性）、主題抽取（5 大類）、以及即時關鍵詞搜尋。系統目前是 POC 階段，但六個月後要上線服務百萬用戶。請說明你的 NLP 文字表示策略，以及各階段如何演進。
 
@@ -45,7 +45,7 @@ series: ["ai-eng-from-scratch"]
 ─────────────────────────────────────────────────
 ```
 
-這篇文章的目標：讓你在面試中能清楚說明**為什麼**在特定場景選擇特定表示法，而不只是背誦演算法。
+這篇文章的目標：讓你能清楚說明**為什麼**在特定場景選擇特定表示法，而不只是背誦演算法。
 
 ---
 
@@ -388,7 +388,7 @@ model.wv['iPhone15Pro']  # 從子詞推斷向量
 ### 6.1 從實驗到生產的五個陷阱
 
 **陷阱 1：訓練集洩漏**  
-評論按時間切分訓練/測試集，而非隨機切分。否則模型可能學到時間特徵而非語義特徵，線上表現比離線差 5-10%。
+評論要按時間切分訓練/測試集，不能隨機切分：隨機切分會讓訓練集混入「未來」的評論（新詞、新商品、新話題），離線分數因此虛高，上線後表現通常明顯下滑。
 
 **陷阱 2：類別不平衡**  
 電商評論通常正向 70%、負向 20%、中性 10%。不處理的話，模型會全預測正向，準確率 70% 但 F1 極低。解法：class_weight='balanced' 或 SMOTE 過採樣。
@@ -532,6 +532,8 @@ vs Embedding    可解釋（哪些詞最重要）               嵌入：黑盒�
          切換至 FastText；需要跨語言或複雜語境時，切換至 Sentence-BERT。
 ```
 
+> 2026 年的實務預設：在考慮自訓 Word2Vec 之前，先用現成的多語言句向量模型（multilingual-e5、bge-m3）或 Embeddings API 建立基線，再決定是否值得往下自訓。
+
 ### 決策 2：jieba vs HanLP vs CKIP（中文分詞）
 
 ```
@@ -640,8 +642,8 @@ vs 即時         成本低 3-5x（同等吞吐量）         即時：每個請
 
 | | 文章 |
 |--|------|
-| ← 上一篇 | [Phase 4 Part 3：模型監控與漂移偵測](/posts/ai-eng-from-scratch-phase4-part3-model-monitoring-zh/) |
-| → 下一篇 | [Phase 5 Part 2：Transformer 與 BERT 實戰](/posts/ai-eng-from-scratch-phase5-part2-transformers-zh/) |
+| ← 上一篇 | [Phase 4 Part 3：視覺語言模型、3D 視覺與世界模型](/posts/ai-eng-from-scratch-phase4-part3-vlm-3d-worldmodels-zh/) |
+| → 下一篇 | [Phase 5 Part 2：Seq2Seq 與注意力機制 — Transformer 前夜](/posts/ai-eng-from-scratch-phase5-part2-seq2seq-attention-zh/) |
 
 ---
 

@@ -6,7 +6,7 @@ weight: 2
 description: "深入探討 Kubernetes 核心資源對象，包含 Pod、Deployment、Service、Ingress、Volume 等完整操作指南，搭配大量 kubectl 指令範例與 YAML 配置，從基礎到實戰全面掌握。"
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "kubectl", "Pod", "Deployment", "Service", "Ingress", "Volume", "實務操作", "YAML", "DevOps"]
-authors: ["yennj12 team"]
+authors: ["yen"]
 readTime: "70 min"
 ---
 
@@ -847,6 +847,8 @@ kubectl delete svc nginx
 ```
 
 ## 🔀 Ingress 路由管理
+
+> **2026 年補充：** Kubernetes 社群已宣布退役 ingress-nginx 控制器（2026 年 3 月後停止維護），本節的 `nginx.ingress.kubernetes.io/*` 註解僅適用於既有叢集。新專案建議改用 Gateway API（`Gateway` / `HTTPRoute`）搭配支援它的控制器。
 
 ### Ingress 架構
 

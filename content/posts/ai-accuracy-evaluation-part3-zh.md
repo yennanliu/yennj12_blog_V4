@@ -6,7 +6,7 @@ weight: 3
 description: "RAG 系統的評估遠不只是看回答品質，還要驗證檢索忠誠度與事實接地性。本文介紹 Faithfulness、Relevance、Context Precision 等 RAG 專屬指標，以及如何使用 RAGAS 框架自動化評估流程。"
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "RAG", "LLM", "RAGAS", "Faithfulness", "Hallucination", "Evaluation", "繁體中文"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "18 min"
 ---
 
@@ -197,6 +197,8 @@ ECE 越低，模型越「自知」——它知道自己什麼時候在說確定�
 
 ### 快速上手
 
+> **版本注意**：這段是 RAGAS 0.1.x 的寫法（`question` / `contexts` / `answer` / `ground_truth` 欄位 + `datasets.Dataset`）。RAGAS 0.2 起改用 `EvaluationDataset` / `SingleTurnSample`，欄位改名為 `user_input` / `retrieved_contexts` / `response` / `reference`，指標也改成類別實例（如 `Faithfulness()`）。照抄請固定 `pip install "ragas<0.2"`，或依官方遷移指南改寫。
+
 ```python
 from ragas import evaluate
 from ragas.metrics import (
@@ -250,7 +252,7 @@ results = evaluate(
 )
 
 print(results)
-# 輸出範例：
+# 輸出範例（示意數字，非實際執行結果）：
 # {'faithfulness': 0.97, 'answer_relevancy': 0.92,
 #  'context_precision': 0.88, 'context_recall': 0.91}
 ```

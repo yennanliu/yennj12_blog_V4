@@ -5,7 +5,7 @@ draft: false
 description: "Master Redis Sentinel for high availability with comprehensive setup guides, mode comparisons, failover mechanisms, and production-ready Java integration. Learn monitoring, troubleshooting, and best practices for enterprise deployments."
 categories: ["all", "engineering", "architecture"]
 tags: ["Redis", "Redis Sentinel", "High Availability", "Distributed Systems", "Java", "Spring Boot", "Caching", "Database Architecture", "Failover", "Monitoring", "Database"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "50 min"
 ---
 
@@ -397,6 +397,11 @@ networks:
     driver: bridge
 ```
 
+> **Warning: the Sentinel-in-Docker address trap.** Sentinel tells clients where the current master is by returning the address it knows, which here is a container-internal IP (or, with `announce-hostnames yes`, a container name such as `redis-master`). That works for a client running inside `redis-network`. A Spring Boot app running on your host cannot reach either, so failover appears to "work" in the Sentinel logs while the client fails to connect. Two fixes:
+>
+> 1. **Run the application inside the same Docker network** (simplest, and what the `application.yml` below assumes). Inside the network every Sentinel listens on `26379`, so list `redis-sentinel-N:26379`, not the host-mapped ports.
+> 2. **Announce host-reachable addresses.** Add `replica-announce-ip <host-ip>` / `replica-announce-port <host-port>` to each Redis config and `sentinel announce-ip <host-ip>` / `sentinel announce-port <host-port>` to each Sentinel config, and have the master/replicas advertise their host-mapped ports. Alternatively use `network_mode: host` on Linux.
+
 ### 4. Notification Scripts
 
 **Redis Notification Script (`redis-notify.sh`):**
@@ -491,9 +496,11 @@ spring:
     sentinel:
       master: mymaster
       nodes:
+        # Inside the Docker network all Sentinels listen on 26379
+        # (26380/26381 are only the host-side port mappings)
         - redis-sentinel-1:26379
-        - redis-sentinel-2:26380
-        - redis-sentinel-3:26381
+        - redis-sentinel-2:26379
+        - redis-sentinel-3:26379
       password: sentinel_password
     password: redis_master_password
     timeout: 2000ms

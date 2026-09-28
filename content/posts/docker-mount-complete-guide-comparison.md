@@ -5,7 +5,7 @@ draft: false
 description: "Comprehensive guide to Docker mount types including volumes, bind mounts, and tmpfs. Learn the differences, use cases, pros/cons, and best practices for persisting data in Docker containers with practical examples."
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Docker", "Containers", "Docker Volumes", "Bind Mount", "tmpfs", "Data Persistence", "DevOps", "Container Storage", "Docker Best Practices"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "45 min"
 ---
 
@@ -156,8 +156,6 @@ docker run \
 ### Docker Compose Example
 
 ```yaml
-version: '3.8'
-
 services:
   app:
     image: node:18
@@ -369,8 +367,6 @@ docker run \
 ### Docker Compose Example
 
 ```yaml
-version: '3.8'
-
 services:
   web:
     image: nginx:latest
@@ -414,8 +410,6 @@ services:
 # └── docker-compose.yml
 
 # 2. Docker Compose configuration
-version: '3.8'
-
 services:
   dev:
     image: node:18
@@ -435,7 +429,7 @@ services:
       - CHOKIDAR_USEPOLLING=true  # For file watching
 
 # 3. Start development
-docker-compose up
+docker compose up
 
 # Now changes to ./src/* are immediately reflected in container!
 ```
@@ -443,6 +437,8 @@ docker-compose up
 ### Advanced Bind Mount Features
 
 **1. Consistency Modes (macOS/Windows)**
+
+> **Note (2026):** Current Docker Desktop uses VirtioFS file sharing by default and ignores the `cached` / `delegated` / `consistent` flags; they are accepted only for backward compatibility. For faster bind mounts on macOS/Windows, use VirtioFS (default), Docker Desktop's synchronized file shares, or keep heavy directories such as `node_modules` in a named volume.
 
 ```bash
 # Cached: prioritize container performance
@@ -628,8 +624,6 @@ docker run \
 ### Docker Compose Example
 
 ```yaml
-version: '3.8'
-
 services:
   app:
     image: myapp:latest
@@ -921,8 +915,6 @@ docker run \
 
 ```yaml
 # Production setup example
-version: '3.8'
-
 services:
   app:
     image: myapp:1.2.3
@@ -979,8 +971,6 @@ secrets:
 ### Example 1: Full-Stack Application
 
 ```yaml
-version: '3.8'
-
 services:
   # Frontend (Development)
   frontend:
@@ -1082,8 +1072,6 @@ volumes:
 ### Example 2: Microservices with Shared Volumes
 
 ```yaml
-version: '3.8'
-
 services:
   # Service 1: File Processor
   processor:
@@ -1130,8 +1118,6 @@ volumes:
 ### Example 3: Development Environment
 
 ```yaml
-version: '3.8'
-
 services:
   app:
     build:
@@ -1215,11 +1201,8 @@ docker run -v my-data:/app/data myapp:latest
 
 ```bash
 # Problem: File changes not reflected
-# Solution: Use consistency options
-docker run \
-  --mount type=bind,source=$(pwd),target=/app,consistency=cached \
-  node:18
-
+# Solution: make sure Docker Desktop uses VirtioFS file sharing (the default);
+# consistency=cached/delegated are ignored on current versions.
 # Or add polling for file watchers
 docker run \
   -v $(pwd):/app \
@@ -1335,12 +1318,16 @@ volumes:
 ### 2. Bind Mount Performance (macOS/Windows)
 
 ```yaml
-# Use delegated consistency for better performance
+# :delegated / :cached are ignored by current Docker Desktop (VirtioFS).
+# The real win is keeping node_modules out of the bind mount:
 services:
   app:
     volumes:
-      - ./src:/app/src:delegated
-      - ./node_modules:/app/node_modules:cached
+      - ./src:/app/src
+      - node_modules:/app/node_modules   # named volume, not a bind mount
+
+volumes:
+  node_modules:
 ```
 
 ### 3. tmpfs for Performance-Critical Operations

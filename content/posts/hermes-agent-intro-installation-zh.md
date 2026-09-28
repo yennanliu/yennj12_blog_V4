@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["Hermes Agent", "AI Agent", "自動化", "安裝指南", "NousResearch", "agent"]
 summary: "詳細介紹 Hermes Agent，一個具有自我學習和改進能力的 AI 系統。涵蓋核心功能、安裝步驟、配置方式和實際應用，幫助你快速上手這個強大的自主 AI 系統。"
+description: "詳細介紹 Hermes Agent，一個具有自我學習和改進能力的 AI 系統。涵蓋核心功能、安裝步驟、配置方式和實際應用，幫助你快速上手這個強大的自主 AI 系統。"
 readTime: "35 min"
 ---
 
@@ -36,20 +37,20 @@ Hermes Agent：
 ✓ 持久記憶（Persistent memory）
 ✓ 技能創建（Skill creation）
 ✓ 多平台訪問（Multi-platform）
-✓ 本地運行（Local-first）
+✓ 本地優先（Local-first：agent 狀態存在本機，推理可接本地或雲端模型）
 ```
 
 ### 區別於其他系統
 
 | 特性 | ChatGPT | Claude | Hermes Agent |
 |------|---------|--------|------------|
-| 本地運行 | ❌ | ❌ | ✅ |
-| 自我學習 | ❌ | ❌ | ✅ |
-| 創建技能 | ❌ | ❌ | ✅ |
-| 長期記憶 | 有限 | 有限 | ✅ |
-| 自動化任務 | ❌ | ❌ | ✅ |
-| 多平台接入 | 網頁 | 網頁 | Telegram/Discord/Slack |
+| 部署方式 | 雲端服務 | 雲端服務 | 自架；agent 狀態存本機，推理可接本地模型或雲端 API（如 OpenRouter） |
+| 長期記憶 | 有（Memory 功能） | 有（Memory / Projects） | 有（本機持久化） |
+| 技能 / 自動化 | 有（GPTs、排程任務、Agent 模式） | 有（Skills、Claude Code 等） | 有（從使用中自動建立與改進技能） |
+| 多平台接入 | 網頁 / 桌面 / 行動 App | 網頁 / 桌面 / 行動 App | Telegram / Discord / Slack |
 | 開源 | ❌ | ❌ | ✅ |
+
+> 差異不在「有沒有記憶或技能」——三者都有——而在 Hermes 是開源、可自架、由你掌控資料與模型選擇。
 
 ---
 
@@ -416,7 +417,7 @@ Hermes 支持多種模型，選擇時考慮：
 ## 常見問題
 
 ### Q: 數據安全嗎？
-**A**: 完全安全。數據存儲在本地 `~/.hermes/` 目錄，永遠不上傳到遠程伺服器（除非你選擇雲同步）。
+**A**: 取決於你設定的模型供應商。agent 的記憶與技能存在本地 `~/.hermes/` 目錄，但只要推理走雲端 API（例如 OpenRouter 或其他供應商），你的 prompt 與對話內容就會送到該供應商，受其資料政策約束。要讓資料完全不離開本機，必須改用本地模型。
 
 ### Q: 可以離線運行嗎？
 **A**: 可以。推理可以本地進行（使用 8B 模型），但調用 API 模型需要網絡。

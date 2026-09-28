@@ -50,6 +50,8 @@ GenAI 系統的品質卻天生是**主觀的**：一個回答是否「夠好」�
 而實際生產環境用 Gemini 2.0 Flash 的費用大約只有 $0.000075/1K tokens，
 也就是說**裁判費用可能是生產費用的 4-5 倍**。不做成本控制，評估管線本身就會破產。
 
+> 本文的模型（Gemini 1.5 Pro → 2.0 Flash）與單價以 2025 年撰文時為準，前者已退役；請把它讀成「第 N 代 → 第 N+1 代模型」，並以官方最新價目表重算。重點是裁判模型與生產模型的單價比例，而不是絕對金額。
+
 ### 挑戰二：LLM 裁判天生帶偏見
 
 已有多篇 NeurIPS / ACL 論文記錄了兩個關鍵偏見：
@@ -732,4 +734,4 @@ def rag_evaluation_pipeline(
 
 **系列導航**
 
-← [Part 49：FDE 面試指南 Part 49](/posts/fde-interview-guide-part49-multi-agent-orchestration-zh/) | [Part 51：FDE 面試指南 Part 51](/posts/fde-interview-guide-part51-zh/) →
+← [Part 49：百萬級 RAG 系統的即時資料漂移與向量索引自動更新管線](/posts/fde-interview-guide-part49-vector-drift-pipeline-zh/) | [Part 51：百萬級多輪對話的 KV Cache 驅逐機制與記憶體架構優化](/posts/fde-interview-guide-part51-kv-cache-memory-zh/) →

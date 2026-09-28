@@ -18,13 +18,13 @@ readTime: "18 min"
 
 面試官測試的核心能力：
 
-- **系統資源意識**：你是否理解 LLM 的上下文視窗是有限的硬性限制，而非軟性建議？能否量化每個元件的 Token 消耗？Token waterfall 問題若不主動管理，100 輪對話後必然觸發截斷或 OOM。
+- **系統資源意識**：你是否理解 LLM 的上下文視窗是有限的硬性限制，而非軟性建議？能否量化每個元件的 Token 消耗？Token waterfall 問題若不主動管理，100 輪對話後必然觸發截斷或 context 超限錯誤（context-length error，不是記憶體 OOM）。
 - **Trade-off 判斷力**：截斷策略的選擇（FIFO vs. 重要性加權 vs. 摘要壓縮）直接影響對話品質，面試官想看你能否說清楚「何時選哪種、代價是什麼」，而不是背誦一個萬用答案。
 - **生產可操作性**：理論上知道「要做 context trimming」很容易，但能否描述 LangGraph MemorySaver 的週期摘要節點、如何做 tenant-level 成本歸因，才是資深工程師的標誌。
 
 **弱答案長這樣**：「我們用滑動視窗，把最舊的訊息刪掉就好。」——沒有量化 Token 預算、沒有解釋為什麼 FIFO 在長對話中會丟失關鍵系統指令。
 
-**強答案長這樣**：「128K context 視窗中，system prompt 佔 8K、tools schema 佔 12K，剩餘 108K 給 history + answer。我們設 history ceiling 為 80K、answer reserve 為 28K。超過 history ceiling 時觸發階層式摘要：先壓縮最舊的 20 輪，~6K tokens 壓成 ~500 tokens，然後再做 FIFO。這樣能維持對話連貫性同時控制成本。壓縮比約 13:1，每次摘要呼叫用 Gemini Flash，成本不到主對話的 5%。」
+**強答案長這樣**：「128K context 視窗中，system prompt 佔 8K、tools schema 佔 12K，剩餘 108K 給 history + answer。我們設 history ceiling 為 80K、answer reserve 為 28K。超過 history ceiling 時觸發階層式摘要：先壓縮最舊的 20 輪，~16K tokens 壓成 ~500 tokens，然後再做 FIFO。這樣能維持對話連貫性同時控制成本。壓縮比約 32:1，每次摘要呼叫用 Gemini Flash，成本不到主對話的 5%。」
 
 ---
 
@@ -32,7 +32,7 @@ readTime: "18 min"
 
 ### Token 預算分配公式
 
-LLM 的上下文視窗 $C$ 是固定上限（以 Claude Sonnet 4 為例：200K tokens；Gemini 1.5 Pro：1M tokens；GPT-4o：128K tokens）。每次推理呼叫的 Token 組成：
+LLM 的上下文視窗 $C$ 是固定上限（常見規格為 128K、200K 到 1M tokens 不等；各家模型視窗大小更新頻繁，以官方文件為準）。每次推理呼叫的 Token 組成：
 
 ```
 C = P_system + P_tools + P_history + P_answer_reserve
@@ -61,7 +61,7 @@ P_history  ≤  92,000 tokens  (history ceiling)
 Turn 10  →   8,000 tokens   (9% history ceiling)   安全
 Turn 50  →  40,000 tokens   (43% history ceiling)  警戒
 Turn 100 →  80,000 tokens   (87% history ceiling)  危險
-Turn 115 →  92,000 tokens   觸發 OOM 或強制截斷    ← 問題發生點
+Turn 115 →  92,000 tokens   觸發超限錯誤或強制截斷 ← 問題發生點
 ```
 
 ### 上下文視窗的記憶體布局
@@ -162,7 +162,7 @@ FIFO 截斷前：                    FIFO 截斷後（超出 ceiling）：
 
 | 策略 | 50 輪後 tokens | 100 輪後 tokens | 對話品質 | 延遲開銷 |
 |------|--------------|----------------|---------|---------|
-| 無管理 | 40K | 80K（接近 OOM）| 高（直到爆掉）| 0ms |
+| 無管理 | 40K | 80K（接近上限）| 高（直到爆掉）| 0ms |
 | FIFO | 40K（固定上限）| 40K | 中（失憶風險）| <1ms |
 | 重要性加權 | 40K（固定上限）| 40K | 高 | +5–10ms |
 | 階層式摘要 | 24.5K | 24.5K（持續壓縮）| 最高 | +500–1000ms（每 20 輪一次）|
@@ -252,7 +252,7 @@ HISTORY_CEILING = CONTEXT_WINDOW - STATIC_TOKENS - ANSWER_RESERVE
 messages = trim_history_fifo(messages, HISTORY_CEILING)
 ```
 
-**解決的問題**：防止 context OOM，成本可控，對話不會因 API 報錯而中斷。
+**解決的問題**：防止 context 超限，成本可控，對話不會因 API 報錯而中斷。
 **剩下的問題**：FIFO 可能丟失關鍵早期上下文（角色設定、任務目標），對話可能突然「失憶」。工具輸出若未 trim，幾輪後仍快速耗盡 budget。
 **複雜度**：1 天實作，token counting 用 `tiktoken` 或模型 API 的 `count_tokens` 端點，零額外 API 成本。
 **適用場景**：POC 驗證、單輪 Q&A bot、< 20 輪的短對話場景、對話連貫性要求不高的場景。
@@ -410,9 +410,9 @@ summary_latency_seconds{p50, p95, p99}
 
 | 決策 | 選擇 X | 選 X 的理由 | 不選 Y 的理由 | 翻轉條件（何時選 Y）|
 |------|--------|------------|--------------|-------------------|
-| 截斷策略 | 階層式摘要 | 保留語意，對話可無限延伸，13:1 壓縮比 | FIFO：刪掉早期關鍵 turns，對話失憶 | 對話 < 20 輪、角色設定不重要時選 FIFO |
+| 截斷策略 | 階層式摘要 | 保留語意，對話可無限延伸，32:1 壓縮比 | FIFO：刪掉早期關鍵 turns，對話失憶 | 對話 < 20 輪、角色設定不重要時選 FIFO |
 | 摘要模型 | Gemini Flash | 成本 $0.075/1M tokens，延遲 ~300ms | 主模型（Claude Sonnet 4 $3/1M）：摘要成本佔主對話 40 倍 | 摘要品質極為關鍵（法律/醫療）時才考慮主模型 |
-| 觸發機制 | 每 N 輪 + Token 閾值 雙觸發 | 兼顧固定節奏與動態保護 | 僅每 N 輪：工具呼叫密集時可能在 N 輪內就 OOM | 對話輪次與 token 消耗高度相關時單觸發即可 |
+| 觸發機制 | 每 N 輪 + Token 閾值 雙觸發 | 兼顧固定節奏與動態保護 | 僅每 N 輪：工具呼叫密集時可能在 N 輪內就超限 | 對話輪次與 token 消耗高度相關時單觸發即可 |
 | 工具輸出 | Whitelist 欄位保留 | 只留推理所需欄位，安全可控 | Blacklist 欄位刪除：新工具欄位容易遺漏，token 膨脹難發現 | 工具輸出結構極不穩定時用 blacklist 作為補充 |
 | Pinning 策略 | 前 N 輪固定保護 | 角色設定/任務目標通常在開頭，永不丟失 | 依重要性分數決定：計算複雜，且初始 turns 在早期可能分數不高 | 對話中途才有關鍵設定時改用重要性加權 |
 | Budget 配置 | 分級 tenant class | 資源隔離，付費用戶不受免費用戶影響 | 全局統一 budget：免費用戶長對話會耗盡資源池，拖累付費用戶 | 單一租戶系統（內部工具）時無需分級 |
@@ -427,7 +427,7 @@ summary_latency_seconds{p50, p95, p99}
 | 100 輪對話 token 消耗 | 80,000 tokens | ~28,000 tokens（摘要+trim）| -65% |
 | 100 輪對話估算成本 | $0.24（輸入）| $0.084（輸入）| -65% |
 | 工具輸出 token 占比 | ~55%（10 次工具呼叫）| ~6%（修剪後）| -90% |
-| 對話 OOM 發生率 | ~100 輪後必發 | ~0（有監控+提前觸發）| -100% |
+| context 超限錯誤發生率 | ~100 輪後必發 | ~0（有監控+提前觸發）| -100% |
 | 摘要觸發延遲（p95） | N/A | ~800ms（Gemini Flash）| 每 20 輪一次，可接受 |
 | 對話品質（長對話）| 100 輪後急降（上下文丟失）| 穩定（摘要保留關鍵語意）| 主觀 +40% |
 
@@ -439,7 +439,7 @@ summary_latency_seconds{p50, p95, p99}
 |---------|------|---------|
 | 把完整工具 JSON 回應放進 context | 單次工具呼叫消耗 2K–10K tokens，10 次工具後 budget 耗盡 | 呼叫後立即 trim：whitelist 欄位、截斷陣列至 top-N、移除 null |
 | 純 FIFO 不保護早期 turns | 角色設定、使用者目標被刪除，對話「失憶」，品質崩潰 | 前 3 輪標記為 pinned，永不參與 FIFO 截斷 |
-| 沒有 budget 監控，等 API 報錯才知道超限 | 線上 OOM 導致對話中斷，用戶看到錯誤訊息 | 設 80% ceiling 告警，提前觸發摘要，勿等到 100% |
+| 沒有 budget 監控，等 API 報錯才知道超限 | 線上 context 超限錯誤導致對話中斷，用戶看到錯誤訊息 | 設 80% ceiling 告警，提前觸發摘要，勿等到 100% |
 | 摘要節點用跟主模型相同的大模型 | 摘要成本 ≈ 主對話成本，吃掉所有成本節省（40 倍差距）| 摘要用 Gemini Flash / Claude Haiku，成本低 10–40 倍 |
 | 忽略 tools schema 的靜態 Token 消耗 | 誤以為 history budget 有 108K，實際被 tools 佔走 12K | 啟動時計算 static overhead，動態調整 history ceiling |
 | 對所有 tenant 用相同 context 策略 | 免費用戶消耗企業級 Token 預算，SaaS 平台成本失控 | 依 tenant class 設定差異化 budget、summary frequency、trim 策略 |
@@ -464,4 +464,4 @@ summary_latency_seconds{p50, p95, p99}
 
 **系列導航**
 
-← 前一篇（本系列第一篇） | [後一篇：RAG 架構設計與向量檢索策略](/posts/fde-interview-core-topic-2-rag-architecture-zh/) →
+← 前一篇（本系列第一篇） | [後一篇：Memory Architecture：Agent 階層式記憶體設計](/posts/fde-core-concept-2-memory-architecture-zh/) →

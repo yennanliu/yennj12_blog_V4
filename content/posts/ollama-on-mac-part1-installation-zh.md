@@ -25,7 +25,7 @@ readTime: "18 min"
 - **隱私(Privacy)**:你的 prompt、公司的程式碼、病歷、合約草稿,全部留在這台 Mac 上,不會經過任何第三方伺服器。對受法規管制的產業(醫療、金融、法務)這幾乎是唯一能用 LLM 的方式。
 - **離線(Offline)**:飛機上、咖啡廳的爛 Wi-Fi、公司內網隔離環境,只要模型已經下載好,完全不需要網路。
 - **零 API 費用(Zero cost)**:雲端 API 是按 token 計費,重度使用一個月幾百美金跑不掉。本地模型下載後,你想 call 幾百萬次都是免費的,只花電費。
-- **低延遲(Low latency)**:沒有網路來回(round-trip),第一個 token 通常在幾十毫秒內就出來,適合需要即時回饋的互動場景。
+- **低延遲(Low latency)**:沒有網路來回(round-trip),短 prompt 時第一個 token 通常在幾十毫秒內就出來(長 prompt 需要先做 prompt eval,可能要一秒以上),適合需要即時回饋的互動場景。
 - **可實驗(Experimentation)**:想試不同模型、改參數、自訂 system prompt、做 fine-tune、跑 RAG,本地環境讓你毫無顧忌地亂玩,不用擔心帳單爆炸。
 
 當然,天下沒有白吃的午餐。**本地跑 LLM 的取捨**大致如下:
@@ -593,10 +593,10 @@ brew upgrade ollama
 ## 系列導覽
 
 - **Part 1 — 安裝與第一個本地模型(本篇)**
-- [Part 2 — 公開模型全覽與選型指南](../ollama-on-mac-part2-public-models-zh/)
-- [Part 3 — REST API 與自訂 Modelfile](../ollama-on-mac-part3-api-modelfile-zh/)
-- [Part 4 — 與應用整合(Python、OpenAI SDK、LangChain、Open WebUI、RAG)](../ollama-on-mac-part4-app-integration-zh/)
-- [Part 5 — 工具呼叫、多模型服務與進階實踐](../ollama-on-mac-part5-advanced-zh/)
+- [Part 2 — 公開模型全覽與選型指南](/posts/ollama-on-mac-part2-public-models-zh/)
+- [Part 3 — REST API 與自訂 Modelfile](/posts/ollama-on-mac-part3-api-modelfile-zh/)
+- [Part 4 — 與應用整合(Python、OpenAI SDK、LangChain、Open WebUI、RAG)](/posts/ollama-on-mac-part4-app-integration-zh/)
+- [Part 5 — 工具呼叫、多模型服務與進階實踐](/posts/ollama-on-mac-part5-advanced-zh/)
 
 ## 參考連結
 

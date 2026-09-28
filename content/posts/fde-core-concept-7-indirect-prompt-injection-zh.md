@@ -20,11 +20,11 @@ readTime: "18 min"
 
 - **威脅建模能力**：你能否識別 Agent 架構中「信任邊界」在哪裡斷裂？現代 LLM Agent 頻繁呼叫 web scraper、email reader、document parser 等工具，每一個工具回傳值都是潛在的注入載體。面試官想看到你能把攻擊向量具體化，說出「哪一條 tool call path 在何種條件下會被污染」，而不是泛談「要做 input validation」。
 - **防禦縱深設計**：只回答「過濾特殊字元」或「在 system prompt 說不要聽 user 的話」是典型弱答——這些防禦都在 LLM 的 context window 層面打轉，無法對抗語意等價的攻擊變體。強答必須展示網路隔離 + 模型隔離 + Schema 驗證三個獨立防線，讓攻擊者即使突破其中一層也無法達成目標。
-- **系統性工程判斷**：在安全性、功能性、成本之間如何取捨，以及能否量化防禦效果。能說出「Tier 1 Cloud Run 無 VPC 存取，從架構層面消滅 100% 網路可達攻擊面」的候選人，顯示他真的設計過系統，而不是紙上談兵。
+- **系統性工程判斷**：在安全性、功能性、成本之間如何取捨，以及能否量化防禦效果。能說出「Tier 1 Cloud Run 無 VPC 存取，從架構層面切斷對內部網路的可達路徑」的候選人，顯示他真的設計過系統，而不是紙上談兵。
 
 **弱答長相**：「對 scraper 回傳的內容做關鍵字過濾，偵測到 ignore / instructions 等字串就拒絕。」
 
-**強答長相**：「我用三層隔離：Tier 1 是無特權的 scraper 模型，運行在沒有內部 VPC 存取的 Cloud Run 上，system prompt 鎖定只輸出 JSON；Tier 2 做 Pydantic strict schema 驗證，extra=forbid 確保任何 allowlist 外的欄位直接報錯；Tier 3 特權 Agent 只讀已驗證的結構化物件，永遠不看原始外部文字。Unicode 正規化在 Tier 1 入口先跑，覆蓋 98% 的隱形字元技巧。即使 Tier 1 模型被注入，它連內部 API 的網路路徑都沒有，攻擊者什麼也觸達不了。」
+**強答長相**：「我用三層隔離：Tier 1 是無特權的 scraper 模型，運行在沒有內部 VPC 存取的 Cloud Run 上，system prompt 鎖定只輸出 JSON；Tier 2 做 Pydantic strict schema 驗證，extra=forbid 確保任何 allowlist 外的欄位直接報錯；Tier 3 特權 Agent 只讀已驗證的結構化物件，永遠不看原始外部文字。Unicode 正規化在 Tier 1 入口先跑，覆蓋絕大多數已知的隱形字元技巧。即使 Tier 1 模型被注入，它連內部 API 的網路路徑都沒有，攻擊者什麼也觸達不了。」
 
 ---
 
@@ -119,7 +119,7 @@ def normalize_and_strip(text: str) -> str:
     return text[:2048]
 ```
 
-NFC 正規化 + 顯式字元剔除組合可覆蓋 98% 的已知隱形字元攻擊技巧；剩餘 2% 是高度定制化的攻擊，需要更高層的 Schema 隔離來防禦。
+NFC 正規化 + 顯式字元剔除組合可覆蓋絕大多數已知隱形字元攻擊技巧（本文的 98% 為示意量級，非量測值）；剩下的是高度定制化的攻擊，需要更高層的 Schema 隔離來防禦。
 
 ### 攻擊向量的完整分類
 
@@ -138,7 +138,7 @@ NFC 正規化 + 顯式字元剔除組合可覆蓋 98% 的已知隱形字元攻�
 |---------|-----------|-------------|---------|
 | **Tier 1 用 Gemini Flash** vs 完整 Pro 模型 | Flash 成本低 10 倍（$0.00015 vs $0.0015/頁），Tier 1 任務單純——只要輸出 JSON，不需推理能力；被注入的代價低（無特權） | Pro 模型：成本高、context window 大反而增加被操控空間，付更多錢買更高注入風險 | 若 scraping 需要複雜多步驟判斷（如法律文件解析），才考慮升級模型，但同時要加更嚴格的 schema |
 | **Pydantic strict extra=forbid** vs 手動字串過濾 | Schema 驗證是型別系統層面的保障，語言層面強制執行；無論攻擊者如何表達指令，只要不符合欄位型別就直接拒絕 | 字串過濾：需要維護不斷擴充的黑名單，攻擊者只需換一種說法就能繞過，是無窮盡的貓鼠遊戲 | 若外部資料本身就是自由文字（如摘要、評論），必須升到 Layer 3 的 Injection Classifier |
-| **Cloud Run 無 VPC 存取** vs 同 VPC 內的 scraper | 網路層隔離是最硬的防線——即使所有軟體層防禦失效，攻擊者也無法路由到內部服務；消滅 100% 網路可達攻擊面 | 同 VPC：任何注入成功都可能直達內部 API，防禦深度從三層降為二層，風險指數上升 | 若 scraping 需要存取需要身份驗證的內部文件（如私有 S3），改用 IAM 最小權限 + 單一 bucket 存取，不是整個 VPC |
+| **Cloud Run 無 VPC 存取** vs 同 VPC 內的 scraper | 網路層隔離是最硬的防線——即使所有軟體層防禦失效，攻擊者也無法路由到內部服務；切斷通往內部服務的網路路徑 | 同 VPC：任何注入成功都可能直達內部 API，防禦深度從三層降為二層，風險指數上升 | 若 scraping 需要存取需要身份驗證的內部文件（如私有 S3），改用 IAM 最小權限 + 單一 bucket 存取，不是整個 VPC |
 | **2048 token 輸出上限** vs 無上限 | 防止兩種攻擊：(1) context stuffing（塞滿 context window 讓 Tier 3 無法正常工作）；(2) exfiltration（攻擊者在超長回應中夾帶偷到的內部資料） | 無上限：若供應商頁面很長，scraper 可能回傳 50K tokens，攻擊者可在其中夾帶大量混淆內容 | 若業務需要擷取長文件（如完整合約），改用分頁處理，每頁 2048 token，不放開上限 |
 | **URL allowlist 精確比對** vs regex 或 substring | `urlparse().netloc` 回傳精確 hostname，`approved.com.evil.com` 不會比對到 `approved.com`；frozenset lookup O(1) | regex 容易被精心構造的 URL 繞過；substring 有子域名偽裝漏洞；兩者維護成本高且容錯率低 | 若需要允許整個子域名空間（如 `*.supplier.com`），用 suffix match 而非 substring，且必須 test case 覆蓋邊界情況 |
 
@@ -289,7 +289,7 @@ def validate_url(url: str) -> str:
 
 **Layer 2 防禦效果**：
 
-- 網路隔離消滅 100% 的「inject → 直接呼叫內部 API」攻擊路徑（Tier 1 沒有路由到內部網路）
+- 網路隔離切斷「inject → 直接呼叫內部 API」這條攻擊路徑（Tier 1 沒有路由到內部網路）
 - Schema 嚴格驗證使自由文字欄位幾乎消失，大幅縮窄注入指令的存活空間
 - output token 2048 上限防止 context stuffing 和 exfiltration（攻擊者無法把大量內部資料偷渡出去）
 
@@ -357,7 +357,7 @@ def validate_url(url: str) -> str:
 | 防禦層 | 覆蓋的攻擊類型 | 失效條件 | 額外成本（月） | 開發時間 |
 |-------|-------------|---------|-------------|---------|
 | Layer 1（Unicode + 黑名單） | 明顯關鍵字攻擊、零寬字元 | 語意等價變體、多語言、paraphrase | ~$0 | 0.5 天 |
-| Layer 2（Tier 1/2/3 架構隔離） | 網路可達攻擊（100%）、schema 外欄位、token exfiltration | 若 scraping 需要自由文字欄位 | ~$15–30 | 1–2 週 |
+| Layer 2（Tier 1/2/3 架構隔離） | 網路可達攻擊、schema 外欄位、token exfiltration | 若 scraping 需要自由文字欄位 | ~$15–30 | 1–2 週 |
 | Layer 3（KMS + Classifier + SIEM） | Pub/Sub 中間人攻擊、新型注入模式（quarantine 保留）、供應鏈 domain 污染 | 零日攻擊（完全未知的注入手法） | ~$50–100 | 4–6 週 |
 
 **關鍵洞察**：Layer 1 單獨使用只是安慰劑；Layer 2 是真正的防線——網路隔離這一條就消滅了最危險的攻擊路徑。Layer 3 是合規需求，不是安全需求（Layer 2 已提供足夠安全保障）。
@@ -405,9 +405,9 @@ def validate_url(url: str) -> str:
 
 | 指標 | Before（特權 Agent 直讀 scraper 輸出） | After（Tier 1/2/3 隔離） | 改善幅度 |
 |-----|--------------------------------------|------------------------|---------|
-| 網路可達攻擊面 | scraper 與內部 API 同 VPC，注入後可直達任何內部端點 | Tier 1 無 VPC，攻擊者無法路由到任何內部服務 | -100%（完全消滅） |
+| 網路可達攻擊面 | scraper 與內部 API 同 VPC，注入後可直達任何內部端點 | Tier 1 無 VPC，攻擊者無法路由到任何內部服務 | 切斷內部網路路徑 |
 | 自由文字注入存活率 | 攻擊者可在任何回應中放任意自然語言指令 | Tier 2 schema 限制欄位型別，自由文字欄位幾乎消失 | ~-95% |
-| 隱形字元攻擊成功率 | 零寬字元透明傳遞給 LLM，關鍵字過濾失效 | NFC + 顯式剔除，覆蓋 98% 已知隱形字元 | -98% |
+| 隱形字元攻擊成功率 | 零寬字元透明傳遞給 LLM，關鍵字過濾失效 | NFC + 顯式剔除，覆蓋絕大多數已知隱形字元 | 大幅下降（示意約 -98%） |
 | Token exfiltration 風險 | 無上限，攻擊者可在超長回應中夾帶內部資料 | 2048 token 硬上限，截斷並記 warning | 實質消除 |
 | 異常偵測延遲 | 無，注入發生後只能從業務異常反向追查 | Tier 2 rejection rate 指標即時告警，< 5 分鐘偵測 | 從「永遠不知道」到「< 5 min MTTD」 |
 | 合規審計軌跡 | 無法重建攻擊路徑 | 每個 scrape job 帶 trace ID，quarantine queue 保留 forensic 資料 | 從 0% 到 100% 可審計 |
@@ -426,10 +426,10 @@ def validate_url(url: str) -> str:
 
 ## 七、面試一句話（Killer Phrase）
 
-> *「Indirect Prompt Injection 比直接注入危險十倍，原因在於攻擊面從『能登入系統的人』擴展到『任何能在網路上放內容的人』——防禦的本質不是過濾關鍵字，而是讓惡意指令從架構層面就無法抵達有特權的執行環境。我的設計是三層隔離：Tier 1 無特權 Cloud Run 跑 Flash 模型，system prompt 鎖定只輸出 JSON，且無內部 VPC 存取；Tier 2 Pydantic strict schema 以 extra=forbid 拒絕任何 allowlist 外的欄位；Tier 3 特權 Agent 只讀已驗證的結構化 Python object，永遠不接觸原始外部文字。配合 NFC Unicode 正規化覆蓋 98% 隱形字元攻擊、2048 token 輸出上限防止 exfiltration。網路隔離從架構上消滅 100% 網路可達攻擊面——這是系統性防禦，不是和攻擊者玩無窮盡的關鍵字貓鼠遊戲。」*
+> *「Indirect Prompt Injection 比直接注入危險十倍，原因在於攻擊面從『能登入系統的人』擴展到『任何能在網路上放內容的人』——防禦的本質不是過濾關鍵字，而是讓惡意指令從架構層面就無法抵達有特權的執行環境。我的設計是三層隔離：Tier 1 無特權 Cloud Run 跑 Flash 模型，system prompt 鎖定只輸出 JSON，且無內部 VPC 存取；Tier 2 Pydantic strict schema 以 extra=forbid 拒絕任何 allowlist 外的欄位；Tier 3 特權 Agent 只讀已驗證的結構化 Python object，永遠不接觸原始外部文字。配合 NFC Unicode 正規化覆蓋絕大多數隱形字元攻擊、2048 token 輸出上限防止 exfiltration。網路隔離從架構上切斷對內部服務的網路路徑——這是系統性防禦，不是和攻擊者玩無窮盡的關鍵字貓鼠遊戲。」*
 
 ---
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-6-zh/) | [後一篇](/posts/fde-interview-core-topic-8-zh/) →
+← [前一篇](/posts/fde-core-concept-6-prompt-injection-jailbreak-zh/) | [後一篇](/posts/fde-core-concept-8-pii-deidentification-zh/) →

@@ -4,7 +4,7 @@ date: 2025-09-29T10:02:35+08:00
 draft: false
 tags: ["AWS", "DynamoDB", "NoSQL", "Database", "Performance", "Optimization", "Java", "Architecture", "Cloud Computing"]
 categories: ["all", "engineering", "infrastructure"]
-author: "Yen-Nan Liu"
+authors: ["yen"]
 description: "Comprehensive guide to AWS DynamoDB covering data structures, architecture, indexing strategies, secondary indexes, sort keys, and performance optimization techniques for high-speed I/O operations."
 ---
 
@@ -1473,6 +1473,6 @@ Amazon DynamoDB is a powerful NoSQL database service that excels in high-scale, 
 - **High-scale web applications** requiring fast, predictable performance
 - **Gaming applications** with real-time leaderboards and session management
 - **IoT workloads** with massive write throughput requirements
-- **Mobile applications** needing offline sync capabilities
+- **Mobile applications** with simple, high-volume access patterns (offline sync itself comes from AppSync/Amplify DataStore on top of DynamoDB, not from DynamoDB)
 
 Understanding these concepts and implementing the optimization techniques discussed will help you build high-performance applications that can scale to millions of users while maintaining consistent, fast response times.

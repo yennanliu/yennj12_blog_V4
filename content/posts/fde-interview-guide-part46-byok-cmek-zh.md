@@ -28,12 +28,12 @@ readTime: "27 min"
 
 ### 1.1 金融業的監管壓力
 
-台灣金融監理局（FSC）、PCI DSS Level 1、以及個人資料保護法（PDPA）三重框架對金融業的加密要求達到史上最嚴格水準：
+金融監督管理委員會（金管會，FSC）的規範、PCI DSS Level 1、以及個人資料保護法（PDPA）三重框架對金融業的加密要求達到史上最嚴格水準：
 
 - **密鑰主權**：加密密鑰的控制權必須留在金融機構手中，雲端供應商不得持有明文 KEK
 - **審計可追溯**：每一次密鑰使用（加密/解密/輪轉）必須留下不可竄改的操作日誌
 - **密鑰隔離**：不同業務線（個人金融、企業金融、投資銀行）的密鑰必須完全隔離
-- **快速撤銷**：監管機構要求在 15 分鐘內能夠撤銷任何密鑰的使用授權
+- **快速撤銷**：必須能在短時間內撤銷任何密鑰的使用授權（本文以 15 分鐘作為設計目標；這不是引用自特定法規條文，實際時限依主管機關規範與機構內部政策而定）
 
 ### 1.2 GenAI 場景為什麼特別難
 
@@ -62,6 +62,8 @@ LLM Context Cache 的有效期可能是分鐘到小時不等，密鑰輪轉週�
 | 審計完整性 | 完整 | 無 | 日誌如何不漏？ |
 
 答案在於：**讓地端 HSM 只做一件事——授權 DEK 的生成與輪轉；日常解密則在 GCP 的受保護記憶體邊界（Memory Enclave）裡完成。**
+
+> 架構前提說明：Vertex AI Vector Search 是託管服務，啟用 CMEK 後由平台的信封加密在靜態層處理金鑰，客戶看不到、也不需要「每次查詢一次 KMS 往返」，所以上表「純合規路線 12 秒」是刻意誇大的對照組。客戶自己把 DEK 注入 Confidential VM、再替託管的 ANN 查詢解密，這條路徑只適用於自建向量檢索服務的情境。對託管服務而言，真正要設計的是 EKM / Key Access Justifications 的存取政策，以及銀行撤銷金鑰時的影響範圍（哪些服務會立刻失效、SLA 如何受影響）。
 
 ---
 
@@ -377,7 +379,7 @@ Time →
 
 ### 4.1 為什麼需要 Memory Enclave
 
-傳統的 VM 即使 OS 和應用被加密，Hypervisor（雲端供應商控制）仍然理論上可以存取 VM 的記憶體。Memory Enclave 透過 CPU 硬體指令，建立一個即使 Hypervisor 也無法讀取的受保護記憶體區域。
+傳統的 VM 即使 OS 和應用被加密，Hypervisor（雲端供應商控制）仍然理論上可以存取 VM 的記憶體。Confidential VM（AMD SEV / SEV-SNP、Intel TDX）以 CPU 硬體加密整台 VM 的記憶體，讓 Hypervisor 無法讀取。要注意它保護的是整台 VM，而不是 Intel SGX 那種應用程式內的 enclave；本文沿用「Memory Enclave」一詞，指的是這個受保護的 VM 記憶體邊界。
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -725,7 +727,9 @@ gcloud kms keys add-iam-policy-binding vertex-ai-dek \
 ### EKM 外部密鑰管理員設定要點
 
 ```yaml
-# EKM Proxy 設定（地端部署）
+# EKM Proxy 設定（地端部署）——示意用的虛擬設定，非任何產品的實際格式
+# （justification reason 名稱取自 Key Access Justifications 的實際列舉值；
+#   auto_revoke_on_anomaly 等欄位為示意，需在自家 EKM Proxy 中自行實作）
 ekm_config:
   hsm_endpoint: "hsm.bank.internal:2223"
   allowed_justification_reasons:
@@ -746,4 +750,4 @@ ekm_config:
 
 **系列導航**
 
-← [Part 45：大規模 RAG 系統的向量檢索優化與重排序架構](/posts/fde-interview-guide-part45-rag-vector-reranking-zh/) | [Part 47：GenAI 應用的可觀測性與 LLM 評估框架](/posts/fde-interview-guide-part47-genai-observability-llm-eval-zh/) →
+← [Part 45：Agent 工具鏈的間接提示詞注入防禦設計](/posts/fde-interview-guide-part45-prompt-injection-defense-zh/) | [Part 47：RKK 實戰——大模型與地端微型模型的智慧混合路由與冷啟動優化](/posts/fde-interview-guide-part47-edge-model-routing-zh/) →

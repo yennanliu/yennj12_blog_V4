@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "claude-code", "model-tiering", "cost-optimization", "model-routing", "LLM-optimization", "API", "agent-orchestration", "development-tools"]
 summary: "多 Agent Token 優化系列 pt.4：深入探索模型分層策略，從任務分類、智能路由到動態選擇，提供完整實作範例，幫助你在保持品質的同時大幅降低 AI 應用成本。"
+description: "多 Agent Token 優化系列 pt.4：深入探索模型分層策略，從任務分類、智能路由到動態選擇，提供完整實作範例，幫助你在保持品質的同時大幅降低 AI 應用成本。"
 readTime: "30 min"
 ---
 
@@ -18,7 +19,7 @@ readTime: "30 min"
 ### 不同模型的能力與成本差異
 
 ```
-Claude 模型系列對比（2026 參考定價）：
+Claude 模型系列對比（撰文時的舊版定價，僅供示意；請以 Anthropic 官方定價頁為準）：
 
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    Claude 模型能力與成本矩陣                         │
@@ -31,9 +32,11 @@ Claude 模型系列對比（2026 參考定價）：
 │ Claude Haiku 3.5 │ $0.80   │ $4      │ ★★★     │ ★★★★★（最快） │
 └──────────────────┴─────────┴─────────┴──────────┴──────────────────┘
 
-成本差異計算：
+成本差異計算（依上表舊版定價）：
 - Opus vs Haiku 輸入：15 / 0.80 = 18.75x
 - Opus vs Haiku 輸出：75 / 4 = 18.75x
+- 注意：以 2026 年現行定價，Opus 與 Haiku 的價差已縮小到約 5 倍，
+  下方的節省比例會明顯變小
 
 場景：處理 1000 個請求，每個請求 2000 輸入 + 500 輸出 tokens
 
@@ -46,7 +49,8 @@ Claude 模型系列對比（2026 參考定價）：
 智能分層（假設 70% 用 Haiku，30% 用 Sonnet）：
   700 × $3.60/1000 + 300 × ((2000×$3 + 500×$15)/1M) = $5.97
 
-節省：全 Opus 方案的 91%！
+節省：全 Opus 方案的 91%（舊版定價下的示意值；以現行約 5 倍價差
+      重算，節省幅度會大幅縮小）
 ```
 
 ### 任務複雜度的長尾分布
@@ -145,8 +149,9 @@ class ModelSpec:
 # 定義可用模型
 MODELS = {
     "opus": ModelSpec(
-        name="Claude Opus 4",
-        model_id="claude-opus-4-20250514",
+        name="Claude Opus 5.5",
+        model_id="claude-opus-5-5",
+        # 以下價格為撰文時的舊版示意值，請以 Anthropic 官方定價頁為準
         input_cost_per_1m=15.0,
         output_cost_per_1m=75.0,
         max_tokens=4096,
@@ -154,8 +159,8 @@ MODELS = {
         weaknesses=["成本高", "速度較慢"]
     ),
     "sonnet": ModelSpec(
-        name="Claude Sonnet 4",
-        model_id="claude-sonnet-4-20250514",
+        name="Claude Sonnet 5",
+        model_id="claude-sonnet-5",
         input_cost_per_1m=3.0,
         output_cost_per_1m=15.0,
         max_tokens=4096,
@@ -163,8 +168,8 @@ MODELS = {
         weaknesses=["複雜推理略遜 Opus"]
     ),
     "haiku": ModelSpec(
-        name="Claude Haiku 3.5",
-        model_id="claude-3-5-haiku-20241022",
+        name="Claude Haiku 4.5",
+        model_id="claude-haiku-4-5-20251001",
         input_cost_per_1m=0.80,
         output_cost_per_1m=4.0,
         max_tokens=4096,
@@ -506,7 +511,7 @@ class LLMClassifierRouter:
 
     def __init__(
         self,
-        classifier_model: str = "claude-3-5-haiku-20241022",
+        classifier_model: str = "claude-haiku-4-5-20251001",
         enable_caching: bool = True
     ):
         self.classifier_model = classifier_model
@@ -1569,7 +1574,7 @@ if __name__ == "__main__":
         calculator.print_comparison(scenario)
 ```
 
-輸出範例：
+輸出範例（依上方 `MODELS` 中的舊版示意價格計算，實際數字請以現行定價重算）：
 
 ```
 ============================================================
@@ -1658,4 +1663,4 @@ if __name__ == "__main__":
 3. **持續監控優化**：追蹤實際分布，調整路由策略
 4. **品質保障機制**：設置品質閾值，必要時自動升級
 
-透過合理的模型分層，你可以在保持輸出品質的同時，將 AI 應用成本降低 50-90%。
+透過合理的模型分層，你可以在保持輸出品質的同時，明顯降低 AI 應用成本；實際幅度取決於現行各模型的價差與你的流量分布（以現行定價計，Opus 與 Haiku 約差 5 倍，已不是舊版的 18.75 倍）。

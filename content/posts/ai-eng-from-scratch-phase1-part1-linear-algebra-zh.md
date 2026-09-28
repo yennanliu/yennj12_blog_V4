@@ -5,7 +5,7 @@ draft: false
 weight: 1
 description: "從工程師視角掌握 AI 必備的線性代數與微積分直覺：向量、矩陣、梯度下降、反向傳播背後的數學原理，附 ASCII 架構圖與工程決策表"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Math", "Linear Algebra", "Calculus", "Machine Learning", "RKK", "Interview"]
+tags: ["AI", "Math", "Linear Algebra", "Calculus", "Machine Learning", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 面試情境
+## 工程情境
 
 > 你正在為一個推薦系統訓練 Embedding 模型。訓練第 5 個 epoch 後 loss 突然從 0.8 跳到 `NaN`，GPU 使用率正常、資料沒問題。請問你會從哪些數學角度切入診斷？你會如何用線性代數和微積分的知識判斷根本原因並修復？
 
@@ -239,7 +239,7 @@ y = x @ W.T                 # 正確：(32, 128) @ (128, 256) → (32, 256)
 │  CPU 序列計算：                                              │
 │  A(m×k) × B(k×n) → C(m×n)                                  │
 │  複雜度：O(m × k × n) ≈ O(n³) for square matrices          │
-│  1000×1000 矩陣：10⁹ 次乘加 ≈ CPU 單核 ~1秒               │
+│  1000×1000 矩陣：10⁹ 次乘加（純 Python 迴圈要數分鐘）      │
 │                                                             │
 │  GPU 並行計算：                                              │
 │  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐                   │
@@ -247,10 +247,10 @@ y = x @ W.T                 # 正確：(32, 128) @ (128, 256) → (32, 256)
 │  │C[0,0]│  │C[0,1]│  │C[1,0]│  │C[1,1]│  核心同時計算     │
 │  └──────┘  └──────┘  └──────┘  └──────┘                   │
 │                                                             │
-│  GPU 理論加速：4096 核心 → 有效複雜度降至 O(n²)             │
-│  實際測量：1000×1000 矩陣乘法                               │
-│  CPU (i9)：   ~800ms                                        │
-│  GPU (A100)：  ~0.3ms    → 2600倍加速                      │
+│  並行不改變漸近複雜度（仍是 O(n³)），只是把常數除以核心數  │
+│  示意量級：1000×1000 矩陣乘法（FP32）                       │
+│  CPU（BLAS 多核）：~10–20ms                                 │
+│  GPU (A100)：      < 1ms     → 約一到兩個數量級            │
 │                                                             │
 │  TensorCore (混合精度 BF16)：額外 ~4× throughput           │
 └─────────────────────────────────────────────────────────────┘
@@ -512,7 +512,7 @@ torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 | **Adam** | 自適應學習率：每個參數有獨立 LR；不需精細調 LR；收斂快，15–30% 更快達到同等 loss | SGD：需要精細調 LR 和 momentum；對 LR 敏感；收斂慢但有時泛化更好 |
 | **SGD+Momentum** | 某些 CV 任務泛化性能 1–3% 更好；記憶體比 Adam 少 1/3（無需存 m, v）| Adam：訓練快但有時 generalization gap 較大 |
 
-**翻轉條件：** 當模型 > 1B 參數且記憶體緊張時，考慮 SGD；當訓練預算有限時，Adam 幾乎必選。
+**翻轉條件：** 當模型 > 1B 參數且記憶體緊張時，實務上改用 8-bit Adam、Adafactor 或 ZeRO 分片優化器狀態，而不是退回 SGD；當訓練預算有限時，Adam 幾乎必選。
 
 ### 8.2 L1 vs L2 Regularization
 
@@ -565,23 +565,23 @@ torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 
 ## 九、系統效應：有無數學基礎的前後對比
 
-以下是真實工程場景中，數學理解程度對工作效率的量化影響：
+以下是數學理解程度對工作效率的質性對比（效益欄為示意，非實測數據）：
 
 | 場景 | 沒有數學基礎 | 有數學基礎 | 效益 |
 |---|---|---|---|
-| Gradient Explosion 診斷 | 試遍所有超參數，~2天 | 看梯度範數，<30分鐘 | 8× 更快 |
+| Gradient Explosion 診斷 | 試遍所有超參數 | 看梯度範數，快速定位 | 大幅縮短 |
 | 選擇 optimizer | 永遠用 Adam，不了解為什麼 | 根據任務和資源選擇，有理論依據 | 訓練速度提升 15–30% |
 | Loss 不收斂 | 無頭緒，問別人或重跑 | 從 loss landscape 角度系統性排查 | 解決時間 3× 更短 |
 | 設計自訂 Loss | 不敢嘗試 | 能手推梯度公式，30分鐘實作 | 解鎖新能力 |
 | 模型輕量化（LoRA）| 套用現成工具，不理解參數 | 理解 SVD 後可以調整 rank，最佳化精度/大小 | 模型大小再縮減 30–50% |
-| 除錯 NaN loss | 隨機嘗試，平均 6 小時 | 用數學推斷根本原因，< 1 小時 | 5× 更快 |
+| 除錯 NaN loss | 隨機嘗試 | 用數學推斷根本原因 | 大幅縮短 |
 | 解釋模型行為給業務 | 只能說「可能是 overfitting」 | 能用正則化幾何解釋 overfit，加上具體數字 | 提升團隊信任度 |
 
-**訓練效率數字：**
+**訓練效率數字（示意估算，非實測數據）：**
 - 正確初始化（He vs 隨機）：初始 loss 差異高達 50%，收斂速度差異 2× 以上
 - 適當 learning rate schedule（cosine decay）vs 固定 LR：最終準確率提升 1–3%
 - 梯度裁剪防止 exploding：避免重跑訓練的機率提升 40%
-- 理解 batch size 與 LR 的線性縮放關係：batch size 8× → LR √8 倍，訓練速度提升 6×
+- 理解 batch size 與 LR 的縮放關係：線性縮放規則是 batch size 8× → LR 8×（SGD 常用，需搭配 warmup）；平方根縮放則是 LR √8 ≈ 2.8×（Adam 類優化器較常用）
 
 ---
 
@@ -594,11 +594,10 @@ torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 | 篇次 | 主題 | 狀態 |
 |---|---|---|
 | **Phase 1 Part 1（本篇）** | 線性代數與微積分 — AI 演算法直覺 | ✓ 已發布 |
-| Phase 1 Part 2 | 機率論與統計 — 貝氏推斷、最大似然 | 即將發布 |
-| Phase 1 Part 3 | 資訊理論 — Entropy、KL Divergence | 即將發布 |
-| Phase 2 Part 1 | 神經網路架構 — MLP、CNN、RNN | 即將發布 |
-| Phase 2 Part 2 | Transformer 與 Attention 機制 | 即將發布 |
-| Phase 3 Part 1 | 大型語言模型訓練工程 | 即將發布 |
+| [Phase 1 Part 2](/posts/ai-eng-from-scratch-phase1-part2-probability-stats-zh/) | 機率與統計 — 不確定性的數學語言 | ✓ 已發布 |
+| [Phase 2 Part 1](/posts/ai-eng-from-scratch-phase2-part1-classical-ml-zh/) | 傳統機器學習 — 生產 AI 的骨幹 | ✓ 已發布 |
+| [Phase 2 Part 2](/posts/ai-eng-from-scratch-phase2-part2-ensemble-optimization-zh/) | 集成學習與最佳化 — 超越單一模型的上限 | ✓ 已發布 |
+| [Phase 3](/posts/ai-eng-from-scratch-phase3-part1-neural-networks-zh/) | 深度學習核心 — 從第一原理構建神經網路 | ✓ 已發布 |
 
 ---
 

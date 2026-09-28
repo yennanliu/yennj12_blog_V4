@@ -232,8 +232,16 @@ Log 的問題：只記錄「發生了什麼」，不記錄「在哪裡、花了�
       TraceIdRatioBased,   # 按比例隨機採樣
       ParentBased,         # 繼承 parent 的採樣決策
   )
-  # 生產：1% 隨機 + 100% 保留異常
+  # 注意：這只是 Head-based 的 1% 隨機採樣，做不到「保留異常」——
+  # 請求開始時就被丟掉的 trace，事後發現它很慢也救不回來
   sampler = ParentBased(root=TraceIdRatioBased(0.01))
+
+  要「1% 正常 + 100% 異常」，必須用 Tail-based Sampling：
+  ├── SDK 端全量（或高比例）送出 span 到 OpenTelemetry Collector
+  ├── Collector 的 tail_sampling processor 等整條 trace 結束後再決定：
+  │   latency > 5s 或 status = ERROR → 保留；其餘 → 1% 機率保留
+  └── 代價：Collector 要暫存整條 trace（記憶體），且同一 trace 的 span
+      必須送到同一個 Collector 實例（多實例時要按 trace_id 做負載平衡）
 ```
 
 ---
