@@ -4,9 +4,9 @@ date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 AMD FY2025 年報做機構級深度拆解:五年財務軌跡、四大事業體、Xilinx 併購攤銷如何壓低 GAAP 獲利、$8.53 億一次性稅務利益、商譽佔資產 33%、MI308 中國出口管制、資本配置、風險矩陣與投資訊號。"
 categories: ["all", "finance"]
-tags: ["AMD", "Advanced Micro Devices", "10-K", "SEC", "財報分析", "價值投資", "美股", "半導體", "AI", "GPU", "資料中心", "InvestSkill", "investing"]
+tags: ["AMD", "10-K", "SEC", "財報分析", "價值投資", "美股", "半導體", "AI", "GPU", "資料中心", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "19 min"
 ---
 
 > 大部分人看 AMD 的 2025 年報,第一眼看到「營收年增 34%、淨利暴增 164%」就直接喊買:AI 王者確立了。

@@ -7,7 +7,7 @@ categories: ["all", "ai"]
 tags: ["Gemini", "本地部署", "Mac", "開源模型", "私有化", "推理", "local-deployment"]
 summary: "詳細講解如何在 Mac 上本地運行 Google Gemini 4 模型，涵蓋環境配置、模型下載、優化技巧和實際應用，幫助你在不依賴雲服務的情況下使用強大的 Gemini 模型。"
 description: "Gemini 本身不開放權重；本文講解如何在 Mac 上本地運行 Google 開放權重的 Gemma 模型，涵蓋環境配置、模型下載、優化技巧和實際應用，幫助你在不依賴雲服務的情況下使用本地模型。"
-readTime: "38 min"
+readTime: "16 min"
 ---
 
 Google Gemini 是目前最先進的多模態 AI 模型之一，但 **Gemini 本身不開放權重，只能透過 API 使用**。Google 開放權重、可以下載到本地的是同源的 **Gemma** 系列。本文介紹如何在 Mac 上用 Gemma（以及其他開源模型）實現完全本地、隱私優先的體驗。

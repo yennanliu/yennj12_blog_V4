@@ -6,7 +6,7 @@ description: "從 Cloudflare security-audit-skill 的設計原則出發，系統
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Agent", "Security", "LLM", "Cloudflare", "Anti-Pattern", "System Design", "Prompt Engineering", "Agent Pipeline"]
 authors: ["yen"]
-readTime: "22 min"
+readTime: "16 min"
 ---
 
 > 一份有三個真實 MEDIUM 漏洞的報告，  

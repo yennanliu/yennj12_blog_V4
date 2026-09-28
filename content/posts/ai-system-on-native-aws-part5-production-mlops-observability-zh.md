@@ -6,7 +6,7 @@ description: "前四篇蓋好了四個 AI 系統,但『能跑』跟『敢上線�
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "MLOps", "SageMaker", "CloudWatch", "Observability", "Bedrock", "CI/CD", "AI Engineering"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "12 min"
 ---
 
 > 大部分 AI 專案死在「demo 很成功、上線三個月後沒人敢動」。因為沒有人知道:模型現在準不準?這個月的 token 花了多少、花在誰身上?想更新模型會不會把線上搞掛?出錯了要去哪裡看?

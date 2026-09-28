@@ -7,7 +7,7 @@ description: "拆解 QM 的持久化能力：三種沙箱後端與能力損失�
 categories: ["all", "ai", "engineering"]
 tags: ["QM", "AI Agent", "Sandbox", "microVM", "Agent Skills", "Cron", "Memory", "繁體中文"]
 authors: ["yen"]
-readTime: "29 min"
+readTime: "22 min"
 series: ["qm-deep-dive"]
 ---
 

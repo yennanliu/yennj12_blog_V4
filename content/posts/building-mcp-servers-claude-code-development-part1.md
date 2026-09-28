@@ -5,7 +5,7 @@ draft: false
 weight: 1
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "mcp", "claude-code", "development-tools", "automation", "python", "typescript", "tooling"]
+tags: ["AI", "MCP", "Claude Code", "Development Tools", "Automation", "Python", "TypeScript", "tooling"]
 summary: "Complete guide to setting up Model Context Protocol (MCP) servers for Claude Code, from basic configuration to building custom tools that enhance your AI-powered development workflow."
 description: "Complete guide to setting up Model Context Protocol (MCP) servers for Claude Code, from basic configuration to building custom tools that enhance your AI-powered development workflow."
 readTime: "18 min"

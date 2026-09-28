@@ -8,7 +8,7 @@ categories: ["all", "engineering", "finance"]
 tags: ["Cryptocurrency", "Bitcoin", "Ethereum", "Backtesting", "Trading Strategies", "Risk Management", "Python", "Portfolio Optimization", "Mean Reversion", "Trend Following"]
 summary: "Build production-ready cryptocurrency trading strategies with comprehensive backtesting. Learn trend following, mean reversion, pairs trading, and arbitrage strategies. Master risk management, position sizing, and performance evaluation with real Bitcoin and Ethereum examples."
 description: "Advanced guide to cryptocurrency trading strategy development and backtesting. Implement multiple strategy types, build robust backtesting frameworks, apply proper risk management, and evaluate performance with industry-standard metrics. Complete with Python implementations."
-readTime: "28 min"
+readTime: "21 min"
 ---
 
 In Part 1, we established the fundamentals of cryptocurrency quantitative trading and built data collection infrastructure. Now we'll develop actual trading strategies and build a robust backtesting framework to evaluate their performance before risking real capital.

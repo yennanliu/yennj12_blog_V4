@@ -7,7 +7,7 @@ description: "深入探討 RAG 系統的兩個核心基礎：如何切塊才能�
 categories: ["all", "ai", "engineering"]
 tags: ["RAG", "Chunking", "Vector Database", "ChromaDB", "Pinecone", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "25 min"
+readTime: "14 min"
 ---
 
 ## 前言

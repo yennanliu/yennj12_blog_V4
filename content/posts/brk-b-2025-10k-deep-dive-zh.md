@@ -6,7 +6,7 @@ description: "用 10k-digest 方法對 Berkshire Hathaway FY2025 年報做機構
 categories: ["all", "finance"]
 tags: ["BRK.B", "Berkshire Hathaway", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "保險", "控股公司", "巴菲特", "investing"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "18 min"
 ---
 
 > 大部分人看 Berkshire 的 2025 年報,第一眼看到「淨利年減 25%、獲利腰斬四分之一」就恐慌:股神的公司出事了?

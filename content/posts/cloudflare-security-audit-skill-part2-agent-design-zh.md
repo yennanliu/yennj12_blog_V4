@@ -6,7 +6,7 @@ description: "深入拆解 security-audit-skill 的 Agent 設計：Hunt phase �
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Agent", "Multi-Agent", "Security", "LLM", "Cloudflare", "System Design", "Adversarial", "Agent Pipeline"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "13 min"
 ---
 
 > 單一 agent 做安全稽核，最大的問題不是「能力不夠」，  

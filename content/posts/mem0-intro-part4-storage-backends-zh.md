@@ -7,7 +7,7 @@ description: "Mem0 原始碼導讀系列第四篇：拆解向量庫／實體庫�
 categories: ["all", "ai", "engineering", "infrastructure"]
 tags: ["Mem0", "Vector Database", "pgvector", "Qdrant", "Storage", "AI Agent", "Memory", "繁體中文"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "18 min"
 ---
 
 > *大多數人選向量庫的方式，是看 benchmark 的 QPS 數字，或者「團隊已經在用 Postgres 了就用 pgvector」。*

@@ -7,7 +7,7 @@ description: "以系統設計視角拆解生產級 AI 評估管線：黃金資�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Evaluation", "RAGAS", "Vertex AI", "CI/CD", "Safety", "Pipeline", "RKK", "Interview", "Google"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "13 min"
 ---
 
 > Eval Pipeline 和 Eval 的差別：  

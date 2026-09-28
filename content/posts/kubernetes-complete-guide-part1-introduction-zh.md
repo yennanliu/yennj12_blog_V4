@@ -7,7 +7,7 @@ description: "深入淺出介紹 Kubernetes 容器編排平台，涵蓋核心概
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "容器編排", "雲原生", "微服務", "Docker", "DevOps", "叢集管理", "基礎教學"]
 authors: ["yen"]
-readTime: "60 min"
+readTime: "23 min"
 ---
 
 ## 🎯 前言

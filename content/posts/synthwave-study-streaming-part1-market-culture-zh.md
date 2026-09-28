@@ -5,10 +5,10 @@ draft: false
 weight: 1
 authors: ["yen"]
 categories: ["all", "business", "creative"]
-tags: ["Synthwave", "復古合成器", "80年代", "賽博龐克", "YouTube", "24/7直播", "遊戲音樂", "streaming", "music"]
+tags: ["Synthwave", "復古合成器", "80年代", "賽博龐克", "YouTube", "24/7直播", "遊戲音樂", "Streaming", "music"]
 summary: "系列第一篇：深入探索 Synthwave 文化起源、為什麼它是 2026 年的黃金利基市場、如何精準定位高價值受眾（遊戲玩家、程式設計師、創作者），以及建立差異化品牌策略。"
 description: "系列第一篇：深入探索 Synthwave 文化起源、為什麼它是 2026 年的黃金利基市場、如何精準定位高價值受眾（遊戲玩家、程式設計師、創作者），以及建立差異化品牌策略。"
-readTime: "26 min"
+readTime: "16 min"
 ---
 
 歡迎來到 Synthwave 讀書會串流系列！如果深海和太空環境音是「寧靜療癒」的代表，那麼 Synthwave 就是「高能專注」的化身。本系列將教你建立一個針對遊戲玩家、程式設計師、創作者的 24/7 復古合成器音樂頻道。

@@ -6,7 +6,7 @@ description: "AI 系統能跑,離能上線還很遠。本篇拆解 agent_auto_sy
 categories: ["all", "ai", "engineering"]
 tags: ["Langfuse", "Observability", "Docker", "AWS", "ECS", "Deployment", "RBAC", "AI Engineering", "LLMOps"]
 authors: ["yen"]
-readTime: "22 min"
+readTime: "11 min"
 ---
 
 > 「在我電腦上跑得起來」和「能給一群人用」之間,隔著四道牆:

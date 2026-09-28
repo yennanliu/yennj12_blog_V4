@@ -6,7 +6,7 @@ description: "當 AI 系統處理的是病歷、金流、個資,而且要通過�
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Security", "Compliance", "Data Governance", "PrivateLink", "KMS", "Lake Formation", "Enterprise"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "13 min"
 ---
 
 > 大部分團隊做 AI 的資安是「上線後補」:先把系統做出來,等法遵來問「資料會不會流到外面」「病歷有沒有加密」「誰存取過這些資料」時,才發現整套架構要重來。

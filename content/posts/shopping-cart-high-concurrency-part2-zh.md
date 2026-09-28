@@ -7,7 +7,7 @@ description: "高並發購物車系列第二篇：深入剖析 Redisson 分散�
 categories: ["all", "engineering", "architecture"]
 tags: ["Spring Boot", "Java", "Redisson", "Distributed Lock", "Read Replica", "Docker", "Nginx", "High Concurrency", "Backend", "繁體中文"]
 authors: ["yen"]
-readTime: "32 min"
+readTime: "18 min"
 ---
 
 ## 前言

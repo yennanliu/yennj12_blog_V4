@@ -6,7 +6,7 @@ description: "Comprehensive guide to Docker mount types including volumes, bind 
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Docker", "Containers", "Docker Volumes", "Bind Mount", "tmpfs", "Data Persistence", "DevOps", "Container Storage", "Docker Best Practices"]
 authors: ["yen"]
-readTime: "45 min"
+readTime: "28 min"
 ---
 
 ## Introduction

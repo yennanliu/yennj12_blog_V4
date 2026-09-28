@@ -6,6 +6,7 @@ tags: ["AWS", "VPC", "Networking", "Cloud Architecture", "Enterprise", "DevOps",
 categories: ["all", "infrastructure"]
 authors: ["yen"]
 description: "Comprehensive guide to AWS VPC types, enterprise network design patterns, VPC peering, and Java implementations for production-ready cloud networking."
+readTime: "16 min"
 ---
 
 ## Introduction

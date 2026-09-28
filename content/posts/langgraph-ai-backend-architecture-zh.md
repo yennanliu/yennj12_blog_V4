@@ -7,7 +7,7 @@ categories: ["all", "ai", "architecture"]
 tags: ["LangGraph", "AI", "架構", "後端設計", "系統設計", "可擴展性"]
 summary: "深入講解如何設計可擴展、高性能的 LangGraph AI 後端架構，涵蓋從單體應用到微服務的演進，包括 Agent 拓撲、數據流、錯誤恢復、分佈式協調等生產級設計模式。"
 description: "深入講解如何設計可擴展、高性能的 LangGraph AI 後端架構，涵蓋從單體應用到微服務的演進，包括 Agent 拓撲、數據流、錯誤恢復、分佈式協調等生產級設計模式。"
-readTime: "40 min"
+readTime: "14 min"
 ---
 
 構建生產級的 LangGraph AI 後端不僅僅是寫代碼，更需要從系統層面考慮**可擴展性、可靠性、可追蹤性**。本文介紹如何設計健壯的 LangGraph 架構，從單機應用進化到分佈式系統。

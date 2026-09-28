@@ -4,9 +4,9 @@ date: 2026-06-27T14:00:00+08:00
 draft: false
 description: "AeroVironment（NASDAQ: AVAV）三部曲完整選股分析（中）：從 $417.86 崩跌 66% 後的下降趨勢、均線空頭排列、超賣反彈技術面，到內部人士交易、機構持股、12% 空頭興趣與軋空潛力、總體經濟與國防預算週期，全面拆解這檔「墜落天使」的籌碼與市場情緒。"
 categories: ["all", "finance"]
-tags: ["Stock Analysis", "AVAV", "AeroVironment", "Technical Analysis", "Short Interest", "Short Squeeze", "Institutional Ownership", "Macro", "Defense", "InvestSkill", "繁體中文", "investment"]
+tags: ["Stock Analysis", "AVAV", "AeroVironment", "Technical Analysis", "Short Interest", "Short Squeeze", "Institutional Ownership", "Macro", "Defense", "InvestSkill", "繁體中文", "Investment"]
 authors: ["yen"]
-readTime: "21 min"
+readTime: "13 min"
 ---
 
 > 多數人看到 AVAV 跌破 $147 創 52 週新低,直覺是「下降趨勢,別碰」。

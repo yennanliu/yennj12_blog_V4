@@ -7,7 +7,7 @@ description: "端對端構建多模態 AI 應用：圖文理解、語音介面�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Multimodal", "LLM Engineering", "Production", "Capstone", "Vision", "Speech", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "23 min"
 series: ["ai-eng-from-scratch"]
 ---
 

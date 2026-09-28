@@ -7,7 +7,7 @@ description: "RAGFlow 原始碼導讀系列第一篇：用一張全景圖與兩�
 categories: ["all", "ai", "engineering"]
 tags: ["RAGFlow", "RAG", "AI", "Architecture", "Open Source", "Elasticsearch", "Vector Database", "繁體中文"]
 authors: ["yen"]
-readTime: "24 min"
+readTime: "17 min"
 ---
 
 > *大多數人讀 RAG 開源專案的方式，是打開 README，跑 `docker compose up`，上傳一份 PDF，看到答案出來就說「我懂了」。*

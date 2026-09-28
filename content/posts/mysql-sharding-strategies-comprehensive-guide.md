@@ -6,7 +6,7 @@ description: "Master MySQL sharding strategies with detailed comparisons of hori
 categories: ["all", "engineering", "architecture"]
 tags: ["MySQL", "Database Sharding", "Horizontal Scaling", "Database Architecture", "Distributed Systems", "Performance Optimization", "Data Partitioning", "Scalability", "Database"]
 authors: ["yen"]
-readTime: "45 min"
+readTime: "25 min"
 ---
 
 ## 🎯 Introduction

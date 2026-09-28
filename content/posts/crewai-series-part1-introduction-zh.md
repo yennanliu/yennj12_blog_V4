@@ -7,7 +7,7 @@ description: "從零開始學 CrewAI：什麼是多 Agent 協作框架、為什�
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "Multi-Agent", "LLM", "AI Automation", "Python", "繁體中文", "Agent"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "12 min"
 ---
 
 ## 前言

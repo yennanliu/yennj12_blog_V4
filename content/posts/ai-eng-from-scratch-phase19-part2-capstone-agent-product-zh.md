@@ -7,7 +7,7 @@ description: "端對端構建生產級 AI Agent 產品：從架構設計到上�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Agent", "LLM Engineering", "Production", "Capstone", "ReAct", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "22 min"
 series: ["ai-eng-from-scratch"]
 ---
 

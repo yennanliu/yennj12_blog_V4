@@ -4,10 +4,10 @@ date: 2026-01-17T14:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "claude-code", "工作流程", "開發流程", "最佳實踐", "軟體開發", "敏捷開發", "development-tools"]
+tags: ["AI", "Claude Code", "工作流程", "開發流程", "最佳實踐", "軟體開發", "敏捷開發", "Development Tools"]
 summary: "詳細解析使用 Claude Code 的標準開發工作流程：涵蓋需求分析、架構設計、功能開發、測試部署等完整生命週期，並提供不同開發情境的具體實踐策略。"
 description: "詳細解析使用 Claude Code 的標準開發工作流程：涵蓋需求分析、架構設計、功能開發、測試部署等完整生命週期，並提供不同開發情境的具體實踐策略。"
-readTime: "25 min"
+readTime: "32 min"
 ---
 
 使用 Claude Code 進行開發不僅僅是「問 AI 寫程式碼」那麼簡單。真正高效的開發需要建立系統化的工作流程，從需求分析到部署上線，每個階段都有最佳實踐。本文將深入探討如何在軟體開發生命週期的各個階段充分發揮 Claude Code 的潛力。

@@ -7,7 +7,7 @@ description: "深度解析間接提示詞注入（Indirect Prompt Injection）�
 categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "Security", "LLM", "Agent", "Prompt Injection", "Vertex AI", "Cloud Run"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "21 min"
 ---
 
 > 大多數工程師聽到「提示詞注入」，第一反應是寫更好的 System Prompt 告訴模型不要聽惡意指令。

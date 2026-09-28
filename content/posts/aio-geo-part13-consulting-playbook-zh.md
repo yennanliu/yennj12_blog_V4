@@ -7,7 +7,7 @@ description: "GEO 最有效的銷售動作是「當場跑診斷」。本篇給�
 categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "顧問", "銷售", "提案", "合約", "KPI", "客戶溝通", "繁體中文", "Consulting"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "13 min"
 ---
 
 > 大多數人的做法：做一份 40 頁的 GEO 提案簡報，講市場趨勢，然後報價。

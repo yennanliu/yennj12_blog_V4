@@ -6,7 +6,7 @@ description: "系列最終篇,回到使用者直接感受到的那一層。拆�
 categories: ["all", "ai", "engineering"]
 tags: ["SSE", "Frontend", "Pipeline", "CrewAI", "Vanilla JS", "UX", "Automation", "AI Engineering"]
 authors: ["yen"]
-readTime: "21 min"
+readTime: "10 min"
 ---
 
 > 後端做得再精巧,使用者感受到的只有兩件事:

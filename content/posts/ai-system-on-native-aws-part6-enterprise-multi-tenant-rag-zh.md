@@ -6,7 +6,7 @@ description: "系列進入企業篇。Part 1 的單租戶 RAG 一上到企業就
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "RAG", "Multi-tenancy", "Verified Permissions", "OpenSearch Serverless", "Enterprise", "AI Engineering"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "13 min"
 ---
 
 > 大部分 RAG 的 demo 只有一個租戶、一個使用者、一批文件,跑起來很漂亮。一放到企業就爆:A 公司的合約絕不能被 B 公司檢索到、行銷部的人不該問得出財務部的薪資表、而且老闆要知道這個月每個客戶到底燒了你多少 token。

@@ -7,7 +7,7 @@ description: "深入解析 LLM 微調策略：LoRA/QLoRA 低秩分解原理、SF
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "LLM", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "SFT", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "18 min"
 series: ["ai-eng-from-scratch"]
 ---
 

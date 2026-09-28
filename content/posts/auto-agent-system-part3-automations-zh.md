@@ -6,7 +6,7 @@ description: "把 Harness 打好地基後,真正的價值在任務本身。本�
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "AI Agent", "Web Scraping", "Playwright", "Lead Generation", "Automation", "AI Engineering"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "12 min"
 ---
 
 > 有人問:AI Agent 到底能做什麼有用的事?

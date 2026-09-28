@@ -7,7 +7,7 @@ description: "深入探討 Docker 進階主題，包含 Dockerfile 最佳實踐�
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Docker", "Dockerfile", "Docker Compose", "容器編排", "微服務", "CI/CD", "容器安全", "效能優化", "生產部署", "DevOps"]
 authors: ["yen"]
-readTime: "70 min"
+readTime: "29 min"
 ---
 
 ## 🎯 前言

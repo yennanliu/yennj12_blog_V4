@@ -4,7 +4,7 @@ date: 2025-08-10T15:28:17+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering"]
-tags: ["AI", "database", "performance", "optimization", "postgresql", "redis"]
+tags: ["Database", "Performance", "Optimization", "postgresql", "Redis"]
 summary: "A comprehensive guide to database performance optimization techniques that helped us reduce query response times from seconds to milliseconds."
 description: "A comprehensive guide to database performance optimization techniques that helped us reduce query response times from seconds to milliseconds."
 readTime: "15 min"

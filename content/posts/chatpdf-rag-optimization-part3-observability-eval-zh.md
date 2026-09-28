@@ -4,9 +4,9 @@ date: 2026-06-30T11:00:00+08:00
 draft: false
 description: "沒有量測就沒有優化。本篇拆解 chatPDF 如何補上 RAG 的可觀測性最後一塊:opt-in 零開銷的 Langfuse 追蹤、執行緒安全的 singleton、評估歷史持久化、即時答案評分(faithfulness/relevance)、relevance gate,以及無外部依賴的 SVG 趨勢圖表。"
 categories: ["all", "ai", "engineering"]
-tags: ["RAG", "LLM", "ChatPDF", "Observability", "Langfuse", "Evaluation", "Tracing", "LLM-as-judge", "Metrics"]
+tags: ["RAG", "LLM", "ChatPDF", "Observability", "Langfuse", "Evaluation", "Tracing", "LLM-as-Judge", "Metrics"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "11 min"
 ---
 
 > 多數 RAG 專案上線後,優化全憑「感覺答案變好了」。

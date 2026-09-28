@@ -7,7 +7,7 @@ description: "想用純 AI Bot 建立一支 AI 顧問團隊？本文從商業角
 categories: ["all", "ai", "business"]
 tags: ["AI Agent", "Claude Code", "Gemini CLI", "LangGraph", "AI Consultant", "Multi-Agent", "繁體中文", "Agent"]
 authors: ["yen"]
-readTime: "15 min"
+readTime: "10 min"
 ---
 
 ## 前言

@@ -5,7 +5,7 @@ draft: false
 weight: 12
 description: "深入解析 Token Bucket 反壓機制與加權公平排隊，說明多租戶 AI 平台如何在突發流量下保障每個租戶的最低吞吐量，並以 Redis Lua 腳本實現亞毫秒級限速。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Scalability", "RateLimiting", "MultiTenant"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Scalability", "Rate Limiting", "Multi-tenant"]
 authors: ["yen"]
 readTime: "18 min"
 ---

@@ -7,7 +7,7 @@ description: "vLLM 原始碼導讀系列第三篇：拆解連續批次的實作�
 categories: ["all", "ai", "engineering", "architecture"]
 tags: ["vLLM", "Scheduler", "Continuous Batching", "Chunked Prefill", "Speculative Decoding", "LLM", "AI", "繁體中文"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "17 min"
 ---
 
 > *大多數人調 LLM 推論效能的方式，是把 batch size 調大，看到吞吐上升就停手。*

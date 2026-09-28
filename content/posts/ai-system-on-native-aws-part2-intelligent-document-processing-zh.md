@@ -6,7 +6,7 @@ description: "當你的『知識』不是乾淨的 Markdown,而是幾百萬張�
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Textract", "Comprehend", "Bedrock", "Step Functions", "IDP", "Serverless", "AI Engineering"]
 authors: ["yen"]
-readTime: "25 min"
+readTime: "13 min"
 ---
 
 > 大部分人處理「一堆掃描的 PDF」:先找個 OCR 套件,發現表格全亂掉;再寫一堆正則去抓欄位,換一家供應商的發票格式就全爆;最後放棄,回去用人工 key-in。

@@ -7,7 +7,7 @@ description: "Naive RAG 的搜尋精準度不夠？本篇深入四大進階檢�
 categories: ["all", "ai", "engineering"]
 tags: ["RAG", "Hybrid Search", "HyDE", "Reranker", "BM25", "LangChain", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "14 min"
 ---
 
 ## 前言

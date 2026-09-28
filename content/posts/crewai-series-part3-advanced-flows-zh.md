@@ -7,7 +7,7 @@ description: "CrewAI 進階篇：用 @start/@listen/@router 建立事件驅動�
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "Flows", "Memory", "Multi-Agent", "Production", "FastAPI", "Python", "繁體中文", "Agent"]
 authors: ["yen"]
-readTime: "35 min"
+readTime: "17 min"
 ---
 
 ## 前言

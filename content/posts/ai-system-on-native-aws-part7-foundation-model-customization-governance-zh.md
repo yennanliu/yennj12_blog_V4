@@ -6,7 +6,7 @@ description: "當通用模型不夠好、或你有大量專有資料想讓模型
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "SageMaker", "Fine-tuning", "Model Governance", "MLOps", "Enterprise", "AI Engineering"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "13 min"
 ---
 
 > 大部分人聽到「模型不夠好」的第一反應是 fine-tune。於是花了三週標資料、燒了一筆 GPU 錢、訓出一個模型——然後發現它在你沒測到的地方變笨了,而且沒人記得訓練資料是哪來的、當初為什麼這樣調。

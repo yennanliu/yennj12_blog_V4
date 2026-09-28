@@ -6,7 +6,7 @@ description: "用純 AWS 原生服務打造一套 Serverless RAG 問答系統:Be
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "RAG", "OpenSearch Serverless", "Lambda", "LLM", "AI Engineering", "Serverless"]
 authors: ["yen"]
-readTime: "24 min"
+readTime: "15 min"
 ---
 
 > 大部分人做企業內部問答機器人:租一台 GPU、裝 LangChain、自己接一個 Pinecone、再寫一堆膠水程式碼,三個月後發現光是「文件更新後要重新 embedding」這件事就沒人想維護。

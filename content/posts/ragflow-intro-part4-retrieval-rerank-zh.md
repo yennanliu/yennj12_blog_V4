@@ -7,7 +7,7 @@ description: "RAGFlow 原始碼導讀系列第四篇：逐行拆解查詢編譯�
 categories: ["all", "ai", "engineering"]
 tags: ["RAGFlow", "RAG", "AI", "Hybrid Search", "Reranking", "GraphRAG", "RAPTOR", "繁體中文"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "22 min"
 ---
 
 > *大多數人談 RAG 的檢索，是「向量搜尋 top-5，然後塞進 prompt」。*

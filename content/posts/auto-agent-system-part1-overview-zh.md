@@ -6,7 +6,7 @@ description: "從 0 認識 agent_auto_system:一個用 CrewAI 打造、能透過
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "AI Agent", "Automation", "FastAPI", "LLM", "Multi-Agent", "AI Engineering", "Harness"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "11 min"
 ---
 
 > 大部分人寫 AI Agent:把 prompt 丟給 OpenAI SDK,拿到字串,`json.loads()`,能跑就好。

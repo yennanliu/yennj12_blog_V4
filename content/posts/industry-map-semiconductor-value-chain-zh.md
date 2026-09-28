@@ -6,7 +6,7 @@ description: "用 industry-map 方法把半導體產業畫成一張有向圖:從
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "TSMC", "NVDA", "ASML", "晶片", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "13 min"
 ---
 
 > 大部分人分析半導體,習慣盯著一檔股票:NVIDIA 財報多好、台積電良率多高。

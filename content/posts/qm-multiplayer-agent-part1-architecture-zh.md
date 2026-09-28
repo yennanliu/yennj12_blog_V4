@@ -7,7 +7,7 @@ description: "拆解 yc-software/qm — 一個為公司而非個人設計的開�
 categories: ["all", "ai", "engineering"]
 tags: ["QM", "AI Agent", "Multi-tenant", "TypeScript", "Slack", "Agent Platform", "開源專案解析", "繁體中文"]
 authors: ["yen"]
-readTime: "25 min"
+readTime: "16 min"
 series: ["qm-deep-dive"]
 ---
 

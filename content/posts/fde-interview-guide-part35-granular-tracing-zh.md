@@ -7,7 +7,7 @@ description: "以系統設計視角拆解 Agentic AI 系統的可觀測性：為
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Observability", "Tracing", "OpenTelemetry", "Cloud Trace", "Vertex AI", "Agent", "RKK", "Interview", "Google"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "13 min"
 ---
 
 > 面試官問「P95 延遲突然升高，你怎麼辦？」  

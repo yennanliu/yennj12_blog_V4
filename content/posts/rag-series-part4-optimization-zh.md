@@ -7,7 +7,7 @@ description: "當問題本身就是問題：深入三大 RAG 優化技術——S
 categories: ["all", "ai", "engineering"]
 tags: ["RAG", "Self-RAG", "Context Compression", "Query Transformation", "LangChain", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "14 min"
 ---
 
 ## 前言

@@ -7,7 +7,7 @@ description: "以系統設計視角拆解 FDE 最常遇到的現場問題：如�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Integration", "Legacy", "API", "GCP", "VPC", "Security", "Enterprise", "RKK", "Interview", "Google"]
 authors: ["yen"]
-readTime: "19 min"
+readTime: "14 min"
 ---
 
 > Demo 時 Agent 很漂亮。  

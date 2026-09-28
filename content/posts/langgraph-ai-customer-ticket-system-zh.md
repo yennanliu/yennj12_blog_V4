@@ -4,10 +4,10 @@ date: 2026-04-11T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "engineering"]
-tags: ["LangGraph", "LangChain", "AI", "客服系統", "工作流", "多 Agent", "生產級應用", "backend"]
+tags: ["LangGraph", "LangChain", "AI", "客服系統", "工作流", "多 Agent", "生產級應用", "Backend"]
 summary: "詳細講解如何使用 LangGraph 和 AI 構建生產級的智能客服工單處理系統，涵蓋架構設計、Agent 定義、狀態管理、錯誤處理和實際案例，幫助你快速上線 AI 驅動的客服系統。"
 description: "詳細講解如何使用 LangGraph 和 AI 構建生產級的智能客服工單處理系統，涵蓋架構設計、Agent 定義、狀態管理、錯誤處理和實際案例，幫助你快速上線 AI 驅動的客服系統。"
-readTime: "45 min"
+readTime: "15 min"
 ---
 
 客服工單處理是企業運營中的關鍵環節：需要快速分類、智能路由、實時回應和全程追蹤。傳統方案依賴人工，效率低、成本高。而 LangGraph 作為新一代 Agent 編排框架，使得我們可以構建**可預測、可追蹤、可控制**的 AI 客服系統。本文詳細介紹如何用 LangGraph 打造生產級的智能工單系統。

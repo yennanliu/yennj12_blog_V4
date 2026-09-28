@@ -7,7 +7,7 @@ description: "CrewAI 不只是玩具：用三個完整的生產級範例說明�
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "Multi-Agent", "AI Automation", "Code Review", "Customer Service", "Python", "繁體中文", "Agent"]
 authors: ["yen"]
-readTime: "35 min"
+readTime: "15 min"
 ---
 
 ## 前言

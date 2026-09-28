@@ -4,9 +4,9 @@ date: 2025-09-29T08:28:29+08:00
 draft: false
 description: "Master AWS Load Balancers with comprehensive comparisons of ALB, NLB, GWLB, and CLB. Learn when to use each type, advanced features, health checks, auto-scaling integration, and production-ready configurations with real-world examples."
 categories: ["all", "engineering", "architecture", "infrastructure"]
-tags: ["AWS Load Balancer", "ALB", "NLB", "GWLB", "CLB", "Application Load Balancer", "Network Load Balancer", "AWS", "High Availability", "Auto Scaling", "Java", "Spring Boot"]
+tags: ["AWS Load Balancer", "ALB", "NLB", "GWLB", "CLB", "Application Load Balancer", "Network Load Balancer", "AWS", "High Availability", "Autoscaling", "Java", "Spring Boot"]
 authors: ["yen"]
-readTime: "65 min"
+readTime: "28 min"
 ---
 
 ## 🎯 Introduction

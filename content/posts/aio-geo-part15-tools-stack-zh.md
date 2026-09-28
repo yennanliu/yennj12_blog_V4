@@ -7,7 +7,7 @@ description: "GEO 工具市場已經很擁擠，但九成的工具只做同一�
 categories: ["all", "ai", "engineering", "business"]
 tags: ["GEO", "AIO", "工具", "開源", "Cloudflare", "監測", "技術棧", "繁體中文"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "12 min"
 ---
 
 > 大多數人的做法：買一個 GEO 監測工具，看著 dashboard 的數字，然後不知道要做什麼。

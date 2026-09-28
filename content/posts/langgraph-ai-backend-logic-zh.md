@@ -7,7 +7,7 @@ categories: ["all", "ai"]
 tags: ["LangGraph", "邏輯設計", "狀態流", "路由", "決策", "工作流", "logic-design"]
 summary: "深入探討 LangGraph 工作流的邏輯設計，包括狀態定義、決策路由、條件轉移、複雜路徑選擇等，透過實戰案例展示如何設計清晰、高效、易維護的 AI 後端邏輯。"
 description: "深入探討 LangGraph 工作流的邏輯設計，包括狀態定義、決策路由、條件轉移、複雜路徑選擇等，透過實戰案例展示如何設計清晰、高效、易維護的 AI 後端邏輯。"
-readTime: "42 min"
+readTime: "14 min"
 ---
 
 LangGraph 的核心價值在於能表達**複雜的決策邏輯**和**動態的工作流**。相比線性的 Chain，LangGraph 允許根據中間狀態做出決策，選擇不同的處理路徑。本文深入講解如何設計 LangGraph 的邏輯層。

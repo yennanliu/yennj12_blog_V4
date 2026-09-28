@@ -4,10 +4,10 @@ date: 2026-03-19T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "claude-code", "multi-agent", "agent-orchestration", "token-optimization", "system-design", "API", "協作模式", "development-tools"]
+tags: ["AI", "Claude Code", "Multi-Agent", "agent-orchestration", "token-optimization", "System Design", "API", "協作模式", "Development Tools"]
 summary: "多 Agent Token 優化系列 pt.7：深入探討專責化 Agent 的協作模式，涵蓋團隊組織架構、動態路由、任務分解策略、狀態管理、錯誤處理等生產級實作，幫助你打造高效協調的 Agent 團隊。"
 description: "多 Agent Token 優化系列 pt.7：深入探討專責化 Agent 的協作模式，涵蓋團隊組織架構、動態路由、任務分解策略、狀態管理、錯誤處理等生產級實作，幫助你打造高效協調的 Agent 團隊。"
-readTime: "40 min"
+readTime: "29 min"
 ---
 
 在前一篇《Agent 專責化實戰指南》中，我們學會了如何設計單一職責的精簡 Agent。然而，擁有一群優秀的專家還不夠——關鍵在於如何讓他們**高效協作**。本文將深入探討專責化 Agent 的協作模式，從團隊架構設計到生產級的協調機制。

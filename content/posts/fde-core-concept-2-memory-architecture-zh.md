@@ -5,9 +5,9 @@ draft: false
 weight: 2
 description: "深入解析 Agent 三層記憶體架構（Episodic / Semantic / Procedural），涵蓋寫入模式、ANN 檢索、遺忘機制與企業級 RBAC 設計。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Agent", "Memory", "VectorDB"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Agent", "Memory", "Vector DB"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "11 min"
 ---
 
 **Agent 的記憶體不是一個 buffer，是三層具有不同時效、不同存取模式、不同成本結構的資料系統——設計錯了，對話脈絡在 context window 之外全數消失。**

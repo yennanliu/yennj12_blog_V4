@@ -6,6 +6,7 @@ tags: ["AWS", "DynamoDB", "NoSQL", "Database", "Performance", "Optimization", "J
 categories: ["all", "engineering", "infrastructure"]
 authors: ["yen"]
 description: "Comprehensive guide to AWS DynamoDB covering data structures, architecture, indexing strategies, secondary indexes, sort keys, and performance optimization techniques for high-speed I/O operations."
+readTime: "25 min"
 ---
 
 ## Introduction

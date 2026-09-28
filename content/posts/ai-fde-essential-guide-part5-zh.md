@@ -7,7 +7,7 @@ description: "深入探討 AI FDE 客戶協作的核心技能，包含需求分�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Customer Success", "Project Management", "Communication", "Problem Solving", "Requirements Analysis", "cheatsheet"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "32 min"
 ---
 
 ## 前言

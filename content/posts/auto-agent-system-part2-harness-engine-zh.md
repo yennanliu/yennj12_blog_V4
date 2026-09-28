@@ -6,7 +6,7 @@ description: "深入 agent_auto_system 的心臟——Harness 引擎。從第一
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "LLM", "Harness", "Reliability", "Retry", "LLM-as-Judge", "AI Engineering", "Fallback"]
 authors: ["yen"]
-readTime: "22 min"
+readTime: "12 min"
 ---
 
 > Demo 版的 AI:`json.loads(resp.content)`——今天能跑。

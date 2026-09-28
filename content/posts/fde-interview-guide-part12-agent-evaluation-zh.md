@@ -5,7 +5,7 @@ draft: false
 weight: 12
 description: "以系統設計視角拆解 AI Agent 的 Evaluation Pipeline：核心問題是什麼、RAG 評估三角怎麼設計、LLM-as-Judge 的取捨、以及怎麼讓 eval 成為持續整合的一環——含完整架構圖"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Evaluation", "Metrics", "RAG", "RAGAS", "LLM", "Observability", "System Design", "RKK", "Interview", "Google"]
+tags: ["AI", "FDE", "Agent", "Evaluation", "Metrics", "RAG", "LLM", "Observability", "System Design", "RKK", "Interview", "Google"]
 authors: ["yen"]
 readTime: "15 min"
 ---

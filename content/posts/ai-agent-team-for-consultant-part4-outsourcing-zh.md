@@ -7,7 +7,7 @@ description: "實戰案例：一家 10 人軟體外包公司如何用 AI Agent �
 categories: ["all", "ai", "business"]
 tags: ["AI Agent", "外包公司", "Claude Code", "LangGraph", "Multi-Agent", "繁體中文", "實戰案例", "Agent", "Case Study"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "16 min"
 ---
 
 ## 情境設定

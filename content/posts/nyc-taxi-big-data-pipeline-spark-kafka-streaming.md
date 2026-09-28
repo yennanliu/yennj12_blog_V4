@@ -4,10 +4,10 @@ date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering"]
-tags: ["AI", "apache-spark", "kafka", "hadoop", "hive", "aws", "pipeline", "stream-processing", "batch-processing", "elk-stack", "data-engineering", "big-data", "streaming"]
+tags: ["apache-spark", "kafka", "hadoop", "hive", "AWS", "Pipeline", "stream-processing", "batch-processing", "elk-stack", "Data Engineering", "Big Data", "Streaming"]
 summary: "Complete guide to building a production-ready data engineering pipeline for processing NYC taxi trip records using Apache Spark, Kafka streaming, Hadoop ecosystem, and AWS cloud infrastructure."
 description: "Complete guide to building a production-ready data engineering pipeline for processing NYC taxi trip records using Apache Spark, Kafka streaming, Hadoop ecosystem, and AWS cloud infrastructure."
-readTime: "22 min"
+readTime: "44 min"
 ---
 
 ## 🎯 Project Overview & Big Data Challenges

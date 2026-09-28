@@ -6,7 +6,7 @@ description: "詐欺偵測是即時 ML 的極限測試:要在幾十毫秒內對�
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Kinesis", "Managed Flink", "Fraud Detection", "Neptune", "SageMaker", "Streaming", "AI Engineering"]
 authors: ["yen"]
-readTime: "27 min"
+readTime: "12 min"
 ---
 
 > Part 3 的推薦系統要求 100ms、但推錯了頂多少賺一點。詐欺偵測也要求毫秒級,可是判斷錯了——放行一筆盜刷、或攔下一筆正常消費——都是真金白銀或客戶流失。而且推薦的使用者不會故意騙你,詐欺的對手會主動研究你的規則、繞過它、隔天換一套手法再來。

@@ -6,7 +6,7 @@ description: "系列終章。當一個企業有幾十個團隊、上百個 AI �
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Platform Engineering", "LLM Gateway", "FinOps", "Control Tower", "Service Catalog", "Enterprise", "AI Engineering"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "12 min"
 ---
 
 > 一個團隊接 Bedrock,叫專案。五十個團隊各自接 Bedrock,叫混亂:每個團隊重新踩一次合規的坑、各自把 API key 寫死在 Lambda、成本一整包分不清誰花的、某個團隊的失控迴圈把整個帳號的 Bedrock 配額吃光、資安團隊要追五十套不同的架構。

@@ -3,10 +3,10 @@ title: "Java Concurrency and Threading: Complete Guide to Runnable, Callable, an
 date: 2025-01-28T02:00:00+08:00
 draft: false
 description: "Comprehensive guide to Java concurrency and threading mechanisms. Learn Runnable vs Callable, ExecutorService, CompletableFuture, and advanced threading patterns with practical examples and performance analysis."
-categories: ["all", "ai", "engineering", "architecture"]
-tags: ["Java", "Concurrency", "Threading", "Runnable", "Callable", "ExecutorService", "CompletableFuture", "Performance", "AI"]
+categories: ["all", "engineering", "architecture"]
+tags: ["Java", "Concurrency", "Threading", "Runnable", "Callable", "ExecutorService", "CompletableFuture", "Performance"]
 authors: ["yen"]
-readTime: "35 min"
+readTime: "28 min"
 ---
 
 ## 🎯 Introduction

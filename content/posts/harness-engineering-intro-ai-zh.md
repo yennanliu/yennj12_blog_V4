@@ -7,7 +7,7 @@ categories: ["all", "ai", "infrastructure"]
 tags: ["Harness", "CI/CD", "基礎設施", "自動化", "AI", "部署", "工程實踐", "DevOps"]
 summary: "深入探討 Harness 在 AI 時代的角色，從基本概念、核心功能到實戰應用，幫助工程團隊建立高效的自動化部署流程，加速 AI 應用的上線速度。"
 description: "深入探討 Harness 在 AI 時代的角色，從基本概念、核心功能到實戰應用，幫助工程團隊建立高效的自動化部署流程，加速 AI 應用的上線速度。"
-readTime: "35 min"
+readTime: "13 min"
 ---
 
 在 AI 應用快速迭代的時代，傳統的 CI/CD 流程面臨新的挑戰：模型版本管理複雜、部署頻率高、需要快速回滾，以及多環境配置管理困難。本文介紹 Harness——一個現代化的部署平台，如何幫助團隊在 AI 時代實現敏捷、可靠的基礎設施自動化。

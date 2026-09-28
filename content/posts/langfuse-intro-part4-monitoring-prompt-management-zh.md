@@ -6,7 +6,7 @@ description: "系列最終篇。把前三篇的追蹤與評估收進日常營運
 categories: ["all", "ai", "engineering"]
 tags: ["Langfuse", "LLM", "Monitoring", "Prompt Management", "Observability", "Analytics", "LLMOps", "AI Engineering"]
 authors: ["yen"]
-readTime: "15 min"
+readTime: "10 min"
 ---
 
 > 很多團隊把 prompt 當成「寫死在程式裡的字串」,改一個字就要改程式、跑 CI、重新部署。

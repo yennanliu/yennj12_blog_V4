@@ -6,7 +6,7 @@ description: "推薦系統是最經典、商業價值最直接的 AI 系統。�
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "SageMaker", "Kinesis", "Feature Store", "Recommendation", "DynamoDB", "MLOps", "AI Engineering"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "13 min"
 ---
 
 > 大部分人做推薦系統:離線跑個協同過濾,把結果算好塞進一張表,前端去查。上線第一天很香,第三天發現使用者剛剛看過、剛剛買過的東西還一直被推——因為推薦是「昨天算好的」,而使用者是「此刻在變的」。

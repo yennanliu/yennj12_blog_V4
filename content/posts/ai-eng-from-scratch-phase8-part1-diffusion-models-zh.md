@@ -7,7 +7,7 @@ description: "深入解析擴散模型工程原理：DDPM/DDIM 前向與反向�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Generative AI", "Diffusion Models", "Stable Diffusion", "ControlNet", "Image Generation", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "18 min"
 series: ["ai-eng-from-scratch"]
 ---
 

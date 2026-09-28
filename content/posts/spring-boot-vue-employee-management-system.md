@@ -4,10 +4,10 @@ date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["AI", "employee-management", "vue.js", "rest-api", "microservices", "docker", "swagger", "hr-system", "full-stack", "spring-boot", "enterprise"]
+tags: ["employee-management", "Vue.js", "REST API", "Microservices", "Docker", "swagger", "hr-system", "full-stack", "Spring Boot", "Enterprise"]
 summary: "Comprehensive guide to building a modern employee management system using Spring Boot microservices architecture and Vue.js frontend, designed for enterprise scalability and extensibility."
 description: "Comprehensive guide to building a modern employee management system using Spring Boot microservices architecture and Vue.js frontend, designed for enterprise scalability and extensibility."
-readTime: "20 min"
+readTime: "35 min"
 ---
 
 ## 🎯 Project Overview & Business Context

@@ -4,9 +4,9 @@ date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 Alphabet FY2025 年報做機構級深度拆解:五年財務軌跡、Search/YouTube/雲端/Other Bets 事業體損益、淨利被股權投資利得墊高的假象、Google Cloud 獲利拐點、AI 千億資本支出與 2026 指引、TAC、買回與股利、反壟斷矩陣、情境分析與投資訊號。"
 categories: ["all", "finance"]
-tags: ["GOOGL", "Alphabet", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "雲端", "AI", "廣告", "Gemini", "investing"]
+tags: ["GOOGL", "Alphabet", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "雲端", "AI", "Gemini", "investing"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "18 min"
 ---
 
 > 大部分人看 Alphabet 的 2025 年報,第一眼看到「淨利年增 32%、EPS 年增 34%」就結論:Google 太強了,AI 沒有顛覆它。

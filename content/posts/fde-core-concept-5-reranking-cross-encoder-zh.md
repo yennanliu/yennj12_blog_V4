@@ -7,7 +7,7 @@ description: "深入拆解兩階段檢索架構——ANN 快速粗召回搭配 C
 categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "CrossEncoder", "Reranking"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "11 min"
 ---
 
 **核心定義：Re-ranking 是「先用 Bi-Encoder 快速縮小候選集，再用 Cross-Encoder 精準評分」的兩階段架構——用 10ms 的粗召回換取可接受的候選集，再用 150ms 的深度交互換取 LLM 真正需要的高品質上下文。**

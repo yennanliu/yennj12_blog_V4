@@ -4,7 +4,7 @@ date: 2026-01-24T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["AWS", "CDK", "Bitcoin", "Trading", "Machine Learning", "Bedrock", "HuggingFace", "Lambda", "EventBridge", "DynamoDB", "SageMaker"]
+tags: ["AWS", "CDK", "Bitcoin", "Trading", "Machine Learning", "Bedrock", "Hugging Face", "Lambda", "EventBridge", "DynamoDB", "SageMaker"]
 summary: "Build a production-ready automated Bitcoin trading system using AWS CDK that integrates ML models from Bedrock and HuggingFace for price prediction and executes trades based on real-time market events."
 description: "Learn how to architect and deploy an intelligent cryptocurrency trading system on AWS using CDK, with historical price analysis, ML-powered predictions from AWS Bedrock and HuggingFace, and event-driven trade execution."
 readTime: "18 min"

@@ -5,10 +5,10 @@ draft: false
 weight: 2
 authors: ["yen"]
 categories: ["all", "business", "creative"]
-tags: ["Synthwave", "AI音樂", "Suno", "合成器", "音樂製作", "BPM", "音色設計", "streaming", "music-production"]
+tags: ["Synthwave", "AI音樂", "Suno", "合成器", "音樂製作", "BPM", "音色設計", "Streaming", "music-production"]
 summary: "系列第二篇：掌握 AI 生成 Synthwave 音樂的核心技巧、80 年代經典合成器音色重現、BPM 與節奏設計、以及如何策展出讓程式設計師進入心流的完美播放列表。"
 description: "系列第二篇：掌握 AI 生成 Synthwave 音樂的核心技巧、80 年代經典合成器音色重現、BPM 與節奏設計、以及如何策展出讓程式設計師進入心流的完美播放列表。"
-readTime: "30 min"
+readTime: "19 min"
 ---
 
 在系列第一篇中，我們定位了 Synthwave 的黃金受眾。本篇將深入音樂製作的核心：如何使用 AI 工具生成專業級 Synthwave 音樂，以及如何策展出真正適合專注工作的播放列表。

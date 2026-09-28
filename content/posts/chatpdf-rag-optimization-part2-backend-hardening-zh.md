@@ -6,7 +6,7 @@ description: "RAG demo 能跑,不代表能上線。本篇拆解 chatPDF 如何�
 categories: ["all", "ai", "engineering"]
 tags: ["RAG", "LLM", "ChatPDF", "Security", "Backend", "Production", "Multi-Query", "LRU Cache", "API Hardening"]
 authors: ["yen"]
-readTime: "17 min"
+readTime: "11 min"
 ---
 
 > 多數 RAG 專案的生命週期:demo 驚艷 → 上線 → 第一個惡意上傳把記憶體吃爆 → 第一個含程式碼的 PDF 讓檢索掛掉 → 緊急修補。

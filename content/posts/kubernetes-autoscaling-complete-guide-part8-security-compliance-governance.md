@@ -5,10 +5,10 @@ draft: false
 weight: 8
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "Security", "RBAC", "Compliance", "Governance", "Policy", "Audit", "Multi-Tenancy", "OPA", "Gatekeeper", "PCI-DSS", "HIPAA", "SOC2", "devops"]
+tags: ["Kubernetes", "K8S", "Security", "RBAC", "Compliance", "Governance", "Policy", "Audit", "Multi-tenancy", "OPA", "Gatekeeper", "DevOps"]
 summary: "Part 8 of the Kubernetes Autoscaling series: Complete guide to securing autoscaling infrastructure with RBAC, policy enforcement, compliance frameworks (PCI-DSS, HIPAA, SOC2), multi-tenancy patterns, audit logging, and governance best practices for enterprise Kubernetes."
 description: "Part 8 of the Kubernetes Autoscaling series: Complete guide to securing autoscaling infrastructure with RBAC, policy enforcement, compliance frameworks (PCI-DSS, HIPAA, SOC2), multi-tenancy patterns, audit logging, and governance best practices for enterprise Kubernetes."
-readTime: "50 min"
+readTime: "30 min"
 ---
 
 ## Series Overview

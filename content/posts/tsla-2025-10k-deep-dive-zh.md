@@ -4,9 +4,9 @@ date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 Tesla FY2025 年報做機構級深度拆解:史上首次營收衰退、營業利益率崩到 4.6%、監管碳權貢獻 46% 營業利益的隱形依賴、能源儲能的獲利救火隊、2026 年超過 $200 億的 AI 資本支出賭注、CEO 千億級股酬懸念,以及『一台車廠 vs AI 選擇權』的估值撕裂。"
 categories: ["all", "finance"]
-tags: ["TSLA", "Tesla", "10-K", "SEC", "財報分析", "價值投資", "美股", "電動車", "能源", "AI", "自動駕駛", "InvestSkill", "investing"]
+tags: ["TSLA", "Tesla", "10-K", "SEC", "財報分析", "價值投資", "美股", "電動車", "能源", "AI", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "18 min"
 ---
 
 > 大部分人看 Tesla 的 2025 年報,第一眼看到「淨利年減 47%」就下結論:電動車泡沫破了。

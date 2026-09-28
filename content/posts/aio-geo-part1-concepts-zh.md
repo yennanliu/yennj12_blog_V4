@@ -7,7 +7,7 @@ description: "AIO（AI Overview）與 GEO（Generative Engine Optimization）到
 categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "AI Overview", "生成式引擎優化", "SEO", "LLM", "RAG", "繁體中文", "Marketing"]
 authors: ["yen"]
-readTime: "24 min"
+readTime: "14 min"
 ---
 
 > 大多數人的做法：繼續衝關鍵字排名，然後困惑為什麼排名第一、流量卻掉了 40%。

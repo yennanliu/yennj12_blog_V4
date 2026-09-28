@@ -7,7 +7,7 @@ description: "如何從兩百萬個 repo 中挑對模型、用四個抽象層載
 categories: ["all", "ai", "engineering"]
 tags: ["Hugging Face", "Transformers", "Gradio", "vLLM", "TGI", "LLM", "MLOps", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "19 min"
 series: ["hugging-face"]
 ---
 

@@ -7,7 +7,7 @@ description: "vLLM 原始碼導讀系列第二篇：拆解 PagedAttention 的分
 categories: ["all", "ai", "engineering"]
 tags: ["vLLM", "PagedAttention", "KV Cache", "LLM", "AI", "GPU", "Prefix Caching", "繁體中文"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "17 min"
 ---
 
 > *大多數人理解 KV cache 的方式，是「把算過的 K 和 V 存起來，下次不用重算」，然後就不再想這件事。*

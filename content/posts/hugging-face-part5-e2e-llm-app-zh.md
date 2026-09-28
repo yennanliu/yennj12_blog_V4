@@ -7,7 +7,7 @@ description: "把前四篇串起來：用 bge-m3 + FAISS + reranker + 微調模�
 categories: ["all", "ai", "engineering"]
 tags: ["Hugging Face", "RAG", "LLM", "FAISS", "Gradio", "FastAPI", "vLLM", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "22 min"
 series: ["hugging-face"]
 ---
 

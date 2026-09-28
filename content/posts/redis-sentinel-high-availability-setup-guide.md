@@ -6,7 +6,7 @@ description: "Master Redis Sentinel for high availability with comprehensive set
 categories: ["all", "engineering", "architecture"]
 tags: ["Redis", "Redis Sentinel", "High Availability", "Distributed Systems", "Java", "Spring Boot", "Caching", "Database Architecture", "Failover", "Monitoring", "Database"]
 authors: ["yen"]
-readTime: "50 min"
+readTime: "29 min"
 ---
 
 ## 🎯 Introduction

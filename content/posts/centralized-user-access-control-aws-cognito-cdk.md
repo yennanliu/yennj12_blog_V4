@@ -3,10 +3,10 @@ title: "Building a Centralized User Access Control System with AWS Cognito and C
 date: 2025-11-30T13:00:00Z
 draft: false
 description: "Design and implement a production-ready centralized authentication and authorization system using AWS Cognito and CDK (TypeScript). Learn multi-tenant strategies, user pool management, RBAC/ABAC patterns, and how to integrate with multiple services and applications."
-categories: ["all", "ai", "engineering", "architecture", "infrastructure"]
-tags: ["AWS Cognito", "CDK", "TypeScript", "Authentication", "Authorization", "IAM", "Security", "Multi-tenant", "RBAC", "ABAC", "SSO", "Identity Management", "API Gateway", "AI", "AWS"]
+categories: ["all", "engineering", "architecture", "infrastructure"]
+tags: ["AWS Cognito", "CDK", "TypeScript", "Authentication", "Authorization", "IAM", "Security", "Multi-tenant", "RBAC", "ABAC", "API Gateway", "AWS"]
 authors: ["yen"]
-readTime: "60 min"
+readTime: "32 min"
 ---
 
 ## 🎯 Introduction

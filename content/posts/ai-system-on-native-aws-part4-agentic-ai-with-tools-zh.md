@@ -6,7 +6,7 @@ description: "當 AI 不只是回答,而要主動規劃、呼叫工具、串起�
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Bedrock Agents", "AI Agent", "Guardrails", "Lambda", "LLM", "Tool Use", "AI Engineering"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "14 min"
 ---
 
 > 大部分人以為 AI Agent 就是「prompt 寫得很長的 chatbot」。真正的差別在於:chatbot 只會產生文字,agent 會產生**動作**——它會決定去查資料庫、去呼叫 API、去發一封信,而且是它自己排出先後順序、看了中間結果再決定下一步。

@@ -7,7 +7,7 @@ description: "深入解析 YOLO/Faster-RCNN 目標偵測架構、Mask R-CNN 語�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Computer Vision", "Object Detection", "YOLO", "Segmentation", "mAP", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "16 min"
 series: ["ai-eng-from-scratch"]
 ---
 

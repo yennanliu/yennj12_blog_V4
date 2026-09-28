@@ -7,7 +7,7 @@ description: "深入實作：分別用 Claude Code + CLAUDE.md、Gemini CLI 與 
 categories: ["all", "ai", "engineering"]
 tags: ["AI Agent", "Claude Code", "Gemini CLI", "LangGraph", "Python", "Multi-Agent", "繁體中文", "Agent"]
 authors: ["yen"]
-readTime: "30 min"
+readTime: "16 min"
 ---
 
 ## 前言

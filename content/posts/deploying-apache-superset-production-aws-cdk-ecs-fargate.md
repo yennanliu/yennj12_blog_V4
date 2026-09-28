@@ -3,11 +3,11 @@ title: "Deploying Apache Superset at Scale: Production-Ready BI Platform with AW
 date: 2026-01-10T11:00:00+08:00
 draft: false
 authors: ["yen"]
-categories: ["all", "engineering", "architecture"]
-tags: ["AI", "aws", "cdk", "ecs", "fargate", "superset", "rds", "postgresql", "alb", "route53", "analytics", "bi"]
+categories: ["all", "engineering", "architecture", "infrastructure"]
+tags: ["AWS", "CDK", "ECS", "fargate", "superset", "rds", "postgresql", "ALB", "route53", "Analytics", "bi"]
 summary: "Comprehensive guide to architecting a highly available, production-grade Apache Superset deployment using ECS Fargate, RDS PostgreSQL, and AWS CDK for enterprise business intelligence at scale."
 description: "Comprehensive guide to architecting a highly available, production-grade Apache Superset deployment using ECS Fargate, RDS PostgreSQL, and AWS CDK for enterprise business intelligence at scale."
-readTime: "19 min"
+readTime: "26 min"
 ---
 
 Deploying Apache Superset, the modern open-source business intelligence platform, requires careful architectural planning to handle enterprise-scale workloads. While Superset is powerful out of the box, production deployments demand high availability, horizontal scalability, and robust data persistence. This post explores building a production-ready Superset platform using ECS Fargate, RDS PostgreSQL, and AWS CDK.

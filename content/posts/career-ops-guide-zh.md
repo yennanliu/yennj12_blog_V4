@@ -7,7 +7,7 @@ categories: ["all", "ai"]
 tags: ["Career-Ops", "求職", "AI", "應聘工具", "職業發展", "自動化", "career", "job-search"]
 summary: "深入講解 Career-Ops，一個由 AI 驅動的求職系統，幫助你在數百個工作機會中找到最適合的職位。涵蓋安裝、配置、使用技巧和策略，助力你高效求職。"
 description: "深入講解 Career-Ops，一個由 AI 驅動的求職系統，幫助你在數百個工作機會中找到最適合的職位。涵蓋安裝、配置、使用技巧和策略，助力你高效求職。"
-readTime: "40 min"
+readTime: "17 min"
 ---
 
 傳統求職方式低效且被動：你提交簡歷，公司用 AI 篩選你。Career-Ops 反轉了這個過程：**你用 AI 來評估公司**。這個開源工具由一位求職者創建，他用它評估了 740+ 個職位，最終成功獲得了 Head of Applied AI 角色。本文詳細講解如何使用 Career-Ops。
