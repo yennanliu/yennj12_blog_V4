@@ -11,6 +11,21 @@
      `reveal-ready` once it has successfully taken over, and if that never
      happens (main.js fails to load, an earlier initialiser throws, JS is off)
      the hidden state is disarmed here and the page renders as plain content. */}}
+{{/* Theme: resolved here, before first paint, so a dark-mode reader never sees
+     a white flash. A saved choice (the header toggle, initThemeToggle in
+     main.js) wins; otherwise the OS preference. Storage can throw in private
+     windows, which just means "no saved choice". The dark palette itself lives
+     in scss/_tokens.scss. */}}
+<script>
+  (function () {
+    var theme = null;
+    try { theme = localStorage.getItem('theme'); } catch (e) {}
+    if (theme !== 'light' && theme !== 'dark') {
+      theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
 <script>
   document.documentElement.classList.add('js', 'reveal-armed');
   window.setTimeout(function () {

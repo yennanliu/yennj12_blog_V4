@@ -584,6 +584,7 @@
   &__search {
     display: flex;
     align-items: center;
+    gap: $spacing-sm;
   }
 }
 
@@ -592,6 +593,43 @@ body.nav-open {
   overflow: hidden;
 
   @include bp('lg') { overflow: visible; }
+}
+
+// Light/dark switch. Same pill as the search button; shows the icon of the
+// theme it would switch *to*.
+.theme__toggle {
+  @include flex-center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  transition: all $transition-fast;
+
+  &:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-accent);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.theme__icon--sun { display: none; }
+
+html[data-theme="dark"] {
+  .theme__icon--sun { display: block; }
+  .theme__icon--moon { display: none; }
 }
 
 .search {

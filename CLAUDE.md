@@ -225,6 +225,17 @@ and the accent is only ever cyan → blue → violet (`--gradient-accent`). Anyt
 moves must be clipped by `overflow: hidden` on its own band — an unclipped sweep widens the
 document and gives every page a horizontal scrollbar.
 
+**Light / dark theme.** The header toggle (`#themeToggle`, `initThemeToggle()` in `main.js`)
+sets `html[data-theme="light"|"dark"]` and saves the choice in `localStorage.theme`. An inline
+script in `head.html` applies it before first paint, falling back to `prefers-color-scheme`.
+The dark palette is one `theme-dark` mixin in `_tokens.scss`. It **inverts the grey ramp**
+(`--color-white` becomes the dark page, `--color-black` the light text), so paired ramp values
+keep their contrast without touching any component. `$color-text`/`$color-bg`/`$color-border`/
+`$color-accent` in `_variables.scss` now resolve to runtime tokens (`--text`, `--bg`, `--link`, …).
+That means SCSS colour functions cannot take them; use `$color-accent-base` inside
+`rgba()`/`darken()`. Text on the ink bands (hero, CTA, fx-panel) must use `--on-ink`, never
+`--color-white`, because the ramp flips but the bands stay dark.
+
 **No accent literals outside `_tokens.scss`.** Every tint, hairline, ring, glow and bloom that
 uses the accent composes from a named token (`--accent-soft`, `--accent-faint`, `--accent-line`,
 `--accent-edge`, `--accent-select`, `--accent-pulse`, `--accent-bloom`, `--glow-accent*`,
