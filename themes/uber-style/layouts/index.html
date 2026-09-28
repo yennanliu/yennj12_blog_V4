@@ -319,7 +319,7 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: var(--color-white);
+    background: var(--on-ink);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
     animation: hero-dot 2.6s ease-in-out infinite;
 }
@@ -337,7 +337,7 @@
     display: block;
     font-size: clamp(2.5rem, 7vw, var(--font-size-5xl));
     font-weight: 800;
-    color: var(--color-white);
+    color: var(--on-ink);
     letter-spacing: -0.03em;
     line-height: 1.05;
     margin-bottom: 0.15rem;
@@ -409,7 +409,7 @@
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.02em;
-    color: var(--color-white);
+    color: var(--on-ink);
 }
 
 /* White with a vertical falloff, so the figures read as lit rather than flat.
@@ -461,8 +461,8 @@
 /* Inverted button: white surface, ink label. The glow is white too, which is
    what gives the black-and-white hero its one bright focal point. */
 .hero__cta--primary {
-    background: var(--color-white);
-    color: var(--color-black);
+    background: var(--on-ink);
+    color: var(--on-ink-inverse);
     box-shadow: 0 10px 30px rgba(255, 255, 255, 0.16);
 }
 
@@ -479,7 +479,7 @@
 
 .hero__cta--secondary {
     background: rgba(255, 255, 255, 0.05);
-    color: var(--color-white);
+    color: var(--on-ink);
     border-color: var(--glass-border);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
@@ -1042,7 +1042,7 @@
 .cta-content__title {
     font-size: var(--font-size-3xl);
     font-weight: 800;
-    color: var(--color-white);
+    color: var(--on-ink);
     margin-bottom: 1rem;
     letter-spacing: -0.025em;
 }
@@ -1065,16 +1065,16 @@
 }
 
 .cta-section .hero__cta--primary:hover {
-    background: var(--color-gray-100);
+    background: #f5f5f5;
 }
 
 .cta-section .hero__cta--secondary {
     border-color: rgba(255, 255, 255, 0.25);
-    color: var(--color-white);
+    color: var(--on-ink);
 }
 
 .cta-section .hero__cta--secondary:hover {
-    border-color: var(--color-white);
+    border-color: var(--on-ink);
 }
 
 /* Responsive Design */

@@ -108,7 +108,7 @@ a {
   transition: color $transition-fast;
   
   &:hover {
-    color: darken($color-accent, 10%);
+    color: var(--link-hover);
     text-decoration: underline;
   }
 }

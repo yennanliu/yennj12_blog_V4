@@ -68,6 +68,25 @@
   --aurora-2: radial-gradient(34% 40% at 78% 22%, rgba(124, 92, 255, 0.26) 0%, transparent 70%);
   --aurora-3: radial-gradient(46% 46% at 55% 88%, rgba(11, 107, 255, 0.20) 0%, transparent 72%);
 
+  // --- Text / page roles ---------------------------------------------------
+  // What $color-text, $color-bg, … in _variables.scss resolve to. They were
+  // compile-time hex values, which a theme switch cannot reach; routing them
+  // through here is what lets the dark palette below re-colour the SCSS too.
+  --text: #333333;
+  --text-light: #666666;
+  --text-muted: #999999;
+  --bg: var(--color-white);
+  --bg-light: #f8f9fa;
+  --border: #e1e5e9;
+  --border-light: #f0f0f0;
+  --link: #0066cc;
+  --link-hover: #004d99;
+
+  // Text on the ink bands (hero, CTA, header). Those bands are dark in both
+  // themes, so their copy must not follow --color-white when the ramp flips.
+  --on-ink: #ffffff;
+  --on-ink-inverse: var(--ink-950);
+
   // --- Surfaces -----------------------------------------------------------
   --surface: var(--color-white);
   --surface-muted: var(--color-gray-50);
@@ -142,4 +161,68 @@
   --font-size-3xl: 2.5rem;
   --font-size-4xl: 3rem;
   --font-size-5xl: 3.75rem;
+}
+
+// ---------------------------------------------------------------------------
+// Dark theme
+// ---------------------------------------------------------------------------
+// The light design is built on paired ramp values (a --color-black chip with
+// --color-white text, a --color-gray-50 panel under --color-gray-900 copy), so
+// dark mode inverts the ramp rather than restyling components: every pair
+// keeps its contrast, just the other way round. The ink bands sit on --ink-*
+// and --on-ink, which do not flip.
+//
+// Applied two ways, from the same declarations:
+//   * html[data-theme="dark"] — set by the inline script in head.html from the
+//     reader's saved choice (or the OS preference when there is none), and
+//     flipped by the header toggle (initThemeToggle in main.js).
+//   * prefers-color-scheme: dark with no data-theme at all — JS off, so the OS
+//     preference still wins instead of a white page at midnight.
+@mixin theme-dark {
+  color-scheme: dark;
+
+  --color-black: #f2f2f5;
+  --color-white: #0e0e12;
+  --color-gray-50: #141419;
+  --color-gray-100: #1b1b21;
+  --color-gray-200: #2a2a32;
+  --color-gray-300: #3a3a44;
+  --color-gray-400: #5c5c68;
+  --color-gray-500: #8b8b96;
+  --color-gray-600: #a9a9b3;
+  --color-gray-700: #c4c4cc;
+  --color-gray-800: #dcdce2;
+  --color-gray-900: #ececf0;
+
+  --text: #d8d8de;
+  --text-light: #a9a9b3;
+  --text-muted: #80808b;
+  --bg-light: #16161c;
+  --border: #2c2c35;
+  --border-light: #1f1f26;
+  --link: #5aa2ff;
+  --link-hover: #8dbdff;
+
+  --glass-bg-light: rgba(14, 14, 18, 0.72);
+
+  // Shadows that were tuned for a white page vanish on a dark one; deepen
+  // them so a lifted card still separates from the page.
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.35), 0 18px 44px rgba(0, 0, 0, 0.5);
+  --shadow-lift: 0 4px 8px rgba(0, 0, 0, 0.4), 0 30px 60px rgba(0, 0, 0, 0.55);
+  --shadow-code: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  @include theme-dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include theme-dark;
+  }
 }
