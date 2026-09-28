@@ -5,7 +5,8 @@ Each row lists only the rule-level problems a script can detect; the qualitative
 the same post is in `reviews/`. A dash means the post passed every mechanical check.
 
 readTime is compared with the CLAUDE.md calibration (500 lines ≈ 18 min, 700 ≈ 23, 900 ≈ 28,
-extrapolated linearly) and flagged at 8 minutes or more off. Series-standard checks
+extrapolated linearly; outside the two standard series code-block lines count half) and
+flagged at 8 minutes or more off. Series-standard checks
 (600 lines, 三個演進階段, 為什麼選 X 不選 Y, section cap) run only on fde-interview-guide and
 ai-eng-from-scratch, the two series CLAUDE.md defines them for.
 
@@ -13,136 +14,136 @@ ai-eng-from-scratch, the two series CLAUDE.md defines them for.
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `fde-interview-guide-part1-rag-zh.md` | 378 | `Google` tag; no `RKK` tag; 378 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part2-agent-zh.md` | 369 | `Google` tag; no `RKK` tag; 369 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part3-ml-fundamentals-zh.md` | 375 | `Google` tag; no `RKK` tag; 375 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part4-system-design-zh.md` | 443 | `Google` tag; no `RKK` tag; 443 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part5-rag-deep-dive-zh.md` | 391 | `Google` tag; no `RKK` tag; 391 lines (<600); no 三個演進階段; 1× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part6-rag-eval-zh.md` | 436 | `Google` tag; no `RKK` tag; 436 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part7-agent-design-zh.md` | 438 | `Google` tag; no `RKK` tag; 438 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part8-ml-fundamentals-zh.md` | 475 | `Google` tag; no `RKK` tag; 475 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part9-llm-core-zh.md` | 469 | `Google` tag; no `RKK` tag; 469 lines (<600); no 三個演進階段; 2× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part10-context-management-zh.md` | 348 | `Google` tag; 348 lines (<600); no 三個演進階段 |
-| `fde-interview-guide-part11-agent-debugging-zh.md` | 331 | `Google` tag; 331 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part12-agent-evaluation-zh.md` | 333 | 13 tags; `Google` tag; 333 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part13-prompt-injection-zh.md` | 341 | `Google` tag; 341 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part14-memory-architecture-zh.md` | 362 | `Google` tag; 362 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part15-scale-cache-zh.md` | 372 | `Google` tag; 372 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part16-multiagent-state-deadlock-zh.md` | 332 | has dropped 面試答題要點; `Google` tag; 332 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part17-mcp-tool-oauth-zh.md` | 288 | has dropped 面試答題要點; `Google` tag; 288 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part18-memory-cost-tuning-zh.md` | 286 | has dropped 面試答題要點; `Google` tag; 286 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part19-multiagent-eval-tracing-zh.md` | 330 | has dropped 面試答題要點; `Google` tag; 330 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part20-indirect-prompt-injection-zh.md` | 284 | has dropped 面試答題要點; `Google` tag; 284 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part21-async-longrunning-agent-zh.md` | 312 | has dropped 面試答題要點; `Google` tag; 312 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part22-parallel-tool-calling-zh.md` | 289 | has dropped 面試答題要點; `Google` tag; 289 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part23-ratelimit-fairshare-zh.md` | 293 | has dropped 面試答題要點; `Google` tag; 293 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part24-hybrid-model-routing-zh.md` | 285 | has dropped 面試答題要點; `Google` tag; 285 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part25-self-reflection-loop-zh.md` | 308 | has dropped 面試答題要點; `Google` tag; 308 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part26-competitive-positioning-zh.md` | 272 | `Google` tag; 272 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part27-poc-scoping-zh.md` | 291 | `Google` tag; 291 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part28-incident-communication-zh.md` | 301 | `Google` tag; 301 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part29-tco-roi-zh.md` | 316 | `Google` tag; 316 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part30-constraint-driven-architecture-zh.md` | 333 | `Google` tag; 333 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part31-adk-deep-dive-zh.md` | 458 | `Google` tag; 458 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part32-vertex-ai-stack-zh.md` | 519 | `Google` tag; 519 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part33-rkk-anatomy-zh.md` | 422 | `Google` tag; 422 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part34-mock-scenarios-zh.md` | 655 | `Google` tag; no 三個演進階段; 2× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part35-granular-tracing-zh.md` | 304 | has dropped 面試答題要點; `Google` tag; 304 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part36-eval-pipeline-zh.md` | 319 | has dropped 面試答題要點; `Google` tag; 319 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part37-legacy-integration-zh.md` | 339 | has dropped 面試答題要點; `Google` tag; 339 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part38-prototype-to-production-zh.md` | 321 | has dropped 面試答題要點; `Google` tag; 321 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part39-scalability-zh.md` | 712 | has dropped 面試答題要點; 2× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
-| `fde-interview-guide-part40-pii-security-zh.md` | 582 | has dropped 面試答題要點; 582 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part1-rag-zh.md` | 377 | 377 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part2-agent-zh.md` | 369 | 369 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part3-ml-fundamentals-zh.md` | 377 | 377 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part4-system-design-zh.md` | 449 | 449 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part5-rag-deep-dive-zh.md` | 393 | 393 lines (<600); no 三個演進階段; 1× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part6-rag-eval-zh.md` | 436 | 436 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part7-agent-design-zh.md` | 438 | 438 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part8-ml-fundamentals-zh.md` | 475 | 475 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part9-llm-core-zh.md` | 473 | 473 lines (<600); no 三個演進階段; 2× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part10-context-management-zh.md` | 350 | 350 lines (<600); no 三個演進階段 |
+| `fde-interview-guide-part11-agent-debugging-zh.md` | 333 | 333 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part12-agent-evaluation-zh.md` | 333 | 333 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part13-prompt-injection-zh.md` | 341 | 341 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part14-memory-architecture-zh.md` | 362 | 362 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part15-scale-cache-zh.md` | 381 | 381 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part16-multiagent-state-deadlock-zh.md` | 332 | has dropped 面試答題要點; 332 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part17-mcp-tool-oauth-zh.md` | 290 | has dropped 面試答題要點; 290 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part18-memory-cost-tuning-zh.md` | 293 | has dropped 面試答題要點; 293 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part19-multiagent-eval-tracing-zh.md` | 330 | has dropped 面試答題要點; 330 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part20-indirect-prompt-injection-zh.md` | 284 | has dropped 面試答題要點; 284 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part21-async-longrunning-agent-zh.md` | 314 | has dropped 面試答題要點; 314 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part22-parallel-tool-calling-zh.md` | 296 | has dropped 面試答題要點; 296 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part23-ratelimit-fairshare-zh.md` | 294 | has dropped 面試答題要點; 294 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part24-hybrid-model-routing-zh.md` | 289 | has dropped 面試答題要點; 289 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part25-self-reflection-loop-zh.md` | 310 | has dropped 面試答題要點; 310 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part26-competitive-positioning-zh.md` | 281 | 281 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part27-poc-scoping-zh.md` | 297 | 297 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part28-incident-communication-zh.md` | 307 | 307 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part29-tco-roi-zh.md` | 338 | 338 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part30-constraint-driven-architecture-zh.md` | 340 | 340 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part31-adk-deep-dive-zh.md` | 467 | 467 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part32-vertex-ai-stack-zh.md` | 537 | 537 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part33-rkk-anatomy-zh.md` | 430 | 430 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part34-mock-scenarios-zh.md` | 661 | no 三個演進階段; 2× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part35-granular-tracing-zh.md` | 312 | has dropped 面試答題要點; 312 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part36-eval-pipeline-zh.md` | 319 | has dropped 面試答題要點; 319 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part37-legacy-integration-zh.md` | 339 | has dropped 面試答題要點; 339 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part38-prototype-to-production-zh.md` | 321 | has dropped 面試答題要點; 321 lines (<600); no 三個演進階段; 0× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part39-scalability-zh.md` | 714 | has dropped 面試答題要點; 2× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
+| `fde-interview-guide-part40-pii-security-zh.md` | 588 | has dropped 面試答題要點; 588 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
 | `fde-interview-guide-part41-troubleshooting-zh.md` | 630 | has dropped 面試答題要點; sections run to 11 (cap 十) |
 | `fde-interview-guide-part42-consulting-discovery-zh.md` | 598 | has dropped 面試答題要點; 598 lines (<600); no 三個演進階段; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
-| `fde-interview-guide-part43-async-cart-agent-zh.md` | 770 | 2 dead internal link(s); has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
-| `fde-interview-guide-part44-hybrid-context-rag-zh.md` | 817 | has dropped 面試答題要點; sections run to 12 (cap 十) |
-| `fde-interview-guide-part45-prompt-injection-defense-zh.md` | 625 | 2 dead internal link(s); has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4) |
-| `fde-interview-guide-part46-byok-cmek-zh.md` | 739 | 2 dead internal link(s); has dropped 面試答題要點; 13 tags; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
-| `fde-interview-guide-part47-edge-model-routing-zh.md` | 655 | 2 dead internal link(s); has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
-| `fde-interview-guide-part48-self-healing-agent-zh.md` | 676 | 2 dead internal link(s); has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
-| `fde-interview-guide-part49-vector-drift-pipeline-zh.md` | 813 | 2 dead internal link(s); has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 13 (cap 十) |
-| `fde-interview-guide-part50-llm-judge-evaluation-zh.md` | 725 | 2 dead internal link(s); has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
-| `fde-interview-guide-part51-kv-cache-memory-zh.md` | 799 | 2 dead internal link(s); has dropped 面試答題要點; sections run to 11 (cap 十) |
-| `fde-interview-guide-part52-tool-fanout-optimization-zh.md` | 664 | 2 dead internal link(s); has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
+| `fde-interview-guide-part43-async-cart-agent-zh.md` | 772 | has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
+| `fde-interview-guide-part44-hybrid-context-rag-zh.md` | 823 | has dropped 面試答題要點; sections run to 12 (cap 十) |
+| `fde-interview-guide-part45-prompt-injection-defense-zh.md` | 625 | has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4) |
+| `fde-interview-guide-part46-byok-cmek-zh.md` | 743 | has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
+| `fde-interview-guide-part47-edge-model-routing-zh.md` | 664 | has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
+| `fde-interview-guide-part48-self-healing-agent-zh.md` | 678 | has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
+| `fde-interview-guide-part49-vector-drift-pipeline-zh.md` | 818 | has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 13 (cap 十) |
+| `fde-interview-guide-part50-llm-judge-evaluation-zh.md` | 727 | has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
+| `fde-interview-guide-part51-kv-cache-memory-zh.md` | 804 | has dropped 面試答題要點; sections run to 11 (cap 十) |
+| `fde-interview-guide-part52-tool-fanout-optimization-zh.md` | 664 | has dropped 面試答題要點; 3× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
 
 ## ai-eng-from-scratch (43)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `ai-eng-from-scratch-phase1-part1-linear-algebra-zh.md` | 603 | `Interview` tag on non-interview series; 2× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase1-part2-probability-stats-zh.md` | 663 | 1 dead internal link(s); `Interview` tag on non-interview series |
-| `ai-eng-from-scratch-phase2-part1-classical-ml-zh.md` | 703 | 2 dead internal link(s); `Interview` tag on non-interview series |
-| `ai-eng-from-scratch-phase2-part2-ensemble-optimization-zh.md` | 746 | 2 dead internal link(s); `Interview` tag on non-interview series |
-| `ai-eng-from-scratch-phase3-part1-neural-networks-zh.md` | 694 | `Interview` tag on non-interview series; 2× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase4-part1-cnn-image-fundamentals-zh.md` | 525 | 1 dead internal link(s); `Interview` tag on non-interview series; 525 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase4-part2-detection-segmentation-zh.md` | 418 | 1 dead internal link(s); `Interview` tag on non-interview series; 418 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase4-part3-vlm-3d-worldmodels-zh.md` | 564 | 1 dead internal link(s); `Interview` tag on non-interview series; 564 lines (<600) |
-| `ai-eng-from-scratch-phase5-part1-text-fundamentals-zh.md` | 646 | 2 dead internal link(s); `Interview` tag on non-interview series; 2× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase5-part2-seq2seq-attention-zh.md` | 585 | 1 dead internal link(s); `Interview` tag on non-interview series; 585 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase5-part3-advanced-nlp-zh.md` | 580 | 2 dead internal link(s); `Interview` tag on non-interview series; 580 lines (<600) |
-| `ai-eng-from-scratch-phase6-part1-asr-zh.md` | 542 | 2 dead internal link(s); `Interview` tag on non-interview series; 542 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase6-part2-tts-audio-models-zh.md` | 480 | 1 dead internal link(s); `Interview` tag on non-interview series; 480 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase7-part1-transformer-architecture-zh.md` | 594 | 2 dead internal link(s); `Interview` tag on non-interview series; 594 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase7-part2-training-variants-zh.md` | 594 | 2 dead internal link(s); `Interview` tag on non-interview series; 594 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase8-part1-diffusion-models-zh.md` | 515 | 2 dead internal link(s); `Interview` tag on non-interview series; 515 lines (<600) |
-| `ai-eng-from-scratch-phase8-part2-gan-video-generation-zh.md` | 497 | `Interview` tag on non-interview series; 497 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase9-part1-rl-fundamentals-zh.md` | 585 | 3 dead internal link(s); `Interview` tag on non-interview series; 585 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase10-part1-tokenization-zh.md` | 637 | 1 dead internal link(s); `Interview` tag on non-interview series; 3× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase10-part2-pretraining-zh.md` | 529 | 1 dead internal link(s); `Interview` tag on non-interview series; 529 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase10-part3-finetuning-zh.md` | 501 | 2 dead internal link(s); `Interview` tag on non-interview series; 501 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase11-part1-inference-serving-zh.md` | 452 | 2 dead internal link(s); `Interview` tag on non-interview series; 452 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase11-part2-rag-evals-zh.md` | 705 | 2 dead internal link(s); `Interview` tag on non-interview series; 2× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
-| `ai-eng-from-scratch-phase12-part1-vit-fusion-zh.md` | 524 | 2 dead internal link(s); `Interview` tag on non-interview series; 524 lines (<600) |
-| `ai-eng-from-scratch-phase12-part2-agents-computer-use-zh.md` | 508 | 2 dead internal link(s); `Interview` tag on non-interview series; 508 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase13-part1-mcp-apis-zh.md` | 561 | 2 dead internal link(s); `Interview` tag on non-interview series; 561 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase13-part2-orchestration-zh.md` | 780 | 2 dead internal link(s); `Interview` tag on non-interview series |
-| `ai-eng-from-scratch-phase14-part1-loop-memory-zh.md` | 598 | 2 dead internal link(s); `Interview` tag on non-interview series; 598 lines (<600); 2× 為什麼選 X 不選 Y (<4); ╔══╗ box written as `###` headings |
-| `ai-eng-from-scratch-phase14-part2-planning-zh.md` | 591 | 2 dead internal link(s); `Interview` tag on non-interview series; 591 lines (<600) |
-| `ai-eng-from-scratch-phase14-part3-frameworks-zh.md` | 573 | 2 dead internal link(s); `Interview` tag on non-interview series; 573 lines (<600) |
-| `ai-eng-from-scratch-phase14-part4-production-zh.md` | 698 | 2 dead internal link(s); `Interview` tag on non-interview series |
-| `ai-eng-from-scratch-phase15-part1-long-horizon-zh.md` | 643 | 2 dead internal link(s); `Interview` tag on non-interview series; 2× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase15-part2-self-improvement-safety-zh.md` | 540 | 2 dead internal link(s); `Interview` tag on non-interview series; 540 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase16-part1-coordination-zh.md` | 600 | 2 dead internal link(s); `Interview` tag on non-interview series |
-| `ai-eng-from-scratch-phase16-part2-emergence-collective-zh.md` | 645 | 2 dead internal link(s); `Interview` tag on non-interview series; 2× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase17-part1-serving-zh.md` | 489 | 1 dead internal link(s); `Interview` tag on non-interview series; 489 lines (<600) |
-| `ai-eng-from-scratch-phase17-part2-observability-zh.md` | 597 | 2 dead internal link(s); `Interview` tag on non-interview series; 597 lines (<600); ╔══╗ box written as `###` headings |
-| `ai-eng-from-scratch-phase17-part3-cost-scale-zh.md` | 699 | `Interview` tag on non-interview series |
-| `ai-eng-from-scratch-phase18-part1-technical-safety-zh.md` | 588 | `Interview` tag on non-interview series; 588 lines (<600); 3× 為什麼選 X 不選 Y (<4); ╔══╗ box written as `###` headings |
-| `ai-eng-from-scratch-phase18-part2-governance-zh.md` | 636 | 2 dead internal link(s); `Interview` tag on non-interview series |
-| `ai-eng-from-scratch-phase19-part1-capstone-rag-system-zh.md` | 752 | `Interview` tag on non-interview series; 3× 為什麼選 X 不選 Y (<4) |
-| `ai-eng-from-scratch-phase19-part2-capstone-agent-product-zh.md` | 663 | 2 dead internal link(s); `Interview` tag on non-interview series; ╔══╗ box written as `###` headings |
-| `ai-eng-from-scratch-phase19-part3-capstone-multimodal-app-zh.md` | 730 | 2 dead internal link(s); `Interview` tag on non-interview series |
+| `ai-eng-from-scratch-phase1-part1-linear-algebra-zh.md` | 602 | 2× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase1-part2-probability-stats-zh.md` | 654 | — |
+| `ai-eng-from-scratch-phase2-part1-classical-ml-zh.md` | 703 | — |
+| `ai-eng-from-scratch-phase2-part2-ensemble-optimization-zh.md` | 746 | — |
+| `ai-eng-from-scratch-phase3-part1-neural-networks-zh.md` | 712 | 2× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase4-part1-cnn-image-fundamentals-zh.md` | 527 | 527 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase4-part2-detection-segmentation-zh.md` | 421 | 421 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase4-part3-vlm-3d-worldmodels-zh.md` | 566 | 566 lines (<600) |
+| `ai-eng-from-scratch-phase5-part1-text-fundamentals-zh.md` | 648 | 2× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase5-part2-seq2seq-attention-zh.md` | 590 | 590 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase5-part3-advanced-nlp-zh.md` | 585 | 585 lines (<600) |
+| `ai-eng-from-scratch-phase6-part1-asr-zh.md` | 546 | 546 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase6-part2-tts-audio-models-zh.md` | 485 | 485 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase7-part1-transformer-architecture-zh.md` | 597 | 597 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase7-part2-training-variants-zh.md` | 596 | 596 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase8-part1-diffusion-models-zh.md` | 518 | 518 lines (<600) |
+| `ai-eng-from-scratch-phase8-part2-gan-video-generation-zh.md` | 497 | 497 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase9-part1-rl-fundamentals-zh.md` | 590 | 590 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase10-part1-tokenization-zh.md` | 639 | 3× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase10-part2-pretraining-zh.md` | 531 | 531 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase10-part3-finetuning-zh.md` | 506 | 506 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase11-part1-inference-serving-zh.md` | 456 | 456 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase11-part2-rag-evals-zh.md` | 706 | 2× 為什麼選 X 不選 Y (<4); sections run to 11 (cap 十) |
+| `ai-eng-from-scratch-phase12-part1-vit-fusion-zh.md` | 528 | 528 lines (<600) |
+| `ai-eng-from-scratch-phase12-part2-agents-computer-use-zh.md` | 514 | 514 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase13-part1-mcp-apis-zh.md` | 567 | 567 lines (<600); 3× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase13-part2-orchestration-zh.md` | 783 | — |
+| `ai-eng-from-scratch-phase14-part1-loop-memory-zh.md` | 614 | 2× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase14-part2-planning-zh.md` | 593 | 593 lines (<600) |
+| `ai-eng-from-scratch-phase14-part3-frameworks-zh.md` | 578 | 578 lines (<600) |
+| `ai-eng-from-scratch-phase14-part4-production-zh.md` | 702 | — |
+| `ai-eng-from-scratch-phase15-part1-long-horizon-zh.md` | 657 | 2× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase15-part2-self-improvement-safety-zh.md` | 542 | 542 lines (<600); 2× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase16-part1-coordination-zh.md` | 602 | — |
+| `ai-eng-from-scratch-phase16-part2-emergence-collective-zh.md` | 648 | 2× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase17-part1-serving-zh.md` | 493 | 493 lines (<600) |
+| `ai-eng-from-scratch-phase17-part2-observability-zh.md` | 615 | — |
+| `ai-eng-from-scratch-phase17-part3-cost-scale-zh.md` | 707 | — |
+| `ai-eng-from-scratch-phase18-part1-technical-safety-zh.md` | 600 | 3× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase18-part2-governance-zh.md` | 640 | — |
+| `ai-eng-from-scratch-phase19-part1-capstone-rag-system-zh.md` | 757 | 3× 為什麼選 X 不選 Y (<4) |
+| `ai-eng-from-scratch-phase19-part2-capstone-agent-product-zh.md` | 675 | — |
+| `ai-eng-from-scratch-phase19-part3-capstone-multimodal-app-zh.md` | 695 | — |
 
 ## fde-core-concept (25)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `fde-core-concept-1-context-management-zh.md` | 457 | 1 dead internal link(s) |
-| `fde-core-concept-2-memory-architecture-zh.md` | 281 | 2 dead internal link(s) |
-| `fde-core-concept-3-state-machine-dag-zh.md` | 438 | 2 dead internal link(s) |
-| `fde-core-concept-4-hybrid-search-rrf-zh.md` | 423 | 2 dead internal link(s) |
-| `fde-core-concept-5-reranking-cross-encoder-zh.md` | 294 | 2 dead internal link(s) |
-| `fde-core-concept-6-prompt-injection-jailbreak-zh.md` | 204 | 2 dead internal link(s) |
-| `fde-core-concept-7-indirect-prompt-injection-zh.md` | 425 | 2 dead internal link(s) |
-| `fde-core-concept-8-pii-deidentification-zh.md` | 447 | 2 dead internal link(s) |
-| `fde-core-concept-9-data-residence-sovereign-ai-zh.md` | 452 | 2 dead internal link(s) |
-| `fde-core-concept-10-cmek-byok-envelope-zh.md` | 488 | 2 dead internal link(s) |
-| `fde-core-concept-11-async-event-driven-pipeline-zh.md` | 442 | 2 dead internal link(s) |
-| `fde-core-concept-12-backpressure-fair-share-zh.md` | 450 | 2 dead internal link(s) |
-| `fde-core-concept-13-idempotency-state-recovery-zh.md` | 459 | 2 dead internal link(s) |
-| `fde-core-concept-14-speculative-tool-fanout-zh.md` | 442 | 2 dead internal link(s) |
-| `fde-core-concept-15-vector-drift-blue-green-zh.md` | 421 | 2 dead internal link(s) |
-| `fde-core-concept-16-ttft-throughput-optimization-zh.md` | 420 | 2 dead internal link(s) |
-| `fde-core-concept-17-context-caching-eviction-zh.md` | 433 | 2 dead internal link(s) |
-| `fde-core-concept-18-semantic-model-routing-zh.md` | 444 | 2 dead internal link(s) |
-| `fde-core-concept-19-llm-judge-bias-mitigation-zh.md` | 455 | 2 dead internal link(s) |
-| `fde-core-concept-20-rag-triad-metrics-zh.md` | 315 | 2 dead internal link(s) |
-| `fde-core-concept-21-discovery-to-constraints-zh.md` | 450 | 2 dead internal link(s) |
-| `fde-core-concept-22-structured-troubleshooting-zh.md` | 453 | 2 dead internal link(s) |
-| `fde-core-concept-23-stakeholder-mapping-zh.md` | 444 | 2 dead internal link(s) |
-| `fde-core-concept-24-poc-scoring-roi-zh.md` | 441 | 2 dead internal link(s) |
-| `fde-core-concept-25-value-story-objection-zh.md` | 404 | 1 dead internal link(s) |
+| `fde-core-concept-1-context-management-zh.md` | 457 | — |
+| `fde-core-concept-2-memory-architecture-zh.md` | 281 | — |
+| `fde-core-concept-3-state-machine-dag-zh.md` | 438 | — |
+| `fde-core-concept-4-hybrid-search-rrf-zh.md` | 423 | — |
+| `fde-core-concept-5-reranking-cross-encoder-zh.md` | 296 | — |
+| `fde-core-concept-6-prompt-injection-jailbreak-zh.md` | 204 | — |
+| `fde-core-concept-7-indirect-prompt-injection-zh.md` | 425 | — |
+| `fde-core-concept-8-pii-deidentification-zh.md` | 447 | — |
+| `fde-core-concept-9-data-residence-sovereign-ai-zh.md` | 452 | — |
+| `fde-core-concept-10-cmek-byok-envelope-zh.md` | 488 | — |
+| `fde-core-concept-11-async-event-driven-pipeline-zh.md` | 442 | — |
+| `fde-core-concept-12-backpressure-fair-share-zh.md` | 450 | — |
+| `fde-core-concept-13-idempotency-state-recovery-zh.md` | 459 | — |
+| `fde-core-concept-14-speculative-tool-fanout-zh.md` | 441 | — |
+| `fde-core-concept-15-vector-drift-blue-green-zh.md` | 421 | — |
+| `fde-core-concept-16-ttft-throughput-optimization-zh.md` | 424 | — |
+| `fde-core-concept-17-context-caching-eviction-zh.md` | 435 | — |
+| `fde-core-concept-18-semantic-model-routing-zh.md` | 444 | — |
+| `fde-core-concept-19-llm-judge-bias-mitigation-zh.md` | 455 | — |
+| `fde-core-concept-20-rag-triad-metrics-zh.md` | 317 | — |
+| `fde-core-concept-21-discovery-to-constraints-zh.md` | 452 | — |
+| `fde-core-concept-22-structured-troubleshooting-zh.md` | 453 | — |
+| `fde-core-concept-23-stakeholder-mapping-zh.md` | 444 | — |
+| `fde-core-concept-24-poc-scoring-roi-zh.md` | 441 | — |
+| `fde-core-concept-25-value-story-objection-zh.md` | 404 | — |
 
 ## aio-geo (16)
 
@@ -150,134 +151,134 @@ ai-eng-from-scratch, the two series CLAUDE.md defines them for.
 |---|---:|---|
 | `aio-geo-part1-concepts-zh.md` | 521 | — |
 | `aio-geo-part2-how-engines-work-zh.md` | 668 | — |
-| `aio-geo-part3-strategies-zh.md` | 674 | — |
+| `aio-geo-part3-strategies-zh.md` | 676 | — |
 | `aio-geo-part4-implementation-zh.md` | 1214 | — |
-| `aio-geo-part5-measurement-case-study-zh.md` | 906 | — |
-| `aio-geo-part6-case-enterprise-site-zh.md` | 443 | — |
-| `aio-geo-part7-case-ecommerce-zh.md` | 488 | — |
-| `aio-geo-part8-case-landing-page-zh.md` | 375 | — |
-| `aio-geo-part9-case-course-platform-zh.md` | 591 | 13 tags |
-| `aio-geo-part10-case-internal-rag-zh.md` | 576 | — |
-| `aio-geo-part11-market-landscape-zh.md` | 460 | — |
+| `aio-geo-part5-measurement-case-study-zh.md` | 910 | — |
+| `aio-geo-part6-case-enterprise-site-zh.md` | 445 | — |
+| `aio-geo-part7-case-ecommerce-zh.md` | 490 | — |
+| `aio-geo-part8-case-landing-page-zh.md` | 377 | — |
+| `aio-geo-part9-case-course-platform-zh.md` | 593 | — |
+| `aio-geo-part10-case-internal-rag-zh.md` | 578 | — |
+| `aio-geo-part11-market-landscape-zh.md` | 462 | — |
 | `aio-geo-part12-geo-vs-seo-decision-zh.md` | 438 | — |
 | `aio-geo-part13-consulting-playbook-zh.md` | 509 | — |
-| `aio-geo-part14-industry-playbooks-zh.md` | 477 | — |
-| `aio-geo-part15-tools-stack-zh.md` | 425 | — |
+| `aio-geo-part14-industry-playbooks-zh.md` | 478 | — |
+| `aio-geo-part15-tools-stack-zh.md` | 427 | — |
 | `aio-geo-part16-scaling-the-business-zh.md` | 456 | — |
 
 ## 10k-deep-dive (14)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `amd-2025-10k-deep-dive-zh.md` | 604 | readTime 30m vs ~21m; 13 tags |
-| `amzn-2025-10k-deep-dive-zh.md` | 606 | readTime 30m vs ~21m; 13 tags |
-| `avav-2026-10k-deep-dive-zh.md` | 593 | readTime 30m vs ~20m |
-| `brk-b-2025-10k-deep-dive-zh.md` | 555 | readTime 30m vs ~19m |
-| `googl-2025-10k-deep-dive-zh.md` | 590 | readTime 30m vs ~20m; 13 tags |
-| `ktos-2025-10k-deep-dive-zh.md` | 582 | readTime 30m vs ~20m; 13 tags |
-| `meta-2025-10k-deep-dive-zh.md` | 550 | readTime 32m vs ~19m |
-| `nee-2025-10k-deep-dive-zh.md` | 578 | readTime 30m vs ~20m; 13 tags |
-| `nvda-2026-10k-deep-dive-zh.md` | 574 | readTime 30m vs ~20m; 13 tags |
-| `onds-2025-10k-deep-dive-zh.md` | 559 | readTime 27m vs ~19m; 13 tags |
-| `orcl-2026-10k-deep-dive-zh.md` | 603 | readTime 30m vs ~21m; 13 tags |
-| `pltr-2025-10k-deep-dive-zh.md` | 558 | readTime 30m vs ~19m; 13 tags |
-| `rklb-2025-10k-deep-dive-zh.md` | 571 | readTime 30m vs ~20m; 13 tags |
-| `tsla-2025-10k-deep-dive-zh.md` | 594 | readTime 30m vs ~20m; 13 tags |
+| `amd-2025-10k-deep-dive-zh.md` | 605 | — |
+| `amzn-2025-10k-deep-dive-zh.md` | 607 | — |
+| `avav-2026-10k-deep-dive-zh.md` | 594 | — |
+| `brk-b-2025-10k-deep-dive-zh.md` | 556 | — |
+| `googl-2025-10k-deep-dive-zh.md` | 591 | — |
+| `ktos-2025-10k-deep-dive-zh.md` | 583 | — |
+| `meta-2025-10k-deep-dive-zh.md` | 551 | — |
+| `nee-2025-10k-deep-dive-zh.md` | 579 | — |
+| `nvda-2026-10k-deep-dive-zh.md` | 575 | — |
+| `onds-2025-10k-deep-dive-zh.md` | 560 | — |
+| `orcl-2026-10k-deep-dive-zh.md` | 604 | — |
+| `pltr-2025-10k-deep-dive-zh.md` | 559 | — |
+| `rklb-2025-10k-deep-dive-zh.md` | 572 | — |
+| `tsla-2025-10k-deep-dive-zh.md` | 595 | — |
 
 ## industry-map-semiconductor (14)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `industry-map-semiconductor-part1-silicon-wafer-zh.md` | 315 | — |
-| `industry-map-semiconductor-part2-chemicals-photoresist-zh.md` | 310 | — |
-| `industry-map-semiconductor-part3-eda-ip-zh.md` | 309 | — |
-| `industry-map-semiconductor-part4-fab-equipment-zh.md` | 328 | — |
-| `industry-map-semiconductor-part5-foundry-zh.md` | 327 | — |
-| `industry-map-semiconductor-part6-gpu-design-zh.md` | 324 | — |
-| `industry-map-semiconductor-part7-ic-design-zh.md` | 317 | — |
-| `industry-map-semiconductor-part8-memory-zh.md` | 311 | — |
+| `industry-map-semiconductor-part1-silicon-wafer-zh.md` | 317 | — |
+| `industry-map-semiconductor-part2-chemicals-photoresist-zh.md` | 314 | — |
+| `industry-map-semiconductor-part3-eda-ip-zh.md` | 311 | — |
+| `industry-map-semiconductor-part4-fab-equipment-zh.md` | 331 | — |
+| `industry-map-semiconductor-part5-foundry-zh.md` | 329 | — |
+| `industry-map-semiconductor-part6-gpu-design-zh.md` | 326 | — |
+| `industry-map-semiconductor-part7-ic-design-zh.md` | 321 | — |
+| `industry-map-semiconductor-part8-memory-zh.md` | 315 | — |
 | `industry-map-semiconductor-part9-idm-analog-zh.md` | 339 | — |
 | `industry-map-semiconductor-part10-osat-zh.md` | 338 | — |
 | `industry-map-semiconductor-part11-networking-zh.md` | 314 | — |
 | `industry-map-semiconductor-part12-system-oem-zh.md` | 323 | — |
 | `industry-map-semiconductor-part13-cloud-csp-zh.md` | 315 | — |
-| `industry-map-semiconductor-part14-end-demand-zh.md` | 355 | — |
+| `industry-map-semiconductor-part14-end-demand-zh.md` | 357 | — |
 
 ## ai-system-on-native-aws (10)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `ai-system-on-native-aws-part1-serverless-rag-chatbot-zh.md` | 545 | — |
-| `ai-system-on-native-aws-part2-intelligent-document-processing-zh.md` | 418 | readTime 25m vs ~16m |
-| `ai-system-on-native-aws-part3-realtime-recommendation-zh.md` | 409 | readTime 26m vs ~16m |
-| `ai-system-on-native-aws-part4-agentic-ai-with-tools-zh.md` | 427 | readTime 26m vs ~16m |
-| `ai-system-on-native-aws-part5-production-mlops-observability-zh.md` | 351 | readTime 27m vs ~14m |
-| `ai-system-on-native-aws-part6-enterprise-multi-tenant-rag-zh.md` | 372 | readTime 27m vs ~15m |
-| `ai-system-on-native-aws-part7-foundation-model-customization-governance-zh.md` | 362 | readTime 27m vs ~15m |
-| `ai-system-on-native-aws-part8-realtime-streaming-fraud-detection-zh.md` | 349 | readTime 27m vs ~14m |
-| `ai-system-on-native-aws-part9-security-compliance-data-governance-zh.md` | 355 | readTime 27m vs ~14m |
-| `ai-system-on-native-aws-part10-enterprise-ai-platform-engineering-zh.md` | 350 | readTime 28m vs ~14m |
+| `ai-system-on-native-aws-part1-serverless-rag-chatbot-zh.md` | 554 | — |
+| `ai-system-on-native-aws-part2-intelligent-document-processing-zh.md` | 434 | — |
+| `ai-system-on-native-aws-part3-realtime-recommendation-zh.md` | 423 | — |
+| `ai-system-on-native-aws-part4-agentic-ai-with-tools-zh.md` | 454 | — |
+| `ai-system-on-native-aws-part5-production-mlops-observability-zh.md` | 361 | — |
+| `ai-system-on-native-aws-part6-enterprise-multi-tenant-rag-zh.md` | 380 | — |
+| `ai-system-on-native-aws-part7-foundation-model-customization-governance-zh.md` | 370 | — |
+| `ai-system-on-native-aws-part8-realtime-streaming-fraud-detection-zh.md` | 363 | — |
+| `ai-system-on-native-aws-part9-security-compliance-data-governance-zh.md` | 371 | — |
+| `ai-system-on-native-aws-part10-enterprise-ai-platform-engineering-zh.md` | 356 | — |
 
 ## kubernetes-autoscaling-complete-guide (8)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md` | 1709 | no `description`; author `yennj12 team` has no profile; readTime 28m vs ~48m; 5 dead internal link(s) |
-| `kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md` | 1644 | no `description`; author `yennj12 team` has no profile; readTime 32m vs ~47m; 6 dead internal link(s); 13 tags |
-| `kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md` | 1096 | no `description`; author `yennj12 team` has no profile; readTime 25m vs ~33m; 7 dead internal link(s); 14 tags |
-| `kubernetes-autoscaling-complete-guide-part4-monitoring-alerting.md` | 1558 | no `description`; author `yennj12 team` has no profile; readTime 30m vs ~44m; 8 dead internal link(s) |
-| `kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization.md` | 1786 | no `description`; author `yennj12 team` has no profile; readTime 35m vs ~50m; 8 dead internal link(s) |
-| `kubernetes-autoscaling-complete-guide-part6-advanced-patterns.md` | 2047 | no `description`; author `yennj12 team` has no profile; readTime 40m vs ~57m; 10 dead internal link(s) |
-| `kubernetes-autoscaling-complete-guide-part7-troubleshooting-war-stories.md` | 1343 | no `description`; author `yennj12 team` has no profile; 12 dead internal link(s) |
-| `kubernetes-autoscaling-complete-guide-part8-security-compliance-governance.md` | 1800 | no `description`; author `yennj12 team` has no profile; 14 dead internal link(s); 15 tags |
+| `kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md` | 1709 | 5 dead internal link(s) |
+| `kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md` | 1654 | 6 dead internal link(s) |
+| `kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md` | 1104 | 7 dead internal link(s) |
+| `kubernetes-autoscaling-complete-guide-part4-monitoring-alerting.md` | 1564 | 8 dead internal link(s) |
+| `kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization.md` | 1786 | 8 dead internal link(s) |
+| `kubernetes-autoscaling-complete-guide-part6-advanced-patterns.md` | 2058 | 10 dead internal link(s) |
+| `kubernetes-autoscaling-complete-guide-part7-troubleshooting-war-stories.md` | 1355 | 12 dead internal link(s) |
+| `kubernetes-autoscaling-complete-guide-part8-security-compliance-governance.md` | 1806 | 14 dead internal link(s) |
 
 ## stock-analysis (6)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `stock-analysis-avav-aerovironment-part1-fundamentals-zh.md` | 482 | — |
+| `stock-analysis-avav-aerovironment-part1-fundamentals-zh.md` | 483 | — |
 | `stock-analysis-pl-planet-labs-part1-fundamentals-zh.md` | 473 | — |
 | `stock-analysis-avav-aerovironment-part2-technical-sentiment-zh.md` | 413 | — |
 | `stock-analysis-pl-planet-labs-part2-technical-sentiment-zh.md` | 414 | — |
 | `stock-analysis-avav-aerovironment-part3-valuation-verdict-zh.md` | 471 | — |
-| `stock-analysis-pl-planet-labs-part3-valuation-verdict-zh.md` | 471 | — |
+| `stock-analysis-pl-planet-labs-part3-valuation-verdict-zh.md` | 472 | — |
 
 ## ai-agent-team-for-consultant (5)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `ai-agent-team-for-consultant-part1-strategy-zh.md` | 221 | author `YennJ12 Engineering Team` has no profile |
-| `ai-agent-team-for-consultant-part2-implementation-zh.md` | 671 | author `YennJ12 Engineering Team` has no profile; readTime 30m vs ~22m |
-| `ai-agent-team-for-consultant-part3-devops-zh.md` | 612 | author `YennJ12 Engineering Team` has no profile |
-| `ai-agent-team-for-consultant-part4-outsourcing-zh.md` | 659 | author `YennJ12 Engineering Team` has no profile |
-| `ai-agent-team-for-consultant-part5-digital-marketing-zh.md` | 832 | author `YennJ12 Engineering Team` has no profile |
+| `ai-agent-team-for-consultant-part1-strategy-zh.md` | 223 | — |
+| `ai-agent-team-for-consultant-part2-implementation-zh.md` | 687 | — |
+| `ai-agent-team-for-consultant-part3-devops-zh.md` | 612 | H1 inside body |
+| `ai-agent-team-for-consultant-part4-outsourcing-zh.md` | 683 | — |
+| `ai-agent-team-for-consultant-part5-digital-marketing-zh.md` | 834 | — |
 
 ## ai-fde-essential-guide (5)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `ai-fde-essential-guide-part1-zh.md` | 313 | no `RKK` tag |
-| `ai-fde-essential-guide-part2-zh.md` | 758 | readTime 15m vs ~24m; no `RKK` tag |
-| `ai-fde-essential-guide-part3-zh.md` | 1383 | readTime 18m vs ~40m; no `RKK` tag; `-zh` file is mostly English |
-| `ai-fde-essential-guide-part4-zh.md` | 1842 | readTime 20m vs ~52m; no `RKK` tag; `-zh` file is mostly English |
-| `ai-fde-essential-guide-part5-zh.md` | 2048 | readTime 16m vs ~57m; no `RKK` tag |
+| `ai-fde-essential-guide-part1-zh.md` | 324 | no `RKK` tag |
+| `ai-fde-essential-guide-part2-zh.md` | 770 | no `RKK` tag |
+| `ai-fde-essential-guide-part3-zh.md` | 1379 | no `RKK` tag |
+| `ai-fde-essential-guide-part4-zh.md` | 1838 | no `RKK` tag |
+| `ai-fde-essential-guide-part5-zh.md` | 2044 | no `RKK` tag |
 
 ## auto-agent-system (5)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `auto-agent-system-part1-overview-zh.md` | 319 | — |
-| `auto-agent-system-part2-harness-engine-zh.md` | 338 | readTime 22m vs ~14m |
-| `auto-agent-system-part3-automations-zh.md` | 311 | readTime 23m vs ~13m |
-| `auto-agent-system-part4-production-zh.md` | 278 | readTime 22m vs ~12m |
-| `auto-agent-system-part5-frontend-pipeline-zh.md` | 250 | readTime 21m vs ~12m |
+| `auto-agent-system-part1-overview-zh.md` | 321 | — |
+| `auto-agent-system-part2-harness-engine-zh.md` | 338 | — |
+| `auto-agent-system-part3-automations-zh.md` | 311 | — |
+| `auto-agent-system-part4-production-zh.md` | 278 | — |
+| `auto-agent-system-part5-frontend-pipeline-zh.md` | 250 | — |
 
 ## hugging-face (5)
 
 | Post | Lines | Issues |
 |---|---:|---|
 | `hugging-face-part1-getting-started-zh.md` | 723 | — |
-| `hugging-face-part2-use-and-push-models-zh.md` | 842 | — |
+| `hugging-face-part2-use-and-push-models-zh.md` | 843 | — |
 | `hugging-face-part3-fine-tuning-zh.md` | 892 | — |
 | `hugging-face-part4-post-training-zh.md` | 985 | — |
 | `hugging-face-part5-e2e-llm-app-zh.md` | 1153 | — |
@@ -286,21 +287,21 @@ ai-eng-from-scratch, the two series CLAUDE.md defines them for.
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `knowledge-graph-part1-fundamentals-zh.md` | 262 | readTime 20m vs ~12m |
-| `knowledge-graph-part2-construction-zh.md` | 286 | readTime 23m vs ~13m |
-| `knowledge-graph-part3-comparison-zh.md` | 238 | readTime 22m vs ~11m |
-| `knowledge-graph-part4-llm-graphrag-zh.md` | 315 | readTime 25m vs ~13m |
-| `knowledge-graph-part5-end-to-end-project-zh.md` | 323 | readTime 26m vs ~14m |
+| `knowledge-graph-part1-fundamentals-zh.md` | 262 | — |
+| `knowledge-graph-part2-construction-zh.md` | 297 | — |
+| `knowledge-graph-part3-comparison-zh.md` | 238 | — |
+| `knowledge-graph-part4-llm-graphrag-zh.md` | 317 | — |
+| `knowledge-graph-part5-end-to-end-project-zh.md` | 322 | — |
 
 ## mem0-intro (5)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `mem0-intro-part1-architecture-overview-zh.md` | 599 | ╔══╗ box written as `###` headings |
-| `mem0-intro-part2-add-extraction-pipeline-zh.md` | 604 | ╔══╗ box written as `###` headings |
-| `mem0-intro-part3-hybrid-retrieval-zh.md` | 717 | ╔══╗ box written as `###` headings |
-| `mem0-intro-part4-storage-backends-zh.md` | 711 | ╔══╗ box written as `###` headings |
-| `mem0-intro-part5-production-oss-vs-platform-zh.md` | 605 | 4 categories (max 3) |
+| `mem0-intro-part1-architecture-overview-zh.md` | 611 | — |
+| `mem0-intro-part2-add-extraction-pipeline-zh.md` | 616 | — |
+| `mem0-intro-part3-hybrid-retrieval-zh.md` | 729 | — |
+| `mem0-intro-part4-storage-backends-zh.md` | 723 | — |
+| `mem0-intro-part5-production-oss-vs-platform-zh.md` | 607 | — |
 
 ## ollama-on-mac (5)
 
@@ -308,7 +309,7 @@ ai-eng-from-scratch, the two series CLAUDE.md defines them for.
 |---|---:|---|
 | `ollama-on-mac-part1-installation-zh.md` | 597 | — |
 | `ollama-on-mac-part2-public-models-zh.md` | 642 | — |
-| `ollama-on-mac-part3-api-modelfile-zh.md` | 704 | — |
+| `ollama-on-mac-part3-api-modelfile-zh.md` | 706 | — |
 | `ollama-on-mac-part4-app-integration-zh.md` | 654 | — |
 | `ollama-on-mac-part5-advanced-zh.md` | 788 | — |
 
@@ -330,17 +331,17 @@ ai-eng-from-scratch, the two series CLAUDE.md defines them for.
 | `qm-multiplayer-agent-part2-scope-resolution-zh.md` | 683 | — |
 | `qm-multiplayer-agent-part3-harness-abstraction-zh.md` | 670 | — |
 | `qm-multiplayer-agent-part4-security-model-zh.md` | 752 | — |
-| `qm-multiplayer-agent-part5-sandbox-skills-cron-zh.md` | 872 | — |
+| `qm-multiplayer-agent-part5-sandbox-skills-cron-zh.md` | 874 | — |
 
 ## rag-series (5)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `rag-series-part1-foundations-zh.md` | 307 | author `YennJ12 Engineering Team` has no profile |
-| `rag-series-part2-chunking-vectordb-zh.md` | 497 | author `YennJ12 Engineering Team` has no profile |
-| `rag-series-part3-advanced-retrieval-zh.md` | 506 | author `YennJ12 Engineering Team` has no profile; readTime 30m vs ~18m |
-| `rag-series-part4-optimization-zh.md` | 562 | author `YennJ12 Engineering Team` has no profile; readTime 28m vs ~20m |
-| `rag-series-part5-production-zh.md` | 644 | author `YennJ12 Engineering Team` has no profile; readTime 35m vs ~22m |
+| `rag-series-part1-foundations-zh.md` | 307 | — |
+| `rag-series-part2-chunking-vectordb-zh.md` | 497 | — |
+| `rag-series-part3-advanced-retrieval-zh.md` | 506 | — |
+| `rag-series-part4-optimization-zh.md` | 564 | — |
+| `rag-series-part5-production-zh.md` | 646 | — |
 
 ## ragflow-intro (5)
 
@@ -356,20 +357,20 @@ ai-eng-from-scratch, the two series CLAUDE.md defines them for.
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `vllm-intro-part1-architecture-overview-zh.md` | 597 | ╔══╗ box written as `###` headings |
-| `vllm-intro-part2-paged-attention-kv-cache-zh.md` | 627 | ╔══╗ box written as `###` headings |
-| `vllm-intro-part3-scheduler-continuous-batching-zh.md` | 614 | ╔══╗ box written as `###` headings |
-| `vllm-intro-part4-distributed-quantization-zh.md` | 711 | ╔══╗ box written as `###` headings |
-| `vllm-intro-part5-production-serving-zh.md` | 794 | 4 categories (max 3); ╔══╗ box written as `###` headings |
+| `vllm-intro-part1-architecture-overview-zh.md` | 609 | — |
+| `vllm-intro-part2-paged-attention-kv-cache-zh.md` | 639 | — |
+| `vllm-intro-part3-scheduler-continuous-batching-zh.md` | 626 | — |
+| `vllm-intro-part4-distributed-quantization-zh.md` | 723 | — |
+| `vllm-intro-part5-production-serving-zh.md` | 806 | — |
 
 ## ai-ocean-space-ambient-streaming (4)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `ai-ocean-space-ambient-streaming-part1-foundation-zh.md` | 948 | no `description`; 2 dead internal link(s) |
-| `ai-ocean-space-ambient-streaming-part2-visual-zh.md` | 1156 | no `description`; 1 dead internal link(s); H1 inside body |
-| `ai-ocean-space-ambient-streaming-part3-technical-zh.md` | 1294 | no `description`; H1 inside body |
-| `ai-ocean-space-ambient-streaming-part4-growth-zh.md` | 1712 | no `description`; readTime 35m vs ~48m; 1 dead internal link(s) |
+| `ai-ocean-space-ambient-streaming-part1-foundation-zh.md` | 939 | — |
+| `ai-ocean-space-ambient-streaming-part2-visual-zh.md` | 1151 | — |
+| `ai-ocean-space-ambient-streaming-part3-technical-zh.md` | 1291 | — |
+| `ai-ocean-space-ambient-streaming-part4-growth-zh.md` | 1716 | — |
 
 ## langfuse-intro (4)
 
@@ -377,31 +378,31 @@ ai-eng-from-scratch, the two series CLAUDE.md defines them for.
 |---|---:|---|
 | `langfuse-intro-part1-concepts-zh.md` | 221 | — |
 | `langfuse-intro-part2-tracing-sdk-zh.md` | 239 | — |
-| `langfuse-intro-part3-evaluation-zh.md` | 255 | — |
+| `langfuse-intro-part3-evaluation-zh.md` | 265 | — |
 | `langfuse-intro-part4-monitoring-prompt-management-zh.md` | 234 | — |
 
 ## synthwave-study-streaming (4)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `synthwave-study-streaming-part1-market-culture-zh.md` | 742 | no `description`; 1 dead internal link(s) |
-| `synthwave-study-streaming-part2-music-production-zh.md` | 927 | no `description` |
-| `synthwave-study-streaming-part3-cyberpunk-visual-zh.md` | 1031 | no `description` |
-| `synthwave-study-streaming-part4-community-monetization-zh.md` | 1853 | author `∅` has no profile; no `readTime`; 1 dead internal link(s) |
+| `synthwave-study-streaming-part1-market-culture-zh.md` | 741 | — |
+| `synthwave-study-streaming-part2-music-production-zh.md` | 927 | — |
+| `synthwave-study-streaming-part3-cyberpunk-visual-zh.md` | 1031 | — |
+| `synthwave-study-streaming-part4-community-monetization-zh.md` | 1846 | — |
 
 ## ai-accuracy-evaluation (3)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `ai-accuracy-evaluation-part1-zh.md` | 176 | author `YennJ12 Engineering Team` has no profile; only 176 lines |
-| `ai-accuracy-evaluation-part2-zh.md` | 312 | author `YennJ12 Engineering Team` has no profile |
-| `ai-accuracy-evaluation-part3-zh.md` | 412 | author `YennJ12 Engineering Team` has no profile |
+| `ai-accuracy-evaluation-part1-zh.md` | 176 | only 176 lines |
+| `ai-accuracy-evaluation-part2-zh.md` | 314 | — |
+| `ai-accuracy-evaluation-part3-zh.md` | 414 | — |
 
 ## anthropic-financial-services-intro (3)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `anthropic-financial-services-intro-part1-usage-zh.md` | 143 | only 143 lines |
+| `anthropic-financial-services-intro-part1-usage-zh.md` | 145 | only 145 lines |
 | `anthropic-financial-services-intro-part2-concepts-zh.md` | 188 | only 188 lines |
 | `anthropic-financial-services-intro-part3-example-zh.md` | 171 | only 171 lines |
 
@@ -425,125 +426,118 @@ ai-eng-from-scratch, the two series CLAUDE.md defines them for.
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `crewai-series-part1-introduction-zh.md` | 417 | author `YennJ12 Engineering Team` has no profile |
-| `crewai-series-part2-real-world-tasks-zh.md` | 669 | author `YennJ12 Engineering Team` has no profile; readTime 35m vs ~22m |
-| `crewai-series-part3-advanced-flows-zh.md` | 806 | author `YennJ12 Engineering Team` has no profile; readTime 35m vs ~26m |
+| `crewai-series-part1-introduction-zh.md` | 417 | — |
+| `crewai-series-part2-real-world-tasks-zh.md` | 669 | — |
+| `crewai-series-part3-advanced-flows-zh.md` | 810 | — |
 
 ## crypto-quantitative-trading (3)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `crypto-quantitative-trading-part1-fundamentals.md` | 1338 | readTime 25m vs ~39m |
-| `crypto-quantitative-trading-part2-strategies-backtesting.md` | 1182 | — |
-| `crypto-quantitative-trading-part3-production-deployment.md` | 1368 | readTime 30m vs ~40m |
+| `crypto-quantitative-trading-part1-fundamentals.md` | 1338 | — |
+| `crypto-quantitative-trading-part2-strategies-backtesting.md` | 1185 | — |
+| `crypto-quantitative-trading-part3-production-deployment.md` | 1366 | — |
 
 ## docker-complete-guide (3)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `docker-complete-guide-part1-introduction-zh.md` | 947 | author `yennj12 team` has no profile; readTime 50m vs ~29m |
-| `docker-complete-guide-part2-commands-zh.md` | 1350 | author `yennj12 team` has no profile; readTime 60m vs ~39m |
-| `docker-complete-guide-part3-advanced-zh.md` | 1587 | author `yennj12 team` has no profile; readTime 70m vs ~45m |
+| `docker-complete-guide-part1-introduction-zh.md` | 947 | — |
+| `docker-complete-guide-part2-commands-zh.md` | 1352 | — |
+| `docker-complete-guide-part3-advanced-zh.md` | 1576 | — |
 
 ## kubernetes-complete-guide (3)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `kubernetes-complete-guide-part1-introduction-zh.md` | 1001 | author `yennj12 team` has no profile; readTime 60m vs ~31m |
-| `kubernetes-complete-guide-part2-resources-zh.md` | 1475 | author `yennj12 team` has no profile; readTime 70m vs ~42m |
-| `kubernetes-complete-guide-part3-advanced-zh.md` | 1712 | author `yennj12 team` has no profile; readTime 75m vs ~48m; `-zh` file is mostly English |
-
-## nvidia-blog-translation (2)
-
-| Post | Lines | Issues |
-|---|---:|---|
-| `nvidia-minimax-m27 advances scalable-agentic-workflows-on-zh.md` | 56 | no `description`; author `Anu Srivastava` has no profile; readTime 25m vs ~7m; non-breaking spaces in filename; only 56 lines |
-| `nvidia-running-large-scale-gpu-workloads-on-kubernetes-wi-zh.md` | 79 | no `description`; author `nvidia-auto` has no profile; readTime 25m vs ~7m; only 79 lines |
+| `kubernetes-complete-guide-part1-introduction-zh.md` | 1001 | — |
+| `kubernetes-complete-guide-part2-resources-zh.md` | 1477 | — |
+| `kubernetes-complete-guide-part3-advanced-zh.md` | 1713 | — |
 
 ## shopping-cart-high-concurrency (2)
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `shopping-cart-high-concurrency-part1-zh.md` | 613 | author `YennJ12 Engineering Team` has no profile; readTime 30m vs ~21m |
-| `shopping-cart-high-concurrency-part2-zh.md` | 761 | author `YennJ12 Engineering Team` has no profile |
+| `shopping-cart-high-concurrency-part1-zh.md` | 616 | — |
+| `shopping-cart-high-concurrency-part2-zh.md` | 773 | — |
 
 ## Standalone posts
 
 | Post | Lines | Issues |
 |---|---:|---|
-| `adhd-focus-music-streaming-implementation-guide-zh.md` | 2480 | no `description`; readTime 30m vs ~68m; 2 dead internal link(s) |
-| `agent-specialization-multi-agent-guide-zh.md` | 1430 | no `description` |
-| `ai-music-generation-aws-cdk-infrastructure.md` | 1088 | no `description`; readTime 21m vs ~33m |
-| `aws-api-gateway-comprehensive-guide-comparison.md` | 1800 | author `YennJ12 Engineering Team` has no profile; readTime 60m vs ~50m |
-| `aws-dynamodb-complete-guide-optimization.md` | 1469 | author `Yen-Nan Liu` has no profile; no `readTime` |
-| `aws-load-balancer-complete-guide-comparison.md` | 1619 | author `YennJ12 Engineering Team` has no profile; readTime 65m vs ~46m |
-| `aws-vpc-complete-guide-enterprise-networking.md` | 687 | author `Yen-Nan Liu` has no profile; no `readTime` |
-| `bitcoin-trading-system-aws-cdk-ml-predictions.md` | 961 | readTime 18m vs ~30m |
-| `building-advanced-mcp-servers-claude-code-part2.md` | 2045 | no `description`; readTime 24m vs ~57m |
+| `adhd-focus-music-streaming-implementation-guide-zh.md` | 2479 | — |
+| `agent-specialization-multi-agent-guide-zh.md` | 1431 | — |
+| `ai-music-generation-aws-cdk-infrastructure.md` | 1070 | — |
+| `aws-api-gateway-comprehensive-guide-comparison.md` | 1800 | — |
+| `aws-dynamodb-complete-guide-optimization.md` | 1469 | — |
+| `aws-load-balancer-complete-guide-comparison.md` | 1620 | — |
+| `aws-vpc-complete-guide-enterprise-networking.md` | 688 | — |
+| `bitcoin-trading-system-aws-cdk-ml-predictions.md` | 968 | — |
+| `building-advanced-mcp-servers-claude-code-part2.md` | 2052 | — |
 | `building-centralized-logging-opensearch-aws-cdk.md` | 460 | — |
-| `building-mcp-servers-claude-code-development-part1.md` | 1103 | no `description`; readTime 18m vs ~33m |
-| `building-production-kubernetes-platform-aws-eks-cdk.md` | 669 | no `description` |
-| `building-resilient-systems.md` | 597 | no `description`; readTime 10m vs ~20m |
-| `building-serverless-url-shortener-aws-cdk.md` | 777 | no `description` |
-| `career-ops-guide-zh.md` | 752 | no `description`; readTime 40m vs ~24m |
-| `centralized-grafana-prometheus-monitoring-aws-cdk.md` | 1515 | no `description`; readTime 23m vs ~43m |
-| `centralized-monitoring-system-aws-cloudwatch-grafana-cdk.md` | 1939 | author `YennJ12 Engineering Team` has no profile; readTime 65m vs ~54m; 15 tags |
-| `centralized-user-access-control-aws-cognito-cdk.md` | 1842 | author `YennJ12 Engineering Team` has no profile; readTime 60m vs ~52m; 4 categories (max 3); 15 tags |
-| `claude-code-architecture-explained-zh.md` | 1543 | no `description`; readTime 20m vs ~44m |
-| `claude-code-best-practices-zh.md` | 1333 | no `description`; readTime 18m vs ~39m |
-| `claude-code-context-window-deep-dive-zh.md` | 943 | no `description` |
-| `claude-code-development-workflow-zh.md` | 2038 | no `description`; readTime 25m vs ~56m; H1 inside body |
-| `comprehensive-java-learning-journey-fundamentals-to-advanced.md` | 1141 | no `description`; readTime 25m vs ~34m |
-| `context-compression-summarization-guide-zh.md` | 1926 | no `description`; readTime 35m vs ~54m |
-| `data-consistency-patterns-java-enterprise-applications.md` | 1023 | author `YennJ12 Engineering Team` has no profile |
-| `deploying-apache-superset-production-aws-cdk-ecs-fargate.md` | 1250 | no `description`; readTime 19m vs ~37m |
-| `deploying-huggingface-models-aws-cdk-sagemaker.md` | 1614 | author `YennJ12 Engineering Team` has no profile; readTime 55m vs ~46m; 13 tags |
-| `docker-mount-complete-guide-comparison.md` | 1393 | author `YennJ12 Engineering Team` has no profile |
-| `essential-design-patterns-java-comprehensive-guide.md` | 1669 | author `YennJ12 Engineering Team` has no profile |
-| `everything-claude-code-setup-best-practices.md` | 1170 | readTime 22m vs ~35m |
-| `express-nodejs-backend-framework-best-practices.md` | 1682 | author `YennJ12 Engineering Team` has no profile |
+| `building-mcp-servers-claude-code-development-part1.md` | 1104 | — |
+| `building-production-kubernetes-platform-aws-eks-cdk.md` | 671 | — |
+| `building-resilient-systems.md` | 601 | — |
+| `building-serverless-url-shortener-aws-cdk.md` | 779 | — |
+| `career-ops-guide-zh.md` | 755 | — |
+| `centralized-grafana-prometheus-monitoring-aws-cdk.md` | 1522 | — |
+| `centralized-monitoring-system-aws-cloudwatch-grafana-cdk.md` | 1939 | — |
+| `centralized-user-access-control-aws-cognito-cdk.md` | 1845 | — |
+| `claude-code-architecture-explained-zh.md` | 1485 | — |
+| `claude-code-best-practices-zh.md` | 1252 | — |
+| `claude-code-context-window-deep-dive-zh.md` | 944 | — |
+| `claude-code-development-workflow-zh.md` | 2040 | — |
+| `comprehensive-java-learning-journey-fundamentals-to-advanced.md` | 1141 | — |
+| `context-compression-summarization-guide-zh.md` | 1926 | — |
+| `data-consistency-patterns-java-enterprise-applications.md` | 1027 | — |
+| `deploying-apache-superset-production-aws-cdk-ecs-fargate.md` | 1257 | — |
+| `deploying-huggingface-models-aws-cdk-sagemaker.md` | 1624 | — |
+| `docker-mount-complete-guide-comparison.md` | 1380 | — |
+| `essential-design-patterns-java-comprehensive-guide.md` | 1671 | — |
+| `everything-claude-code-setup-best-practices.md` | 1031 | — |
+| `express-nodejs-backend-framework-best-practices.md` | 1687 | — |
 | `finance-data-ai-pipeline-how-it-works-zh.md` | 408 | — |
 | `finance-data-sec-edgar-toolkit.md` | 198 | only 198 lines |
-| `google-gemini-local-mac-zh.md` | 650 | no `description`; readTime 38m vs ~22m |
-| `harness-engineering-intro-ai-zh.md` | 490 | no `description`; readTime 35m vs ~18m |
-| `hermes-agent-intro-installation-zh.md` | 532 | no `description`; readTime 35m vs ~19m |
-| `industry-map-semiconductor-value-chain-zh.md` | 324 | readTime 28m vs ~14m |
-| `investskill-claude-code-financial-analysis-plugin.md` | 615 | — |
-| `java-concurrency-deep-dive-runnable-callable-patterns-part2.md` | 1467 | author `YennJ12 Engineering Team` has no profile |
-| `java-concurrency-design-patterns-thread-interfaces-part3.md` | 1690 | author `YennJ12 Engineering Team` has no profile |
-| `java-concurrency-threading-runnable-callable-guide.md` | 1613 | author `YennJ12 Engineering Team` has no profile; readTime 35m vs ~46m |
-| `jvm-memory-heap-stack-comprehensive-guide-zh.md` | 903 | author `yennj12 team` has no profile; no `readTime` |
-| `langgraph-ai-backend-architecture-zh.md` | 548 | no `description`; readTime 40m vs ~19m |
-| `langgraph-ai-backend-core-code-zh.md` | 928 | no `description`; readTime 48m vs ~29m; `-zh` file is mostly English |
-| `langgraph-ai-backend-ideas-zh.md` | 994 | no `description`; readTime 52m vs ~30m |
-| `langgraph-ai-backend-logic-zh.md` | 568 | no `description`; readTime 42m vs ~20m |
-| `langgraph-ai-customer-ticket-system-zh.md` | 641 | no `description`; readTime 45m vs ~22m |
-| `langgraph-langchain-intro-zh.md` | 689 | no `description`; readTime 50m vs ~23m |
-| `llm-fine-tuning-aws-bedrock-complete-guide.md` | 1321 | no `description`; readTime 28m vs ~39m; 14 tags |
-| `llm-post-training-approaches-open-source-zh.md` | 650 | no `description`; readTime 35m vs ~22m; 14 tags |
-| `microservices-architecture-patterns.md` | 319 | no `description` |
+| `google-gemini-local-mac-zh.md` | 632 | H1 inside body |
+| `harness-engineering-intro-ai-zh.md` | 496 | — |
+| `hermes-agent-intro-installation-zh.md` | 532 | — |
+| `industry-map-semiconductor-value-chain-zh.md` | 348 | — |
+| `investskill-claude-code-financial-analysis-plugin.md` | 619 | — |
+| `java-concurrency-deep-dive-runnable-callable-patterns-part2.md` | 1471 | — |
+| `java-concurrency-design-patterns-thread-interfaces-part3.md` | 1690 | — |
+| `java-concurrency-threading-runnable-callable-guide.md` | 1615 | — |
+| `jvm-memory-heap-stack-comprehensive-guide-zh.md` | 903 | — |
+| `langgraph-ai-backend-architecture-zh.md` | 548 | — |
+| `langgraph-ai-backend-core-code-zh.md` | 936 | — |
+| `langgraph-ai-backend-ideas-zh.md` | 993 | — |
+| `langgraph-ai-backend-logic-zh.md` | 570 | — |
+| `langgraph-ai-customer-ticket-system-zh.md` | 645 | — |
+| `langgraph-langchain-intro-zh.md` | 686 | — |
+| `llm-fine-tuning-aws-bedrock-complete-guide.md` | 1326 | — |
+| `llm-post-training-approaches-open-source-zh.md` | 652 | — |
+| `microservices-architecture-patterns.md` | 319 | — |
 | `mkdocs-site-size-deploy-perf-tuning-zh.md` | 402 | — |
-| `model-tiering-cost-optimization-guide-zh.md` | 1652 | no `description`; readTime 30m vs ~47m |
-| `multi-agent-token-optimization-claude-code-zh.md` | 1023 | no `description` |
-| `mysql-sharding-strategies-comprehensive-guide.md` | 1362 | author `YennJ12 Engineering Team` has no profile |
-| `nyc-taxi-big-data-pipeline-spark-kafka-streaming.md` | 2792 | no `description`; readTime 22m vs ~75m; 13 tags |
-| `optimizing-database-performance.md` | 534 | no `description` |
-| `orchestration-agents-claude-code-comprehensive-guide.md` | 1175 | no `description`; readTime 22m vs ~35m |
-| `prompt-caching-practical-guide-rag-vector-db-zh.md` | 1577 | no `description`; readTime 30m vs ~45m |
-| `redis-sentinel-high-availability-setup-guide.md` | 1735 | author `YennJ12 Engineering Team` has no profile |
-| `saga-pattern-distributed-transactions-spring-boot.md` | 1247 | author `YennJ12 Engineering Team` has no profile |
-| `scalable-wordpress-ecs-fargate-architecture.md` | 1407 | no `description`; readTime 16m vs ~41m |
-| `selective-context-passing-multi-agent-guide-zh.md` | 1673 | no `description`; readTime 35m vs ~47m |
-| `sentiment-driven-stock-trading-aws-cdk-twitter.md` | 1614 | readTime 20m vs ~46m |
-| `specialized-agent-orchestration-patterns-zh.md` | 1811 | no `description`; readTime 40m vs ~51m |
-| `spotify-playlist-full-stack-application.md` | 850 | no `description`; readTime 15m vs ~27m; non-`-zh` file is mostly Chinese |
+| `model-tiering-cost-optimization-guide-zh.md` | 1656 | — |
+| `multi-agent-token-optimization-claude-code-zh.md` | 1023 | — |
+| `mysql-sharding-strategies-comprehensive-guide.md` | 1378 | — |
+| `nyc-taxi-big-data-pipeline-spark-kafka-streaming.md` | 2793 | — |
+| `optimizing-database-performance.md` | 537 | — |
+| `orchestration-agents-claude-code-comprehensive-guide.md` | 1175 | — |
+| `prompt-caching-practical-guide-rag-vector-db-zh.md` | 1579 | — |
+| `redis-sentinel-high-availability-setup-guide.md` | 1742 | — |
+| `saga-pattern-distributed-transactions-spring-boot.md` | 1249 | — |
+| `scalable-wordpress-ecs-fargate-architecture.md` | 1412 | — |
+| `selective-context-passing-multi-agent-guide-zh.md` | 1673 | — |
+| `sentiment-driven-stock-trading-aws-cdk-twitter.md` | 1616 | — |
+| `specialized-agent-orchestration-patterns-zh.md` | 1811 | — |
+| `spotify-playlist-full-stack-application-zh.md` | 852 | — |
 | `spotifymcp2-claude-spotify-mcp-server.md` | 267 | — |
-| `spring-boot-code-loading-compilation-transformation-zh.md` | 1165 | author `yennj12 team` has no profile; no `readTime` |
-| `spring-boot-ecommerce-shopping-cart-stripe-integration.md` | 1794 | no `description`; readTime 18m vs ~50m |
-| `spring-boot-multi-environment-configuration-guide-zh.md` | 1657 | no `description`; readTime 18m vs ~47m |
-| `spring-boot-vue-employee-management-system.md` | 1930 | no `description`; readTime 20m vs ~54m |
-| `spring-boot-websocket-chat-room-application.md` | 1847 | no `description`; readTime 16m vs ~52m |
-| `springdataplatform-flink-management-system.md` | 622 | author `Yen` has no profile; no `readTime` |
-| `stock-selling-strategy-systematic-approach-zh.md` | 989 | readTime 15m vs ~30m |
-| `typescript-best-practices-comprehensive-guide.md` | 1099 | author `YennJ12 Engineering Team` has no profile; readTime 45m vs ~33m |
-| `webhooks-comprehensive-guide-java-implementation.md` | 1938 | author `YennJ12 Engineering Team` has no profile |
+| `spring-boot-code-loading-compilation-transformation-zh.md` | 1165 | — |
+| `spring-boot-ecommerce-shopping-cart-stripe-integration.md` | 1796 | — |
+| `spring-boot-multi-environment-configuration-guide-zh.md` | 1664 | — |
+| `spring-boot-vue-employee-management-system.md` | 1910 | — |
+| `spring-boot-websocket-chat-room-application.md` | 1858 | — |
+| `springdataplatform-flink-management-system.md` | 622 | non-`-zh` file is mostly Chinese |
+| `stock-selling-strategy-systematic-approach-zh.md` | 993 | — |
+| `typescript-best-practices-comprehensive-guide.md` | 1102 | — |
+| `webhooks-comprehensive-guide-java-implementation.md` | 1944 | — |

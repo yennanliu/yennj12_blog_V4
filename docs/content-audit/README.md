@@ -22,6 +22,52 @@ suspected but unconfirmed (usually current vendor limits or API shapes); check b
 
 ---
 
+## Status (2026-09-28, after #13 and #14)
+
+The rest of this README is the audit **as written, before any fix**; its numbers describe the
+old state. `per-post-checklist.md` is regenerated against current `main`, so it is the live list.
+
+| Check | At audit | Now |
+|---|---:|---:|
+| Posts passing every mechanical check | 78 | 257 |
+| Posts with no `description` | 60 | 0 |
+| Authors with no profile | 56 | 0 |
+| `readTime` missing / ≥ 8 min off | 6 / 108 | 0 / 0 |
+| More than 3 categories / more than 12 tags | 3 / 23 | 0 / 0 |
+| Case/spelling duplicate tag groups | ~90 | 0 |
+| fde-interview-guide `Google` tag / missing `RKK` | 38 / 9 | 0 / 0 |
+| `Interview` tag on ai-eng-from-scratch | 43 | 0 |
+| Leaked tool markup, `nvidia-*` posts, employer claim | present | removed |
+| ╔║╚ boxes as `###` headings | 13 posts | 0 |
+| Dead internal links | 210 in 85 posts | 70 in 8 posts |
+| 面試答題要點 sections | 28 | 28 |
+| Duplicate headings | — | 22 posts |
+
+**Still open, mechanical (group 2):**
+
+- The 70 dead links are all in the kubernetes-autoscaling series: `./slug.md` links, which the
+  render hook passes through untouched, so the live pages link to `/posts/<post>/<slug>.md`
+  and 404. `check_links.py` misses them because it only checks root-absolute hrefs.
+- The 28 面試答題要點 sections (fde parts 16–25, 35–52) and the model-answer variants in 1–11
+  and 15.
+- ai-system-on-native-aws part 5 still ends with finale language (fde part 9 is fixed).
+- 22 posts with duplicate headings.
+- Three fence bugs: a ```` ```json ```` inside a Python string closes the block early in
+  `ai-agent-team-for-consultant-part3-devops-zh`, a stray fence in `google-gemini-local-mac-zh`,
+  and an unclosed fence in kubernetes-autoscaling part 8.
+- `springdataplatform-flink-management-system.md` has Chinese prose under an English filename.
+
+**Still open, needs an owner decision:** everything in section 4. Merges, restructures and
+retirements (section 5, step 8) have not started. The source-or-label pass on numbers (step 7)
+is done for the lines the reviews named, but not as a site-wide rule.
+
+**Audit script changes since the audit:** code fences now close by CommonMark rules (a ````
+block may contain ```), language is judged on prose only, and `readTime` counts code-block
+lines at half weight outside fde-interview-guide and ai-eng-from-scratch, the rule #14 applied.
+That removed false H1, language and readTime flags, and exposed the fence bugs above.
+
+---
+
 ## 1. Verdicts at a glance
 
 | Verdict | Posts | Meaning |

@@ -85,6 +85,29 @@ def expected_readtime(lines: int) -> int:
     return round(5.5 + lines * 0.025)
 
 
+def fenced_blocks(lines: list[str]):
+    """Return ([(start, end, info, content)], unclosed) using CommonMark closing rules.
+
+    A fence closes only on the same character, at least as long as the opener and
+    with no info string, so a ```` block that shows ``` inside it stays one block.
+    """
+    blocks = []
+    opener = None
+    for i, ln in enumerate(lines):
+        m = FENCE.match(ln)
+        if not m:
+            continue
+        mark = m.group(1)
+        rest = ln.strip()[len(mark) :].strip()
+        if opener is None:
+            opener = (i, mark, rest)
+        elif mark[0] == opener[1][0] and len(mark) >= len(opener[1]) and not rest:
+            start = opener[0]
+            blocks.append((start, i, opener[2], "\n".join(lines[start + 1 : i])))
+            opener = None
+    return blocks, opener is not None
+
+
 def audit(path: Path) -> dict:
     text = path.read_text(encoding="utf-8", errors="replace")
     fm, body, fm_err = split_front_matter(text)
@@ -131,28 +154,9 @@ def audit(path: Path) -> dict:
     lines = body.split("\n")
     rec["lines"] = len(lines)
     rec["chars"] = len(body)
-    rec["cjk_chars"] = len(CJK.findall(body))
-    latin_words = len(re.findall(r"[A-Za-z]{2,}", body))
-    rec["latin_words"] = latin_words
-    rec["lang_guess"] = "zh" if rec["cjk_chars"] > latin_words * 0.6 else "en"
-    rec["lang_mismatch"] = (rec["is_zh"] and rec["lang_guess"] == "en") or ((not rec["is_zh"]) and rec["lang_guess"] == "zh")
 
     # fenced blocks
-    fences = []
-    in_fence = False
-    fence_start = 0
-    fence_lang = ""
-    for i, ln in enumerate(lines):
-        m = FENCE.match(ln)
-        if m:
-            if not in_fence:
-                in_fence = True
-                fence_start = i
-                fence_lang = ln.strip()[len(m.group(1)) :].strip()
-            else:
-                in_fence = False
-                fences.append((fence_start, i, fence_lang, "\n".join(lines[fence_start + 1 : i])))
-    rec["unclosed_fence"] = in_fence
+    fences, rec["unclosed_fence"] = fenced_blocks(lines)
     rec["code_blocks"] = len(fences)
     rec["ascii_diagrams"] = sum(1 for f in fences if len(BOX_CHARS.findall(f[3])) >= 20)
     rec["code_lines"] = sum(f[1] - f[0] - 1 for f in fences)
@@ -161,15 +165,18 @@ def audit(path: Path) -> dict:
     rec["code_langs"] = sorted({f[2].split()[0] for f in fences if f[2]})
 
     # headings (outside fences)
-    prose_lines = []
-    in_fence = False
-    for ln in lines:
-        if FENCE.match(ln):
-            in_fence = not in_fence
-            continue
-        if not in_fence:
-            prose_lines.append(ln)
+    in_code = set()
+    for start, end, _, _ in fences:
+        in_code.update(range(start, end + 1))
+    prose_lines = [ln for i, ln in enumerate(lines) if i not in in_code]
     prose = "\n".join(prose_lines)
+
+    # Language is judged on prose only: a Chinese post full of English code is still Chinese.
+    rec["cjk_chars"] = len(CJK.findall(prose))
+    latin_words = len(re.findall(r"[A-Za-z]{2,}", prose))
+    rec["latin_words"] = latin_words
+    rec["lang_guess"] = "zh" if rec["cjk_chars"] > latin_words * 0.6 else "en"
+    rec["lang_mismatch"] = (rec["is_zh"] and rec["lang_guess"] == "en") or ((not rec["is_zh"]) and rec["lang_guess"] == "zh")
     h1s = [l for l in prose_lines if re.match(r"^#\s", l)]
     h2s = [l for l in prose_lines if re.match(r"^##\s", l)]
     h3s = [l for l in prose_lines if re.match(r"^###\s", l)]
@@ -235,12 +242,14 @@ def audit(path: Path) -> dict:
     rec["dead_internal_links_count"] = len(dead)
 
     # readTime calibration
+    # Outside the two standard series, code-block lines count half: readers skim code dumps.
+    rec["readTime_lines"] = rec["lines"] if rec["series"] in ("fde-interview-guide", "ai-eng-from-scratch") else round(rec["lines"] - rec["code_lines"] / 2)
     if rec["readTime_min"] is not None:
-        exp = expected_readtime(rec["lines"])
+        exp = expected_readtime(rec["readTime_lines"])
         rec["readTime_expected"] = exp
         rec["readTime_delta"] = rec["readTime_min"] - exp
     else:
-        rec["readTime_expected"] = expected_readtime(rec["lines"])
+        rec["readTime_expected"] = expected_readtime(rec["readTime_lines"])
         rec["readTime_delta"] = None
 
     # ending: does the file end mid-sentence / short?
@@ -450,7 +459,8 @@ md = [
     "the same post is in `reviews/`. A dash means the post passed every mechanical check.",
     "",
     "readTime is compared with the CLAUDE.md calibration (500 lines ≈ 18 min, 700 ≈ 23, 900 ≈ 28,",
-    "extrapolated linearly) and flagged at 8 minutes or more off. Series-standard checks",
+    "extrapolated linearly; outside the two standard series code-block lines count half) and",
+    "flagged at 8 minutes or more off. Series-standard checks",
     "(600 lines, 三個演進階段, 為什麼選 X 不選 Y, section cap) run only on fde-interview-guide and",
     "ai-eng-from-scratch, the two series CLAUDE.md defines them for.",
     "",
