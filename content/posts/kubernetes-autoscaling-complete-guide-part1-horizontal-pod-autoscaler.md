@@ -16,7 +16,7 @@ readTime: "34 min"
 This is **Part 1** of the Kubernetes Autoscaling Complete Guide series:
 
 - **Part 1 (This Post)**: Horizontal Pod Autoscaler - Application-level autoscaling with HPA, custom metrics, and KEDA
-- **[Part 2: Cluster Autoscaling & Cloud Providers](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Infrastructure-level autoscaling with Cluster Autoscaler, Karpenter, and cloud-specific solutions (EKS, GKE, AKS)
+- **[Part 2: Cluster Autoscaling & Cloud Providers](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Infrastructure-level autoscaling with Cluster Autoscaler, Karpenter, and cloud-specific solutions (EKS, GKE, AKS)
 
 ---
 
@@ -1577,14 +1577,14 @@ Savings: $720 - $315 = $405/month (56% reduction)
 For comprehensive Kubernetes learning, explore these related topics covered in other posts:
 
 ### Kubernetes Fundamentals
-- **[Kubernetes Complete Guide (Part 1): Introduction](./kubernetes-complete-guide-part1-introduction-zh.md)** - Kubernetes architecture, core concepts, and installation
-- **[Kubernetes Complete Guide (Part 2): Core Resources](./kubernetes-complete-guide-part2-resources-zh.md)** - Pods, Deployments, Services, and resource management
+- **[Kubernetes Complete Guide (Part 1): Introduction](/posts/kubernetes-complete-guide-part1-introduction-zh/)** - Kubernetes architecture, core concepts, and installation
+- **[Kubernetes Complete Guide (Part 2): Core Resources](/posts/kubernetes-complete-guide-part2-resources-zh/)** - Pods, Deployments, Services, and resource management
 
 ### Advanced Kubernetes Topics
-- **[Kubernetes Complete Guide (Part 3): Advanced Features & Production Practices](./kubernetes-complete-guide-part3-advanced-zh.md)** - RBAC, Network Policies, Helm, monitoring with Prometheus/Grafana, and production best practices
+- **[Kubernetes Complete Guide (Part 3): Advanced Features & Production Practices](/posts/kubernetes-complete-guide-part3-advanced-zh/)** - RBAC, Network Policies, Helm, monitoring with Prometheus/Grafana, and production best practices
 
 ### Production Kubernetes on AWS
-- **[Building Production Kubernetes Platform on AWS EKS](./building-production-kubernetes-platform-aws-eks-cdk.md)** - Complete EKS architecture with CDK, multi-service orchestration, observability stack, and operational excellence
+- **[Building Production Kubernetes Platform on AWS EKS](/posts/building-production-kubernetes-platform-aws-eks-cdk/)** - Complete EKS architecture with CDK, multi-service orchestration, observability stack, and operational excellence
 
 ## Troubleshooting Common Issues
 

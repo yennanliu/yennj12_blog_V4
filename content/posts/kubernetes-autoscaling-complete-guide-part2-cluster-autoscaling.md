@@ -15,12 +15,12 @@ readTime: "32 min"
 
 This is **Part 2** of the Kubernetes Autoscaling Complete Guide series:
 
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Application-level autoscaling with HPA, custom metrics, and KEDA
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Application-level autoscaling with HPA, custom metrics, and KEDA
 - **Part 2 (This Post)**: Cluster Autoscaling & Cloud Providers - Infrastructure-level autoscaling with Cluster Autoscaler, Karpenter, and cloud-specific solutions
 
 ---
 
-While Horizontal Pod Autoscaler (HPA) manages application-level scaling by adjusting pod replicas (covered in [Part 1](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)), production Kubernetes environments require intelligent cluster-level autoscaling that dynamically provisions and deprovisions compute resources. This comprehensive guide explores advanced autoscaling strategies across node management, cloud provider integrations, and cutting-edge autoscaling technologies.
+While Horizontal Pod Autoscaler (HPA) manages application-level scaling by adjusting pod replicas (covered in [Part 1](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)), production Kubernetes environments require intelligent cluster-level autoscaling that dynamically provisions and deprovisions compute resources. This comprehensive guide explores advanced autoscaling strategies across node management, cloud provider integrations, and cutting-edge autoscaling technologies.
 
 ## The Complete Autoscaling Picture
 
@@ -1609,14 +1609,14 @@ aws ec2 terminate-instances --instance-ids i-xxxxx
 For comprehensive Kubernetes knowledge, explore these related posts:
 
 ### Horizontal Pod Autoscaling
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Deep dive into HPA, KEDA, custom metrics, and event-driven autoscaling
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Deep dive into HPA, KEDA, custom metrics, and event-driven autoscaling
 
 ### Kubernetes Fundamentals
-- **[Kubernetes Complete Guide (Part 1): Introduction](./kubernetes-complete-guide-part1-introduction-zh.md)** - Architecture, concepts, installation (Traditional Chinese)
-- **[Kubernetes Complete Guide (Part 3): Advanced Features](./kubernetes-complete-guide-part3-advanced-zh.md)** - RBAC, monitoring, production practices (Traditional Chinese)
+- **[Kubernetes Complete Guide (Part 1): Introduction](/posts/kubernetes-complete-guide-part1-introduction-zh/)** - Architecture, concepts, installation (Traditional Chinese)
+- **[Kubernetes Complete Guide (Part 3): Advanced Features](/posts/kubernetes-complete-guide-part3-advanced-zh/)** - RBAC, monitoring, production practices (Traditional Chinese)
 
 ### Production Kubernetes
-- **[Building Production Kubernetes Platform on AWS EKS](./building-production-kubernetes-platform-aws-eks-cdk.md)** - Complete EKS architecture with CDK implementation
+- **[Building Production Kubernetes Platform on AWS EKS](/posts/building-production-kubernetes-platform-aws-eks-cdk/)** - Complete EKS architecture with CDK implementation
 
 ## Conclusion
 

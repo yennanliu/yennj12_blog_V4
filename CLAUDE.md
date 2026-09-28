@@ -144,7 +144,8 @@ the domain root 404s in production. Three rules keep that from happening:
   that already start with `/` — pipe them through `strings.TrimPrefix "/"`. Prefer a page's own
   `.RelPermalink` when you have the page.
 - **CI enforces it.** `scripts/check_links.py` reads `baseURL` out of `hugo.toml`, then fails on
-  a hard-coded baseURL anywhere in `content/`, on any root-absolute `href`/`src` in `public/`
+  a hard-coded baseURL anywhere in `content/`, on a relative link to a Markdown file
+  (`./slug.md` — the render hook passes it through verbatim, so it 404s), on any root-absolute `href`/`src` in `public/`
   that is missing the sub-path, and on self-referential metadata (`og:image`, `twitter:image`,
   `og:url`, `rel=canonical`) that points at our own host without it. All three deploy workflows
   run it between the build and the upload, and `link-check.yml` runs the same build and check on

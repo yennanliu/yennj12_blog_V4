@@ -15,12 +15,12 @@ readTime: "26 min"
 
 This is **Part 7** of the Kubernetes Autoscaling Complete Guide series:
 
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Application-level autoscaling theory
-- **[Part 2: Cluster Autoscaling & Cloud Providers](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Infrastructure-level autoscaling
-- **[Part 3: Hands-On HPA Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)** - Practical implementation
-- **[Part 4: Monitoring, Alerting & Threshold Tuning](./kubernetes-autoscaling-complete-guide-part4-monitoring-alerting.md)** - Production observability
-- **[Part 5: VPA & Resource Optimization](./kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization.md)** - Right-sizing strategies
-- **[Part 6: Advanced Autoscaling Patterns](./kubernetes-autoscaling-complete-guide-part6-advanced-patterns.md)** - Complex architectures
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Application-level autoscaling theory
+- **[Part 2: Cluster Autoscaling & Cloud Providers](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Infrastructure-level autoscaling
+- **[Part 3: Hands-On HPA Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)** - Practical implementation
+- **[Part 4: Monitoring, Alerting & Threshold Tuning](/posts/kubernetes-autoscaling-complete-guide-part4-monitoring-alerting/)** - Production observability
+- **[Part 5: VPA & Resource Optimization](/posts/kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization/)** - Right-sizing strategies
+- **[Part 6: Advanced Autoscaling Patterns](/posts/kubernetes-autoscaling-complete-guide-part6-advanced-patterns/)** - Complex architectures
 - **Part 7 (This Post)**: Production Troubleshooting & War Stories - Real-world incidents
 
 ---
@@ -1342,12 +1342,12 @@ Autoscaling Accuracy: ±10% of optimal replica count
 ## Related Topics
 
 ### Autoscaling Series
-- **[Part 1: HPA Fundamentals](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)**
-- **[Part 2: Cluster Autoscaling](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)**
-- **[Part 3: Hands-On Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)**
-- **[Part 4: Monitoring & Alerting](./kubernetes-autoscaling-complete-guide-part4-monitoring-alerting.md)**
-- **[Part 5: VPA & Resource Optimization](./kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization.md)**
-- **[Part 6: Advanced Patterns](./kubernetes-autoscaling-complete-guide-part6-advanced-patterns.md)**
+- **[Part 1: HPA Fundamentals](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)**
+- **[Part 2: Cluster Autoscaling](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)**
+- **[Part 3: Hands-On Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)**
+- **[Part 4: Monitoring & Alerting](/posts/kubernetes-autoscaling-complete-guide-part4-monitoring-alerting/)**
+- **[Part 5: VPA & Resource Optimization](/posts/kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization/)**
+- **[Part 6: Advanced Patterns](/posts/kubernetes-autoscaling-complete-guide-part6-advanced-patterns/)**
 
 ## Conclusion
 
