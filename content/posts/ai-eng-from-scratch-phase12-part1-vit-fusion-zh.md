@@ -5,7 +5,7 @@ draft: false
 weight: 24
 description: "深入解析 ViT 的 Patch Embedding 機制、多模態融合策略（Early/Late/Cross-Modal Fusion）、CLIP/ALIGN 對比學習與多模態生產系統設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multimodal", "Vision Transformer", "ViT", "CLIP", "Fusion", "RKK", "Interview"]
+tags: ["AI", "Multimodal", "Vision Transformer", "ViT", "CLIP", "Fusion", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -527,8 +527,8 @@ CLIP          →  BLIP          →  Flamingo / LLaVA
 
 | | |
 |---|---|
-| ← 上一篇 | [Phase 11 Part 2：強化學習與 RLHF 實戰架構](/posts/ai-eng-from-scratch-phase11-part2-rlhf-zh/) |
-| → 下一篇 | [Phase 12 Part 2：多模態生產系統：推理優化、向量資料庫與 A/B 測試](/posts/ai-eng-from-scratch-phase12-part2-multimodal-prod-zh/) |
+| ← 上一篇 | [Phase 11 Part 2：RAG 系統與 LLM 評估 — 生產落地的最後一哩](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/) |
+| → 下一篇 | [Phase 12 Part 2：多模態 Agent 與電腦操作 — 跨模態推理與行動](/posts/ai-eng-from-scratch-phase12-part2-agents-computer-use-zh/) |
 
 ---
 

@@ -5,7 +5,7 @@ draft: false
 weight: 7
 description: "深入解析 YOLO/Faster-RCNN 目標偵測架構、Mask R-CNN 語義分割、IoU/mAP 評估框架與工業部署的延遲優化策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Computer Vision", "Object Detection", "YOLO", "Segmentation", "mAP", "RKK", "Interview"]
+tags: ["AI", "Computer Vision", "Object Detection", "YOLO", "Segmentation", "mAP", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -417,7 +417,7 @@ IoU 閾值的工程含義：
 
 | | 文章 | 主題 |
 |--|------|------|
-| ← | [Phase 4 Part 1：影像分類與卷積神經網路](/posts/ai-eng-from-scratch-phase4-part1-cnn-classification-zh/) | CNN 架構、Transfer Learning、EfficientNet |
+| ← | [Phase 4 Part 1：電腦視覺基礎 — 從像素到 CNN 特徵](/posts/ai-eng-from-scratch-phase4-part1-cnn-image-fundamentals-zh/) | CNN 架構、Transfer Learning、EfficientNet |
 | → | Phase 4 Part 3：視覺 Transformer 與多模態基礎模型 | ViT、CLIP、SAM、基礎模型工程化 |
 
 ---

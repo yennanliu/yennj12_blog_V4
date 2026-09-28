@@ -5,7 +5,7 @@ draft: false
 weight: 23
 description: "深入解析 RAG 架構設計：向量資料庫選型、Hybrid Search、Re-ranking、Chunking 策略，以及 LLM 評估框架：RAGAS/G-Eval/LLM-as-Judge"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "RAG", "Vector Database", "Evaluation", "LLM Engineering", "RKK", "Interview"]
+tags: ["AI", "LLM", "RAG", "Vector Database", "Evaluation", "LLM Engineering", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -706,9 +706,9 @@ OpenAI text-embedding-3 系列支援 MRL，可將 1,536 維向量壓縮為 256 �
 
 ## 系列導航
 
-← [Phase 11 Part 1：LLM Fine-tuning 與 PEFT 技術全解析](/posts/ai-eng-from-scratch-phase11-part1-llm-finetune-zh/)
+← [Phase 11 Part 1：LLM 推論工程 — 從實驗到每秒千次請求](/posts/ai-eng-from-scratch-phase11-part1-inference-serving-zh/)
 
-→ [Phase 12 Part 1：AI 系統可觀測性與生產監控](/posts/ai-eng-from-scratch-phase12-part1-observability-zh/)
+→ [Phase 12 Part 1：Vision Transformer 與多模態融合架構](/posts/ai-eng-from-scratch-phase12-part1-vit-fusion-zh/)
 
 ---
 

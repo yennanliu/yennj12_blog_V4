@@ -5,7 +5,7 @@ draft: false
 weight: 13
 description: "深入解析 TTS 工程架構：Tacotron/FastSpeech/VITS 聲學模型、聲碼器設計、情感語音合成、音樂生成與即時語音克隆系統"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Speech", "TTS", "Audio", "Voice Cloning", "Music Generation", "RKK", "Interview"]
+tags: ["AI", "Speech", "TTS", "Audio", "Voice Cloning", "Music Generation", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "20 min"
 series: ["ai-eng-from-scratch"]
@@ -470,7 +470,7 @@ Meta 的 AudioCraft 包含三個子模型：
 
 ## 十、系列導航
 
-← 上一篇：[Phase 6 Part 1：語音辨識（ASR）— 讓機器聽懂人話](/posts/ai-eng-from-scratch-phase6-part1-asr-speech-recognition-zh/)
+← 上一篇：[Phase 6 Part 1：自動語音辨識 — 讓機器聽懂人類](/posts/ai-eng-from-scratch-phase6-part1-asr-zh/)
 
 → 下一篇：Phase 7 Part 1：推薦系統工程基礎（即將推出）
 

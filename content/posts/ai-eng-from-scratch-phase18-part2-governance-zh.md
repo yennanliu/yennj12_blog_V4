@@ -5,7 +5,7 @@ draft: false
 weight: 40
 description: "深入解析 AI 治理工程：EU AI Act/NIST AI RMF 合規架構、偏見偵測與緩解技術、資料隱私工程（差分隱私/聯邦學習）與 AI 稽核框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Safety", "Governance", "Ethics", "Bias", "Privacy", "Compliance", "RKK", "Interview"]
+tags: ["AI", "Safety", "Governance", "Ethics", "Bias", "Privacy", "Compliance", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -638,9 +638,9 @@ RDBMS           原生合規（SEC 17a-4 標準）      - 5 年保存期：100GB
 
 ## 十、系列導航
 
-← [Phase 18 Part 1：AI 安全工程 — 對抗攻擊與模型強固化](/posts/ai-eng-from-scratch-phase18-part1-security-zh/)
+← [Phase 18 Part 1：AI 技術安全 — 讓模型行為符合人類意圖](/posts/ai-eng-from-scratch-phase18-part1-technical-safety-zh/)
 
-→ [Phase 19 Part 1：AI 系統評估與 LLM 可靠性工程](/posts/ai-eng-from-scratch-phase19-part1-evaluation-zh/)
+→ [Phase 19 Part 1：Capstone — 企業級 RAG 知識庫系統端對端實作](/posts/ai-eng-from-scratch-phase19-part1-capstone-rag-system-zh/)
 
 ---
 

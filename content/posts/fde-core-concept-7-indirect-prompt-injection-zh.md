@@ -432,4 +432,4 @@ def validate_url(url: str) -> str:
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-6-zh/) | [後一篇](/posts/fde-interview-core-topic-8-zh/) →
+← [前一篇](/posts/fde-core-concept-6-prompt-injection-jailbreak-zh/) | [後一篇](/posts/fde-core-concept-8-pii-deidentification-zh/) →

@@ -662,4 +662,4 @@ A/B 測試框架：
 
 **系列導航**
 
-← [Part 46：前一篇主題](/posts/fde-interview-guide-part46-zh/) | [Part 48：下一篇主題](/posts/fde-interview-guide-part48-zh/) →
+← [Part 46：高規格金融業的數據無痕化與自主密鑰管理（BYOK / CMEK in GenAI）](/posts/fde-interview-guide-part46-byok-cmek-zh/) | [Part 48：高可靠性 Agent Graph 的多重工具 Fallback 與自我修復機制](/posts/fde-interview-guide-part48-self-healing-agent-zh/) →

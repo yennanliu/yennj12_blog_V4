@@ -5,7 +5,7 @@ draft: false
 weight: 15
 description: "深入解析 Transformer 訓練：學習率 Warmup/Schedule、梯度裁剪、混合精度訓練、Encoder-only/Decoder-only/Encoder-Decoder 架構選型，以及 MoE 混合專家系統"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Transformer", "Training", "MoE", "BERT", "GPT", "T5", "RKK", "Interview"]
+tags: ["AI", "Transformer", "Training", "MoE", "BERT", "GPT", "T5", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -596,9 +596,9 @@ Mamba 用 Selective State Space Model 取代 attention：
 
 ## 十、系列導航
 
-← [Phase 7 Part 1：Transformer 核心機制——Self-Attention 與位置編碼](/posts/ai-eng-from-scratch-phase7-part1-transformer-core-zh/)
+← [Phase 7 Part 1：Transformer 架構深度解析 — 改變一切的注意力](/posts/ai-eng-from-scratch-phase7-part1-transformer-architecture-zh/)
 
-→ [Phase 8 Part 1：Pre-training 與 Fine-tuning 策略](/posts/ai-eng-from-scratch-phase8-part1-pretraining-finetuning-zh/)
+→ [Phase 8 Part 1：擴散模型 — 從雜訊到藝術的數學](/posts/ai-eng-from-scratch-phase8-part1-diffusion-models-zh/)
 
 ---
 

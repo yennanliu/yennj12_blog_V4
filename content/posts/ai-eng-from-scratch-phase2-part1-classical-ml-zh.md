@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "深入解析線性回歸、邏輯回歸、決策樹、SVM、特徵工程等傳統 ML 技術為何在 80% 生產 AI 系統中仍是首選，附完整決策框架與量化比較"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Machine Learning", "Linear Regression", "Decision Tree", "SVM", "Feature Engineering", "RKK", "Interview"]
+tags: ["AI", "Machine Learning", "Linear Regression", "Decision Tree", "SVM", "Feature Engineering", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -707,7 +707,7 @@ AUC 準確率             0.935             0.941             0.948
 
 ---
 
-← [Phase 1 Part 2：Python AI 生態系統與開發工具](/posts/ai-eng-from-scratch-phase1-part2-python-ecosystem-zh/) ｜ [Phase 2 Part 2：深度學習基礎 →](/posts/ai-eng-from-scratch-phase2-part2-deep-learning-zh/)
+← [Phase 1 Part 2：機率與統計 — 不確定性的數學語言](/posts/ai-eng-from-scratch-phase1-part2-probability-stats-zh/) ｜ [Phase 2 Part 2：集成學習與最佳化 — 超越單一模型的上限 →](/posts/ai-eng-from-scratch-phase2-part2-ensemble-optimization-zh/)
 
 ---
 

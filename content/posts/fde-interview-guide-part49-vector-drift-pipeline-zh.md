@@ -820,4 +820,4 @@ def embed_with_cache(chunks: List[str]) -> List[np.ndarray]:
 
 **系列導航**
 
-← [Part 48：RAG 系統的多路召回與重排序架構](/posts/fde-interview-guide-part48-rag-multi-recall-rerank-zh/) | [Part 50：Agent 工具呼叫的容錯與冪等設計](/posts/fde-interview-guide-part50-agent-tool-idempotency-zh/) →
+← [Part 48：高可靠性 Agent Graph 的多重工具 Fallback 與自我修復機制](/posts/fde-interview-guide-part48-self-healing-agent-zh/) | [Part 50：生產環境 GenAI 自動化評估管線與 LLM-as-a-Judge 漂移監控](/posts/fde-interview-guide-part50-llm-judge-evaluation-zh/) →

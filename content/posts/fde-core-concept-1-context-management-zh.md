@@ -464,4 +464,4 @@ summary_latency_seconds{p50, p95, p99}
 
 **系列導航**
 
-← 前一篇（本系列第一篇） | [後一篇：RAG 架構設計與向量檢索策略](/posts/fde-interview-core-topic-2-rag-architecture-zh/) →
+← 前一篇（本系列第一篇） | [後一篇：Memory Architecture：Agent 階層式記憶體設計](/posts/fde-core-concept-2-memory-architecture-zh/) →

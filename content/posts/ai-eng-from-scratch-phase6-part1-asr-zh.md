@@ -5,7 +5,7 @@ draft: false
 weight: 12
 description: "深入解析 ASR 工程架構：聲學特徵提取（MFCC/Mel Spectrogram）、CTC/Attention 解碼、Whisper 架構與生產級語音辨識系統設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Speech", "ASR", "Whisper", "CTC", "Audio", "RKK", "Interview"]
+tags: ["AI", "Speech", "ASR", "Whisper", "CTC", "Audio", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "20 min"
 series: ["ai-eng-from-scratch"]
@@ -544,9 +544,9 @@ VAD 是串流 ASR 的「守門員」：
 
 ## 十、系列導航
 
-← [Phase 5 Part 3：向量資料庫與 RAG 系統設計](/posts/ai-eng-from-scratch-phase5-part3-rag-zh/)
+← [Phase 5 Part 3：進階 NLP — BERT、問答系統與語言理解](/posts/ai-eng-from-scratch-phase5-part3-advanced-nlp-zh/)
 
-→ [Phase 6 Part 2：文字轉語音（TTS）系統設計](/posts/ai-eng-from-scratch-phase6-part2-tts-zh/)
+→ [Phase 6 Part 2：語音合成與音訊模型 — 讓機器開口說話](/posts/ai-eng-from-scratch-phase6-part2-tts-audio-models-zh/)
 
 ---
 

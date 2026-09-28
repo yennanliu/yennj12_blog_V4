@@ -462,4 +462,4 @@ CREATE TABLE evaluation_results (
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-18-rag-evaluation-metrics-zh/) | [後一篇](/posts/fde-interview-core-topic-20-multimodal-embedding-retrieval-zh/) →
+← [前一篇](/posts/fde-core-concept-18-semantic-model-routing-zh/) | [後一篇](/posts/fde-core-concept-20-rag-triad-metrics-zh/) →

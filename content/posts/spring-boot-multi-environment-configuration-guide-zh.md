@@ -1664,4 +1664,4 @@ DB_HOST=mysql
 | 📂 **完整範例程式碼** | [GitHub - SpringPlayground](https://github.com/yennanliu/SpringPlayground) |
 | 📖 **Spring Boot 文檔** | [官方文檔](https://spring.io/projects/spring-boot) |
 | 🐳 **Docker 文檔** | [Docker 官方文檔](https://docs.docker.com/) |
-| 📚 **相關文章** | [Spring Boot 系列文章](/categories/spring-boot/) |
+| 📚 **相關文章** | [Spring Boot 相關文章](/tags/spring-boot/) |

@@ -427,4 +427,4 @@ Decode Pool（Bandwidth 優先，A100）：
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-15-kv-cache-memory-management-zh/) | [後一篇](/posts/fde-interview-core-topic-17-gpu-cost-optimization-zh/) →
+← [前一篇](/posts/fde-core-concept-15-vector-drift-blue-green-zh/) | [後一篇](/posts/fde-core-concept-17-context-caching-eviction-zh/) →

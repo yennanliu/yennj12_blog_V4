@@ -5,7 +5,7 @@ draft: false
 weight: 30
 description: "深入比較主流 Agent 框架：AutoGen/CrewAI/LangGraph/Semantic Kernel 的架構差異、適用場景與生產成熟度，以及何時應該自建框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "AutoGen", "CrewAI", "LangGraph", "Framework", "RKK", "Interview"]
+tags: ["AI", "Agent", "AutoGen", "CrewAI", "LangGraph", "Framework", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -575,9 +575,9 @@ Python 型別安全        中等          中等        高（TypedDict） 完�
 
 ## 十、系列導航
 
-← **Phase 14 Part 2**：[Agent 記憶體架構 — 短期、長期與情節記憶的工程設計](/posts/ai-eng-from-scratch-phase14-part2-memory-zh/)
+← **Phase 14 Part 2**：[Phase 14 Part 2：Agent 規劃系統 — 從目標到行動計畫](/posts/ai-eng-from-scratch-phase14-part2-planning-zh/)
 
-→ **Phase 14 Part 4**：[Agent 評估與可觀測性 — 如何知道你的 Agent 表現好不好](/posts/ai-eng-from-scratch-phase14-part4-eval-zh/)
+→ **Phase 14 Part 4**：[Phase 14 Part 4：Agent 生產化 — 可靠性、可觀測性與成本控制](/posts/ai-eng-from-scratch-phase14-part4-production-zh/)
 
 ---
 

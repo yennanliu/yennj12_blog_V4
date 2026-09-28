@@ -5,7 +5,7 @@ draft: false
 weight: 34
 description: "深入解析多 Agent 系統協調工程：Supervisor/Peer-to-Peer/Market 協調模式、Agent 間通訊協議、衝突解決、任務分配與共識機制"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multi-Agent", "Coordination", "Swarm", "Agent Communication", "RKK", "Interview"]
+tags: ["AI", "Multi-Agent", "Coordination", "Swarm", "Agent Communication", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -602,9 +602,9 @@ vs 全體一致  容忍單 Agent 錯誤（噪聲）         全體一致：任�
 
 ## 十、系列導航
 
-← [Phase 15 Part 2：Agent 記憶體與長期狀態管理](/posts/ai-eng-from-scratch-phase15-part2-memory-zh/)
+← [Phase 15 Part 2：自我改進與 2026 安全技術棧](/posts/ai-eng-from-scratch-phase15-part2-self-improvement-safety-zh/)
 
-→ [Phase 16 Part 2：多 Agent 系統的可觀測性與除錯](/posts/ai-eng-from-scratch-phase16-part2-observability-zh/)
+→ [Phase 16 Part 2：湧現與集體智慧 — 群體行為的工程設計](/posts/ai-eng-from-scratch-phase16-part2-emergence-collective-zh/)
 
 ---
 

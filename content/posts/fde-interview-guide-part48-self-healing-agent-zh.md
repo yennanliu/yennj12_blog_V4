@@ -683,4 +683,4 @@ Trace: task_id=ORD-2026-00431
 
 **系列導航**
 
-← [Part 47：供應鏈 Agent 的分散式追蹤與可觀測性](/posts/fde-interview-guide-part47-supply-chain-observability-zh/) | [Part 49：多 Agent 協作系統的工作流編排與衝突解決](/posts/fde-interview-guide-part49-multi-agent-orchestration-zh/) →
+← [Part 47：RKK 實戰——大模型與地端微型模型的智慧混合路由與冷啟動優化](/posts/fde-interview-guide-part47-edge-model-routing-zh/) | [Part 49：百萬級 RAG 系統的即時資料漂移與向量索引自動更新管線](/posts/fde-interview-guide-part49-vector-drift-pipeline-zh/) →

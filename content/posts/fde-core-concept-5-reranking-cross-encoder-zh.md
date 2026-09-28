@@ -301,4 +301,4 @@ Query ──▶ ANN Top-50
 
 **系列導航**
 
-← [前一篇：RAG Pipeline 整體架構設計](/posts/fde-interview-core-topic-4-rag-pipeline-zh/) | [後一篇：Embedding Model 選型與 Fine-tuning](/posts/fde-interview-core-topic-6-embedding-model-zh/) →
+← [前一篇：Hybrid Search & RRF：混合檢索與倒數排名融合演算法](/posts/fde-core-concept-4-hybrid-search-rrf-zh/) | [後一篇：Prompt Injection & Jailbreak Defense：生產環境零信任 AI 防禦體系](/posts/fde-core-concept-6-prompt-injection-jailbreak-zh/) →

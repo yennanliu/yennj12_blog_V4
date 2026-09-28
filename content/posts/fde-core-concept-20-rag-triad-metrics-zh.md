@@ -322,4 +322,4 @@ groups:
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-19-vector-database-zh/) | [後一篇](/posts/fde-interview-core-topic-21-prompt-engineering-zh/) →
+← [前一篇](/posts/fde-core-concept-19-llm-judge-bias-mitigation-zh/) | [後一篇](/posts/fde-core-concept-21-discovery-to-constraints-zh/) →

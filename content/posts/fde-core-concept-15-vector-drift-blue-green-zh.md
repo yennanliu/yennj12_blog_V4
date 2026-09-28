@@ -428,4 +428,4 @@ Step 4: blue_green_swap（漸進切換）
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-14-embedding-versioning-zh/) | [後一篇](/posts/fde-interview-core-topic-16-multimodal-retrieval-zh/) →
+← [前一篇](/posts/fde-core-concept-14-speculative-tool-fanout-zh/) | [後一篇](/posts/fde-core-concept-16-ttft-throughput-optimization-zh/) →

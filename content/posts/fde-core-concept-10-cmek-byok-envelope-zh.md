@@ -495,4 +495,4 @@ AES-256-GCM  wrap/unwrap 速度極快（< 0.1ms）         需要安全信道預
 
 **系列導航**
 
-← [前一篇：Part 9](/posts/fde-interview-core-topic-9-zh/) | [後一篇：Part 11](/posts/fde-interview-core-topic-11-zh/) →
+← [前一篇：Data Residence & Sovereign AI：金融醫療場景的地緣合規架構](/posts/fde-core-concept-9-data-residence-sovereign-ai-zh/) | [後一篇：Async Event-Driven Pipeline：解耦同步 HTTP 與保護後端連線池](/posts/fde-core-concept-11-async-event-driven-pipeline-zh/) →

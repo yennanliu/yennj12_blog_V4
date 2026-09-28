@@ -5,7 +5,7 @@ draft: false
 weight: 8
 description: "深入解析 CLIP/BLIP/LLaVA 視覺語言模型架構、NeRF/3D Gaussian Splatting 三維重建、以及 Sora 等影片生成世界模型的工程原理"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Computer Vision", "VLM", "CLIP", "LLaVA", "NeRF", "3D Vision", "World Models", "RKK", "Interview"]
+tags: ["AI", "Computer Vision", "VLM", "CLIP", "LLaVA", "NeRF", "3D Vision", "World Models", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -558,7 +558,7 @@ Sora 基於 Diffusion Transformer（DiT），將影片視為時空 patch 序列�
 [Phase 4 Part 2：目標偵測、語義分割與姿態估計](/posts/ai-eng-from-scratch-phase4-part2-detection-segmentation-zh/)
 
 **→ 下一篇：**
-[Phase 5 Part 1：語音識別、TTS 與多模態語音系統](/posts/ai-eng-from-scratch-phase5-part1-speech-asr-tts-zh/)
+[Phase 5 Part 1：NLP 基礎 — 文字是智慧的介面](/posts/ai-eng-from-scratch-phase5-part1-text-fundamentals-zh/)
 
 ---
 

@@ -411,4 +411,4 @@ Feature Demo（功能展示）          Value Story Demo（價值故事展示）
 
 **系列導航**
 
-← [前一篇：Structured Troubleshooting — 自上而下分層排錯與 AI 系統觀測方法論](/posts/fde-interview-core-topic-22-structured-troubleshooting-zh/)
+← [前一篇：POC Scoring & ROI：概念驗證評分矩陣與投資回報框架設計](/posts/fde-core-concept-24-poc-scoring-roi-zh/)

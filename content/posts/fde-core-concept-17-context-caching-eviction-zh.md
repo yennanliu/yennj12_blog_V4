@@ -440,4 +440,4 @@ $0.3125/M  CachedContent.create()
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-16-zh/) | [後一篇](/posts/fde-interview-core-topic-18-zh/) →
+← [前一篇](/posts/fde-core-concept-16-ttft-throughput-optimization-zh/) | [後一篇](/posts/fde-core-concept-18-semantic-model-routing-zh/) →

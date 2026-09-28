@@ -445,7 +445,7 @@ BigQuery 分析每日費用：
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-10-caching-strategies-zh/) | [後一篇](/posts/fde-interview-core-topic-12-vector-search-embedding-pipeline-zh/) →
+← [前一篇](/posts/fde-core-concept-10-cmek-byok-envelope-zh/) | [後一篇](/posts/fde-core-concept-12-backpressure-fair-share-zh/) →
 
 ---
 

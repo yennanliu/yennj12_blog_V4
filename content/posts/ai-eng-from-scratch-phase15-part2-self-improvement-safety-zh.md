@@ -5,7 +5,7 @@ draft: false
 weight: 33
 description: "深入解析 AI 自我改進機制：Constitutional AI/Self-Refinement/RLVR，以及 2026 年生產安全技術棧：越獄防禦/提示注入防護/行動沙箱"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Safety", "Self-Improvement", "Constitutional AI", "Autonomous Systems", "RKK", "Interview"]
+tags: ["AI", "Safety", "Self-Improvement", "Constitutional AI", "Autonomous Systems", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -542,9 +542,9 @@ RLVR 訓練循環（簡化）
 
 ## 十、系列導航
 
-← 上一篇：[Phase 15 Part 1：Agent 記憶體與長期規劃架構](/posts/ai-eng-from-scratch-phase15-part1-agent-memory-planning-zh/)
+← 上一篇：[Phase 15 Part 1：長時程自主系統 — 跨天任務的 Agent 工程](/posts/ai-eng-from-scratch-phase15-part1-long-horizon-zh/)
 
-→ 下一篇：[Phase 16 Part 1：多模態 AI 工程：視覺、語音、跨模態架構](/posts/ai-eng-from-scratch-phase16-part1-multimodal-zh/)
+→ 下一篇：[Phase 16 Part 1：多 Agent 協調 — 分工、通訊與共識](/posts/ai-eng-from-scratch-phase16-part1-coordination-zh/)
 
 ---
 

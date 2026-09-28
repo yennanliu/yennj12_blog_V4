@@ -5,7 +5,7 @@ draft: false
 weight: 9
 description: "從詞袋到詞嵌入，掌握 NLP 工程師必備的文字前處理、TF-IDF、Word2Vec/GloVe/FastText 嵌入技術與文字分類生產架構"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "Word2Vec", "Text Classification", "Embeddings", "TF-IDF", "RKK", "Interview"]
+tags: ["AI", "NLP", "Word2Vec", "Text Classification", "Embeddings", "TF-IDF", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -640,8 +640,8 @@ vs 即時         成本低 3-5x（同等吞吐量）         即時：每個請
 
 | | 文章 |
 |--|------|
-| ← 上一篇 | [Phase 4 Part 3：模型監控與漂移偵測](/posts/ai-eng-from-scratch-phase4-part3-model-monitoring-zh/) |
-| → 下一篇 | [Phase 5 Part 2：Transformer 與 BERT 實戰](/posts/ai-eng-from-scratch-phase5-part2-transformers-zh/) |
+| ← 上一篇 | [Phase 4 Part 3：視覺語言模型、3D 視覺與世界模型](/posts/ai-eng-from-scratch-phase4-part3-vlm-3d-worldmodels-zh/) |
+| → 下一篇 | [Phase 5 Part 2：Seq2Seq 與注意力機制 — Transformer 前夜](/posts/ai-eng-from-scratch-phase5-part2-seq2seq-attention-zh/) |
 
 ---
 

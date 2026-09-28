@@ -430,4 +430,4 @@ LIMIT 10
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-3-zh/) | [後一篇](/posts/fde-interview-core-topic-5-zh/) →
+← [前一篇](/posts/fde-core-concept-3-state-machine-dag-zh/) | [後一篇](/posts/fde-core-concept-5-reranking-cross-encoder-zh/) →

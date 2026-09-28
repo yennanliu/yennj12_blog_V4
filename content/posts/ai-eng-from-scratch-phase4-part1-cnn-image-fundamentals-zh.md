@@ -5,7 +5,7 @@ draft: false
 weight: 6
 description: "深入解析卷積神經網路的工程直覺：卷積運算、池化、ResNet/EfficientNet 架構演進、影像資料增強與遷移學習策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Computer Vision", "CNN", "ResNet", "Transfer Learning", "Image Classification", "RKK", "Interview"]
+tags: ["AI", "Computer Vision", "CNN", "ResNet", "Transfer Learning", "Image Classification", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -519,9 +519,9 @@ transform = Normalize(mean=dataset_mean, std=dataset_std)
 
 | | 文章 | 主題 |
 |---|------|------|
-| ← | [Phase 3：MLOps 與模型部署](/posts/ai-eng-from-scratch-phase3-mlops-zh/) | 模型監控、CI/CD、Feature Store |
+| ← | [Phase 3：深度學習核心 — 從第一原理構建神經網路](/posts/ai-eng-from-scratch-phase3-part1-neural-networks-zh/) | 神經網路基礎 |
 | 📍 | **Phase 4 Part 1（本文）** | CNN 基礎、ResNet、EfficientNet、遷移學習 |
-| → | Phase 4 Part 2（即將推出） | 目標偵測：YOLO、Faster RCNN、Anchor-free |
+| → | [Phase 4 Part 2：目標偵測與語義分割 — 讓機器看懂空間](/posts/ai-eng-from-scratch-phase4-part2-detection-segmentation-zh/) | 目標偵測：YOLO、Faster RCNN、Anchor-free |
 
 ---
 

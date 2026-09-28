@@ -460,4 +460,4 @@ resource "google_monitoring_uptime_check_config" "search_api_check" {
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-21-cost-attribution-quota-management-zh/) | [後一篇](/posts/fde-interview-core-topic-23-chaos-engineering-resilience-zh/) →
+← [前一篇](/posts/fde-core-concept-21-discovery-to-constraints-zh/) | [後一篇](/posts/fde-core-concept-23-stakeholder-mapping-zh/) →

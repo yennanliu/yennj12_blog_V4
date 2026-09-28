@@ -5,7 +5,7 @@ draft: false
 weight: 18
 description: "深入解析強化學習工程原理：MDP/Q-Learning/Policy Gradient/PPO/RLHF，理解 ChatGPT 背後的對齊訓練機制"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Reinforcement Learning", "RLHF", "PPO", "Q-Learning", "Policy Gradient", "RKK", "Interview"]
+tags: ["AI", "Reinforcement Learning", "RLHF", "PPO", "Q-Learning", "Policy Gradient", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -587,10 +587,10 @@ Flip condition：若有大量絕對品質標注資料（如考試題目答案）
 
 ## 十、系列導航
 
-**← 上一篇：** [Phase 8 Part 2：分散式訓練與混合精度](/posts/ai-eng-from-scratch-phase8-part2-distributed-training-zh/)
+**← 上一篇：** [Phase 8 Part 2：GAN 與影片生成 — 對抗的藝術](/posts/ai-eng-from-scratch-phase8-part2-gan-video-generation-zh/)
 
-**→ 下一篇：** [Phase 9 Part 2：PPO 實作與 RLHF 工程細節](/posts/ai-eng-from-scratch-phase9-part2-ppo-implementation-zh/)
+**→ 下一篇：** [Phase 10 Part 1：從頭構建 LLM — Tokenization 的工程藝術](/posts/ai-eng-from-scratch-phase10-part1-tokenization-zh/)
 
 ---
 
-*本文為「AI 工程從零開始」系列第 Phase 9 第 1 篇，聚焦強化學習基礎理論與 RLHF 工程實踐。系列完整索引請見 [Phase 1 總覽](/posts/ai-eng-from-scratch-phase1-part1-overview-zh/)。*
+*本文為「AI 工程從零開始」系列第 Phase 9 第 1 篇，聚焦強化學習基礎理論與 RLHF 工程實踐。系列完整索引請見 [Phase 8 Part 2：GAN 與影片生成 — 對抗的藝術](/posts/ai-eng-from-scratch-phase8-part2-gan-video-generation-zh/)。*

@@ -746,4 +746,4 @@ ekm_config:
 
 **系列導航**
 
-← [Part 45：大規模 RAG 系統的向量檢索優化與重排序架構](/posts/fde-interview-guide-part45-rag-vector-reranking-zh/) | [Part 47：GenAI 應用的可觀測性與 LLM 評估框架](/posts/fde-interview-guide-part47-genai-observability-llm-eval-zh/) →
+← [Part 45：Agent 工具鏈的間接提示詞注入防禦設計](/posts/fde-interview-guide-part45-prompt-injection-defense-zh/) | [Part 47：RKK 實戰——大模型與地端微型模型的智慧混合路由與冷啟動優化](/posts/fde-interview-guide-part47-edge-model-routing-zh/) →

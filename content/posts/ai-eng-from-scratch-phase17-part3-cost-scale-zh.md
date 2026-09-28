@@ -5,7 +5,7 @@ draft: false
 weight: 38
 description: "深入解析 AI 生產成本工程：Token 成本分解、快取策略（Semantic Cache/Prompt Cache）、模型路由、批次推論、Spot GPU 與 FinOps for AI"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Infrastructure", "Cost Optimization", "FinOps", "Caching", "Model Routing", "RKK", "Interview"]
+tags: ["AI", "Infrastructure", "Cost Optimization", "FinOps", "Caching", "Model Routing", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]

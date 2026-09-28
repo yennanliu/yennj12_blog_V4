@@ -1717,7 +1717,6 @@ Month 7-12: 規模化
 
 ## 延伸閱讀
 
-- [24/7 YouTube 串流賺錢策略完整分析](/posts/youtube-24-7-streaming-money-strategy-zh/)
 - [ADHD 友善專注音樂頻道實作指南](/posts/adhd-focus-music-streaming-implementation-guide-zh/)
 
 **標籤**: #YouTube #Shorts #社群經營 #變現策略 #內容行銷 #被動收入 #創業指南

@@ -445,4 +445,4 @@ graph TD
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-2-rag-retrieval-zh/) | [後一篇](/posts/fde-interview-core-topic-4-multi-agent-orchestration-zh/) →
+← [前一篇](/posts/fde-core-concept-2-memory-architecture-zh/) | [後一篇](/posts/fde-core-concept-4-hybrid-search-rrf-zh/) →

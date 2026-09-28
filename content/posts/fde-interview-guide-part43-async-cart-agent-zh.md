@@ -777,4 +777,4 @@ Worker B: T+500ms 讀到 is_committed=true，跳過該節點，繼續 version=6
 
 **系列導航**
 
-← [Part 42：跨國電商多語言向量搜尋與個性化排序架構](/posts/fde-interview-guide-part42-multilingual-vector-search-zh/) | [Part 44：大規模即時推薦系統的特徵工程與線上學習架構](/posts/fde-interview-guide-part44-realtime-recommendation-zh/) →
+← [Part 42：RKK 實戰——顧問技能：從「要 AI」到 POC 範圍定義的 Discovery 框架](/posts/fde-interview-guide-part42-consulting-discovery-zh/) | [Part 44：RKK 實戰——長文本 LLM 與 RAG 動態混合路由架構設計](/posts/fde-interview-guide-part44-hybrid-context-rag-zh/) →

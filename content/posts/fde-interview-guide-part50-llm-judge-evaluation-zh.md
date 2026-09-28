@@ -732,4 +732,4 @@ def rag_evaluation_pipeline(
 
 **系列導航**
 
-← [Part 49：FDE 面試指南 Part 49](/posts/fde-interview-guide-part49-multi-agent-orchestration-zh/) | [Part 51：FDE 面試指南 Part 51](/posts/fde-interview-guide-part51-zh/) →
+← [Part 49：百萬級 RAG 系統的即時資料漂移與向量索引自動更新管線](/posts/fde-interview-guide-part49-vector-drift-pipeline-zh/) | [Part 51：百萬級多輪對話的 KV Cache 驅逐機制與記憶體架構優化](/posts/fde-interview-guide-part51-kv-cache-memory-zh/) →

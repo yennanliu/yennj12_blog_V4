@@ -211,4 +211,4 @@ Response to User
 ---
 
 **系列導航**
-← [前一篇](/posts/fde-interview-core-topic-5-vector-database-embedding-zh/) | [後一篇](/posts/fde-interview-core-topic-7-llm-evaluation-metrics-zh/) →
+← [前一篇](/posts/fde-core-concept-5-reranking-cross-encoder-zh/) | [後一篇](/posts/fde-core-concept-7-indirect-prompt-injection-zh/) →

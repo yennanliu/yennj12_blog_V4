@@ -5,7 +5,7 @@ draft: false
 weight: 11
 description: "深入解析 BERT/RoBERTa/DeBERTa 預訓練策略、問答系統架構、文字摘要、機器翻譯評估與 NLP 生產系統的工程挑戰"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "BERT", "Question Answering", "Text Summarization", "Machine Translation", "RKK", "Interview"]
+tags: ["AI", "NLP", "BERT", "Question Answering", "Text Summarization", "Machine Translation", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -582,9 +582,9 @@ Faiss           自架，資料不出境               Pinecone：managed servic
 
 ## 十、系列導航
 
-← 上一篇：[Phase 5 Part 2：Transformer 注意力機制與自監督學習](/posts/ai-eng-from-scratch-phase5-part2-transformer-zh/)
+← 上一篇：[Phase 5 Part 2：Seq2Seq 與注意力機制 — Transformer 前夜](/posts/ai-eng-from-scratch-phase5-part2-seq2seq-attention-zh/)
 
-→ 下一篇：[Phase 6 Part 1：MLOps — 模型版本管理與 CI/CD 流水線](/posts/ai-eng-from-scratch-phase6-part1-mlops-zh/)
+→ 下一篇：[Phase 6 Part 1：自動語音辨識 — 讓機器聽懂人類](/posts/ai-eng-from-scratch-phase6-part1-asr-zh/)
 
 ---
 

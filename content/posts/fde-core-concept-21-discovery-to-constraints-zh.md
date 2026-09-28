@@ -457,4 +457,4 @@ vs 用例故事         User Story 描述功能，不描述技術邊界       �
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-20-guardrails-output-safety-zh/) | [後一篇](/posts/fde-interview-core-topic-22-cost-modeling-tco-zh/) →
+← [前一篇](/posts/fde-core-concept-20-rag-triad-metrics-zh/) | [後一篇](/posts/fde-core-concept-22-structured-troubleshooting-zh/) →

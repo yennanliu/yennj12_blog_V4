@@ -451,4 +451,4 @@ Gemma-2B（$0.00003/q）→ Gemma-9B（$0.0001/q）→ Gemini Pro（$0.015/q）
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-17-zh/) | [後一篇](/posts/fde-interview-core-topic-19-zh/) →
+← [前一篇](/posts/fde-core-concept-17-context-caching-eviction-zh/) | [後一篇](/posts/fde-core-concept-19-llm-judge-bias-mitigation-zh/) →

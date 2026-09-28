@@ -449,4 +449,4 @@ async def record_latency(endpoint: str, latency_ms: float):
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-13-rate-limiting-token-bucket-zh/) | [後一篇](/posts/fde-interview-core-topic-15-vector-index-hnsw-zh/) →
+← [前一篇](/posts/fde-core-concept-13-idempotency-state-recovery-zh/) | [後一篇](/posts/fde-core-concept-15-vector-drift-blue-green-zh/) →

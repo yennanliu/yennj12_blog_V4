@@ -5,7 +5,7 @@ draft: false
 weight: 17
 description: "深入解析 GAN 訓練動態、StyleGAN/CycleGAN 架構、影片生成系統設計，以及 GAN vs 擴散模型的工程選型決策"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Generative AI", "GAN", "Video Generation", "StyleGAN", "Image Synthesis", "RKK", "Interview"]
+tags: ["AI", "Generative AI", "GAN", "Video Generation", "StyleGAN", "Image Synthesis", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "20 min"
 series: ["ai-eng-from-scratch"]

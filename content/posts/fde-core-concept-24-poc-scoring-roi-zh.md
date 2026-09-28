@@ -448,4 +448,4 @@ POC 三週時間盒最常被誤用的方式是把它當成「迷你 MVP」——
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-23-multi-tenant-isolation-zh/) | [後一篇](/posts/fde-interview-core-topic-25-ai-incident-response-playbook-zh/) →
+← [前一篇](/posts/fde-core-concept-23-stakeholder-mapping-zh/) | [後一篇](/posts/fde-core-concept-25-value-story-objection-zh/) →

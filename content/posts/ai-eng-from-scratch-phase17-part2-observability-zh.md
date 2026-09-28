@@ -5,7 +5,7 @@ draft: false
 weight: 37
 description: "深入解析 AI 系統可觀測性工程：LLM 追蹤（Traces/Spans）、提示版本管理、模型效能漂移偵測、成本歸因分析與 AI 告警策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Infrastructure", "Observability", "Monitoring", "LLM", "Tracing", "Production", "RKK", "Interview"]
+tags: ["AI", "Infrastructure", "Observability", "Monitoring", "LLM", "Tracing", "Production", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -599,9 +599,9 @@ THEN: send_pagerduty_alert(severity="high")
 
 ## 十、系列導航
 
-← [Phase 17 Part 1：AI 系統部署策略 — 從 Shadow Mode 到 Canary Release](/posts/ai-eng-from-scratch-phase17-part1-deployment-zh/)
+← [Phase 17 Part 1：AI 推論服務架構 — 從單機到全球部署](/posts/ai-eng-from-scratch-phase17-part1-serving-zh/)
 
-→ [Phase 17 Part 3：AI 系統成本工程 — Token 優化與快取架構](/posts/ai-eng-from-scratch-phase17-part3-cost-engineering-zh/)
+→ [Phase 17 Part 3：AI 成本優化與規模化 — 把每美元壓榨到極限](/posts/ai-eng-from-scratch-phase17-part3-cost-scale-zh/)
 
 ---
 

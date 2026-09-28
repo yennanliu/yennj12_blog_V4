@@ -5,7 +5,7 @@ draft: false
 weight: 43
 description: "端對端構建多模態 AI 應用：圖文理解、語音介面、文件分析三合一系統的架構設計、模態融合策略、延遲優化與系列學習路線總結"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multimodal", "LLM Engineering", "Production", "Capstone", "Vision", "Speech", "RKK", "Interview"]
+tags: ["AI", "Multimodal", "LLM Engineering", "Production", "Capstone", "Vision", "Speech", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "28 min"
 series: ["ai-eng-from-scratch"]
@@ -726,15 +726,15 @@ AI 工程從零開始：19 Phase 知識地圖
 
 ---
 
-← [Phase 19 Part 2：語音介面與多輪多模態對話系統](/posts/ai-eng-from-scratch-phase19-part2-voice-interface-zh/)
+← [Phase 19 Part 2：Capstone — 生產級 AI Agent 產品端對端實作](/posts/ai-eng-from-scratch-phase19-part2-capstone-agent-product-zh/)
 
 ---
 
 🎉 **「AI 工程從零開始」系列圓滿完結！**
 
-你已經走完了 19 個 Phase、63 篇文章的完整旅程。
+你已經走完了 19 個 Phase、43 篇文章的完整旅程。
 
-[← 回到 Phase 1：從零開始的 AI 工程環境設置](/posts/ai-eng-from-scratch-phase1-environment-setup-zh/) | [查看完整系列列表 →](/tags/ai-eng-from-scratch/)
+[← 回到 Phase 1 Part 1：線性代數與微積分 — AI 演算法直覺](/posts/ai-eng-from-scratch-phase1-part1-linear-algebra-zh/) | [查看完整系列列表 →](/tags/ai-eng-from-scratch/)
 
 ---
 

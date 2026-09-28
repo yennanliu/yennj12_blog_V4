@@ -5,7 +5,7 @@ draft: false
 weight: 10
 description: "深入解析 RNN/LSTM/GRU 序列建模、Encoder-Decoder 架構、Bahdanau 注意力機制，理解 Transformer 取代 RNN 的工程動機"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "LSTM", "Seq2Seq", "Attention", "RNN", "Encoder-Decoder", "RKK", "Interview"]
+tags: ["AI", "NLP", "LSTM", "Seq2Seq", "Attention", "RNN", "Encoder-Decoder", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -588,7 +588,7 @@ Transformer（100 token 序列）的梯度路徑：
 
 | 方向 | 連結 |
 |------|------|
-| ← 上一篇 | [Phase 5 Part 1：詞向量與語言模型基礎（Word2Vec / N-gram / 困惑度）](/posts/ai-eng-from-scratch-phase5-part1-word-embeddings-zh/) |
+| ← 上一篇 | [Phase 5 Part 1：NLP 基礎 — 文字是智慧的介面](/posts/ai-eng-from-scratch-phase5-part1-text-fundamentals-zh/) |
 | → 下一篇 | Phase 5 Part 3：Transformer 深度解析（Multi-Head Attention / Positional Encoding / Pre-LN）（即將發布）|
 
 ---

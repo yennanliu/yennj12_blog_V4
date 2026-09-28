@@ -5,7 +5,7 @@ draft: false
 weight: 21
 description: "深入解析 LLM 微調策略：LoRA/QLoRA 低秩分解原理、SFT 指令資料品質、PEFT 家族比較、微調陷阱與生產部署的工程決策"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "SFT", "RKK", "Interview"]
+tags: ["AI", "LLM", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "SFT", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -498,9 +498,9 @@ QLoRA 不是免費的午餐：
 
 本文是「AI 工程從零開始」系列 Phase 10 的第 3 篇。
 
-← **上一篇：** [Phase 10 Part 2：RAG 系統設計 — 向量資料庫、檢索策略與評估框架](/posts/ai-eng-from-scratch-phase10-part2-rag-zh/)
+← **上一篇：** [Phase 10 Part 2：LLM 預訓練 — 萬億 Token 的工程挑戰](/posts/ai-eng-from-scratch-phase10-part2-pretraining-zh/)
 
-→ **下一篇：** [Phase 11 Part 1：LLM 推理優化 — vLLM、PagedAttention 與批次策略](/posts/ai-eng-from-scratch-phase11-part1-inference-zh/)
+→ **下一篇：** [Phase 11 Part 1：LLM 推論工程 — 從實驗到每秒千次請求](/posts/ai-eng-from-scratch-phase11-part1-inference-serving-zh/)
 
 ---
 

@@ -288,4 +288,4 @@ Score < 0.1 → 直接 evict（hard delete from Vector Search）
 
 **系列導航**
 
-← [前一篇：Context Window Management](/posts/fde-interview-core-topic-1-context-window-zh/) | [後一篇：Tool Use & Function Calling](/posts/fde-interview-core-topic-3-tool-use-zh/) →
+← [前一篇：Context Management：Token 預算管理與上下文修剪策略](/posts/fde-core-concept-1-context-management-zh/) | [後一篇：State Machine & DAG：確定性圖結構與 Agent 反思迴圈收斂](/posts/fde-core-concept-3-state-machine-dag-zh/) →

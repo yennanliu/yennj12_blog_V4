@@ -466,4 +466,4 @@ SLA 要求？
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-12-vector-search-retrieval-zh/) | [後一篇](/posts/fde-interview-core-topic-14-multi-agent-orchestration-zh/) →
+← [前一篇](/posts/fde-core-concept-12-backpressure-fair-share-zh/) | [後一篇](/posts/fde-core-concept-14-speculative-tool-fanout-zh/) →

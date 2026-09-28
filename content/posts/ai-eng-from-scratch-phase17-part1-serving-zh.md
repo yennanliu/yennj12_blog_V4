@@ -5,7 +5,7 @@ draft: false
 weight: 36
 description: "深入解析 AI 推論服務工程：模型服務器選型（Triton/TorchServe/vLLM）、負載均衡、自動擴縮容、GPU 共享與多租戶隔離架構"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Infrastructure", "Serving", "Triton", "GPU", "Kubernetes", "Production", "RKK", "Interview"]
+tags: ["AI", "Infrastructure", "Serving", "Triton", "GPU", "Kubernetes", "Production", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -491,7 +491,7 @@ DCGM 指標收集每個 Pod 的 GPU 時間使用量，配合 Kubernetes Cost All
 
 ## 十、系列導航
 
-← [Phase 16 Part 2：AI 訓練平台的分散式儲存與資料管線](/posts/ai-eng-from-scratch-phase16-part2-storage-zh/)
+← [Phase 16 Part 2：湧現與集體智慧 — 群體行為的工程設計](/posts/ai-eng-from-scratch-phase16-part2-emergence-collective-zh/)
 
 → [Phase 17 Part 2：AI 推論服務的可觀測性與成本最佳化](/posts/ai-eng-from-scratch-phase17-part2-observability-zh/)
 

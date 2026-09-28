@@ -451,4 +451,4 @@ Layer 3     8–12 h/月      $50–$300      8–12 週        > $500K ARR
 
 **系列導航**
 
-← [前一篇](/posts/fde-interview-core-topic-22-enterprise-ai-adoption-blockers-zh/) | [後一篇](/posts/fde-interview-core-topic-24-ai-roi-business-case-zh/) →
+← [前一篇](/posts/fde-core-concept-22-structured-troubleshooting-zh/) | [後一篇](/posts/fde-core-concept-24-poc-scoring-roi-zh/) →

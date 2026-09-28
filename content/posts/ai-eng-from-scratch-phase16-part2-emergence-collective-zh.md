@@ -5,7 +5,7 @@ draft: false
 weight: 35
 description: "深入解析多 Agent 系統的湧現行為：群智優化、集體推理、辯論機制、Mixture of Agents 架構與集體智慧的工程可控性"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multi-Agent", "Swarm", "Emergence", "Collective Intelligence", "Mixture of Agents", "RKK", "Interview"]
+tags: ["AI", "Multi-Agent", "Swarm", "Emergence", "Collective Intelligence", "Mixture of Agents", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -647,9 +647,9 @@ class EmergenceMonitor:
 
 ## 十、系列導航
 
-**← 上一篇：** [Phase 16 Part 1：多 Agent 協調 — 從單兵作戰到兵團協作](/posts/ai-eng-from-scratch-phase16-part1-multi-agent-coordination-zh/)
+**← 上一篇：** [Phase 16 Part 1：多 Agent 協調 — 分工、通訊與共識](/posts/ai-eng-from-scratch-phase16-part1-coordination-zh/)
 
-**→ 下一篇：** [Phase 17 Part 1：AI 系統的可觀測性 — 追蹤、指標與除錯](/posts/ai-eng-from-scratch-phase17-part1-observability-zh/)
+**→ 下一篇：** [Phase 17 Part 1：AI 推論服務架構 — 從單機到全球部署](/posts/ai-eng-from-scratch-phase17-part1-serving-zh/)
 
 ---
 

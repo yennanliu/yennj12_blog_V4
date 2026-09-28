@@ -5,7 +5,7 @@ draft: false
 weight: 28
 description: "深入解析 AI Agent 工程基礎：ReAct/Reflexion 思考迴圈、記憶系統四層架構（感官/工作/情節/語意）、上下文管理與 Agent 狀態機設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Memory", "ReAct", "LLM", "Autonomous", "RKK", "Interview"]
+tags: ["AI", "Agent", "Memory", "ReAct", "LLM", "Autonomous", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -600,9 +600,9 @@ vs                狀態機確保同一 session 不可            "好的隨便"
 
 本文是 **AI 工程從零開始** 系列 Phase 14 Part 1。
 
-← [Phase 13 Part 2：RAG 進階優化與生產部署](/posts/ai-eng-from-scratch-phase13-part2-rag-advanced-zh/)
+← [Phase 13 Part 2：AI 工作流程編排 — LangChain、LlamaIndex 與生產管線](/posts/ai-eng-from-scratch-phase13-part2-orchestration-zh/)
 
-→ [Phase 14 Part 2：Multi-Agent 協作與 Tool Use 進階設計](/posts/ai-eng-from-scratch-phase14-part2-multi-agent-zh/)
+→ [Phase 14 Part 2：Agent 規劃系統 — 從目標到行動計畫](/posts/ai-eng-from-scratch-phase14-part2-planning-zh/)
 
 ---
 

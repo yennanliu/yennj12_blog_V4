@@ -5,7 +5,7 @@ draft: false
 weight: 22
 description: "深入解析 LLM 生產推論：vLLM PagedAttention、連續批次、投機解碼、量化（GPTQ/AWQ/INT4）、推論成本優化與 SLA 設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "Inference", "vLLM", "Quantization", "Serving", "Production", "RKK", "Interview"]
+tags: ["AI", "LLM", "Inference", "vLLM", "Quantization", "Serving", "Production", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -455,8 +455,8 @@ flip：流量非常穩定（方差 < 20%）用固定副本。有明顯日夜流�
 
 | | |
 |---|---|
-| ← 上一篇 | [Phase 10 Part 3：RAG 系統評估與生產化](/posts/ai-eng-from-scratch-phase10-part3-rag-eval-zh/) |
-| → 下一篇 | [Phase 11 Part 2：多模型服務與成本治理](/posts/ai-eng-from-scratch-phase11-part2-multi-model-zh/) |
+| ← 上一篇 | [Phase 10 Part 3：LLM 微調 — LoRA、QLoRA 與指令對齊](/posts/ai-eng-from-scratch-phase10-part3-finetuning-zh/) |
+| → 下一篇 | [Phase 11 Part 2：RAG 系統與 LLM 評估 — 生產落地的最後一哩](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/) |
 
 ---
 

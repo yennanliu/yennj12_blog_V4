@@ -5,7 +5,7 @@ draft: false
 weight: 32
 description: "深入解析長時程 Agent 工程挑戰：跨會話記憶持久化、多步驟任務分解、進度恢復、人機協作設計與長時程 Agent 的可靠性保障"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Autonomous Systems", "Long Horizon", "Persistent Memory", "RKK", "Interview"]
+tags: ["AI", "Agent", "Autonomous Systems", "Long Horizon", "Persistent Memory", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -647,7 +647,7 @@ vs 固定間隔        符合 AWS / GCP 等主流雲端服務的 SLA   固定間
 
 ## 十、系列導航
 
-← [Phase 14 Part 4：多模態 Agent 的工具選擇策略](/posts/ai-eng-from-scratch-phase14-part4-multimodal-tools-zh/) | [Phase 15 Part 2：長時程 Agent 的成本控制與 Token 預算管理](/posts/ai-eng-from-scratch-phase15-part2-token-budget-zh/) →
+← [Phase 14 Part 4：Agent 生產化 — 可靠性、可觀測性與成本控制](/posts/ai-eng-from-scratch-phase14-part4-production-zh/) | [Phase 15 Part 2：自我改進與 2026 安全技術棧](/posts/ai-eng-from-scratch-phase15-part2-self-improvement-safety-zh/) →
 
 ---
 

@@ -5,7 +5,7 @@ draft: false
 weight: 14
 description: "從工程師視角完整解析 Transformer：Multi-Head Attention 矩陣計算、位置編碼、KV Cache、Flash Attention 與 MQA/GQA 生產優化"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Transformer", "Attention", "KV Cache", "Flash Attention", "Architecture", "RKK", "Interview"]
+tags: ["AI", "Transformer", "Attention", "KV Cache", "Flash Attention", "Architecture", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -595,9 +595,9 @@ Flip condition：下游任務對細微差異敏感（如數值計算） → BF16
 
 ## 十、系列導航
 
-← [Phase 6 Part 2：模型微調與 LoRA 工程實踐](/posts/ai-eng-from-scratch-phase6-part2-lora-finetuning-zh/)
+← [Phase 6 Part 2：語音合成與音訊模型 — 讓機器開口說話](/posts/ai-eng-from-scratch-phase6-part2-tts-audio-models-zh/)
 
-→ [Phase 7 Part 2：LLM 推理引擎與部署架構](/posts/ai-eng-from-scratch-phase7-part2-inference-deployment-zh/)
+→ [Phase 7 Part 2：Transformer 訓練策略與架構變體](/posts/ai-eng-from-scratch-phase7-part2-training-variants-zh/)
 
 ---
 

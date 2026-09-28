@@ -5,7 +5,7 @@ draft: false
 weight: 41
 description: "端對端構建企業級 RAG 系統：從需求分析到生產部署，涵蓋文件解析管線、Hybrid Search、Re-ranking、LLM 評估框架與 30 天迭代路線圖"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "RAG", "LLM Engineering", "Vector Database", "Production", "Capstone", "RKK", "Interview"]
+tags: ["AI", "RAG", "LLM Engineering", "Vector Database", "Production", "Capstone", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "28 min"
 series: ["ai-eng-from-scratch"]

@@ -5,7 +5,7 @@ draft: false
 weight: 25
 description: "深入解析多模態 Agent 架構：OCR+VLM 文件理解、電腦視覺 UI 自動化、SeeAct/Computer Use 系統設計與安全邊界"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multimodal", "Agent", "Computer Use", "VLM", "Document AI", "RKK", "Interview"]
+tags: ["AI", "Multimodal", "Agent", "Computer Use", "VLM", "Document AI", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -500,9 +500,9 @@ TaskPolicy {
 
 本文是 **AI 工程從零開始** 系列 Phase 12 的第 2 篇。
 
-← **上一篇：[Phase 12 Part 1：多模態基礎 — VLM 架構與視覺語言對齊](/posts/ai-eng-from-scratch-phase12-part1-vlm-basics-zh/)**
+← **上一篇：[Phase 12 Part 1：Vision Transformer 與多模態融合架構](/posts/ai-eng-from-scratch-phase12-part1-vit-fusion-zh/)**
 
-→ **下一篇：[Phase 13 Part 1：Agent 評估框架 — 基準測試、自動評分與人工標注管線](/posts/ai-eng-from-scratch-phase13-part1-agent-eval-zh/)**
+→ **下一篇：[Phase 13 Part 1：MCP 與 API 整合 — AI 與真實世界的介面](/posts/ai-eng-from-scratch-phase13-part1-mcp-apis-zh/)**
 
 ---
 

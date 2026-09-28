@@ -5,7 +5,7 @@ draft: false
 weight: 29
 description: "深入解析 AI Agent 規劃架構：Tree-of-Thought/Plan-and-Execute/MCTS、任務分解策略、規劃失敗診斷與動態重規劃機制"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Planning", "Tree of Thought", "Task Decomposition", "RKK", "Interview"]
+tags: ["AI", "Agent", "Planning", "Tree of Thought", "Task Decomposition", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -593,9 +593,9 @@ Flip condition：Planner 無法穩定輸出合法 JSON（常見於較弱的模�
 
 ## 十、系列導航
 
-← [Phase 14 Part 1：Agent 工具呼叫與 Function Calling 設計](/posts/ai-eng-from-scratch-phase14-part1-tool-calling-zh/)
+← [Phase 14 Part 1：Agent 迴圈與記憶系統 — 從單次呼叫到自主行動](/posts/ai-eng-from-scratch-phase14-part1-loop-memory-zh/)
 
-→ [Phase 14 Part 3：Agent 記憶系統 — 短期/長期記憶與 RAG 整合](/posts/ai-eng-from-scratch-phase14-part3-memory-zh/)
+→ [Phase 14 Part 3：Agent 框架全景 — AutoGen、CrewAI 與自建的取捨](/posts/ai-eng-from-scratch-phase14-part3-frameworks-zh/)
 
 ---
 

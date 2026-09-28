@@ -5,7 +5,7 @@ draft: false
 weight: 20
 description: "深入解析 LLM 預訓練工程：資料清洗管線、Scaling Laws、分散式訓練（DP/TP/PP）、梯度累積與 Chinchilla 最優計算分配"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "Pretraining", "Scaling Laws", "Distributed Training", "Data Pipeline", "RKK", "Interview"]
+tags: ["AI", "LLM", "Pretraining", "Scaling Laws", "Distributed Training", "Data Pipeline", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -523,7 +523,7 @@ dist_checkpoint.save(
 
 本文是 **AI 工程從零開始** 系列 Phase 10 的第 2 篇。
 
-← **上一篇**：[Phase 10 Part 1：LLM 架構深探 — Transformer 的每一層在做什麼](/posts/ai-eng-from-scratch-phase10-part1-transformer-arch-zh/)
+← **上一篇**：[Phase 10 Part 1：從頭構建 LLM — Tokenization 的工程藝術](/posts/ai-eng-from-scratch-phase10-part1-tokenization-zh/)
 
 → **下一篇**：[Phase 10 Part 3：LLM 微調全景 — SFT、LoRA 與 RLHF 工程實踐](/posts/ai-eng-from-scratch-phase10-part3-finetuning-zh/)
 

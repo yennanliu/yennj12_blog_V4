@@ -5,7 +5,7 @@ draft: false
 weight: 42
 description: "端對端構建生產級 AI Agent 產品：從架構設計到上線，涵蓋 ReAct 迴圈、工具整合、記憶系統、Guardrails、可觀測性與商業指標追蹤"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "LLM Engineering", "Production", "Capstone", "ReAct", "RKK", "Interview"]
+tags: ["AI", "Agent", "LLM Engineering", "Production", "Capstone", "ReAct", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "28 min"
 series: ["ai-eng-from-scratch"]
@@ -665,9 +665,9 @@ Haiku 用於低複雜度任務（純查詢、格式化輸出），Sonnet 用於�
 
 本文是 **AI 工程從零開始** 系列 Phase 19 的第 2 篇。
 
-← **Phase 19 Part 1**：[Capstone — 系統設計與 Sprint 規劃](/posts/ai-eng-from-scratch-phase19-part1-capstone-design-zh/)
+← **Phase 19 Part 1**：[Phase 19 Part 1：Capstone — 企業級 RAG 知識庫系統端對端實作](/posts/ai-eng-from-scratch-phase19-part1-capstone-rag-system-zh/)
 
-→ **Phase 19 Part 3**：[Capstone — 上線後優化與 A/B 測試框架](/posts/ai-eng-from-scratch-phase19-part3-capstone-optimization-zh/)
+→ **Phase 19 Part 3**：[Phase 19 Part 3：Capstone — 多模態 AI 應用端對端實作與系列總結](/posts/ai-eng-from-scratch-phase19-part3-capstone-multimodal-app-zh/)
 
 ---
 

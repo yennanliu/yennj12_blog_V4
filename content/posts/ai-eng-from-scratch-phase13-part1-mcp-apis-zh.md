@@ -5,7 +5,7 @@ draft: false
 weight: 26
 description: "深入解析 Model Context Protocol（MCP）架構、Function Calling 設計模式、工具整合生產化、API 安全與速率控制，以及 AI 系統的外部工具編排"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "MCP", "Function Calling", "API", "Tool Use", "Integration", "RKK", "Interview"]
+tags: ["AI", "MCP", "Function Calling", "API", "Tool Use", "Integration", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -563,9 +563,9 @@ Prompt 限制       細粒度控制（金額上限等）             模型更�
 
 ## 十、系列導航
 
-← [Phase 12 Part 2：多模態 AI 工程](/posts/ai-eng-from-scratch-phase12-part2-multimodal-zh/)
+← [Phase 12 Part 2：多模態 Agent 與電腦操作 — 跨模態推理與行動](/posts/ai-eng-from-scratch-phase12-part2-agents-computer-use-zh/)
 
-→ [Phase 13 Part 2：AI 代理編排與工具鏈規劃](/posts/ai-eng-from-scratch-phase13-part2-agent-orchestration-zh/)
+→ [Phase 13 Part 2：AI 工作流程編排 — LangChain、LlamaIndex 與生產管線](/posts/ai-eng-from-scratch-phase13-part2-orchestration-zh/)
 
 ---
 

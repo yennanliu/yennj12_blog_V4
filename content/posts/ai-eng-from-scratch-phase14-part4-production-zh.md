@@ -5,7 +5,7 @@ draft: false
 weight: 31
 description: "深入解析 Agent 生產部署工程：執行追蹤、成本預算控制、並發限流、Guardrails 安全防護、A/B 測試框架與 Agent 監控告警設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Production", "Observability", "Guardrails", "Cost Control", "RKK", "Interview"]
+tags: ["AI", "Agent", "Production", "Observability", "Guardrails", "Cost Control", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -700,9 +700,9 @@ Shadow Mode 確認 v2 無崩潰、無無限迴圈、無異常高成本後，才�
 
 ## 十、系列導航
 
-← [Phase 14 Part 3：Agent 工具設計與記憶體管理](/posts/ai-eng-from-scratch-phase14-part3-tools-memory-zh/)
+← [Phase 14 Part 3：Agent 框架全景 — AutoGen、CrewAI 與自建的取捨](/posts/ai-eng-from-scratch-phase14-part3-frameworks-zh/)
 
-→ [Phase 15 Part 1：RAG 系統設計與向量資料庫選型](/posts/ai-eng-from-scratch-phase15-part1-rag-zh/)
+→ [Phase 15 Part 1：長時程自主系統 — 跨天任務的 Agent 工程](/posts/ai-eng-from-scratch-phase15-part1-long-horizon-zh/)
 
 ---
 

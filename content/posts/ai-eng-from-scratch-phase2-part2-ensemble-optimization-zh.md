@@ -5,7 +5,7 @@ draft: false
 weight: 4
 description: "深入解析 Random Forest、Gradient Boosting、XGBoost、超參數調優與 AutoML，理解集成方法為何在表格資料競賽與生產系統持續稱霸"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Machine Learning", "XGBoost", "Random Forest", "Gradient Boosting", "Optimization", "RKK", "Interview"]
+tags: ["AI", "Machine Learning", "XGBoost", "Random Forest", "Gradient Boosting", "Optimization", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -744,9 +744,9 @@ vs 直接部署       模型文件從 200MB 降至 20MB        精度損失 1–
 
 | | 文章 | 主題 |
 |--|------|------|
-| ← 上一篇 | [Phase 2 Part 1：監督學習基礎](/posts/ai-eng-from-scratch-phase2-part1-supervised-learning-zh/) | 線性回歸、決策樹、SVM、模型評估 |
+| ← 上一篇 | [Phase 2 Part 1：傳統機器學習 — 生產 AI 的骨幹](/posts/ai-eng-from-scratch-phase2-part1-classical-ml-zh/) | 線性回歸、決策樹、SVM、模型評估 |
 | 本篇 | **Phase 2 Part 2：集成學習與最佳化** | Random Forest、XGBoost、Stacking、Bayesian HPO |
-| → 下一篇 | [Phase 3 Part 1：深度學習基礎](/posts/ai-eng-from-scratch-phase3-part1-deep-learning-zh/) | 神經網路、反向傳播、CNN、RNN |
+| → 下一篇 | [Phase 3：深度學習核心 — 從第一原理構建神經網路](/posts/ai-eng-from-scratch-phase3-part1-neural-networks-zh/) | 神經網路、反向傳播、CNN、RNN |
 
 ---
 

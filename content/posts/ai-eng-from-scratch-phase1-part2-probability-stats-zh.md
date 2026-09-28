@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "從工程師視角掌握 AI 必備的機率論與統計直覺：貝葉斯定理、最大概似估計、資訊理論、分佈假設背後的設計決策"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Math", "Probability", "Statistics", "Bayesian", "RKK", "Interview"]
+tags: ["AI", "Math", "Probability", "Statistics", "Bayesian", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -667,7 +667,7 @@ vs Platt Scaling  能處理非單調的校準誤差            若資料夠多�
 |------|------|------|
 | Phase 1 Part 1 | 線性代數：向量、矩陣與神經網路的幾何直覺 | [← 上一篇](/posts/ai-eng-from-scratch-phase1-part1-linear-algebra-zh/) |
 | **Phase 1 Part 2** | **機率與統計（本文）** | |
-| Phase 1 Part 3 | 微積分與最佳化：梯度下降的數學 | [下一篇 →](/posts/ai-eng-from-scratch-phase1-part3-calculus-optimization-zh/) |
+| Phase 2 Part 1 | 傳統機器學習：生產 AI 的骨幹 | [下一篇 →](/posts/ai-eng-from-scratch-phase2-part1-classical-ml-zh/) |
 
 ---
 

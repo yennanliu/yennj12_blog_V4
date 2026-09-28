@@ -5,7 +5,7 @@ draft: false
 weight: 27
 description: "深入解析 AI 工作流程編排：LangChain/LlamaIndex/Haystack 框架比較、DAG 管線設計、有狀態工作流程、錯誤重試與生產監控"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LangChain", "LlamaIndex", "Orchestration", "Pipeline", "Workflow", "RKK", "Interview"]
+tags: ["AI", "LangChain", "LlamaIndex", "Orchestration", "Pipeline", "Workflow", "RKK", "Interview", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "23 min"
 series: ["ai-eng-from-scratch"]
@@ -782,9 +782,9 @@ Level 4：蒸餾/微調（難度：高）
 
 ## 十、系列導航
 
-← **Phase 13 Part 1**：[RAG 系統設計：向量搜尋、重排序與上下文壓縮](/posts/ai-eng-from-scratch-phase13-part1-rag-zh/)
+← **Phase 13 Part 1**：[Phase 13 Part 1：MCP 與 API 整合 — AI 與真實世界的介面](/posts/ai-eng-from-scratch-phase13-part1-mcp-apis-zh/)
 
-→ **Phase 14 Part 1**：[AI Agent 設計：工具呼叫、規劃循環與多 Agent 協作](/posts/ai-eng-from-scratch-phase14-part1-agents-zh/)
+→ **Phase 14 Part 1**：[Phase 14 Part 1：Agent 迴圈與記憶系統 — 從單次呼叫到自主行動](/posts/ai-eng-from-scratch-phase14-part1-loop-memory-zh/)
 
 ---
 
