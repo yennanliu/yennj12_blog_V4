@@ -418,37 +418,6 @@ Embedding 的品質直接決定 retrieval 的品質。
 
 ---
 
-## 面試回答完整示範
-
-```
-面試官問：「這三塊——Token、Prompt Engineering、Embedding——
-         你在系統設計裡怎麼用？」
-
-Token + Context Budget：
-「設計 RAG 系統時，我會明確規劃 context budget：
- System Prompt 約 500 tokens，User Query 約 100 tokens，
- 剩下的空間分給 Retrieved Chunks 和對話 History。
- Chunk Size 設多大、Top-K 取幾個，都是由 context budget 決定的，
- 不是隨意設的。」
-
-Prompt Engineering：
-「對於需要多步推理的問題，我用 CoT——
- 在 Prompt 加上『請一步步思考』讓 LLM 展示推理過程，
- 這能顯著提升複雜問題的準確率。
- 如果需要查外部資料，改用 ReAct——
- 讓 LLM 的推理和 Tool Calling 交替進行。
- 對準確率要求極高的場景，考慮 Self-Consistency——
- 跑 5 次取眾數，但代價是 5 倍成本，要跟客戶確認 budget。」
-
-Embedding 選型：
-「GCP 環境我選 text-embedding-004，因為原生整合、支援 task_type。
- 中文為主的知識庫，我會認真評估 BGE 系列的實際 recall@k，
- 因為它在中文 benchmark 上明顯優於通用多語言模型。
- 最終選型我不靠直覺——用客戶的真實資料跑 retrieval recall@5 比較。」
-```
-
----
-
 ## 系列總結
 
 九篇走完，這是整個 FDE 面試知識地圖的架構：

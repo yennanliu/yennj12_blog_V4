@@ -408,9 +408,7 @@ cluster.awsAuth.addRoleMapping(nodeRole, {
 
 ## Deployment Strategy and Operations
 
-### **Infrastructure as Code Benefits**
-
-**Deployment Pipeline Architecture:**
+### **Deployment Pipeline Architecture**
 
 | Stage | Actions | Validation |
 |-------|---------|------------|
@@ -453,7 +451,7 @@ kubectl apply -f k8s/airflow/
 
 ## Architecture Tradeoffs Analysis
 
-### **EKS vs. Self-Managed Kubernetes**
+### **EKS vs. Self-Managed Kubernetes: When Each Wins**
 
 | Decision Factor | EKS Advantage | Self-Managed Advantage |
 |----------------|---------------|----------------------|

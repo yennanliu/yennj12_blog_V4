@@ -412,42 +412,6 @@ Internal Copilot：
 
 ---
 
-## 六、面試回答完整示範
-
-```
-面試官期待聽到的回答結構：
-
-第一分鐘（釐清需求）：
-「在開始設計之前，我想先確認幾個關鍵需求。
- 不同部門能看的文件不同嗎？這決定我是否需要 RBAC。
- Latency 要求大概是多少？這影響我的 Cache 策略。
- 資料有合規要求嗎？這影響部署在哪個 Region。」
-
-第二到五分鐘（高層架構）：
-「好，基於這些需求，我的架構分四層：
- API Gateway 負責 Auth 和 Rate Limiting，
- Chatbot Service 負責 RBAC 和 RAG 邏輯，
- Cache Layer 用 role-aware key 避免資料洩漏，
- Logging 記錄每個 request 的 user_id 和文件引用，供審計用。」
-
-第三部分（關鍵設計決策）：
-「我想特別說兩個設計決策：
- 第一，RBAC 要在向量搜尋前就過濾，不是搜完再過濾——
- 原因是 post-filter 會破壞 Top-K 的相關性。
- 第二，Cache key 要帶用戶的 role set——
- 同一個問題，Manager 和 Employee 看到的答案不同。」
-
-最後（Trade-off 和 Failure）：
-「這個設計最可能出問題的地方有兩個：
- 第一，文件更新後 Cache invalidation 的時間窗口——
- 用戶可能看到舊的回答，我的方案是文件更新時主動 purge 相關 cache。
- 第二，RBAC pre-filter 縮小了搜尋空間，
- 如果某個 role 的文件很少，recall 可能下降——
- 監控 per-role 的回答準確率可以及早發現。」
-```
-
----
-
 **FDE 的核心不是把架構圖畫得滿，**  
 **而是說清楚每個設計決策背後的 trade-off，**  
 **以及你是在什麼場景條件下做了那個選擇。**

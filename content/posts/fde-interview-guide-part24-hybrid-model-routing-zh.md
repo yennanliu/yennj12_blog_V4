@@ -280,20 +280,6 @@ GKE 部署考量：
 
 ---
 
-## 八、面試答題要點
-
-> *「設計混合路由系統要解決兩個問題：準確路由 + 品質保障。*
->
-> *路由架構用兩層：Layer 1 是 Rule-based 快速過濾（< 1ms），處理明顯的簡單或複雜請求；Layer 2 是 Semantic Router，用輕量 Embedding 模型計算當前請求和黃金範例的相似度，超過 0.88 閾值的送 Gemma，不確定的保守策略送 Gemini。*
->
-> *Gemma 部署在 GKE 上用 vLLM 服務，比 Vertex AI API 便宜約 15 倍。保持至少 2 個 Warm Pod 避免冷啟動延遲。*
->
-> *品質保障：每日從生產日誌抽 5%，做 Shadow Run（同一請求同時跑 Gemma 和 Gemini），比較答案差距，計算誤判率。如果某類 Query 誤判率超過 10%，自動調高路由閾值，確保那類問題更容易被判為複雜、路由到 Gemini。*
->
-> *量化的成本節省：在 10 萬請求/天的規模，從 $7,500/月降到 $3,790/月，節省約 49%。」*
-
----
-
 **系列導航**
 
 ← [Part 23：RKK 實戰——多租戶 Agent 的限流、Fair-Share 與 Token 預算控制](/posts/fde-interview-guide-part23-ratelimit-fairshare-zh/) | [Part 25：RKK 實戰——Self-Reflection 與幻覺校正迴圈設計](/posts/fde-interview-guide-part25-self-reflection-loop-zh/) →

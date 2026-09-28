@@ -15,9 +15,9 @@ readTime: "30 min"
 
 This is **Part 4** of the Kubernetes Autoscaling Complete Guide series:
 
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Application-level autoscaling theory
-- **[Part 2: Cluster Autoscaling & Cloud Providers](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Infrastructure-level autoscaling
-- **[Part 3: Hands-On HPA Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)** - Practical implementation with Apache-PHP
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Application-level autoscaling theory
+- **[Part 2: Cluster Autoscaling & Cloud Providers](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Infrastructure-level autoscaling
+- **[Part 3: Hands-On HPA Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)** - Practical implementation with Apache-PHP
 - **Part 4 (This Post)**: Monitoring, Alerting & Threshold Tuning - Production observability
 
 ---
@@ -1522,13 +1522,13 @@ sum(container_memory_working_set_bytes)
 ## Related Topics
 
 ### Autoscaling Series
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Theory and approaches
-- **[Part 2: Cluster Autoscaling](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Node-level autoscaling
-- **[Part 3: Hands-On HPA Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)** - Implementation guide
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Theory and approaches
+- **[Part 2: Cluster Autoscaling](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Node-level autoscaling
+- **[Part 3: Hands-On HPA Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)** - Implementation guide
 
 ### Kubernetes Monitoring
-- **[Kubernetes Complete Guide (Part 3): Advanced Features](./kubernetes-complete-guide-part3-advanced-zh.md)** - Includes monitoring setup (Traditional Chinese)
-- **[Building Production Kubernetes Platform on AWS EKS](./building-production-kubernetes-platform-aws-eks-cdk.md)** - Production observability patterns
+- **[Kubernetes Complete Guide (Part 3): Advanced Features](/posts/kubernetes-complete-guide-part3-advanced-zh/)** - Includes monitoring setup (Traditional Chinese)
+- **[Building Production Kubernetes Platform on AWS EKS](/posts/building-production-kubernetes-platform-aws-eks-cdk/)** - Production observability patterns
 
 ## Conclusion
 

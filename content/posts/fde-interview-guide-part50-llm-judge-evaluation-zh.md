@@ -717,12 +717,6 @@ def rag_evaluation_pipeline(
 
 ---
 
-## 十一、面試答題要點
-
-> *「面對 GenAI 品質監控，我會建立三層自動化評估管線：第一層對 100% 的生產日誌跑免費的輕量指標（BLEU、Tool-calling 失敗率），捕捉顯而易見的退化；第二層用統計學分層抽樣精準抽取 5% 的代表性對話，按租戶和意圖分類確保每個分層都有足夠樣本（最少 30 筆），送入 Vertex AI Pipelines 跑 LLM 裁判；裁判設計上，用 Chain-of-Thought 強制先輸出理由再給分，並動態隨機交換 Context 和 Answer 的輸入順序來消除 Position Bias——這兩個設計讓評分方差從 σ=0.8 降到 σ=0.3。監控層用週移動平均 Sigma 2 控制圖取代固定閾值，當 RAG 三元組任一維度下滑超過兩個標準差時，Cloud Monitoring 自動觸發 PagerDuty P1 警報。新模型上線前，先在 1% 影子流量上做 A/B 對比，用 Mann-Whitney U 檢定驗證改善是否統計顯著，這套流程讓模型升級失敗上線率從 15% 降到 1% 以下，同時把每日裁判費用控制在 $25–50，比全量評估節省 95%。」*
-
----
-
 ## 延伸閱讀
 
 - [Judging the Judges: Evaluating Alignment and Vulnerabilities in LLMs-as-Judges](https://arxiv.org/abs/2406.12624)（NeurIPS 2024）

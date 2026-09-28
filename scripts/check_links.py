@@ -11,20 +11,24 @@ dead while the real page lived at
 
     https://yennj12.js.org/yennj12_blog_V4/posts/aio-geo-part2-how-engines-work-zh/
 
-Three checks run, and each is an error:
+Four checks run, and each is an error:
 
   1. content/  — no hard-coded baseURL (the sub-path or the full domain) in a
      Markdown link. Write "/posts/slug/" and let the render hooks in
      themes/uber-style/layouts/_default/_markup/ resolve it.
-  2. public/   — every root-absolute href/src in the built site must sit under
+  2. content/  — no relative link to a Markdown file ("./slug.md", "../x.md").
+     The render hook only rewrites root-absolute links, so these reach the
+     page verbatim and resolve to /posts/<this-post>/slug.md, which 404s.
+     Write "/posts/slug/" instead.
+  3. public/   — every root-absolute href/src in the built site must sit under
      the baseURL path. This catches templates that forget relURL, and the
      relURL leading-slash trap: `relURL "/tags/x/"` returns "/tags/x/"
      unchanged, only `relURL "tags/x/"` prepends the sub-path.
-  3. public/   — self-referential metadata (og:image, og:url, twitter:image,
+  4. public/   — self-referential metadata (og:image, og:url, twitter:image,
      rel=canonical) goes through absURL, which has the same leading-slash trap
-     and never appears as an href/src, so check 2 cannot see it.
+     and never appears as an href/src, so check 3 cannot see it.
 
-All three are sub-path rules, so all three switch off when the configured
+Checks 1, 3 and 4 are sub-path rules, so they switch off when the configured
 baseURL has no sub-path — otherwise a correct root-served site would fail every
 line. Note that the patterns must tolerate unquoted attribute values: CI builds
 with `hugo --minify`, which strips the quotes.
@@ -73,6 +77,8 @@ HAS_SUBPATH = BASE_PATH != "/"
 MD_LINK = re.compile(r"\]\(([^)\s]+)")
 ATTR = re.compile(r"""(?:href|src)=(?:"([^"]*)"|'([^']*)'|([^\s>]+))""", re.I)
 FENCE = re.compile(r"^\s*(```+|~~~+)")
+# A relative link (no scheme, not root-absolute, not a fragment) to a .md file.
+RELATIVE_MD = re.compile(r"^(?![a-z][a-z0-9+.-]*:|/|#)[^?#]*\.md(?:[?#].*)?$", re.I)
 
 # Attribute value, quoted or not. `hugo --minify` drops the quotes whenever the
 # value has no character that needs them, so a pattern that insists on quotes
@@ -106,9 +112,11 @@ def markdown_links(text: str):
     """Yield (line_no, url) for Markdown links outside fenced code blocks.
 
     Fence matching follows CommonMark: a block opened with N markers closes
-    only on a run of the *same* character that is at least N long. Truncating
-    the delimiter would let an inner ``` close an outer ````, after which a
-    URL inside that code sample would be reported as a real link.
+    only on a run of the *same* character that is at least N long, with nothing
+    after it. Truncating the delimiter would let an inner ``` close an outer
+    ````, and accepting trailing text would let a ```python line inside a code
+    sample close it; either way a URL later in that sample would be reported
+    as a real link.
     """
     fence = None
     for n, line in enumerate(text.split("\n"), 1):
@@ -117,9 +125,10 @@ def markdown_links(text: str):
             token = m.group(1)
             if fence is None:
                 fence = token
-            elif token[0] == fence[0] and len(token) >= len(fence):
+                continue
+            if token[0] == fence[0] and len(token) >= len(fence) and not line[m.end():].strip():
                 fence = None
-            continue
+                continue
         if fence:
             continue
         for link in MD_LINK.finditer(line):
@@ -128,6 +137,15 @@ def markdown_links(text: str):
 
 def check_content() -> list[str]:
     errors = []
+    for path in sorted(CONTENT.rglob("*.md")):
+        for line_no, url in markdown_links(path.read_text(encoding="utf-8")):
+            if RELATIVE_MD.match(url):
+                slug = Path(url.split("#")[0]).stem
+                errors.append(
+                    f"{path.relative_to(ROOT)}:{line_no}: relative Markdown link "
+                    f"{url!r} is published verbatim and 404s — write "
+                    f"'/posts/{slug}/' instead"
+                )
     # With a root baseURL every test below collapses into something true of
     # correct links: BASE_PATH is "/", so "hard-coded prefix" means "starts
     # with a slash" and "hard-coded host" means "any absolute link to our own
@@ -241,7 +259,7 @@ def main() -> int:
             ]
 
     if errors:
-        print(f"\nerror: {len(errors)} internal link(s) missing the site sub-path:")
+        print(f"\nerror: {len(errors)} internal link problem(s):")
         for message in errors[:40]:
             print(f"  {message}")
         if len(errors) > 40:

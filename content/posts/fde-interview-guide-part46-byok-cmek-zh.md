@@ -678,25 +678,6 @@ Cloud EKM 的 KeyAccessJustification 功能要求每次密鑰存取都必須附�
 
 ---
 
-## 十一、面試答題要點
-
-**面試官問題：** 公營銀行要引入 Vertex AI 做 RAG 系統，CISO 要求向量 Embedding 和 Context Cache 的加密密鑰必須由地端 HSM 自主控管，但向量搜索的 P99 必須 < 50ms。請描述你的架構思路。
-
-> *「這道題的核心張力是：讓地端 HSM 控管密鑰，但日常 5,000 QPS 的 ANN 查詢不能每次跨海解密——否則延遲從 30ms 暴增到 12 秒。我的解法是用信封加密的 DEK/KEK 分層：KEK 永久存放於地端 FIPS 140-2 Level 3 HSM，只在每小時密鑰輪轉時透過 Dedicated Interconnect（延遲 < 5ms，99.99% SLA）生成新的 wrapped DEK 並傳至 Cloud KMS；日常的向量搜索和 Cache 讀寫，由 Confidential VM 的 Memory Enclave 暫存 DEK 明文，在受硬體保護的邊界內完成解密，P99 延遲維持在 48ms。KeyAccessJustification 機制確保即使雲端供應商內部試圖以服務維護名義存取密鑰，地端 EKM Proxy 也會自動拒絕並在 30 秒內告警，密鑰撤銷指令在 12 分鐘內完成 Enclave 記憶體清除，符合 FSC 要求的 15 分鐘撤銷 SLA。Context Cache 的密鑰版本問題透過將 Cache TTL 設為 55 分鐘（略小於 60 分鐘輪轉週期）來解決，Cache 命中率維持在 85%，完整審計日誌透過 Pub/Sub → Dataflow → BigQuery WORM 管線保存 7 年，同時滿足 PCI DSS Level 1、PDPA 與 FSC 金融監理三套框架。」*
-
-**評分要點檢核：**
-- ✅ 識別核心張力（密鑰主權 vs 延遲性能）
-- ✅ DEK/KEK 分層的信封加密原理
-- ✅ Confidential VM / Memory Enclave 的作用
-- ✅ Dedicated Interconnect 而非公網或 VPN
-- ✅ 具體延遲數字（12,000ms → 48ms）
-- ✅ Context Cache 密鑰版本協調方案
-- ✅ KeyAccessJustification 防止雲端私自存取
-- ✅ 密鑰撤銷 SLA（< 15 分鐘）
-- ✅ 三大合規框架（PCI DSS / PDPA / FSC）
-
----
-
 ## 附錄：工程師實作清單
 
 ### 啟用 Vertex AI CMEK 的必要步驟

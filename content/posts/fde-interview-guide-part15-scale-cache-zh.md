@@ -350,18 +350,6 @@ P → Performance  各層 hit rate + 成本節省估算
 E → Edge Cases   cache invalidation、冷啟動、個人化問題
 ```
 
-**完整範例回答：**
-
-> *「先估算規模。10 萬 DAU，每人 3 次查詢，30 萬請求/天。Gemini Flash 每月基線成本約 $2,800，這驅動了 cache 設計的必要性。*
->
-> *架構上我會做三層：L1 Redis 做 exact match 的 hot query cache（15% hit rate）；L2 Semantic Cache 用向量相似度複用語意相近的答案（35% hit rate）；L3 Vertex AI Context Cache 把固定的 system prompt 和 RAG 知識庫 prefix 快取，prefix token 成本降低 75%。*
->
-> *Agent instance 本身完全無狀態，session state 和 memory 全部外部化到 Redis 和向量資料庫，可以自由水平擴展。*
->
-> *三層 cache 合計月節省約 68%，從 $2,800 降到 $900 左右（示意估算）。*
->
-> *邊界情況：知識庫更新時需要清除相關 Semantic Cache；個人化回答不進共享 cache，以 user_id 為 key 隔離。」*
-
 ---
 
 ## 十、快速複習卡

@@ -430,43 +430,6 @@ ADK Agent → Container → Cloud Run
 
 ---
 
-## 八、面試回答完整示範
-
-```
-面試官情境：保險公司需要並行查三個系統後做審核決策
-
-架構選擇（30 秒）：
-「我選 ADK。客戶在 GCP + Google Workspace，
- ADK 原生整合 Vertex AI，不需要額外配置，
- 而且這個工作流的結構很清楚——並行查詢 + 彙整決策——
- ADK 的 ParallelAgent + LlmAgent 直接對應這個模式，
- 比用 LangGraph 從零搭少很多 boilerplate。」
-
-架構設計（2 分鐘）：
-「最外層是一個 SequentialAgent，兩個步驟：
- 步驟一：ParallelAgent，三個 sub_agents 同時執行：
-   policy_agent 查核保資料庫，
-   medical_agent 查醫療記錄，
-   fraud_agent 跑詐欺偵測模型。
- 三個結果都寫入 session 範圍（不加前綴）的 State。
- 步驟二：decision_agent（LlmAgent），
-   讀取 session State 裡的三份資料，
-   用 Gemini Pro 做最終審核決策。
-
- 理賠金額超過閾值，decision_agent 有一個 Tool 是 require_human_approval，
- 觸發 Human-in-the-Loop，等審核人員確認再執行。」
-
-部署（30 秒）：
-「部署到 Vertex AI Agent Engine——
- 全託管、不需要管 Container，
- Session State 自動持久化到 Firestore，
- 審計日誌直接進 Cloud Audit Logs。
- 如果之後需要客製化 middleware（例如加入 PII 遮罩層），
- 再遷移到 Cloud Run。」
-```
-
----
-
 **ADK 的設計哲學是：讓你聚焦在「這個 Agent 應該做什麼」，而不是「這個 Agent 的執行流程怎麼寫」。**  
 **理解這個哲學，是說清楚 ADK vs LangGraph 選擇依據的關鍵。**
 

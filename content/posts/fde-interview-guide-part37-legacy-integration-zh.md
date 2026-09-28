@@ -330,20 +330,6 @@ VPC-SC vs IAM vs CMEK：選哪個，為什麼
 
 ---
 
-## 八、面試答題要點
-
-> *「這道題考的是 FDE 如何讓 AI 系統在真實企業環境中落地，而不只是在 Demo 環境裡跑。*
->
-> *三種資料來源，三種整合模式：SAP 用 API 橋接層（隱藏認證複雜性、Rate Limiting、Cache）；Oracle 用 Stored Procedure 層（防 SQL Injection、最小權限、索引優化）；Mainframe CSV 用批次攝取 Pipeline（GCS → Schema 驗證 → BigQuery，Agent 查 BigQuery 不讀原始 CSV）。*
->
-> *安全設計：Cloud Run 透過 Direct VPC egress（現行建議做法，舊做法是 Serverless VPC Access Connector）走私有網路，不讓資料經過公共網路。Credentials 存在 Secret Manager，Agent 代碼裡沒有任何密碼。Oracle DB 帳號只有 EXECUTE 特定 SP 的權限，沒有任何 SELECT/UPDATE 權限。*
->
-> *批次資料的資料新鮮度：Tool docstring 說明「每日凌晨更新，非即時」，讓 LLM 在回答時主動告知用戶資料截止時間，管理預期。*
->
-> *橋接層的 Trade-off：多了 2-3 天設計成本，但讓 Agent 和 Legacy 系統之間有一個穩定的隔離層——SAP 改版了，只需要改橋接層，不需要改所有 Agent 代碼。」*
-
----
-
 **系列導航**
 
 ← [Part 36：RKK 實戰——生產級 AI Evaluation Pipeline：從黃金資料集到 CI/CD 品質閘門](/posts/fde-interview-guide-part36-eval-pipeline-zh/) | [Part 38：RKK 實戰——從 POC 到 Production：AI 系統的五個生產化差距與 Rollback 設計](/posts/fde-interview-guide-part38-prototype-to-production-zh/) →

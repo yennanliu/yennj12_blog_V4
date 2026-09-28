@@ -15,10 +15,10 @@ readTime: "35 min"
 
 This is **Part 5** of the Kubernetes Autoscaling Complete Guide series:
 
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Application-level autoscaling theory
-- **[Part 2: Cluster Autoscaling & Cloud Providers](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Infrastructure-level autoscaling
-- **[Part 3: Hands-On HPA Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)** - Practical implementation with Apache-PHP
-- **[Part 4: Monitoring, Alerting & Threshold Tuning](./kubernetes-autoscaling-complete-guide-part4-monitoring-alerting.md)** - Production observability
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Application-level autoscaling theory
+- **[Part 2: Cluster Autoscaling & Cloud Providers](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Infrastructure-level autoscaling
+- **[Part 3: Hands-On HPA Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)** - Practical implementation with Apache-PHP
+- **[Part 4: Monitoring, Alerting & Threshold Tuning](/posts/kubernetes-autoscaling-complete-guide-part4-monitoring-alerting/)** - Production observability
 - **Part 5 (This Post)**: VPA & Resource Optimization - Right-sizing and cost optimization
 
 ---
@@ -1748,10 +1748,10 @@ kubectl apply -f vpa-recreate-mode-prod.yaml
 ## Related Topics
 
 ### Autoscaling Series
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - HPA theory and approaches
-- **[Part 2: Cluster Autoscaling](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Node-level autoscaling
-- **[Part 3: Hands-On HPA Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)** - Practical implementation
-- **[Part 4: Monitoring & Alerting](./kubernetes-autoscaling-complete-guide-part4-monitoring-alerting.md)** - Observability
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - HPA theory and approaches
+- **[Part 2: Cluster Autoscaling](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Node-level autoscaling
+- **[Part 3: Hands-On HPA Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)** - Practical implementation
+- **[Part 4: Monitoring & Alerting](/posts/kubernetes-autoscaling-complete-guide-part4-monitoring-alerting/)** - Observability
 
 ## Conclusion
 

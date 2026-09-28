@@ -303,18 +303,6 @@ Self-Reflection 的成本：
 
 ---
 
-## 八、面試答題要點
-
-> *「這道題的核心是：設計一個讓 Agent 能自我校正的迴圈，同時確保這個迴圈一定會終止。*
->
-> *架構設計：Generator-Evaluator 雙節點模式。Generator（Gemini Pro，法務助理角色）產生初稿；Evaluator（同一個 Gemini Pro，但不同 System Prompt，法務審查員角色）評估初稿，輸出結構化的錯誤報告（has_error + error_type + 具體位置 + severity）。Conditional Router 根據評估結果決定：通過 → 輸出，有問題且可以重試 → 帶 feedback 回到 Generator，已達上限 → Fallback。*
->
-> *收斂保證三層：MAX_REFLECTIONS = 2（次數上限），reflection_count 存在 Global State（跨節點可見），Token Budget Check 防止成本無限燃燒。超過上限就跳 Fallback，回傳「需要人工審核」，觸發 Cloud Logging Alert。*
->
-> *成本分析：每次反思大約 2~3x 成本，所以反思機制應該只用在高風險場景（法務、財務、醫療），不應該是所有查詢的 default。」*
-
----
-
 **系列導航**
 
 ← [Part 24：RKK 實戰——混合模型路由與語意路由器設計](/posts/fde-interview-guide-part24-hybrid-model-routing-zh/) | [Part 26：顧問實戰——「我們現在用 OpenAI，為什麼要換 Vertex AI？」](/posts/fde-interview-guide-part26-competitive-positioning-zh/) →

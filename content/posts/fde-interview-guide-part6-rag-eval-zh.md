@@ -413,34 +413,4 @@ Total: ~$32/day = ~$960/month
 
 ---
 
-## 面試回答完整示範
-
-```
-面試官問：「客戶說回答品質下降了，你怎麼處理？」
-
-診斷（1 分鐘）：
-「我會先用 RAGAS 跑一批測試問題，
- 看 Context Recall 和 Faithfulness 各是多少。
- Context Recall 低 → Retrieval 有問題：
-   可能是資料更新了但 Index 沒更新，
-   或者 Embedding 模型對新加入的文件類型效果差。
- Context Recall 高但 Faithfulness 低 → Generation 問題：
-   LLM 在 hallucinate，Grounding Prompt 可能被改過或者不夠強。」
-
-根因修復（1 分鐘）：
-「如果是 Retrieval 問題，我會先看最近有沒有新增文件類型——
- 如果有，可能需要重新評估 Embedding 模型是否適合新的內容。
- 如果是 Generation 問題，我會加強 Prompt 的 Grounding 指令，
- 明確要求 LLM『只根據以下資料回答，資料不足請說不知道』，
- 並加入 Citation 機制，讓每個回答都要引用具體的文件段落。」
-
-成本控制（30 秒）：
-「如果成本超出預算，第一個動作是加 Semantic Cache——
- 相似的問題直接回快取，不過 LLM。
- 第二個動作是把 FAQ 類的簡單問題路由到較便宜的模型（Flash 而不是 Pro）。
- 依快取命中率與流量組成而定，這兩步有機會把成本降低數成（示意估算），而不影響複雜問題的回答品質。」
-```
-
----
-
 下一篇：[FDE 面試準備指南（七）：Agent 深度設計——ReAct vs Planner、Tool Routing、Multi-Agent](/posts/fde-interview-guide-part7-agent-design-zh/)

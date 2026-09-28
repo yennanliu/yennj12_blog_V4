@@ -663,12 +663,6 @@ A/B 測試框架：
 
 ---
 
-## 十一、面試答題要點
-
-> *「這個問題的核心矛盾是：傳統的『先跑完再判斷』路由，把路由決策點放在答案完成之後，導致任何需要升級的查詢都承受雙倍延遲。我的解法是把決策點前移到答案生成的前 10 個 Token：透過 vLLM 的 logprobs API（overhead < 5ms），即時計算 Shannon 熵值 H = -∑p log p，若 H > 2.5 代表模型對當前答案高度不確定，立刻取消地端請求、中斷生成，同步將原始 Prompt 送到雲端（以 Provisioned Throughput 保證容量）。這個早停機制讓升級路徑延遲從 6.8s 降到 3.2s（-53%），同時節省了 92% 的地端 GPU 算力浪費。在 PII 保護方面，我在路由決策上游設計雙層防禦：Regex（< 1ms）+ spaCy NER（< 3ms）同步阻塞路由，任何 PII 命中都強制本地路由，永不升級到雲端，達成零 PII 外洩事件。架構從 Phase 1 的靜態規則字典，演進到 Phase 2 的 Cross-Encoder（F1 = 0.91），最終在 Phase 3 加入動態閾值校準（每 6 小時自動校準各業務類型的最佳 H 閾值）和 FAISS 嵌入快取路由（重複查詢命中率 ~40%，0ms 決策），讓整體每查詢推理成本從 $0.0052 降到約 $0.0026（約 -50%，示意估算）。」*
-
----
-
 **系列導航**
 
 ← [Part 46：高規格金融業的數據無痕化與自主密鑰管理（BYOK / CMEK in GenAI）](/posts/fde-interview-guide-part46-byok-cmek-zh/) | [Part 48：高可靠性 Agent Graph 的多重工具 Fallback 與自我修復機制](/posts/fde-interview-guide-part48-self-healing-agent-zh/) →

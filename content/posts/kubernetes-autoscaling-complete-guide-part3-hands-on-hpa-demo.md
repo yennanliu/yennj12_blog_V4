@@ -15,8 +15,8 @@ readTime: "25 min"
 
 This is **Part 3** of the Kubernetes Autoscaling Complete Guide series:
 
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Application-level autoscaling theory and approaches
-- **[Part 2: Cluster Autoscaling & Cloud Providers](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Infrastructure-level autoscaling strategies
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Application-level autoscaling theory and approaches
+- **[Part 2: Cluster Autoscaling & Cloud Providers](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Infrastructure-level autoscaling strategies
 - **Part 3 (This Post)**: Hands-On HPA Demo - Practical implementation with Apache-PHP application
 
 ---
@@ -1073,15 +1073,15 @@ kubectl logs -f deployment/<name>  # Application logs
 For more autoscaling knowledge, explore the series:
 
 ### Autoscaling Series
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Theory and approaches
-- **[Part 2: Cluster Autoscaling](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Node-level autoscaling
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Theory and approaches
+- **[Part 2: Cluster Autoscaling](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Node-level autoscaling
 
 ### Kubernetes Fundamentals
-- **[Kubernetes Complete Guide (Part 1): Introduction](./kubernetes-complete-guide-part1-introduction-zh.md)** - Architecture and concepts
-- **[Kubernetes Complete Guide (Part 3): Advanced Features](./kubernetes-complete-guide-part3-advanced-zh.md)** - Production practices
+- **[Kubernetes Complete Guide (Part 1): Introduction](/posts/kubernetes-complete-guide-part1-introduction-zh/)** - Architecture and concepts
+- **[Kubernetes Complete Guide (Part 3): Advanced Features](/posts/kubernetes-complete-guide-part3-advanced-zh/)** - Production practices
 
 ### Production Kubernetes
-- **[Building Production Kubernetes Platform on AWS EKS](./building-production-kubernetes-platform-aws-eks-cdk.md)** - Full platform architecture
+- **[Building Production Kubernetes Platform on AWS EKS](/posts/building-production-kubernetes-platform-aws-eks-cdk/)** - Full platform architecture
 
 ## Conclusion
 

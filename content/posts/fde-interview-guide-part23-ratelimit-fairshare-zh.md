@@ -287,18 +287,6 @@ Noisy Neighbor 的攻擊場景：
 
 ---
 
-## 八、面試答題要點
-
-> *「這個問題的根本是：AI 系統的資源消耗由 Token 數而非請求次數決定，傳統 RPM 限流完全失效。*
->
-> *架構設計三層：入口閘道做 Token 估算（請求進來時估算 input + max_output），每個租戶有獨立的分散式令牌桶（Redis Token Bucket），全域 Quota 接近滿載時切換為 Fair-Share 佇列（Round-Robin 跨租戶調度）。*
->
-> *關鍵設計細節：Redis 的 Lua Script 確保令牌桶操作的原子性；事前高估 token（×1.1 安全係數）、事後退回多扣的 token；租戶配額分配時保留 10% 全域緩衝。*
->
-> *Noisy Neighbor 防禦：租戶級令牌桶確保 Tenant A 的濫用不佔用其他租戶的 Quota；全域使用率超過 90% 時暫停新請求入隊；加上單次請求大小上限。」*
-
----
-
 **系列導航**
 
 ← [Part 22：RKK 實戰——動態並行 Tool-Calling 與依賴解析引擎](/posts/fde-interview-guide-part22-parallel-tool-calling-zh/) | [Part 24：RKK 實戰——混合模型路由與語意路由器設計](/posts/fde-interview-guide-part24-hybrid-model-routing-zh/) →

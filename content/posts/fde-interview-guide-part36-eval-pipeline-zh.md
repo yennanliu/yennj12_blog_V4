@@ -312,18 +312,6 @@ CI 報告格式（讓工程師看到的不只是 PASS/FAIL）：
 
 ---
 
-## 九、面試答題要點
-
-> *「這道題的核心是：不靠人記得去評估，而是讓品質退化在影響用戶之前被系統自動擋住。*
->
-> *四層架構：黃金資料集（律師建立 200 題，四種題型，Git 版本控制）；離線評估（Vertex AI Evaluation Service + 獨立的 Safety 評估）；CI/CD 品質閘門（Faithfulness >= 0.90、Safety 越界 == 0%，否則 Block 部署）；線上評估（影子評分 3% 抽樣 + 人工抽查每週 50 筆）。*
->
-> *法律場景的特殊設計：Safety 評估是獨立維度，越界率 > 0% 直接 Block，不和 Accuracy 指標一起加權。Faithfulness 閾值用 0.90 不用 0.80，因為漏掉一個風險條款的代價是千萬，不是用戶體驗略差。這個閾值是和客戶的法務長一起決定的，不是工程師自己設定的。*
->
-> *成本分析：200 題的 Eval CI 每次大約 $0.40 的 LLM 費用。每週改 5 次 Prompt → 每週 $2。這個成本和它防止的業務風險相比是微不足道的。」*
-
----
-
 **系列導航**
 
 ← [Part 35：RKK 實戰——生產級可觀測性設計：Granular Tracing、Span 樹與 Cloud Trace 整合](/posts/fde-interview-guide-part35-granular-tracing-zh/) | [Part 37：RKK 實戰——企業 AI 的「連接組織」：Legacy 系統整合、API 橋接與安全邊界設計](/posts/fde-interview-guide-part37-legacy-integration-zh/) →

@@ -283,18 +283,6 @@ GCP 組件對應：
 
 ---
 
-## 八、面試答題要點
-
-> *「這個問題有三個層次：*
->
-> *第一，User Impersonation（身分代入）：Agent 必須以真實用戶身分而非系統帳號呼叫企業 API。我的設計是 HITL OAuth 流程——當 Agent 第一次需要呼叫需要授權的工具時，進入 Interrupt 狀態，觸發 OAuth 授權請求，用戶確認後 Token 注入 Tool Execution Context，Agent 才繼續執行。Token 使用 Refresh Token 機制透明更新，過期時自動換取新 Token。*
->
-> *第二，Tool Injection 防禦：LLM 產生的 JSON 參數絕對不能直接傳給企業 API。MCP Server 中間層要做三層驗證：Schema 驗證（格式是否合法）、Business Logic 驗證（業務規則，例如金額上限、郵件域名白名單）、異常偵測（呼叫頻率是否正常）。*
->
-> *第三，最小權限：每次 OAuth 請求只申請完成當前任務所需的最小 Scope，Token 只存在記憶體，不寫磁碟，所有操作完整 Audit Log。」*
-
----
-
 **系列導航**
 
 ← [Part 16：RKK 實戰——Multi-Agent 狀態管理與死鎖排除](/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh/) | [Part 18：RKK 實戰——三層記憶體架構與 LLM 成本調優](/posts/fde-interview-guide-part18-memory-cost-tuning-zh/) →

@@ -646,15 +646,9 @@ Blacklist 在每日夜間重建完成後會被清空。但在清空前，必須�
 
 ---
 
-## 十、面試答題要點
+## 十、常見陷阱與生產事故分析
 
-> *「面對百萬向量的 RAG 知識庫，頻繁更新帶來的索引退化問題，核心解法是 **Lambda Vector Architecture**：將索引分為 Base（批次重建、唯讀、精準度高）與 Delta（即時寫入、允許輕度 Graph Drift）兩層，查詢時 Parallel Query 同時打兩個索引再合併去重，透過 Firestore Blacklist 實現 O(1) 的刪除過濾，把文件刪除到 Agent 不再引用的延遲從 4 小時壓縮至 10 秒。演進路徑上，Phase 1 的單索引方案適合 < 10K 文件驗證業務價值；Phase 2 在單索引基礎上加入 Blacklist 機制，用 60 秒延遲換零架構複雜度；Phase 3 才引入雙索引，成本增至約 $783/月，但換來零停機與 RECALL@10 長期穩定在 93% ± 2%。最關鍵的風險不是索引速度，而是 HNSW Graph Drift 的靜默劣化——我們用 Golden Query Set 每 30 分鐘評估一次 RECALL@10，一旦下滑 5% 就自動觸發 Cloud Composer DAG 進行 Blue-Green Re-indexing，整個切換過程對用戶完全透明，停機時間為零。」*
-
----
-
-## 十一、常見陷阱與生產事故分析
-
-### 11.1 三個高頻踩坑場景
+### 10.1 三個高頻踩坑場景
 
 **陷阱一：Blacklist 清空時機過早**
 
@@ -709,7 +703,7 @@ Vertex AI Vector Search 的 `approximateNeighborsCount`（即 ef_search）參數
 
 ---
 
-### 11.2 生產事故 Post-Mortem 範例
+### 10.2 生產事故 Post-Mortem 範例
 
 **事故名稱**：2025-Q3 某企業客戶知識庫 RECALL 崩盤事件
 
@@ -736,9 +730,9 @@ Vertex AI Vector Search 的 `approximateNeighborsCount`（即 ef_search）參數
 
 ---
 
-## 十二、成本優化策略與規模化路徑
+## 十一、成本優化策略與規模化路徑
 
-### 12.1 分階段成本拆解
+### 11.1 分階段成本拆解
 
 在邁向百萬向量規模的過程中，成本的主要驅動因素會隨著規模改變：
 
@@ -764,7 +758,7 @@ Vertex AI Vector Search 的 `approximateNeighborsCount`（即 ef_search）參數
 └────────────────────────────────────────────────────────────┘
 ```
 
-### 12.2 三個高效成本優化手段
+### 11.2 三個高效成本優化手段
 
 **優化一：Embedding 快取**
 
@@ -793,7 +787,7 @@ def embed_with_cache(chunks: List[str]) -> List[np.ndarray]:
 
 超過 180 天未被任何查詢命中的向量，可以標記為「冷向量」，從 Base Index 移出，存入 Cloud Storage（GCS）作為壓縮向量備份。僅在用戶明確要求搜尋歷史文件時，才按需載入。100 萬向量中通常有 **20–35%** 是冷向量，這個策略可以節省約 $50–70/月的向量儲存費用。
 
-### 12.3 規模化時的架構變更
+### 11.3 規模化時的架構變更
 
 當系統規模超過 1M 向量（即 Phase 3 的上限）時，需要考慮：
 
@@ -809,7 +803,7 @@ def embed_with_cache(chunks: List[str]) -> List[np.ndarray]:
 
 ---
 
-## 十三、系列回顧：FDE Interview Guide 知識地圖
+## 十二、系列回顧：FDE Interview Guide 知識地圖
 
 本篇是 FDE Interview Guide 系列的第 49 篇。系列涵蓋的核心主題已超過 45 個生產級架構設計問題，從 Phase 1 快速驗證到 Phase 3 百萬用戶規模，每篇都提供具體數字、Why-X-not-Y 決策框架，以及面試可直接使用的 RKK 模型答案。
 

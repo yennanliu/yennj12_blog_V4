@@ -303,20 +303,6 @@ PII 處理       記錄 Prompt 內容         只記錄 token 數/長度  只記
 
 ---
 
-## 九、面試答題要點
-
-> *「這道題的核心是：當 Multi-Agent 系統出問題，你如何在不重現問題的情況下找到根因。*
->
-> *架構設計：每個 Agent.run、LLM.generate、Tool.call、Vector Search 都有獨立的 Span，帶 latency_ms、token 數、success/fail 等 Attributes。用 OpenTelemetry SDK + Cloud Trace Exporter，BatchSpanProcessor 非同步上送，對 Agent 的效能影響 < 1%。*
->
-> *診斷流程：打開 Cloud Trace，過濾 latency > 10s 的請求，看瀑布圖找最長 Span。如果是 vector_search：索引或配置問題。如果是 tool.call 且 success=false：外部依賴問題。如果是 llm.generate 且 input_tokens 異常大：context 截斷問題。*
->
-> *Sampling 策略：Production 正常流量 1% 採樣，異常請求（latency > 5s）100% 保留。控制 Cloud Trace 成本，同時確保能診斷所有異常。*
->
-> *PII 原則：Span Attributes 只記錄 token 數和長度，不記錄 Prompt 原文和 LLM 輸出內容——這些可能含有 PII，不應該進入 Trace 儲存。」*
-
----
-
 **系列導航**
 
 ← [Part 34：RKK 實戰演練——六個端對端 Mock 情境題與模範答案](/posts/fde-interview-guide-part34-mock-scenarios-zh/) | [Part 36：RKK 實戰——生產級 AI Evaluation Pipeline：從黃金資料集到 CI/CD 品質閘門](/posts/fde-interview-guide-part36-eval-pipeline-zh/) →
