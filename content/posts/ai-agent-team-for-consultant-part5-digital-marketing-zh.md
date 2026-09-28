@@ -6,7 +6,7 @@ weight: 5
 description: "實戰案例：一家 8 人數位行銷公司如何用 AI Agent 團隊自動化內容策略、廣告文案、成效報告與客戶簡報，包含完整 Prompt、LangGraph 實作與執行步驟。"
 categories: ["all", "ai", "business"]
 tags: ["AI Agent", "數位行銷", "LangGraph", "Claude", "內容行銷", "廣告文案", "Multi-Agent", "繁體中文", "實戰案例", "Agent", "Case Study", "Marketing"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "30 min"
 ---
 

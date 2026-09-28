@@ -5,7 +5,7 @@ draft: false
 description: "Master essential design patterns in Java with practical implementations. Learn Singleton, Factory, Builder, Observer, Strategy, Decorator, and more patterns with real-world examples, best practices, and performance considerations."
 categories: ["all", "ai", "engineering", "architecture"]
 tags: ["Java", "Design Patterns", "Software Architecture", "Object-Oriented Programming", "Gang of Four", "Creational Patterns", "Structural Patterns", "Behavioral Patterns", "AI"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "50 min"
 ---
 

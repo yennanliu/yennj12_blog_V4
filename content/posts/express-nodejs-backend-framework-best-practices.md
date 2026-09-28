@@ -5,7 +5,7 @@ draft: false
 description: "Master Express.js development with comprehensive best practices covering configuration, middleware, routing, security, error handling, and performance optimization. Learn to build scalable, maintainable, and secure Node.js backend applications."
 categories: ["all", "ai", "engineering"]
 tags: ["Express.js", "Node.js", "Backend", "REST API", "Middleware", "Security", "Best Practices", "Web Development", "JavaScript", "TypeScript", "AI"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "50 min"
 ---
 

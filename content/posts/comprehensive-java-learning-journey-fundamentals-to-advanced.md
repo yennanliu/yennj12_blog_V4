@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering"]
 tags: ["AI", "java-fundamentals", "oop", "design-patterns", "concurrency", "testing", "frameworks", "reactive-programming", "microservices", "java", "programming", "software-engineering"]
 summary: "Complete exploration of Java programming concepts through practical examples, covering core language features, object-oriented principles, design patterns, modern frameworks, and advanced topics like reactive programming and microservices."
+description: "Complete exploration of Java programming concepts through practical examples, covering core language features, object-oriented principles, design patterns, modern frameworks, and advanced topics like reactive programming and microservices."
 readTime: "25 min"
 ---
 

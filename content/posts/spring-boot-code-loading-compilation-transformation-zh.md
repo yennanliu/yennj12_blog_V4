@@ -4,7 +4,7 @@ date: 2025-09-29T09:50:40+08:00
 draft: false
 tags: ["Spring Boot", "Java", "程式碼載入", "類別載入器", "編譯", "物件實例化", "依賴注入", "應用程式啟動"]
 categories: ["all", "engineering"]
-author: "yennj12 team"
+authors: ["yen"]
 description: "深入探討 Spring Boot 應用程式的程式碼載入機制，從 Java 原始碼編譯、類別載入、到 Spring Bean 物件實例化的完整流程分析。"
 ---
 

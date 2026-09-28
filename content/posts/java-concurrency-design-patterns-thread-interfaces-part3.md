@@ -6,7 +6,7 @@ weight: 3
 description: "Master concurrent design patterns using Java thread interfaces: Producer-Consumer, Observer, Command, Strategy, and Enterprise patterns. Learn practical implementations with Runnable and Callable, including pros/cons and real-world use cases."
 categories: ["all", "ai", "engineering", "architecture"]
 tags: ["Java", "Concurrency", "Design Patterns", "Threading", "Runnable", "Callable", "Producer-Consumer", "Observer", "Command Pattern", "AI"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "45 min"
 ---
 

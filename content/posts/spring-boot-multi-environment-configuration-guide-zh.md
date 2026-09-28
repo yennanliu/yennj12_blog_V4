@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
 tags: ["spring-boot", "configuration", "docker", "environment", "redis", "database", "production", "backend", "devops"]
 summary: "深入探討 Spring Boot 多環境配置管理，包括資料庫切換、Redis 配置、以及 Docker 容器化部署的完整實作指南。"
+description: "深入探討 Spring Boot 多環境配置管理，包括資料庫切換、Redis 配置、以及 Docker 容器化部署的完整實作指南。"
 readTime: "18 min"
 ---
 

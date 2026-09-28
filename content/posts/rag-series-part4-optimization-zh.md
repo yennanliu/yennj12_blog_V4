@@ -6,7 +6,7 @@ weight: 4
 description: "當問題本身就是問題：深入三大 RAG 優化技術——Step-Back Prompting、Self-RAG 自我反思、以及 Context Compression。了解它們的核心原理、實作方式、優缺點與最佳使用場景。"
 categories: ["all", "ai", "engineering"]
 tags: ["RAG", "Self-RAG", "Context Compression", "Query Transformation", "LangChain", "Python", "繁體中文"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "28 min"
 ---
 

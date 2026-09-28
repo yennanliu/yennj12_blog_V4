@@ -5,7 +5,7 @@ draft: false
 description: "Design and implement a production-ready centralized authentication and authorization system using AWS Cognito and CDK (TypeScript). Learn multi-tenant strategies, user pool management, RBAC/ABAC patterns, and how to integrate with multiple services and applications."
 categories: ["all", "ai", "engineering", "architecture", "infrastructure"]
 tags: ["AWS Cognito", "CDK", "TypeScript", "Authentication", "Authorization", "IAM", "Security", "Multi-tenant", "RBAC", "ABAC", "SSO", "Identity Management", "API Gateway", "AI", "AWS"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "60 min"
 ---
 

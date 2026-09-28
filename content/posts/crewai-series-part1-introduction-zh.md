@@ -6,7 +6,7 @@ weight: 1
 description: "從零開始學 CrewAI：什麼是多 Agent 協作框架、為什麼需要它、核心四大元件（Agent、Task、Crew、Tool）的詳細說明，以及你的第一個 CrewAI 應用程式。"
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "Multi-Agent", "LLM", "AI Automation", "Python", "繁體中文", "Agent"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "20 min"
 ---
 

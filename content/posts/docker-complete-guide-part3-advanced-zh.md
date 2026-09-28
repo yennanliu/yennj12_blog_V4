@@ -6,7 +6,7 @@ weight: 3
 description: "深入探討 Docker 進階主題，包含 Dockerfile 最佳實踐、多階段建立、Docker Compose 編排、網路進階配置、安全性強化、效能優化與生產環境部署策略。"
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Docker", "Dockerfile", "Docker Compose", "容器編排", "微服務", "CI/CD", "容器安全", "效能優化", "生產部署", "DevOps"]
-authors: ["yennj12 team"]
+authors: ["yen"]
 readTime: "70 min"
 ---
 

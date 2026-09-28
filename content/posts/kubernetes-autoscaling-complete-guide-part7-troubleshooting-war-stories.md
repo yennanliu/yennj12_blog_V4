@@ -3,10 +3,11 @@ title: "Kubernetes Autoscaling Complete Guide (Part 7): Production Troubleshooti
 date: 2025-11-10T00:00:00+08:00
 draft: false
 weight: 7
-authors: ["yennj12 team"]
+authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "Troubleshooting", "Debugging", "Production", "Incidents", "War Stories", "Performance", "Autoscaling", "SRE", "devops"]
 summary: "Part 7 of the Kubernetes Autoscaling series: Real-world production incidents, debugging workflows, common failure scenarios, and hard-learned lessons from operating autoscaling at scale. Battle-tested troubleshooting guides and postmortem analysis."
+description: "Part 7 of the Kubernetes Autoscaling series: Real-world production incidents, debugging workflows, common failure scenarios, and hard-learned lessons from operating autoscaling at scale. Battle-tested troubleshooting guides and postmortem analysis."
 readTime: "45 min"
 ---
 

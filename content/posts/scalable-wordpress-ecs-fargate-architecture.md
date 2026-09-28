@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
 tags: ["AI", "aws", "ecs", "fargate", "wordpress", "containers", "rds", "efs", "cdk"]
 summary: "Comprehensive guide to deploying production-ready WordPress on AWS ECS Fargate, exploring containerization strategies, infrastructure decisions, and scalability patterns for high-traffic content management systems."
+description: "Comprehensive guide to deploying production-ready WordPress on AWS ECS Fargate, exploring containerization strategies, infrastructure decisions, and scalability patterns for high-traffic content management systems."
 readTime: "16 min"
 ---
 

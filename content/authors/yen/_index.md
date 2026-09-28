@@ -1,7 +1,7 @@
 ---
 title: "Yen"
 role: "Principal Software Engineer"
-avatar: "/images/authors/yen.jpg"
+avatar: "https://github.com/yennanliu.png"
 bio: "Yen is a Principal Software Engineer with expertise in distributed systems, database optimization, and building resilient architectures. Passionate about sharing technical knowledge and best practices."
 social:
   twitter: "https://twitter.com/yennj12"

@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
 tags: ["AI", "aws", "cdk", "ecs", "fargate", "superset", "rds", "postgresql", "alb", "route53", "analytics", "bi"]
 summary: "Comprehensive guide to architecting a highly available, production-grade Apache Superset deployment using ECS Fargate, RDS PostgreSQL, and AWS CDK for enterprise business intelligence at scale."
+description: "Comprehensive guide to architecting a highly available, production-grade Apache Superset deployment using ECS Fargate, RDS PostgreSQL, and AWS CDK for enterprise business intelligence at scale."
 readTime: "19 min"
 ---
 

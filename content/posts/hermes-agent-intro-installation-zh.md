@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["Hermes Agent", "AI Agent", "自動化", "安裝指南", "NousResearch", "agent"]
 summary: "詳細介紹 Hermes Agent，一個具有自我學習和改進能力的 AI 系統。涵蓋核心功能、安裝步驟、配置方式和實際應用，幫助你快速上手這個強大的自主 AI 系統。"
+description: "詳細介紹 Hermes Agent，一個具有自我學習和改進能力的 AI 系統。涵蓋核心功能、安裝步驟、配置方式和實際應用，幫助你快速上手這個強大的自主 AI 系統。"
 readTime: "35 min"
 ---
 

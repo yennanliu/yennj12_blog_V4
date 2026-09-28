@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai"]
 tags: ["LangGraph", "應用案例", "創意", "行業解決方案", "未來趨勢"]
 summary: "探索 LangGraph AI 後端在 10 個不同行業和場景的創意應用，從客服系統到內容創作、從數據分析到程式碼生成，展示 LangGraph 的真正潛力和未來發展方向。"
+description: "探索 LangGraph AI 後端在 10 個不同行業和場景的創意應用，從客服系統到內容創作、從數據分析到程式碼生成，展示 LangGraph 的真正潛力和未來發展方向。"
 readTime: "52 min"
 ---
 

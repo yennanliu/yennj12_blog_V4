@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai"]
 tags: ["Gemini", "本地部署", "Mac", "開源模型", "私有化", "推理", "local-deployment"]
 summary: "詳細講解如何在 Mac 上本地運行 Google Gemini 4 模型，涵蓋環境配置、模型下載、優化技巧和實際應用，幫助你在不依賴雲服務的情況下使用強大的 Gemini 模型。"
+description: "詳細講解如何在 Mac 上本地運行 Google Gemini 4 模型，涵蓋環境配置、模型下載、優化技巧和實際應用，幫助你在不依賴雲服務的情況下使用強大的 Gemini 模型。"
 readTime: "38 min"
 ---
 

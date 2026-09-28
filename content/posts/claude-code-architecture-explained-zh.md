@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "claude-code", "mcp", "plugin", "skill", "agent", "開發工具", "自動化", "架構設計", "development-tools"]
 summary: "完整解析 Claude Code 的核心架構元件：從底層的 MCP 協議到高層的 Sub-agent，了解 Plugin、Skill、Sub-agent 與 MCP 的運作原理、使用時機與層級關係。"
+description: "完整解析 Claude Code 的核心架構元件：從底層的 MCP 協議到高層的 Sub-agent，了解 Plugin、Skill、Sub-agent 與 MCP 的運作原理、使用時機與層級關係。"
 readTime: "20 min"
 ---
 

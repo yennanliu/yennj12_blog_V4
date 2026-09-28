@@ -6,7 +6,7 @@ weight: 2
 description: "深入實作：分別用 Claude Code + AGENTS.md、Gemini CLI 與 LangGraph 建立 AI 顧問 Agent 團隊。包含完整設定步驟、System Prompt 設計、範例程式碼與關鍵注意事項。"
 categories: ["all", "ai", "engineering"]
 tags: ["AI Agent", "Claude Code", "Gemini CLI", "LangGraph", "Python", "Multi-Agent", "繁體中文", "Agent"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "30 min"
 ---
 

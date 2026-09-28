@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering", "business"]
 tags: ["AI", "stripe", "payment-gateway", "jwt-authentication", "rest-api", "vue.js", "mysql", "full-stack", "spring-boot", "ecommerce"]
 summary: "A complete e-commerce shopping cart system built with Spring Boot backend and Vue.js frontend, featuring Stripe payment integration, JWT authentication, and full CRUD operations for products, categories, and cart management."
+description: "A complete e-commerce shopping cart system built with Spring Boot backend and Vue.js frontend, featuring Stripe payment integration, JWT authentication, and full CRUD operations for products, categories, and cart management."
 readTime: "18 min"
 ---
 

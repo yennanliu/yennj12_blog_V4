@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "claude-code", "multi-agent", "context-passing", "token-optimization", "agent-orchestration", "API", "development-tools"]
 summary: "多 Agent Token 優化系列 pt.5：深入探索選擇性 Context 傳遞策略，從依賴關係映射、結構化輸出到相關性過濾，提供完整實作範例，幫助你大幅降低 Agent 間通訊的 Token 消耗。"
+description: "多 Agent Token 優化系列 pt.5：深入探索選擇性 Context 傳遞策略，從依賴關係映射、結構化輸出到相關性過濾，提供完整實作範例，幫助你大幅降低 Agent 間通訊的 Token 消耗。"
 readTime: "35 min"
 ---
 

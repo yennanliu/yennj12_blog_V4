@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering"]
 tags: ["AI", "database", "performance", "optimization", "postgresql", "redis"]
 summary: "A comprehensive guide to database performance optimization techniques that helped us reduce query response times from seconds to milliseconds."
+description: "A comprehensive guide to database performance optimization techniques that helped us reduce query response times from seconds to milliseconds."
 readTime: "15 min"
 ---
 

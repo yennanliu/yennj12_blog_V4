@@ -6,6 +6,7 @@ weight: 4
 tags: ["YouTube", "Synthwave", "復古合成器波", "社群經營", "變現", "開發者", "程式設計師", "Discord", "GitHub", "科技品牌", "YouTube 串流", "內容創作"]
 categories: ["all", "creative"]
 description: "Synthwave 讀書會串流系列最終章：如何建立開發者社群、製作病毒式 Shorts、科技品牌合作，以及完整的變現路徑規劃（$0 到 $10K/月）"
+authors: ["yen"]
 ---
 
 ## 📘 系列導覽

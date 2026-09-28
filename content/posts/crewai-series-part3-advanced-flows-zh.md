@@ -6,7 +6,7 @@ weight: 3
 description: "CrewAI 進階篇：用 @start/@listen/@router 建立事件驅動的複雜工作流程、三種記憶體機制的實際應用、錯誤處理與成本控制，以及如何把 CrewAI Crew 包成 API 服務部署到生產環境。"
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "Flows", "Memory", "Multi-Agent", "Production", "FastAPI", "Python", "繁體中文", "Agent"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "35 min"
 ---
 

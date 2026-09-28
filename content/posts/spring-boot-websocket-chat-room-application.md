@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
 tags: ["AI", "websocket", "stomp", "real-time-messaging", "sockjs", "redis", "cluster", "chat-application", "real-time", "spring-boot"]
 summary: "Comprehensive guide to building a scalable, real-time chat room application using Spring Boot WebSocket, STOMP protocol, and Redis clustering for enterprise-grade messaging solutions."
+description: "Comprehensive guide to building a scalable, real-time chat room application using Spring Boot WebSocket, STOMP protocol, and Redis clustering for enterprise-grade messaging solutions."
 readTime: "16 min"
 ---
 

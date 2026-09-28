@@ -5,7 +5,7 @@ draft: false
 description: "Master webhooks with comprehensive comparisons to HTTP calls and polling, real-world Java implementations, and practical examples using Stripe, Shopify, and GitHub APIs. Learn when to use webhooks, security best practices, and production-ready patterns."
 categories: ["all", "engineering", "architecture"]
 tags: ["Webhooks", "Event-Driven Architecture", "Java", "Spring Boot", "API Integration", "Real-Time Systems", "Stripe", "GitHub", "Shopify", "HTTP", "REST API", "Integration"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "55 min"
 ---
 

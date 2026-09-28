@@ -5,7 +5,7 @@ draft: false
 description: "Master Redis Sentinel for high availability with comprehensive setup guides, mode comparisons, failover mechanisms, and production-ready Java integration. Learn monitoring, troubleshooting, and best practices for enterprise deployments."
 categories: ["all", "engineering", "architecture"]
 tags: ["Redis", "Redis Sentinel", "High Availability", "Distributed Systems", "Java", "Spring Boot", "Caching", "Database Architecture", "Failover", "Monitoring", "Database"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "50 min"
 ---
 

@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "business", "creative"]
 tags: ["ADHD", "專注音樂", "YouTube", "24/7直播", "實作指南", "雙耳節拍", "音頻設計", "streaming", "tutorial"]
 summary: "手把手教你建立 ADHD 友善專注音樂 24/7 直播頻道：從科學原理、音頻設計、視覺製作到實際上線，包含完整技術實作步驟與優化策略。"
+description: "手把手教你建立 ADHD 友善專注音樂 24/7 直播頻道：從科學原理、音頻設計、視覺製作到實際上線，包含完整技術實作步驟與優化策略。"
 readTime: "30 min"
 ---
 

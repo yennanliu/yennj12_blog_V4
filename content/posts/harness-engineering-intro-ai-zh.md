@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "infrastructure"]
 tags: ["Harness", "CI/CD", "基礎設施", "自動化", "AI", "部署", "工程實踐", "DevOps"]
 summary: "深入探討 Harness 在 AI 時代的角色，從基本概念、核心功能到實戰應用，幫助工程團隊建立高效的自動化部署流程，加速 AI 應用的上線速度。"
+description: "深入探討 Harness 在 AI 時代的角色，從基本概念、核心功能到實戰應用，幫助工程團隊建立高效的自動化部署流程，加速 AI 應用的上線速度。"
 readTime: "35 min"
 ---
 

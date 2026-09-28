@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "claude-code", "prompt-caching", "RAG", "vector-database", "cost-optimization", "API", "LLM-optimization", "agent-orchestration", "development-tools"]
 summary: "多 Agent Token 優化系列 pt.2：深入探索 Prompt Caching 的實際應用，從 Claude API 原生快取、應用層記憶體快取、到 RAG 系統整合，提供完整程式碼範例，幫助你打造高效低成本的 AI 應用。"
+description: "多 Agent Token 優化系列 pt.2：深入探索 Prompt Caching 的實際應用，從 Claude API 原生快取、應用層記憶體快取、到 RAG 系統整合，提供完整程式碼範例，幫助你打造高效低成本的 AI 應用。"
 readTime: "30 min"
 ---
 

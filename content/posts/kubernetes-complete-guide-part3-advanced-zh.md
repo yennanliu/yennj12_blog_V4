@@ -6,7 +6,7 @@ weight: 3
 description: "深入探討 Kubernetes 進階主題，包含自動擴展、RBAC 權限管理、Network Policy、Helm 套件管理、監控告警、日誌收集、CI/CD 整合與生產環境最佳實踐，打造企業級 K8S 平台。"
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "HPA", "RBAC", "Helm", "監控", "Prometheus", "Grafana", "CI/CD", "生產部署", "最佳實踐", "DevOps"]
-authors: ["yennj12 team"]
+authors: ["yen"]
 readTime: "75 min"
 ---
 

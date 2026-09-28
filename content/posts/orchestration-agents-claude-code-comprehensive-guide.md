@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "claude-code", "agent-orchestration", "multi-agent-systems", "automation", "python", "crewai", "langchain", "development-tools"]
 summary: "Comprehensive guide to building multi-agent orchestration systems with Claude Code - learn to coordinate specialized AI agents for complex software development workflows, from architecture design to implementation."
+description: "Comprehensive guide to building multi-agent orchestration systems with Claude Code - learn to coordinate specialized AI agents for complex software development workflows, from architecture design to implementation."
 readTime: "22 min"
 ---
 

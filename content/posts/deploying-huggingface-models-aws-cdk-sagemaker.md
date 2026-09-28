@@ -5,7 +5,7 @@ draft: false
 description: "Learn how to deploy production-ready Hugging Face AI models to AWS using CDK (TypeScript), SageMaker, and Lambda. Comprehensive guide covering system design, infrastructure setup, model deployment, API creation, and best practices for scalable ML applications."
 categories: ["all", "ai", "engineering", "infrastructure"]
 tags: ["AWS CDK", "SageMaker", "Lambda", "Hugging Face", "Machine Learning", "MLOps", "TypeScript", "Python", "API Gateway", "Infrastructure as Code", "AI", "Deep Learning", "AWS"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "55 min"
 ---
 

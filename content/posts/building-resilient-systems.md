@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
 tags: ["AI", "resilience", "fault-tolerance", "reliability", "distributed-systems"]
 summary: "How we built systems that gracefully handle failures and maintain service availability even when components fail."
+description: "How we built systems that gracefully handle failures and maintain service availability even when components fail."
 readTime: "10 min"
 ---
 

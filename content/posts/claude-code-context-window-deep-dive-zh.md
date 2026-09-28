@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "claude-code", "context-window", "對話管理", "效能優化", "最佳實踐", "development-tools"]
 summary: "深度解析 Claude Code 的 Context Window 機制：從底層原理到實戰策略，學習如何有效管理對話上下文、優化 token 使用，並避免常見陷阱，讓 AI 輔助開發更高效。"
+description: "深度解析 Claude Code 的 Context Window 機制：從底層原理到實戰策略，學習如何有效管理對話上下文、優化 token 使用，並避免常見陷阱，讓 AI 輔助開發更高效。"
 readTime: "22 min"
 ---
 

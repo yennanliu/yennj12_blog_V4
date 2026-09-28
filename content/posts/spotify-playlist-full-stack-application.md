@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering"]
 tags: ["AI", "spotify-api", "machine-learning", "oauth", "recommendation-system", "java", "vue.js", "full-stack", "spring-boot", "vue"]
 summary: "使用 Spring Boot 後端與 Vue.js 前端，整合 Spotify API 打造智能音樂推薦系統，突破 Spotify 原生推薦限制，提供更主動的音樂探索體驗。"
+description: "使用 Spring Boot 後端與 Vue.js 前端，整合 Spotify API 打造智能音樂推薦系統，突破 Spotify 原生推薦限制，提供更主動的音樂探索體驗。"
 readTime: "15 min"
 ---
 

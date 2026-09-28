@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
 tags: ["AI", "serverless", "aws", "cdk", "dynamodb", "lambda", "api-gateway"]
 summary: "Deep dive into designing and building a production-ready URL shortener using AWS serverless services, exploring architectural tradeoffs, and implementing with AWS CDK."
+description: "Deep dive into designing and building a production-ready URL shortener using AWS serverless services, exploring architectural tradeoffs, and implementing with AWS CDK."
 readTime: "18 min"
 ---
 

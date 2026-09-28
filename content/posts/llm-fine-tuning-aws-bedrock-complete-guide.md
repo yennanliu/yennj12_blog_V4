@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "infrastructure"]
 tags: ["AWS Bedrock", "LLM", "fine-tuning", "machine-learning", "AI", "Claude", "Titan", "AWS CDK", "Python", "boto3", "reinforcement-learning", "AWS", "Machine Learning", "MLOps"]
 summary: "Comprehensive guide to fine-tuning and customizing Large Language Models (LLMs) with AWS Bedrock - covering supervised fine-tuning, continued pre-training, and reinforcement fine-tuning with practical examples and AWS CDK infrastructure setup."
+description: "Comprehensive guide to fine-tuning and customizing Large Language Models (LLMs) with AWS Bedrock - covering supervised fine-tuning, continued pre-training, and reinforcement fine-tuning with practical examples and AWS CDK infrastructure setup."
 readTime: "28 min"
 ---
 

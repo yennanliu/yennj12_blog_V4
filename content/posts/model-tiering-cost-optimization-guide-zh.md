@@ -6,6 +6,7 @@ authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "claude-code", "model-tiering", "cost-optimization", "model-routing", "LLM-optimization", "API", "agent-orchestration", "development-tools"]
 summary: "多 Agent Token 優化系列 pt.4：深入探索模型分層策略，從任務分類、智能路由到動態選擇，提供完整實作範例，幫助你在保持品質的同時大幅降低 AI 應用成本。"
+description: "多 Agent Token 優化系列 pt.4：深入探索模型分層策略，從任務分類、智能路由到動態選擇，提供完整實作範例，幫助你在保持品質的同時大幅降低 AI 應用成本。"
 readTime: "30 min"
 ---
 

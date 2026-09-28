@@ -7,6 +7,7 @@ authors: ["yen"]
 categories: ["all", "business", "creative"]
 tags: ["Synthwave", "AI音樂", "Suno", "合成器", "音樂製作", "BPM", "音色設計", "streaming", "music-production"]
 summary: "系列第二篇：掌握 AI 生成 Synthwave 音樂的核心技巧、80 年代經典合成器音色重現、BPM 與節奏設計、以及如何策展出讓程式設計師進入心流的完美播放列表。"
+description: "系列第二篇：掌握 AI 生成 Synthwave 音樂的核心技巧、80 年代經典合成器音色重現、BPM 與節奏設計、以及如何策展出讓程式設計師進入心流的完美播放列表。"
 readTime: "30 min"
 ---
 

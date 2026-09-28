@@ -6,7 +6,7 @@ weight: 2
 description: "完整的 Docker 指令參考手冊，涵蓋容器管理、映像操作、網路配置、資料卷管理等實務操作，配合大量範例與表格說明，從基礎到進階全面掌握 Docker CLI。"
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Docker", "容器化", "Docker CLI", "指令教學", "DevOps", "容器管理", "映像管理", "實務操作"]
-authors: ["yennj12 team"]
+authors: ["yen"]
 readTime: "60 min"
 ---
 

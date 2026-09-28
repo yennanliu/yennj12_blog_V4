@@ -5,7 +5,7 @@ draft: false
 description: "Master TypeScript development with comprehensive best practices covering configuration, type system, design patterns, code style, and advanced techniques. Learn to write type-safe, maintainable, and scalable TypeScript applications."
 categories: ["all", "ai", "engineering"]
 tags: ["TypeScript", "JavaScript", "Type Safety", "Design Patterns", "Code Quality", "Best Practices", "Software Architecture", "AI", "Frontend"]
-authors: ["YennJ12 Engineering Team"]
+authors: ["yen"]
 readTime: "45 min"
 ---
 
