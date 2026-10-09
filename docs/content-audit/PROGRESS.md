@@ -11,7 +11,7 @@ and pushed. The roll-up lives in `../CONTENT_AUDIT_2026-10.md`.
 | DONE-tooling-anthropic | 6 | ✅ done 2026-10-04 | batches/DONE-tooling-anthropic.md |
 | B01-fde-interview-01-13 | 13 | ✅ done 2026-10-09 | batches/B01-fde-interview-01-13.md |
 | B02-fde-interview-14-26 | 13 | ✅ done 2026-10-09 | batches/B02-fde-interview-14-26.md |
-| B03-fde-interview-27-39 | 13 | ⏳ pending | |
+| B03-fde-interview-27-39 | 13 | ✅ done 2026-10-09 | batches/B03-fde-interview-27-39.md |
 | B04-fde-interview-40-52 | 13 | ⏳ pending | |
 | B05-fde-core-01-13 | 13 | ⏳ pending | |
 | B06-fde-core-14-25-fde-essential-career | 18 | ⏳ pending | |
@@ -34,4 +34,4 @@ and pushed. The roll-up lives in `../CONTENT_AUDIT_2026-10.md`.
 | B23-java-spring | 14 | ⏳ pending | |
 | B24-backend-misc | 9 | ⏳ pending | |
 
-Posts covered: 50 / 362.
+Posts covered: 63 / 362.
