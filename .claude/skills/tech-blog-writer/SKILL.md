@@ -99,8 +99,10 @@ Default structure for a standalone post:
    works, or a concrete incident. Then one paragraph stating the thesis and what the reader gets.
 2. **The problem / why it's hard** — establish the tension before the solution.
 3. **Core concept(s)** — one `##` section each, walking the explanation ladder.
-4. **Design decisions** — for each non-obvious choice, a 「為什麼選 X 不選 Y」 / "Why X over Y"
-   table with a **flip condition** (when Y becomes right).
+4. **Design decisions** — for each non-obvious choice, name the alternative, say why it lost,
+   and give the **flip condition** (when the alternative becomes right). Prose or a short table,
+   whichever fits. The 「為什麼選 X 不選 Y」 table with 4–6 rows is the *interview-prep* house
+   format (fde-interview-guide); do not import it into other posts as a quota.
 5. **In practice** — failure modes, symptom → diagnosis (what you'd see in metrics/logs/traces),
    rollout checklist.
 6. **Summary** — the thesis restated as 3–5 bullets a reader could act on. Then related posts.

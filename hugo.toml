@@ -88,7 +88,7 @@ paginate = 25
   [[menu.main]]
     parent = 'series'
     name = 'AI Engineering'
-    url = '/tags/ai-engineering/'
+    url = '/tags/ai-eng-from-scratch/'
     weight = 30
     [menu.main.params]
       note = 'From zero to production AI systems'

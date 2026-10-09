@@ -1,0 +1,209 @@
+content/posts/ai-agent-team-for-consultant-part3-devops-zh.md:112: warning: H1 in the body; the title is already the page's H1, start sections at ##
+content/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh.md:630: warning: section 「十一」 exceeds the 十-section cap
+content/posts/anthropic-financial-services-intro-part1-usage-zh.md:1: warning: readTime says 12 min, content estimates ~5 min
+content/posts/anthropic-financial-services-intro-part3-example-zh.md:1: warning: readTime says 13 min, content estimates ~5 min
+content/posts/crypto-quantitative-trading-part1-fundamentals.md:1: warning: finance post has no disclaimer near the top (「不構成投資建議」)
+content/posts/crypto-quantitative-trading-part2-strategies-backtesting.md:1: warning: finance post has no disclaimer near the top (「不構成投資建議」)
+content/posts/crypto-quantitative-trading-part3-production-deployment.md:1: warning: finance post has no disclaimer near the top (「不構成投資建議」)
+content/posts/fde-core-concept-12-backpressure-fair-share-zh.md:195: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-core-concept-17-context-caching-eviction-zh.md:128: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-core-concept-22-structured-troubleshooting-zh.md:80: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-core-concept-3-state-machine-dag-zh.md:162: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-core-concept-5-reranking-cross-encoder-zh.md:126: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-core-concept-9-data-residence-sovereign-ai-zh.md:145: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part1-rag-zh.md:1: warning: 388 lines; the series target is 600-900
+content/posts/fde-interview-guide-part1-rag-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part1-rag-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part10-context-management-zh.md:1: warning: 361 lines; the series target is 600-900
+content/posts/fde-interview-guide-part10-context-management-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part10-context-management-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part11-agent-debugging-zh.md:1: warning: 344 lines; the series target is 600-900
+content/posts/fde-interview-guide-part11-agent-debugging-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part11-agent-debugging-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part11-agent-debugging-zh.md:6: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part12-agent-evaluation-zh.md:1: warning: 344 lines; the series target is 600-900
+content/posts/fde-interview-guide-part12-agent-evaluation-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part12-agent-evaluation-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part13-prompt-injection-zh.md:1: warning: 352 lines; the series target is 600-900
+content/posts/fde-interview-guide-part13-prompt-injection-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part13-prompt-injection-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part14-memory-architecture-zh.md:1: warning: 373 lines; the series target is 600-900
+content/posts/fde-interview-guide-part14-memory-architecture-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part14-memory-architecture-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part15-scale-cache-zh.md:1: warning: 392 lines; the series target is 600-900
+content/posts/fde-interview-guide-part15-scale-cache-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part15-scale-cache-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh.md:1: warning: 343 lines; the series target is 600-900
+content/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh.md:21: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh.md:328: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part17-mcp-tool-oauth-zh.md:1: warning: 301 lines; the series target is 600-900
+content/posts/fde-interview-guide-part17-mcp-tool-oauth-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part17-mcp-tool-oauth-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part17-mcp-tool-oauth-zh.md:286: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part18-memory-cost-tuning-zh.md:1: warning: 304 lines; the series target is 600-900
+content/posts/fde-interview-guide-part18-memory-cost-tuning-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part18-memory-cost-tuning-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part18-memory-cost-tuning-zh.md:287: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part19-multiagent-eval-tracing-zh.md:1: warning: 341 lines; the series target is 600-900
+content/posts/fde-interview-guide-part19-multiagent-eval-tracing-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part19-multiagent-eval-tracing-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part19-multiagent-eval-tracing-zh.md:324: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part2-agent-zh.md:1: warning: 380 lines; the series target is 600-900
+content/posts/fde-interview-guide-part2-agent-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part2-agent-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part2-agent-zh.md:6: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part20-indirect-prompt-injection-zh.md:1: warning: 295 lines; the series target is 600-900
+content/posts/fde-interview-guide-part20-indirect-prompt-injection-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part20-indirect-prompt-injection-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part20-indirect-prompt-injection-zh.md:280: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part21-async-longrunning-agent-zh.md:1: warning: 325 lines; the series target is 600-900
+content/posts/fde-interview-guide-part21-async-longrunning-agent-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part21-async-longrunning-agent-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part21-async-longrunning-agent-zh.md:308: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part22-parallel-tool-calling-zh.md:1: warning: 307 lines; the series target is 600-900
+content/posts/fde-interview-guide-part22-parallel-tool-calling-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part22-parallel-tool-calling-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part22-parallel-tool-calling-zh.md:6: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part22-parallel-tool-calling-zh.md:290: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part23-ratelimit-fairshare-zh.md:1: warning: 305 lines; the series target is 600-900
+content/posts/fde-interview-guide-part23-ratelimit-fairshare-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part23-ratelimit-fairshare-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part23-ratelimit-fairshare-zh.md:290: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part24-hybrid-model-routing-zh.md:1: warning: 300 lines; the series target is 600-900
+content/posts/fde-interview-guide-part24-hybrid-model-routing-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part24-hybrid-model-routing-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part24-hybrid-model-routing-zh.md:283: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part25-self-reflection-loop-zh.md:1: warning: 321 lines; the series target is 600-900
+content/posts/fde-interview-guide-part25-self-reflection-loop-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part25-self-reflection-loop-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part25-self-reflection-loop-zh.md:306: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part26-competitive-positioning-zh.md:1: warning: 292 lines; the series target is 600-900
+content/posts/fde-interview-guide-part26-competitive-positioning-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part26-competitive-positioning-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part26-competitive-positioning-zh.md:6: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part27-poc-scoping-zh.md:1: warning: 308 lines; the series target is 600-900
+content/posts/fde-interview-guide-part27-poc-scoping-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part27-poc-scoping-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part27-poc-scoping-zh.md:6: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part28-incident-communication-zh.md:1: warning: 318 lines; the series target is 600-900
+content/posts/fde-interview-guide-part28-incident-communication-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part28-incident-communication-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part28-incident-communication-zh.md:6: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part29-tco-roi-zh.md:1: warning: 349 lines; the series target is 600-900
+content/posts/fde-interview-guide-part29-tco-roi-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part29-tco-roi-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part29-tco-roi-zh.md:6: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part3-ml-fundamentals-zh.md:1: warning: 388 lines; the series target is 600-900
+content/posts/fde-interview-guide-part3-ml-fundamentals-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part3-ml-fundamentals-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part3-ml-fundamentals-zh.md:106: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part30-constraint-driven-architecture-zh.md:1: warning: 351 lines; the series target is 600-900
+content/posts/fde-interview-guide-part30-constraint-driven-architecture-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part30-constraint-driven-architecture-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part30-constraint-driven-architecture-zh.md:6: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part31-adk-deep-dive-zh.md:1: warning: 478 lines; the series target is 600-900
+content/posts/fde-interview-guide-part31-adk-deep-dive-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part31-adk-deep-dive-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part31-adk-deep-dive-zh.md:2: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part32-vertex-ai-stack-zh.md:1: warning: 548 lines; the series target is 600-900
+content/posts/fde-interview-guide-part32-vertex-ai-stack-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part32-vertex-ai-stack-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part32-vertex-ai-stack-zh.md:6: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part33-rkk-anatomy-zh.md:1: warning: 441 lines; the series target is 600-900
+content/posts/fde-interview-guide-part33-rkk-anatomy-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part33-rkk-anatomy-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part33-rkk-anatomy-zh.md:6: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part34-mock-scenarios-zh.md:1: warning: 0 ASCII box diagrams; the series standard is 2-4
+content/posts/fde-interview-guide-part34-mock-scenarios-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part34-mock-scenarios-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part34-mock-scenarios-zh.md:87: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part35-granular-tracing-zh.md:1: warning: 323 lines; the series target is 600-900
+content/posts/fde-interview-guide-part35-granular-tracing-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part35-granular-tracing-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part35-granular-tracing-zh.md:306: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part36-eval-pipeline-zh.md:1: warning: 330 lines; the series target is 600-900
+content/posts/fde-interview-guide-part36-eval-pipeline-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part36-eval-pipeline-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part36-eval-pipeline-zh.md:141: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part36-eval-pipeline-zh.md:315: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part37-legacy-integration-zh.md:1: warning: 350 lines; the series target is 600-900
+content/posts/fde-interview-guide-part37-legacy-integration-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part37-legacy-integration-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part37-legacy-integration-zh.md:333: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part38-prototype-to-production-zh.md:1: warning: 332 lines; the series target is 600-900
+content/posts/fde-interview-guide-part38-prototype-to-production-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part38-prototype-to-production-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part38-prototype-to-production-zh.md:210: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part38-prototype-to-production-zh.md:317: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part39-scalability-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part39-scalability-zh.md:710: warning: section 「十一」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part39-scalability-zh.md:710: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part4-system-design-zh.md:1: warning: 460 lines; the series target is 600-900
+content/posts/fde-interview-guide-part4-system-design-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part4-system-design-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part4-system-design-zh.md:77: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part40-pii-security-zh.md:1: warning: 599 lines; the series target is 600-900
+content/posts/fde-interview-guide-part40-pii-security-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part40-pii-security-zh.md:584: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part41-troubleshooting-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part41-troubleshooting-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part41-troubleshooting-zh.md:626: warning: section 「十一」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part41-troubleshooting-zh.md:626: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part42-consulting-discovery-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part42-consulting-discovery-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part42-consulting-discovery-zh.md:590: warning: section 「十一」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part42-consulting-discovery-zh.md:590: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part43-async-cart-agent-zh.md:761: warning: section 「十一」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part43-async-cart-agent-zh.md:761: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part44-hybrid-context-rag-zh.md:729: warning: section 「十一」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part44-hybrid-context-rag-zh.md:803: warning: section 「十二」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part44-hybrid-context-rag-zh.md:803: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part45-prompt-injection-defense-zh.md:460: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part45-prompt-injection-defense-zh.md:584: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part46-byok-cmek-zh.md:547: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part46-byok-cmek-zh.md:681: warning: section 「十一」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part46-byok-cmek-zh.md:681: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part47-edge-model-routing-zh.md:666: warning: section 「十一」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part47-edge-model-routing-zh.md:666: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part48-self-healing-agent-zh.md:664: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part48-self-healing-agent-zh.md:670: warning: section 「十一」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part49-vector-drift-pipeline-zh.md:422: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part49-vector-drift-pipeline-zh.md:649: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part49-vector-drift-pipeline-zh.md:655: warning: section 「十一」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part49-vector-drift-pipeline-zh.md:739: warning: section 「十二」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part49-vector-drift-pipeline-zh.md:812: warning: section 「十三」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part5-rag-deep-dive-zh.md:1: warning: 404 lines; the series target is 600-900
+content/posts/fde-interview-guide-part5-rag-deep-dive-zh.md:1: warning: 0 ASCII box diagrams; the series standard is 2-4
+content/posts/fde-interview-guide-part5-rag-deep-dive-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part5-rag-deep-dive-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part5-rag-deep-dive-zh.md:116: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part50-llm-judge-evaluation-zh.md:720: warning: section 「十一」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part50-llm-judge-evaluation-zh.md:720: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part51-kv-cache-memory-zh.md:802: warning: section 「十一」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part51-kv-cache-memory-zh.md:802: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part52-tool-fanout-optimization-zh.md:654: warning: section 「十一」 exceeds the 十-section cap
+content/posts/fde-interview-guide-part52-tool-fanout-optimization-zh.md:654: warning: 「面試答題要點」 section was dropped from the standard format
+content/posts/fde-interview-guide-part6-rag-eval-zh.md:1: warning: 447 lines; the series target is 600-900
+content/posts/fde-interview-guide-part6-rag-eval-zh.md:1: warning: 1 ASCII box diagrams; the series standard is 2-4
+content/posts/fde-interview-guide-part6-rag-eval-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part6-rag-eval-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part6-rag-eval-zh.md:146: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/fde-interview-guide-part7-agent-design-zh.md:1: warning: 449 lines; the series target is 600-900
+content/posts/fde-interview-guide-part7-agent-design-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part7-agent-design-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part8-ml-fundamentals-zh.md:1: warning: 486 lines; the series target is 600-900
+content/posts/fde-interview-guide-part8-ml-fundamentals-zh.md:1: warning: 0 ASCII box diagrams; the series standard is 2-4
+content/posts/fde-interview-guide-part8-ml-fundamentals-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part8-ml-fundamentals-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part9-llm-core-zh.md:1: warning: 484 lines; the series target is 600-900
+content/posts/fde-interview-guide-part9-llm-core-zh.md:1: warning: 0 ASCII box diagrams; the series standard is 2-4
+content/posts/fde-interview-guide-part9-llm-core-zh.md:1: warning: no 「三個演進階段」 section
+content/posts/fde-interview-guide-part9-llm-core-zh.md:1: warning: 0 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions
+content/posts/fde-interview-guide-part9-llm-core-zh.md:225: warning: interview posts must not mention Google (CLAUDE.md style rule)
+content/posts/finance-data-sec-edgar-toolkit.md:1: warning: finance post has no disclaimer near the top (「不構成投資建議」)
+content/posts/investskill-claude-code-financial-analysis-plugin.md:1: warning: front matter: description is 306 chars; search engines truncate around 160
+content/posts/qm-multiplayer-agent-part1-architecture-zh.md:392: warning: placeholder text left in prose: '> comments or docblocks, TODO/FIXME notes, lint/type suppres'
+content/posts/stock-selling-strategy-systematic-approach-zh.md:1: warning: finance post has no disclaimer near the top (「不構成投資建議」)
+review_posts: 362 post(s), 0 error(s), 208 warning(s)

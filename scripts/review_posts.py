@@ -302,34 +302,41 @@ def check_series(r: Report, fm: dict, lines: list[str], prose, blocks) -> None:
     diagrams = sum(1 for b in blocks if len(BOX_CHARS.findall("\n".join(b))) >= 8)
     decisions = count_decisions(lines)
 
-    def house_rules(min_lines: int, max_lines: int) -> None:
-        if total < min_lines:
+    def house_rules(min_lines: int, max_lines: int, interview_format: bool) -> None:
+        """Shared series checks. The phase section, the decision-table count and the
+        line-count floor are the interview-prep house format (CLAUDE.md) and only apply
+        when `interview_format` is set; diagrams and the 十 cap apply to every series."""
+        if interview_format and total < min_lines:
             r.warn(1, f"{total} lines; the series target is {min_lines}-{max_lines}")
         for n, num in sections:
             if num not in ZH_NUMERALS:
                 r.warn(n, f"section 「{num}」 exceeds the 十-section cap")
         if diagrams < 2:
             r.warn(1, f"{diagrams} ASCII box diagrams; the series standard is 2-4")
-        if not any("三個演進階段" in l for _, l in prose):
+        if interview_format and not any("三個演進階段" in l for _, l in prose):
             r.warn(1, "no 「三個演進階段」 section")
-        if decisions < 4:
+        if interview_format and decisions < 4:
             r.warn(1, f"{decisions} 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions")
         for n, l in prose:
             if "面試答題要點" in l and l.startswith("#"):
                 r.warn(n, "「面試答題要點」 section was dropped from the standard format")
 
-    if name.startswith("fde-interview-guide"):
-        house_rules(600, 900)
+    # The "no Google" rule covers every interview-prep post: the fde-interview-guide series
+    # by file name, and any other post that tags itself "Interview" (fde-core-concept today).
+    if name.startswith("fde-interview-guide") or "Interview" in tags:
         for n, l in enumerate(lines, start=1):
             if re.search(r"google", l, re.I):
                 r.warn(n, "interview posts must not mention Google (CLAUDE.md style rule)")
                 break
+
+    if name.startswith("fde-interview-guide"):
+        house_rules(600, 900, interview_format=True)
         missing = [t for t in ("RKK", "Interview") if t not in tags]
         if missing:
             r.warn(1, f"interview post tags are missing {missing}")
 
     elif name.startswith("ai-eng-from-scratch"):
-        house_rules(600, 900)
+        house_rules(600, 900, interview_format=False)
         if "Interview" in tags:
             r.warn(1, 'ai-eng-from-scratch is not interview prep; drop the "Interview" tag')
         if "RKK" not in tags:

@@ -60,26 +60,29 @@ One post per phase; larger phases split into 2–4 posts.
 
 ## Standard Post Structure
 
-Every post follows this section order (using Chinese numerals 一–十):
+Posts use Chinese numerals 一–十 for top-level sections (at most ten). The recommended shape:
 
 1. **一、核心問題** — why this topic matters; what breaks without it
-2. **二、三個演進階段** — beginner / practitioner / expert framing with ASCII diagrams
-3. **三–七、Deep Dives** — major concepts, each with ASCII diagram + decision rationale
-4. **八、為什麼選 X 不選 Y** — decision tables with flip conditions
-5. **九、系統效應** — before/after numbers (accuracy, latency, cost)
-6. **十、系列導航** — previous / next phase links
+2. **二–八、Deep Dives** — the lesson's concepts in teaching order, each walking
+   intuition → mechanism → example → numbers → limits, with a diagram where structure matters
+3. **九、系統效應 / 小結** — before/after numbers (accuracy, latency, cost) and what the reader can now do
+4. **十、系列導航** — previous / next phase links
+
+「三個演進階段」 and 「為什麼選 X 不選 Y」 tables are the *interview-prep* house format
+(fde-interview-guide). They are **optional** here: use a phase section only when the topic really
+has a scale cliff, and a decision table only when there is a real alternative to weigh. Existing
+posts that already have them need not be changed; new posts must not add them to hit a count.
 
 This is **not an interview-prep series** — it is an engineering curriculum. Do **not** add a
 **十、面試答題要點** (model interview answer) section; it was removed from every post in the series.
 
 ### Quality checklist per post
 
-- [ ] 2–4 ASCII block diagrams
-- [ ] Concrete numbers throughout (ms, %, $, QPS)
-- [ ] 4–6 Why-X-not-Y decisions
-- [ ] 600–900 lines
-- [ ] No mention of "Google" (use "Cloud" in tags)
-- [ ] Tags include `"RKK"`
+- [ ] 2–4 ASCII/Mermaid diagrams that show mechanism (not feature lists)
+- [ ] Concrete numbers throughout (ms, %, $, QPS), each with its assumption or source
+- [ ] Tradeoffs explained with the condition under which the choice flips (table optional)
+- [ ] Length follows the lesson (~400–900 lines); no padding to a floor
+- [ ] Tags include `"RKK"`; no `"Interview"` tag (the "no Google" rule does not apply to this series)
 - [ ] No 面試答題要點 section
 - [ ] readTime calibrated: 500L≈18min, 700L≈23min, 900L≈28min
 - [ ] Opening 4-line contrast quote
