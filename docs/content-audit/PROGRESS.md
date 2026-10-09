@@ -14,7 +14,7 @@ and pushed. The roll-up lives in `../CONTENT_AUDIT_2026-10.md`.
 | B03-fde-interview-27-39 | 13 | ✅ done 2026-10-09 | batches/B03-fde-interview-27-39.md |
 | B04-fde-interview-40-52 | 13 | ✅ done 2026-10-09 | batches/B04-fde-interview-40-52.md |
 | B05-fde-core-01-13 | 13 | ✅ done 2026-10-09 | batches/B05-fde-core-01-13.md |
-| B06-fde-core-14-25-fde-essential-career | 18 | ⏳ pending | |
+| B06-fde-core-14-25-fde-essential-career | 18 | ✅ done 2026-10-09 | batches/B06-fde-core-14-25-fde-essential-career.md |
 | B07-ai-eng-phase-01-05 | 11 | ⏳ pending | |
 | B08-ai-eng-phase-06-10 | 10 | ⏳ pending | |
 | B09-ai-eng-phase-11-14 | 10 | ⏳ pending | |
@@ -34,4 +34,4 @@ and pushed. The roll-up lives in `../CONTENT_AUDIT_2026-10.md`.
 | B23-java-spring | 14 | ⏳ pending | |
 | B24-backend-misc | 9 | ⏳ pending | |
 
-Posts covered: 89 / 362.
+Posts covered: 107 / 362.
