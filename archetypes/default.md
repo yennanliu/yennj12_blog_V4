@@ -2,9 +2,9 @@
 title: "{{ replace .Name "-" " " | title }}"
 date: {{ .Date }}
 draft: true
-authors: [""]
-categories: [""]
+description: ""
+categories: ["all", ""]
 tags: [""]
-summary: ""
+authors: ["yen"]
 readTime: ""
 ---
