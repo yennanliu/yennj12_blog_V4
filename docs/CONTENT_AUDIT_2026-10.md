@@ -239,6 +239,7 @@ _Updated as batches complete. Each finding cites the batch report that evidences
 | B04-fde-interview-40-52 | 13 | 0 / 7 / 6 | `docs/content-audit/batches/B04-fde-interview-40-52.md` |
 | B05-fde-core-01-13 | 13 | 0 / 6 / 7 | `docs/content-audit/batches/B05-fde-core-01-13.md` |
 | B06-fde-core-14-25-fde-essential-career | 18 | 3 / 6 / 9 | `docs/content-audit/batches/B06-fde-core-14-25-fde-essential-career.md` |
+| B07-ai-eng-phase-01-05 | 11 | 3 / 7 / 1 | `docs/content-audit/batches/B07-ai-eng-phase-01-05.md` |
 
 _Remaining batches are appended here as they complete (see `docs/content-audit/PROGRESS.md`)._
 
