@@ -234,6 +234,7 @@ _Updated as batches complete. Each finding cites the batch report that evidences
 | DONE-creative-streaming | 9 | 0 / 4 / 5 | `docs/content-audit/batches/DONE-creative-streaming.md` |
 | DONE-tooling-anthropic | 6 | 0 / 4 / 2 | `docs/content-audit/batches/DONE-tooling-anthropic.md` |
 | B01-fde-interview-01-13 | 13 | 5 / 7 / 1 | `docs/content-audit/batches/B01-fde-interview-01-13.md` |
+| B02-fde-interview-14-26 | 13 | 1 / 12 / 0 | `docs/content-audit/batches/B02-fde-interview-14-26.md` |
 
 _Remaining batches are appended here as they complete (see `docs/content-audit/PROGRESS.md`)._
 
