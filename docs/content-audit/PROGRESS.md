@@ -19,7 +19,7 @@ and pushed. The roll-up lives in `../CONTENT_AUDIT_2026-10.md`. Pull request: ht
 | B08-ai-eng-phase-06-10 | 10 | ✅ done 2026-10-09 | batches/B08-ai-eng-phase-06-10.md |
 | B09-ai-eng-phase-11-14 | 10 | ✅ done 2026-10-09 | batches/B09-ai-eng-phase-11-14.md |
 | B10-ai-eng-phase-15-19 | 12 | ✅ done 2026-10-11 | batches/B10-ai-eng-phase-15-19.md |
-| B11-10k-deep-dives | 14 | ⏳ pending | |
+| B11-10k-deep-dives | 14 | ✅ done 2026-10-11 | batches/B11-10k-deep-dives.md |
 | B12-stock-crypto-selling | 10 | ⏳ pending | |
 | B13-aio-geo | 16 | ⏳ pending | |
 | B14-industry-map-semiconductor | 15 | ⏳ pending | |
@@ -34,4 +34,4 @@ and pushed. The roll-up lives in `../CONTENT_AUDIT_2026-10.md`. Pull request: ht
 | B23-java-spring | 14 | ⏳ pending | |
 | B24-backend-misc | 9 | ⏳ pending | |
 
-Posts covered: 150 / 362.
+Posts covered: 164 / 362.
