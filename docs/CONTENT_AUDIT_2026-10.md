@@ -244,6 +244,7 @@ _Updated as batches complete. Each finding cites the batch report that evidences
 | B09-ai-eng-phase-11-14 | 10 | 0 / 8 / 2 | `docs/content-audit/batches/B09-ai-eng-phase-11-14.md` |
 | B10-ai-eng-phase-15-19 | 12 | 0 / 7 / 5 | `docs/content-audit/batches/B10-ai-eng-phase-15-19.md` |
 | B11-10k-deep-dives | 14 | 12 / 2 / 0 | `docs/content-audit/batches/B11-10k-deep-dives.md` |
+| B12-stock-crypto-selling | 10 | 0 / 5 / 5 | `docs/content-audit/batches/B12-stock-crypto-selling.md` |
 
 _Remaining batches are appended here as they complete (see `docs/content-audit/PROGRESS.md`)._
 
