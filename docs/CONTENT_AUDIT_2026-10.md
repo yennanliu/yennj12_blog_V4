@@ -254,6 +254,7 @@ _Updated as batches complete. Each finding cites the batch report that evidences
 | B19-agent-showcase-series | 20 | 13 / 7 / 0 | `docs/content-audit/batches/B19-agent-showcase-series.md` |
 | B20-k8s-autoscaling-aws-guides | 12 | 0 / 5 / 7 | `docs/content-audit/batches/B20-k8s-autoscaling-aws-guides.md` |
 | B21-ai-system-on-native-aws | 10 | 2 / 4 / 4 | `docs/content-audit/batches/B21-ai-system-on-native-aws.md` |
+| B22-aws-cdk-projects | 14 | 0 / 0 / 14 | `docs/content-audit/batches/B22-aws-cdk-projects.md` |
 
 _Remaining batches are appended here as they complete (see `docs/content-audit/PROGRESS.md`)._
 
