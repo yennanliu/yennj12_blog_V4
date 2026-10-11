@@ -252,6 +252,7 @@ _Updated as batches complete. Each finding cites the batch report that evidences
 | B17-ollama-langfuse-crewai-langgraph | 23 | 4 / 7 / 12 | `docs/content-audit/batches/B17-ollama-langfuse-crewai-langgraph.md` |
 | B18-claude-code-mcp-orchestration | 16 | 2 / 8 / 6 | `docs/content-audit/batches/B18-claude-code-mcp-orchestration.md` |
 | B19-agent-showcase-series | 20 | 13 / 7 / 0 | `docs/content-audit/batches/B19-agent-showcase-series.md` |
+| B20-k8s-autoscaling-aws-guides | 12 | 0 / 5 / 7 | `docs/content-audit/batches/B20-k8s-autoscaling-aws-guides.md` |
 
 _Remaining batches are appended here as they complete (see `docs/content-audit/PROGRESS.md`)._
 
