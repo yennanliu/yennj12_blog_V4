@@ -248,6 +248,7 @@ _Updated as batches complete. Each finding cites the batch report that evidences
 | B13-aio-geo | 16 | 8 / 8 / 0 | `docs/content-audit/batches/B13-aio-geo.md` |
 | B14-industry-map-semiconductor | 15 | 12 / 3 / 0 | `docs/content-audit/batches/B14-industry-map-semiconductor.md` |
 | B15-rag-vllm-ragflow-chatpdf | 18 | 10 / 8 / 0 | `docs/content-audit/batches/B15-rag-vllm-ragflow-chatpdf.md` |
+| B16-mem0-kg-hf-eval-singles | 21 | 6 / 10 / 5 | `docs/content-audit/batches/B16-mem0-kg-hf-eval-singles.md` |
 
 _Remaining batches are appended here as they complete (see `docs/content-audit/PROGRESS.md`)._
 
