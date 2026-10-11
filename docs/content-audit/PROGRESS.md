@@ -27,11 +27,11 @@ and pushed. The roll-up lives in `../CONTENT_AUDIT_2026-10.md`. Pull request: ht
 | B16-mem0-kg-hf-eval-singles | 21 | ✅ done 2026-10-11 | batches/B16-mem0-kg-hf-eval-singles.md |
 | B17-ollama-langfuse-crewai-langgraph | 23 | ✅ done 2026-10-11 | batches/B17-ollama-langfuse-crewai-langgraph.md |
 | B18-claude-code-mcp-orchestration | 16 | ✅ done 2026-10-11 | batches/B18-claude-code-mcp-orchestration.md |
-| B19-agent-showcase-series | 20 | ⏳ pending | |
+| B19-agent-showcase-series | 20 | ✅ done 2026-10-11 | batches/B19-agent-showcase-series.md |
 | B20-k8s-autoscaling-aws-guides | 12 | ⏳ pending | |
 | B21-ai-system-on-native-aws | 10 | ⏳ pending | |
 | B22-aws-cdk-projects | 14 | ⏳ pending | |
 | B23-java-spring | 14 | ⏳ pending | |
 | B24-backend-misc | 9 | ⏳ pending | |
 
-Posts covered: 283 / 362.
+Posts covered: 303 / 362.

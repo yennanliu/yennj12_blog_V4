@@ -251,6 +251,7 @@ _Updated as batches complete. Each finding cites the batch report that evidences
 | B16-mem0-kg-hf-eval-singles | 21 | 6 / 10 / 5 | `docs/content-audit/batches/B16-mem0-kg-hf-eval-singles.md` |
 | B17-ollama-langfuse-crewai-langgraph | 23 | 4 / 7 / 12 | `docs/content-audit/batches/B17-ollama-langfuse-crewai-langgraph.md` |
 | B18-claude-code-mcp-orchestration | 16 | 2 / 8 / 6 | `docs/content-audit/batches/B18-claude-code-mcp-orchestration.md` |
+| B19-agent-showcase-series | 20 | 13 / 7 / 0 | `docs/content-audit/batches/B19-agent-showcase-series.md` |
 
 _Remaining batches are appended here as they complete (see `docs/content-audit/PROGRESS.md`)._
 
