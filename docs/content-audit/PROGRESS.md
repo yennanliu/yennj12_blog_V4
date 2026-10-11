@@ -25,7 +25,7 @@ and pushed. The roll-up lives in `../CONTENT_AUDIT_2026-10.md`. Pull request: ht
 | B14-industry-map-semiconductor | 15 | ✅ done 2026-10-11 | batches/B14-industry-map-semiconductor.md |
 | B15-rag-vllm-ragflow-chatpdf | 18 | ✅ done 2026-10-11 | batches/B15-rag-vllm-ragflow-chatpdf.md |
 | B16-mem0-kg-hf-eval-singles | 21 | ✅ done 2026-10-11 | batches/B16-mem0-kg-hf-eval-singles.md |
-| B17-ollama-langfuse-crewai-langgraph | 23 | ⏳ pending | |
+| B17-ollama-langfuse-crewai-langgraph | 23 | ✅ done 2026-10-11 | batches/B17-ollama-langfuse-crewai-langgraph.md |
 | B18-claude-code-mcp-orchestration | 16 | ⏳ pending | |
 | B19-agent-showcase-series | 20 | ⏳ pending | |
 | B20-k8s-autoscaling-aws-guides | 12 | ⏳ pending | |
@@ -34,4 +34,4 @@ and pushed. The roll-up lives in `../CONTENT_AUDIT_2026-10.md`. Pull request: ht
 | B23-java-spring | 14 | ⏳ pending | |
 | B24-backend-misc | 9 | ⏳ pending | |
 
-Posts covered: 244 / 362.
+Posts covered: 267 / 362.
