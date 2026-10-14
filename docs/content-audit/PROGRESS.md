@@ -32,6 +32,6 @@ and pushed. The roll-up lives in `../CONTENT_AUDIT_2026-10.md`. Pull request: ht
 | B21-ai-system-on-native-aws | 10 | ✅ done 2026-10-11 | batches/B21-ai-system-on-native-aws.md |
 | B22-aws-cdk-projects | 14 | ✅ done 2026-10-11 | batches/B22-aws-cdk-projects.md |
 | B23-java-spring | 14 | ✅ done 2026-10-11 | batches/B23-java-spring.md |
-| B24-backend-misc | 9 | ⏳ pending | |
+| B24-backend-misc | 9 | ✅ done 2026-10-15 | batches/B24-backend-misc.md |
 
-Posts covered: 353 / 362.
+Posts covered: 362 / 362 — audit complete.

@@ -5,16 +5,16 @@ project skills — `tech-blog-writer`, `finance-blog-writer` and `blog-reviewer`
 `CLAUDE.md` and the tooling that enforces it. The goal is a prioritised, evidence-backed list of
 what to improve, why, and how.
 
-**Status: in progress.** Posts are reviewed in sequential batches; `docs/content-audit/PROGRESS.md`
-shows which batches are done, and each batch's full scorecard and findings are in
-`docs/content-audit/batches/`. Sections 1, 5 and 7 of this document are updated as batches land.
+**Status: complete (2026-10-15).** Every post was reviewed in one of 27 sequential batches;
+`docs/content-audit/PROGRESS.md` lists them and each batch's full per-post scorecard, verified
+claims and file-level recommendations are in `docs/content-audit/batches/`.
 
 ---
 
 ## 1. Executive summary
 
-**353 of 362 posts reviewed in full (the last 9 are in batch B24, pending).** Verdicts so far:
-**83 Ready (24 %) · 157 Needs revision (44 %) · 113 Not ready (32 %).** The site's problem is not
+**All 362 posts reviewed in full.** Verdicts:
+**83 Ready (23 %) · 159 Needs revision (44 %) · 120 Not ready (33 %).** The site's problem is not
 writing quality — clarity and visuals score 4–5 in most batches — it is **trust**: numbers that
 look sourced are not, code that looks runnable is not, and product facts that look current are
 not. Every "Not ready" verdict traces to one of those three.
@@ -22,7 +22,9 @@ not. Every "Not ready" verdict traces to one of those three.
 What the audit found, in order of how much it matters:
 
 1. **Code a reader would copy does not run.** Across the CDK projects (14/14 Not ready), the Java
-   and Spring posts (12/14), the LangGraph cluster (6/6), both MCP tutorials, the crypto trading
+   and Spring posts (12/14), the six English backend "comprehensive guides" (6/6 — non-existent
+   `sql.Config`, a per-request `setDataSource` on a singleton `JdbcTemplate`, a Stripe webhook
+   cast that rejects every real payload), the LangGraph cluster (6/6), both MCP tutorials, the crypto trading
    bot, the consultant agent series and a dozen single posts, reviewers found invented SDK
    constructs and props, non-existent property keys and CLI flags, wrong imports, missing
    imports, async methods called synchronously, and configs whose comment says the opposite of
@@ -347,7 +349,7 @@ The blockers by class, with counts from the batch reports:
 
 | class | examples | batches |
 |---|---|---|
-| Code that cannot run or deploy | invented CDK constructs/props/methods (≥ 8), `AWS::Bedrock` L1s that do not exist (2), MCP `InitializeResult`, `ThreadPoolTaskExecutor` as `ExecutorService`, `Counter.increment(Tags)` ×14, `GRPOTrainer(reward_weights)`, `langgraph.graph import interrupt`, `invoke()` dict read as attributes (6 posts), discord.py without intents, Bitnami env vars on official postgres, crypto bot's five neutralised safeguards | B22, B21, B18, B23, DONE-k8s, B16, B19, B17, DONE-creative, B12 |
+| Code that cannot run or deploy | invented CDK constructs/props/methods (≥ 8), backend guides' `sql.Config` / `JdbcTemplate.setDataSource` per request / `LinkedHashMap`→`PaymentIntent` cast / invalid PromQL (B24), `AWS::Bedrock` L1s that do not exist (2), MCP `InitializeResult`, `ThreadPoolTaskExecutor` as `ExecutorService`, `Counter.increment(Tags)` ×14, `GRPOTrainer(reward_weights)`, `langgraph.graph import interrupt`, `invoke()` dict read as attributes (6 posts), discord.py without intents, Bitnami env vars on official postgres, crypto bot's five neutralised safeguards | B22, B21, B18, B23, DONE-k8s, B16, B19, B17, DONE-creative, B12 |
 | Config whose comment says the opposite | CA priority expander inverted, NetworkPolicy OR-vs-AND, SELinux `:z`/`:Z` swapped, `rate()` on gauges, HPA on replication lag, `allUsers` org-wide log viewer as "audit" | B20, DONE-k8s, B03 |
 | Verified-wrong product facts | Cloud Run T4, KMS price/quota, Pub/Sub ack ceiling, AutoAWQ INT8, cache TTL max, Claude Code "Bash Agent"/`/agent`/zero-token skills, Titan Express fine-tuning, Timestream, Gemma as Gemini, `docker scan`, `componentstatuses`, Patreon/Brain.fm/Gumroad prices, r/outrun size | B05, B06, B04, B18, B17, B22, DONE-k8s, DONE-creative |
 | Misdescribed mechanism | RRF k "weights a modality", non-format-preserving FPE, HIPAA localisation, KEK/DEK conflation, KV cache "cuts first-token latency", NFC vs NFKC, entropy threshold unreachable with top-5 logprobs, `OptimisticLockException` caught inside the transaction, saga log rolled back by its own `@Transactional`, quorum vs majority in Sentinel, "Dual-LLM" that is not privilege-separated | B05, B08, B04, B23, DONE-k8s, B02 |
@@ -407,8 +409,9 @@ DONE-creative)
 | B21-ai-system-on-native-aws | 10 | 2 / 4 / 4 | `docs/content-audit/batches/B21-ai-system-on-native-aws.md` |
 | B22-aws-cdk-projects | 14 | 0 / 0 / 14 | `docs/content-audit/batches/B22-aws-cdk-projects.md` |
 | B23-java-spring | 14 | 0 / 2 / 12 | `docs/content-audit/batches/B23-java-spring.md` |
+| B24-backend-misc | 9 | 0 / 2 / 7 | `docs/content-audit/batches/B24-backend-misc.md` |
+| **Total** | **362** | **83 / 159 / 120** | |
 
-_Remaining batches are appended here as they complete (see `docs/content-audit/PROGRESS.md`)._
 
 ---
 
