@@ -8,6 +8,7 @@ tags: ["AI", "Claude Code", "Multi-Agent", "token-optimization", "Cost Optimizat
 summary: "多 Agent Token 優化系列總覽：深入解析 Token 用量優化策略，涵蓋 Prompt Caching、Context 壓縮、Agent 專責化、模型分層、選擇性 Context 傳遞等方法，幫助你建構高效且低成本的多 Agent 系統。"
 description: "多 Agent Token 優化系列總覽：深入解析 Token 用量優化策略，涵蓋 Prompt Caching、Context 壓縮、Agent 專責化、模型分層、選擇性 Context 傳遞等方法，幫助你建構高效且低成本的多 Agent 系統。"
 readTime: "25 min"
+aliases: ["/posts/orchestration-agents-claude-code-comprehensive-guide/"]
 ---
 
 在使用 Claude Code API 建構多 Agent 系統時，**Token 用量**往往是影響成本、延遲與系統可靠性的關鍵因素。隨著 Agent 數量增加、任務複雜度提升，Token 消耗可能以指數級成長，若不加以優化，很快就會遇到成本爆炸或 Context Window 耗盡的問題。

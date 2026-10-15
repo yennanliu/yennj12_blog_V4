@@ -7,6 +7,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["Ollama", "LLM", "macOS", "Local LLM", "Apple Silicon", "AI Engineering", "Llama"]
 authors: ["yen"]
 readTime: "18 min"
+aliases: ["/posts/google-gemini-local-mac-zh/"]
 ---
 
 > 大部分人第一次聽到「在自己的 Mac 上跑 LLM」,直覺反應是:那不是要一張幾萬塊的顯示卡、還要會編譯一堆奇怪的 C++ 專案嗎?
