@@ -40,7 +40,7 @@ This is a **Hugo static site** using a custom theme called `uber-style` (in `the
 - `themes/uber-style/assets/scss/_effects.scss` — Reusable visual effects (`fx-*` / `u-*`). See "Design system" below.
 - `static/` — Unprocessed assets (favicon, author avatars at `static/images/authors/`).
 - `scripts/generate_nvidia_blog.py` — Python script that fetches NVIDIA Developer Blog via RSS, translates to Traditional Chinese using GPT-4, and writes a new post. Requires `OPENAI_API_KEY` and `feedparser`/`requests` packages. Its daily workflow was removed because the output was fabricated rather than translated; any post it generates must be reviewed by hand before publishing.
-- `.github/workflows/` — Three Hugo build/deploy workflows (`hugo-latest.yml` is the recommended one).
+- `.github/workflows/` — Five workflows. `hugo-latest.yml` is the only one that deploys on push to `main`; `hugo.yml` and `deploy-alternative.yml` are manual (`workflow_dispatch`) fallbacks. `link-check.yml` and `post-review.yml` run on pull requests (see below).
 - `.claude/skills/` — Project skills: `tech-blog-writer`, `finance-blog-writer`, `blog-reviewer`, plus the InvestSkill `10k-digest` and `industry-map`. See "Writing and reviewing posts" below.
 
 ### Post front matter
@@ -99,7 +99,12 @@ Three project skills in `.claude/skills/` cover the post lifecycle:
   returns line-referenced findings. Both writer skills run it on their own draft before handing back.
 
 Series rules in this file (fde-interview-guide, ai-eng-from-scratch, 10-K) override the writer
-skills' defaults.
+skills' defaults. The 「為什麼選 X 不選 Y」 table and 「三個演進階段」 section are the
+**interview-prep house format only** (`fde-interview-guide-*`, `fde-core-concept-*`); other posts
+explain tradeoffs in whatever form fits and are not scored against those counts.
+
+A full content audit of all posts (October 2026) with per-cluster findings and a prioritised
+improvement plan lives in [`docs/CONTENT_AUDIT_2026-10.md`](docs/CONTENT_AUDIT_2026-10.md).
 
 The mechanical half of the review is `scripts/review_posts.py`: front matter completeness, the
 closed category set and author slugs (both read from `content/`), unclosed code fences, images
@@ -131,7 +136,8 @@ Resolution order:
 - **Title** — `title` front matter, rendered as `<title>Post | Site</title>` and bare `Post` for
   `og:title` (the site name is already in `og:site_name`).
 - **Description** — `description` front matter → `summary` front matter → `params.description` in
-  `hugo.toml`. Most existing posts only set `summary`, which is why the fallback matters.
+  `hugo.toml`. Every post sets `description` (the mechanical reviewer requires it); the `summary`
+  fallback only matters for non-post pages.
 - **Image** — `image` front matter → `params.images` in `hugo.toml`
   (`static/images/og-default.png`). `og:image:width`/`height` are only emitted for the site
   default, since a post's own card has unknown dimensions. `imageAlt` overrides the alt text.
@@ -377,7 +383,7 @@ Always include the "flip condition": when does Y become the right choice instead
 
 ### 6. Style rules
 
-- **No mention of "Google"** anywhere in the generated content or tags. **This rule applies ONLY to interview-related posts** (`fde-interview-guide-*` and other interview-prep series). Non-interview posts (general tech tutorials, stock analysis, etc.) may freely mention Google and its products.
+- **No mention of "Google"** anywhere in the generated content or tags. **This rule applies ONLY to interview-prep posts** — `fde-interview-guide-*`, `fde-core-concept-*`, and any other post tagged `"Interview"`. `scripts/review_posts.py` warns on exactly that set (file prefix or `Interview` tag). Non-interview posts (general tech tutorials, the ai-eng-from-scratch curriculum, stock analysis, etc.) may freely mention Google and its products.
 - Tags: use `"Cloud"` instead of `"Google"`; always include `"RKK"` and `"Interview"`
 - readTime: set based on line count — 500 lines ≈ 18 min, 700 lines ≈ 23 min, 900 lines ≈ 28 min
 - Opening quote: 4-line contrast (what most people do vs what the right answer is)
@@ -398,9 +404,16 @@ Consequences for generation:
 - Do not describe posts as interview material in the front-matter `description`.
 - Tags: keep `"RKK"`; do not add `"Interview"`.
 
-Otherwise the fde-interview-guide formatting conventions above still apply: 2–4 ASCII diagrams,
-「三個演進階段」, 4–6「為什麼選 X 不選 Y」decision tables with flip conditions, concrete numbers,
-600–900 lines, section numbering in Chinese numerals capped at 十, series nav links at the bottom.
+The **interview-prep format is not imposed on this series.** 「三個演進階段」 and the 4–6
+「為什麼選 X 不選 Y」 decision tables are interview-answer scaffolding (see the fde rules above);
+in a curriculum they produce padding when the lesson has no scale cliff or no real alternative to
+weigh. Use either only when the topic genuinely has one, and never to hit a count. What does carry
+over: 2–4 ASCII/Mermaid diagrams that show mechanism, concrete numbers with their assumptions,
+section numbering in Chinese numerals capped at 十, the `"RKK"` tag, and series nav links at the
+bottom. Length follows the lesson (roughly 400–900 lines); do not pad to a floor. The "no Google"
+rule does **not** apply here. `scripts/review_posts.py` checks this series for diagrams, the
+section cap, the leftover 面試答題要點 section and tags — not for phases, decision tables or a
+line-count floor.
 
 ---
 
@@ -415,6 +428,8 @@ Generated with the InvestSkill `10k-digest` skill (`.claude/skills/10k-digest/`)
 
 Quick reminders: the filename year is the *filing* year — read the real fiscal year off the cover.
 These are **finance posts, so the "no Google" rule above does NOT apply**. ~20 sections, 450–600
-lines, honest per-company signal (not uniformly bullish). Hugo exits 1 on the known `paginate`
-deprecation — verify via `public/` output, not the exit code. For many companies, fan out one
+lines, honest per-company signal (not uniformly bullish). Verify a post via the `public/` output
+after `hugo --gc --minify`, not just the exit code (note that Hugo ≥ 0.128 silently ignores the
+deprecated `paginate` key in `hugo.toml` and falls back to 10 items per page, so local pagination
+differs from the CI build on 0.124.1). For many companies, fan out one
 subagent per company and make a single batch commit; skip GOOG as a duplicate of Alphabet's GOOGL 10-K.

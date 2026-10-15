@@ -99,16 +99,25 @@ Default structure for a standalone post:
    works, or a concrete incident. Then one paragraph stating the thesis and what the reader gets.
 2. **The problem / why it's hard** — establish the tension before the solution.
 3. **Core concept(s)** — one `##` section each, walking the explanation ladder.
-4. **Design decisions** — for each non-obvious choice, a 「為什麼選 X 不選 Y」 / "Why X over Y"
-   table with a **flip condition** (when Y becomes right).
+4. **Design decisions** — for each non-obvious choice, name the alternative, say why it lost,
+   and give the **flip condition** (when the alternative becomes right). Prose or a short table,
+   whichever fits. The 「為什麼選 X 不選 Y」 table with 4–6 rows is the *interview-prep* house
+   format (fde-interview-guide); do not import it into other posts as a quota.
 5. **In practice** — failure modes, symptom → diagnosis (what you'd see in metrics/logs/traces),
    rollout checklist.
 6. **Summary** — the thesis restated as 3–5 bullets a reader could act on. Then related posts.
 
-**Series posts override this.** For `fde-interview-guide-*` and `ai-eng-from-scratch-*`, the
-section order, 「三個演進階段」 phase section, 600–900 line target, 一…十 section cap, tag rules
-and the "no Google" rule for interview posts are all in `CLAUDE.md` — read that section and
-follow it exactly; it wins over anything here.
+**Series posts override this.** The rules live in `CLAUDE.md`; read the relevant section and
+follow it exactly, it wins over anything here. The two series differ:
+
+- `fde-interview-guide-*` (interview prep): the full house format — section order,
+  「三個演進階段」, 4–6 「為什麼選 X 不選 Y」 tables with flip conditions, 600–900 lines, 一…十
+  section cap, `RKK` + `Interview` tags, and the "no Google" rule.
+- `ai-eng-from-scratch-*` (curriculum, not interview prep): 2–4 diagrams, concrete numbers with
+  their assumptions, the 一…十 cap, the `RKK` tag and series nav. 「三個演進階段」 and decision
+  tables are **optional** — use them only when the topic has a real scale cliff or a real
+  alternative to weigh. Length follows the lesson (~400–900 lines); never pad to a floor. No
+  interviewer-question opener, no model-answer section, and the "no Google" rule does not apply.
 
 ## Hugo mechanics (this repo)
 
