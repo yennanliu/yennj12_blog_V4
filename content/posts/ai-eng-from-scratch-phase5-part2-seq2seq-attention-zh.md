@@ -7,7 +7,7 @@ description: "深入解析 RNN/LSTM/GRU 序列建模、Encoder-Decoder 架構、
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "NLP", "LSTM", "Seq2Seq", "Attention", "RNN", "Encoder-Decoder", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "18 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**工程情境**：「你正在設計一個英中機器翻譯系統，句子長度最長 200 個 token。請說明你會選擇哪種架構，為什麼不直接用純 RNN，LSTM 與 GRU 在這個場景下如何選擇，以及如果引入注意力機制，架構上需要做哪些改變？」
+這篇給已經會用 PyTorch 跑序列模型、但說不清楚 LSTM 和注意力機制各自解決了什麼問題的工程師看。我們以一個句長最多 200 token 的英中翻譯系統為貫穿例子。讀完你會能判斷純 RNN 在什麼序列長度下失效、LSTM 與 GRU 在資料量與序列長度上如何取捨、固定長度 context vector 為什麼是長句品質的瓶頸，以及引入注意力機制後 encoder-decoder 架構需要改動哪些部分。
 
 > 註：這是 2014–2017 年的歷史情境。2026 年從零建構英中翻譯，預設答案是 Transformer——更常見的是微調預訓練模型或直接使用 LLM。本篇借這個情境說明注意力機制為什麼會被發明。
 
@@ -444,22 +444,7 @@ score(Y, X) = log P(Y|X) / |Y|^α
 
 ## 八、為什麼選 X 不選 Y
 
-### 決策 1：LSTM vs 純 RNN
-
-```
-選擇          選 LSTM 的理由                    不選純 RNN 的理由
-─────────────────────────────────────────────────────────────────
-長序列任務    Cell state gradient highway        梯度消失，> 30 token 失效
-             梯度穩定，可訓練 200+ 步             BPTT 計算不穩定
-翻譯/摘要    遺忘門學習哪些歷史要保留             無法控制記憶衰減
-             BLEU 高 5–10 分                     長句精度斷崖
-```
-
-**翻轉條件：** 序列長度 < 15 token 且訓練資料 < 5K 時，純 RNN 參數少、不易過擬合，反而可能較好。
-
----
-
-### 決策 2：LSTM vs GRU
+### 決策 1：LSTM vs GRU
 
 ```
 選擇          選 LSTM 的理由                    選 GRU 的理由
@@ -474,7 +459,7 @@ score(Y, X) = log P(Y|X) / |Y|^α
 
 ---
 
-### 決策 3：加注意力 vs 不加注意力
+### 決策 2：加注意力 vs 不加注意力
 
 ```
 選擇             選 Attention 的理由              不選的理由
@@ -489,22 +474,7 @@ score(Y, X) = log P(Y|X) / |Y|^α
 
 ---
 
-### 決策 4：Bahdanau vs Luong 注意力
-
-```
-選擇          選 Bahdanau 的理由                選 Luong 的理由
-─────────────────────────────────────────────────────────────────
-計算           用 s_{t-1}，可以 pipeline        用 s_t，邏輯更直觀
-對齊品質       稍好（有獨立投影矩陣）             差距 < 1 BLEU
-實作           略複雜                            更容易 debug
-語音/ASR       Hybrid Attention 變體多           NMT 快速實驗首選
-```
-
-**翻轉條件：** 工程快速迭代 → Luong General；追求最高精度且有時間 tune → Bahdanau。
-
----
-
-### 決策 5：Seq2Seq+Attention vs Transformer
+### 決策 3：Seq2Seq+Attention vs Transformer
 
 ```
 選擇                  選 Seq2Seq+Attention            選 Transformer
@@ -520,7 +490,7 @@ score(Y, X) = log P(Y|X) / |Y|^α
 
 ---
 
-### 決策 6：Beam Search vs Greedy Decoding
+### 決策 4：Beam Search vs Greedy Decoding
 
 ```
 選擇          選 Beam Search 的理由              選 Greedy 的理由
@@ -562,6 +532,8 @@ LSTM+Attention 到 Transformer：**BLEU 約 +3.8**，而且訓練計算量只有
 | 最長可處理序列 | 200–300（精度保證） | 512–2048（視記憶體） |
 | 推理 latency（單句） | ~80ms | ~45ms（有 KV cache）|
 
+*示意估算，非實測數據*
+
 ### 梯度流動對比
 
 ```
@@ -584,6 +556,8 @@ Transformer（100 token 序列）的梯度路徑：
 | 訓練收斂 epoch | ~30 | ~20（快 33%） |
 | 模型可解釋性 | 低（黑盒） | 高（alignment 可視化） |
 | 推理時間 | 基準 | +25%（值得） |
+
+*示意估算，非實測數據*
 
 ---
 

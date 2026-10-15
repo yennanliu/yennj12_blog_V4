@@ -394,14 +394,14 @@ Always include the "flip condition": when does Y become the right choice instead
 
 ## AI 工程從零開始 series (`ai-eng-from-scratch-phase{N}-part{M}-*-zh.md`)
 
-Traditional-Chinese engineering curriculum, ~44 posts across 19 phases. Full plan, per-phase
+Traditional-Chinese engineering curriculum, 43 posts across 19 phases. Full plan, per-phase
 inventory, and quality checklist: [`AI_ENG_FROM_SCRATCH_PLAN.md`](AI_ENG_FROM_SCRATCH_PLAN.md).
 
 **This is NOT an interview-prep series.** It teaches AI engineering; it is not a study guide.
 Consequences for generation:
 
 - Do **not** add a **十、面試答題要點** (model interview answer) section. It was removed from all
-  44 existing posts; the section order now ends at **十、系列導航**.
+  43 existing posts; the section order now ends at **十、系列導航**.
 - Do not describe posts as interview material in the front-matter `description`.
 - Tags: keep `"RKK"`; do not add `"Interview"`.
 
