@@ -502,6 +502,5 @@ if __name__ == "__main__":
 
 - [第一篇](/posts/rag-series-part1-foundations-zh/)：基礎概念與第一個 RAG 系統
 - **第二篇（本篇）**：Chunking 策略與向量資料庫選型
-- [第三篇](/posts/rag-series-part3-advanced-retrieval-zh/)：進階檢索技術（混合搜尋、HyDE、Multi-Query、Reranker）
-- [第四篇](/posts/rag-series-part4-optimization-zh/)：查詢優化與 Context 壓縮
+- 第三、四篇（進階檢索、查詢優化與 Context 壓縮）已併入[第一篇的導讀](/posts/rag-series-part1-foundations-zh/)；深入請看 [Hybrid Search & RRF](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)、[AI 工程 Phase 11 Part 2](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/) 與 [Context 壓縮與摘要](/posts/context-compression-summarization-guide-zh/)
 - [第五篇](/posts/rag-series-part5-production-zh/)：生產級 RAG 評估與 Agentic RAG

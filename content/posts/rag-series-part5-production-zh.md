@@ -217,6 +217,8 @@ def evaluate_and_log(rag_pipeline, test_cases: list[dict], output_dir: str = "./
 
 ## Part 2：GraphRAG
 
+> 本節是概念與玩具實作。RAGFlow 實際怎麼建圖、何時用 RAPTOR 取代它，請看 [RAGFlow Part 4](/posts/ragflow-intro-part4-retrieval-rerank-zh/) §5.1–5.2。
+
 ### 向量搜尋的根本限制
 
 向量搜尋擅長找「語意相似的文件」，但對需要**跨文件推理**的問題很弱：
@@ -651,6 +653,5 @@ RAG 的技術仍在快速演進，但這五篇涵蓋的核心原理和思路，�
 
 - [第一篇](/posts/rag-series-part1-foundations-zh/)：基礎概念與第一個 RAG 系統
 - [第二篇](/posts/rag-series-part2-chunking-vectordb-zh/)：Chunking 策略與向量資料庫選型
-- [第三篇](/posts/rag-series-part3-advanced-retrieval-zh/)：進階檢索技術（混合搜尋、HyDE、Multi-Query、Reranker）
-- [第四篇](/posts/rag-series-part4-optimization-zh/)：查詢優化與 Context 壓縮
+- 第三、四篇（進階檢索、查詢優化與 Context 壓縮）已併入[第一篇的導讀](/posts/rag-series-part1-foundations-zh/)；深入請看 [Hybrid Search & RRF](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)、[AI 工程 Phase 11 Part 2](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/) 與 [Context 壓縮與摘要](/posts/context-compression-summarization-guide-zh/)
 - **第五篇（本篇）**：生產級 RAG 評估與 Agentic RAG
