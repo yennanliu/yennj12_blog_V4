@@ -8,7 +8,7 @@ categories: ["all", "ai", "business", "creative"]
 tags: ["AI音樂", "環境音", "深海", "太空", "YouTube", "24/7直播", "Midjourney", "Runway", "Streaming"]
 summary: "系列第一篇：深度分析深海/太空環境音市場機會、聲音設計的科學原理，以及如何使用 AI 工具生成高品質音頻內容。從零開始建立你的沉浸式環境音頻道。"
 description: "系列第一篇：深度分析深海/太空環境音市場機會、聲音設計的科學原理，以及如何使用 AI 工具生成高品質音頻內容。從零開始建立你的沉浸式環境音頻道。"
-readTime: "22 min"
+readTime: "29 min"
 ---
 
 本系列將手把手教你建立一個 AI 生成的深海/太空環境音 24/7 直播頻道。第一篇聚焦於基礎：為什麼這個市場值得投入、聲音設計的科學原理、以及如何使用最新的 AI 工具創造令人驚嘆的音頻內容。
@@ -907,9 +907,10 @@ Day 7: 質量控制（3 小時）
 本系列共四篇：
 
 1. **【當前】市場分析、科學原理與 AI 工具選擇**
-2. **【下一篇】視覺製作：8K 深海/太空場景生成**
-3. **【第三篇】技術實作：OBS 設定、串流上線與自動化**
-4. **【第四篇】內容策略：Shorts 導流、社群經營與變現**
+2. [視覺製作：4K 深海/太空場景生成](/posts/ai-ocean-space-ambient-streaming-part2-visual-zh/)
+3. [技術實作：OBS 設定、串流上線與自動化](/posts/ai-ocean-space-ambient-streaming-part3-technical-zh/)
+4. [內容策略：Shorts 導流、社群經營與變現](/posts/ai-ocean-space-ambient-streaming-part4-growth-zh/)
+- 共用基礎建設：[24/7 音樂直播共用基礎建設：編碼器、自癒串流、監控與社群管線](/posts/music-streaming-247-infrastructure-zh/)
 
 ---
 
@@ -946,5 +947,3 @@ AI 工具:
 ## 延伸閱讀
 
 - [ADHD 友善專注音樂頻道實作指南](/posts/adhd-focus-music-streaming-implementation-guide-zh/)
-
-**標籤**: #AI音樂 #環境音 #深海 #太空 #YouTube #Suno #Midjourney #被動收入

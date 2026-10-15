@@ -299,6 +299,14 @@ Query ──▶ ANN Top-50
 
 > *「Re-ranking 的本質是用兩階段架構平衡召回效率與精排品質：Bi-Encoder 因為 query 和 doc 獨立編碼，可離線預計算向量並在 ANN 索引中 10ms 內召回 Top-50 候選；Cross-Encoder 則把 query 和 doc 拼接成 `[CLS] q [SEP] d [SEP]` 後過完整 BERT 注意力層，query 的每個 token 都能和 doc 的每個 token 交互，精準度遠高於 Bi-Encoder，但無法預計算、延遲約 150ms。兩階段合計 ANN 10ms + CE 150ms + LLM 800ms ≈ 960ms，多數 RAG 場景可接受。引入 Cross-Encoder 後 MRR@5 從 0.61 升至 0.79（+30%），LLM 幻覺率也可望因高品質 context 而下降（示意量級約 40%）——代價是每 query 增加約 $0.002。對延遲 SLA < 200ms 的場景，我會改用 ColBERT 的 token 級 Late Interaction，延遲壓至 30–50ms，品質介於兩者之間。」*
 
+## 相關文章與正典版本
+
+- 重排的生產實作（正典）— [RAGFlow Intro Part 4 — 混合搜尋、Rerank 與 GraphRAG/RAPTOR](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
+- 混合搜尋與 RRF（正典）— [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)
+- 評估（正典）— [FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+- 面試情境與演進階段 — [FDE 面試準備指南（五）：RAG 深度技術——Chunking、Embedding、向量資料庫與混合搜尋](/posts/fde-interview-guide-part5-rag-deep-dive-zh/)、[FDE 面試準備指南（六）：RAG 進階——檢索失敗、Grounding、評估指標與成本控制](/posts/fde-interview-guide-part6-rag-eval-zh/)
+
 ---
 
 **系列導航**

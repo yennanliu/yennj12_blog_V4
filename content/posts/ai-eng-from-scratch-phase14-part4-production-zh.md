@@ -7,7 +7,7 @@ description: "深入解析 Agent 生產部署工程：執行追蹤、成本預�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Agent", "Production", "Observability", "Guardrails", "Cost Control", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "21 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,9 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 工程情境
-
-> 「你們的 AI Agent 在 staging 表現很好，但上線兩週後 token 費用暴增 400%，還出現幾次無限迴圈。你作為 tech lead，怎麼設計一個生產級的 Agent 系統架構來防止這些問題？請從可觀測性、成本控制、安全護欄三個維度說明，並說明你會如何科學地評估新 Agent 策略的效果。」
+這篇給 Agent 已經在 staging 跑得不錯、正要推上生產的工程師看。讀完你會能為 Agent 設計跨 Step 的 Trace / Span 結構與告警閾值、用四層預算（請求／用戶／全域／模型降級）把 token 費用鎖住、用非同步 Worker Pool 與 token bucket 處理並發、在輸入／輸出／行動三層放 Guardrails，並用 Shadow → Canary 的流程科學地評估新版 Agent，而不是上線後等帳單暴增才知道出事。
 
 ---
 
@@ -587,6 +585,8 @@ Shadow Mode 確認 v2 無崩潰、無無限迴圈、無異常高成本後，才�
 
 ## 八、為什麼選 X 不選 Y
 
+Token 預算與時間窗口限流、Pydantic 結構驗證與 LLM-as-judge 都是「兩者並用」而不是二選一（§五、§六已說明分工）；這裡只留四個真正需要權衡的決策。
+
 ### 決策 1：OpenTelemetry vs 自定義日誌系統
 
 | 選擇 | 選 OpenTelemetry 的理由 | 不選自定義日誌的理由 |
@@ -616,20 +616,7 @@ Shadow Mode 確認 v2 無崩潰、無無限迴圈、無異常高成本後，才�
 
 ---
 
-### 決策 3：Token 數量限流 vs 時間窗口限流
-
-| 選擇 | 選 Token-based 限流的理由 | 不選純 Time-based 的理由 |
-|------|--------------------------|------------------------|
-| 成本準確性 | token 數直接對應 LLM API 費用 | 1 次複雜請求和 20 次簡單請求費用差 10 倍 |
-| 公平性 | 用戶花同樣的「token 預算」，但任務複雜度自由選擇 | 按次數限流對複雜任務用戶不公平 |
-| 防濫用 | 有效防止「1 次請求耗盡 50K tokens」的攻擊 | 時間窗口無法防止高 token 的單次攻擊 |
-| 業務對齊 | 成本中心可以直接用 token 使用量計算用戶費用 | 需要另外估算 token 消耗來計費 |
-
-**Flip Condition**：對 CPU、記憶體、網路 IO 等計算資源的限流，仍然需要時間窗口限流（requests per second）。兩者應組合使用：時間窗口控制請求頻率，token 預算控制 LLM 成本。
-
----
-
-### 決策 4：Circuit Breaker vs 無限指數退避重試
+### 決策 3：Circuit Breaker vs 無限指數退避重試
 
 | 選擇 | 選 Circuit Breaker 的理由 | 不選無限重試的理由 |
 |------|--------------------------|-----------------|
@@ -643,7 +630,7 @@ Shadow Mode 確認 v2 無崩潰、無無限迴圈、無異常高成本後，才�
 
 ---
 
-### 決策 5：Shadow Mode vs Blue-Green 部署做 Agent A/B 測試
+### 決策 4：Shadow Mode vs Blue-Green 部署做 Agent A/B 測試
 
 | 選擇 | 選 Shadow Mode 的理由 | 不選 Blue-Green A/B 的理由 |
 |------|----------------------|--------------------------|
@@ -654,20 +641,6 @@ Shadow Mode 確認 v2 無崩潰、無無限迴圈、無異常高成本後，才�
 | 多版本並存 | 可以同時對比 v2 和 v3 | Blue-Green 一次只能比較兩個版本 |
 
 **Flip Condition**：新 Agent 功能需要觀察用戶的「後續行為」才能評估效果（例如：用戶在獲得 Agent 回應後，是否繼續追問 → 代表首次回應不夠好），Shadow Mode 不夠，必須用 Canary 讓真實用戶使用新版本。原則：能用 Shadow Mode 的先用 Shadow Mode，品質確認後再走 Canary。
-
----
-
-### 決策 6：結構化輸出驗證（Pydantic）vs 純 Prompt Guardrails
-
-| 選擇 | 選 Pydantic 結構驗證的理由 | 不選純 Prompt 指令的理由 |
-|------|--------------------------|------------------------|
-| 確定性 | 驗證失敗 100% 可偵測，無假陰性 | LLM 可能「忘記」遵守格式指令，假陰性率 5–15% |
-| 效能 | 本地 Python 執行，< 1ms | 要求 LLM 自我驗證需要額外 200–500 tokens |
-| 精確錯誤信息 | `field 'price' must be > 0, got -5` | LLM 錯誤描述通常模糊（「格式有問題」） |
-| 版本控制 | Schema 是程式碼，有 git history，code review | Prompt 散落在多個地方，難以追蹤 |
-| 可測試性 | 可以寫 unit test 驗證 schema 本身 | Prompt 只能靠手動測試 |
-
-**Flip Condition**：語義層面的驗證（「這個回應邏輯上是否自洽？」「引用的數字是否與前文一致？」）Pydantic 完全無法處理，必須用 LLM-as-judge 或人工評估。最佳實踐：Pydantic 負責結構驗證（必做），LLM-as-judge 負責語義品質評估（按比例取樣，每 100 個 run 取樣 5 個）。
 
 ---
 

@@ -7,7 +7,7 @@ description: "深入解析 Model Context Protocol（MCP）架構、Function Call
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "MCP", "Function Calling", "API", "Tool Use", "Integration", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "17 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**工程情境**：你正在設計一個 AI 客服代理，需要讀取訂單資料庫、發送退款請求、查詢物流狀態。系統每日處理 5 萬通查詢，P99 回應要在 3 秒內。你怎麼設計工具層的架構，同時確保安全性與可觀測性？
+這篇給已經接過一兩個 function call、但還沒處理過「模型重試把退款做了兩次」的工程師看。讀完你會能完整走一遍 Function Calling 的生命週期、說出 MCP 相對於直接呼叫 API 多解決了哪三個問題、為有副作用的工具設計冪等鍵與快取 TTL、用 RBAC 與結果隔離擋住 prompt injection，並為「每日 5 萬通查詢、P99 < 3 秒」的客服 Agent 排出工具層從直接呼叫到 MCP Gateway 的升級路徑。
 
 ---
 
@@ -460,6 +460,8 @@ async def request_refund(order_id: str, amount: float, idempotency_key: str):
 
 ## 八、為什麼選 X 不選 Y
 
+> 工具結果快取該放 Redis 還是資料庫／應用層記憶體，以及 Circuit Breaker 與單純 Retry 的取捨，和工作流程編排共用同一組理由，統一放在 [Phase 13 Part 2 §七–§八](/posts/ai-eng-from-scratch-phase13-part2-orchestration-zh/)，這裡不重複。
+
 ### 決策 1：MCP 協議 vs 自定義 Tool API
 
 ```
@@ -474,21 +476,7 @@ vs               動態工具發現（tools/list）           介面碎片化，
 
 ---
 
-### 決策 2：Redis 工具快取 vs 應用層記憶體快取
-
-```
-選擇              選 Redis 的理由                  不選記憶體快取的理由
-──────────────────────────────────────────────────────────────────
-Redis            多 instance 共享快取              記憶體快取：重啟即失效
-vs               原生 TTL 支援                     水平擴展時快取不一致
-記憶體快取        持久化選項（RDB/AOF）              單機限制，容量受限
-                 發布/訂閱支援（快取失效通知）
-```
-**Flip condition**：單機部署、工具 QPS < 100，記憶體快取即可，省去 Redis 運維。
-
----
-
-### 決策 3：同步工具執行 vs 非同步任務佇列
+### 決策 2：同步工具執行 vs 非同步任務佇列
 
 ```
 選擇              選非同步的理由                    不選同步的理由
@@ -502,7 +490,7 @@ vs               可中斷、可重試                      阻塞 LLM 請求代
 
 ---
 
-### 決策 4：每工具獨立 MCP Server vs 單一 MCP Server 包含所有工具
+### 決策 3：每工具獨立 MCP Server vs 單一 MCP Server 包含所有工具
 
 ```
 選擇              選獨立 Server 的理由               不選單體 Server 的理由
@@ -516,21 +504,7 @@ vs               獨立擴縮（物流 QPS 高，獨立 scale） 但一個工具
 
 ---
 
-### 決策 5：工具層 Circuit Breaker vs 單純 Retry
-
-```
-選擇              選 Circuit Breaker 的理由           不選純 Retry 的理由
-─────────────────────────────────────────────────────────────────────
-Circuit Breaker   外部 API 不穩定時快速失敗（< 5ms）  純 Retry：可能放大故障
-(Resilience4j)    防止下游雪崩（避免重試風暴）         3 次 retry × 30s timeout
-vs               自動恢復探測（Half-Open 狀態）        = 用戶等 90 秒才收到錯誤
-純 Retry          可觀測性：追蹤熔斷觸發頻率
-```
-**Flip condition**：工具呼叫的外部 API SLA > 99.9% 且重試成本低，單純 exponential backoff 即可。
-
----
-
-### 決策 6：RBAC 工具授權 vs 基於 Prompt 的工具限制
+### 決策 4：RBAC 工具授權 vs 基於 Prompt 的工具限制
 
 ```
 選擇              選 RBAC 的理由                     不選 Prompt 限制的理由
@@ -561,7 +535,7 @@ Prompt 限制       細粒度控制（金額上限等）             模型更�
 > 本節數字（含下方 ROI）為示意估算，非實測數據。
 
 **ROI 計算（Phase 3 vs 純人工）**：
-- 日處理 50,000 查詢 × $4.45 節省 = 日省 $222,500
+- 以日處理 50,000 查詢為例：× $4.45 節省 = 日省 $222,500
 - Phase 3 月成本 $3,200 → 回本週期 < 1 天
 - 關鍵前提：Phase 3 架構投資（6–8 週開發，$50K–80K）需求量達到規模才值得
 

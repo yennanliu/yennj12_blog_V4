@@ -317,6 +317,11 @@ GKE 的彈性擴縮架構：
 >
 > *邊界情況：用 Redis Distributed Lock 避免重複執行；TTL 硬上限防止任務永遠不結束；429 限流用 Exponential Backoff + 任務重排。」*
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Idempotency & State Recovery](/posts/fde-core-concept-13-idempotency-state-recovery-zh/)
+- 機制與原理（正典） — [FDE core topic — Async Event-Driven Pipeline](/posts/fde-core-concept-11-async-event-driven-pipeline-zh/)
+
 ---
 
 **系列導航**

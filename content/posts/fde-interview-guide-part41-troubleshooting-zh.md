@@ -633,6 +633,10 @@ Embed. Model       版本綁定機制，CI 檢查               靠人記得
 >
 > *為什麼選 OTel 不選廠商專有 SDK：OTel 是業界標準，換 Trace 後端不需要改代碼。為什麼選 P95 不選 P50 或 P99：P95 在代表大多數用戶和排除極端異常值之間最平衡，是 AI 系統 SLO 的最佳指標。」*
 
+## 相關文章與正典版本
+
+- 機制與原理（正典） — [FDE core topic — Structured Troubleshooting：分層排錯與 AI 系統觀測方法論](/posts/fde-core-concept-22-structured-troubleshooting-zh/)
+
 ---
 
 **系列導航**

@@ -7,7 +7,7 @@ description: "深入解析 ASR 工程架構：聲學特徵提取（MFCC/Mel Spec
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Speech", "ASR", "Whisper", "CTC", "Audio", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "17 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,9 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 工程情境
-
-> 你正在設計一個線上教育平台的即時字幕系統，需要支援 10,000 位同時在線的學生。系統要求：辨識延遲 < 500ms、WER < 10%、支援中英文混合語音。請說明你的 ASR 架構選擇，以及如何在 POC 到 Scale 的過程中演進這個系統。
+這篇給已經會呼叫雲端 ASR API、但還沒拆開過一條語音辨識管線的工程師看。讀完你會能說明聲音從波形到 Mel 頻譜、再經 CTC 或 Attention 解碼成文字的每一步在做什麼，知道 Whisper 為什麼不原生支援串流、串流場景為什麼改用 Conformer-CTC，並能為一個「上萬人同時在線、延遲 < 500ms、WER < 10%、中英混合」的即時字幕系統，有依據地在雲端 API 與自建模型之間做選擇，規劃它從 POC 到規模化的演進。
 
 ---
 
@@ -516,8 +514,6 @@ VAD 是串流 ASR 的「守門員」：
 | **串流模型** | Conformer-CTC | 無需看未來幀，延遲 < 150ms；CTC 可並行 beam search | Whisper：自回歸解碼，串流需 chunking，幻覺問題多 | 離線批次場景且 WER 最優先 → 選 Whisper |
 | **特徵表示** | Mel Spectrogram (80 維) | 現代神經網路直接學習特徵，資訊保留完整 | MFCC：DCT 壓縮損失部分資訊，深度學習不需要手工降維 | 計算資源極度受限（嵌入式設備）→ MFCC |
 | **解碼策略** | CTC + 外部 LM | 解碼速度快（beam search O(B×V)），可熱換語言模型 | 純 Attention Decoder：自回歸，無法並行，串流不友善 | 高準確率離線場景 → Attention rescore |
-| **降噪前處理** | RNNoise / NSNet2 | 2–5dB SNR 改善，WER 降低 8–15%，推理前完成 | 讓 ASR 模型自己處理噪音：模型容量浪費在噪音上，訓練資料需求大 | 模型已在高噪音資料上 Fine-tune（如 Whisper v3）→ 跳過 |
-| **GPU 型號** | A10G（24GB VRAM）| Whisper large 需 10GB，A10G 可同時跑 2 個實例，成本 $1.0/h | A100（80GB）：過殺，$3.2/h，Utilization < 30% 浪費 | 批次推理且 throughput 優先 → A100 多路並行更划算 |
 | **API vs 自建** | 自建（> 10K DAU） | > 10K 日活時自建 ROI 3–6 個月回收，成本降低 70–90% | 雲端 ASR API：無需維運，但 $0.006–0.024/min，大量使用成本爆炸 | < 1K DAU 或需求不確定 → 先用 API，驗證後再自建 |
 
 ---
@@ -536,6 +532,8 @@ VAD 是串流 ASR 的「守門員」：
 | **領域微調能力** | ✗ | △（需重新部署）| ✓（A/B 路由）|
 | **可用性 SLA** | 99.9%（API 保證）| 99.5%（自維護）| 99.95%（多區域備援）|
 | **GPU 利用率** | N/A | 40–60% | 75–85%（自動擴縮）|
+
+*示意估算，非實測數據*
 
 **關鍵數字總結**：
 - Whisper large-v3 在 LibriSpeech test-clean WER：**2.7%**

@@ -7,7 +7,7 @@ description: "從工程師視角完整解析 Transformer：Multi-Head Attention 
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Transformer", "Attention", "KV Cache", "Flash Attention", "Architecture", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "16 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**工程情境**：「你負責將一個 7B 參數的 LLM 部署到生產環境，P99 首 token 延遲必須 < 500ms，批次吞吐量 > 200 req/s，GPU 記憶體預算 40GB。請說明你會在 Transformer 架構層面做哪些優化決策，以及你如何取捨精度與速度。」
+這篇給已經用 Hugging Face 跑過 LLM 推理、但還沒算過一次注意力矩陣有多大的工程師看。讀完你會能手算 Self-Attention 的計算與記憶體複雜度、解釋 KV Cache 為什麼只加速 decode 步驟而不改變首 token 延遲、說明 Flash Attention 省的是 HBM 讀寫而不是 FLOPs，並能為「7B 模型、P99 首 token < 500ms、吞吐 > 200 req/s、40GB GPU 記憶體」這樣的部署目標，在 dtype、GQA 與 PagedAttention 之間做出有數字支撐的取捨。
 
 ---
 
@@ -55,93 +55,17 @@ Attention(Q, K, V) = softmax( QKᵀ / √dₖ ) · V
 
 ---
 
-## 二、三個演進階段（POC / MVP / Scale）
+## 二、何時該升級：從 HF generate 到 vLLM 與量化部署的觸發條件
 
-### ╔══ Phase 1：POC — 理解架構，跑通推理（< 1K req/day）╗
+用 Hugging Face Transformers 的 `from_pretrained()` + `generate()` 在單張 GPU 上跑，足以驗證模型輸出品質——它預設就啟用 KV Cache，單一請求的 decode 速度並不差。它的限制在**並發**：請求逐一串行處理、沒有 continuous batching、KV Cache 以靜態方式預先分配。該升級到 vLLM 的訊號是 P99 延遲開始由排隊時間主導（並發 > 1 時就會發生），或是 GPU 記憶體被 padding 與預分配的 KV 區塊佔滿、批次塞不進更多請求；PagedAttention 把碎片率從 60–80% 壓到 < 4%，吞吐提升 2–4×（§六）。
 
-目標：把預訓練模型跑起來，驗證輸出品質。
+第二道門檻是**記憶體而非吞吐**：7B MHA 模型在 4K 上下文下每個請求的 KV Cache 約 2.1 GB，16 路並發就是 33.6 GB（§六的計算）。此時能動的槓桿有兩個——換用 GQA 的 checkpoint（如 Llama 3 8B 的 8 個 KV heads，KV Cache ÷ 4），以及 INT8/INT4 權重量化把模型本身的 14 GB 減半。要注意 GQA 是預訓練 checkpoint 的架構屬性，不是部署時能「加上去」的優化；Llama-2 7B 是 MHA，改不了。Flash Attention 在 vLLM 中預設開啟，它的價值在長 prompt 的 prefill 階段才看得到。
 
-```
-┌─────────────────────────────────────────────┐
-│  Phase 1 架構：純 CPU / 單 GPU              │
-│                                             │
-│  User Request                               │
-│       │                                     │
-│       ▼                                     │
-│  ┌─────────────┐                            │
-│  │  HuggingFace│  直接 from_pretrained()    │
-│  │  Transformers│  FP32 或 FP16            │
-│  └──────┬──────┘                            │
-│         │                                   │
-│         ▼                                   │
-│  ┌─────────────┐                            │
-│  │  Greedy /   │  逐 token 生成             │
-│  │  Sampling   │  無 KV Cache 重用          │
-│  └─────────────┘                            │
-└─────────────────────────────────────────────┘
-
-新增組件：HuggingFace pipeline
-問題：首 token 延遲 6–10s，無法生產用
-```
-
-成本：開發者筆電或單張 A100（$2–3/hr）
-
-### ╔══ Phase 2：MVP — 生產就緒，KV Cache 啟用（10K–200K req/day）╗
-
-目標：P99 < 1s，支援並發請求。
-
-```
-┌──────────────────────────────────────────────────────┐
-│  Phase 2 架構：vLLM + KV Cache                       │
-│                                                      │
-│  Load Balancer (nginx)                               │
-│       │                                              │
-│       ▼                                              │
-│  ┌──────────────────────────────────────┐            │
-│  │  vLLM Server (OpenAI-compatible API) │            │
-│  │                                      │            │
-│  │  ┌────────────┐   ┌───────────────┐  │            │
-│  │  │ Continuous │   │  PagedAttention│  │            │
-│  │  │ Batching   │──▶│  KV Cache     │  │            │
-│  │  └────────────┘   └───────────────┘  │            │
-│  │                                      │            │
-│  │  Model: 7B BF16 on A100 80GB         │            │
-│  └──────────────────────────────────────┘            │
-│                                                      │
-│  新增：KV Cache、Continuous Batching                  │
-│  首 token 延遲：6s → 400ms（↓93%）                   │
-│  吞吐量：5 req/s → 80 req/s（↑16x）                  │
-└──────────────────────────────────────────────────────┘
-```
-
-### ╔══ Phase 3：Scale — 企業級，Flash Attention + GQA（200K–1M+ req/day）╗
-
-目標：P99 < 500ms，200+ req/s，40GB GPU 限制。
-
-```
-┌────────────────────────────────────────────────────────────┐
-│  Phase 3 架構：Flash Attention + GQA + 量化                 │
-│                                                            │
-│  ┌─────────────┐    ┌──────────────────────────────────┐  │
-│  │ API Gateway │───▶│  vLLM Cluster (4× A100 40GB)     │  │
-│  └─────────────┘    │                                  │  │
-│                     │  ┌─────────────────────────────┐ │  │
-│                     │  │ Flash Attention 2            │ │  │
-│                     │  │ (IO-aware, tiling)           │ │  │
-│                     │  ├─────────────────────────────┤ │  │
-│                     │  │ GQA (8 KV heads / 32 Q heads)│ │  │
-│                     │  ├─────────────────────────────┤ │  │
-│                     │  │ INT8 Weight Quantization     │ │  │
-│                     │  ├─────────────────────────────┤ │  │
-│                     │  │ Paged KV Cache              │ │  │
-│                     │  └─────────────────────────────┘ │  │
-│                     └──────────────────────────────────┘  │
-│                                                            │
-│  P99 首 token：400ms → 120ms（↓70%）                       │
-│  吞吐量：80 req/s → 250 req/s（↑3.1x）                     │
-│  KV Cache 記憶體：32GB → 8GB（↓75%）                       │
-└────────────────────────────────────────────────────────────┘
-```
+| 從 | 到 | 觸發訊號 |
+|----|----|----------|
+| HF `generate()`，請求串行 | vLLM：continuous batching + PagedAttention | 並發 > 1 且 P99 由排隊時間主導；KV 記憶體碎片讓批次塞不滿 |
+| MHA checkpoint + BF16 | GQA checkpoint（如 Llama 3 8B）+ INT8/INT4 權重量化 | 批次的 KV Cache 總量超過記憶體預算（16 路 × 2.1 GB ≈ 34 GB）；模型權重佔掉一半 VRAM |
+| 短 prompt、標準 attention | Flash Attention 2（vLLM 預設） | prompt > 2K tokens 時，prefill 的 n² 記憶體與 HBM 往返成為首 token 延遲主因 |
 
 ---
 
@@ -440,7 +364,7 @@ A100 規格：
 └─────────────────────────────────────────────────────┘
 ```
 
-**實測數字**：
+**論文數字**：
 - Flash Attention 1：比標準注意力快 2-4×，記憶體使用 O(n) vs O(n²)
 - Flash Attention 2：進一步 2× 加速（更好的工作分配，減少 non-matmul FLOP）
 - Flash Attention 3（H100）：利用 Tensor Core 非同步執行，再 1.5-2×
@@ -518,52 +442,20 @@ MQA     KV Cache 省 97%，速度最快               品質損失 5-8%，訓練
 Flip condition：模型品質是首要指標（如醫療、法律）→ 選 MHA；成本優先 → GQA；極端延遲要求 → MQA
 ```
 
-### 8.3 RoPE vs ALiBi vs Sinusoidal
+### 8.3 BF16 vs FP16 vs INT8 量化
 
 ```
-選擇          優勢                            劣勢                    適用場景
-────────────────────────────────────────────────────────────────────────────
-RoPE          相對位置、外推強（+YaRN 4-8×）  額外旋轉計算 +5-8%       新訓練模型首選
-ALiBi         無需修改 embedding，外推最佳    表達能力略弱              超長文（>64K）
-Sinusoidal    無參數，通用                    超出訓練長度急劇下降      BERT 類微調任務
-
-Flip condition：固定長度任務且不需外推 → Sinusoidal 夠用；> 128K 上下文 → ALiBi
-```
-
-### 8.4 KV Cache vs 重新計算
-
-```
-選擇          優勢                              劣勢                   適用場景
-──────────────────────────────────────────────────────────────────────────
-KV Cache      Decode 每步 O(t)（只算新 token）  大量記憶體，長序列費用高  正常 API 服務
-重新計算      記憶體接近零額外開銷               每步重算整段 O(t²)，慢   記憶體極度受限環境
-
-Flip condition：seq_len < 64 且批次 >> 1 時，重新計算有時更高效（cache miss > compute cost）
-```
-
-### 8.5 vLLM PagedAttention vs 靜態 KV Cache
-
-```
-選擇               優勢                              劣勢
-──────────────────────────────────────────────────────────────────────────────
-Paged (vLLM)       記憶體碎片 <4%，支援 prefix cache  額外 Block Table 管理複雜度
-靜態 KV Cache      實作簡單，延遲更低（無分頁開銷）   碎片率 60-80%，無法 prefix share
-
-Flip condition：單一固定長度請求，無並發 → 靜態 Cache 更快；並發 > 4 → PagedAttention 必選
-```
-
-### 8.6 BF16 vs FP16 vs INT8 量化
-
-```
-選擇    範圍        精度         速度（vs FP32）   適用場景
-─────────────────────────────────────────────────────────────
-FP32    ±3.4×10³⁸  最高         1×               訓練/精度關鍵推理
-BF16    ±3.4×10³⁸  與 FP32 等效  2×              生產推理標準選擇
-FP16    ±65504     動態範圍小    2×               需要特別 loss scaling
-INT8    ±127        有損 ~1-2%   2-4×             高吞吐、成本敏感
+選擇    範圍        精度                速度（vs FP32）   適用場景
+────────────────────────────────────────────────────────────────────
+FP32    ±3.4×10³⁸  最高（尾數 23 bit）  1×               訓練/精度關鍵推理
+BF16    ±3.4×10³⁸  範圍同 FP32，尾數 7 bit  2×          生產推理標準選擇
+FP16    ±65504     尾數 10 bit，動態範圍小  2×           需要特別 loss scaling
+INT8    ±127        有損 ~1-2%          2-4×             高吞吐、成本敏感
 
 Flip condition：下游任務對細微差異敏感（如數值計算） → BF16；延遲預算 <100ms → INT8
 ```
+
+浮點格式的位元配置、loss scaling 與 FP8 的完整說明見 [Phase 7 Part 2 §四](/posts/ai-eng-from-scratch-phase7-part2-training-variants-zh/)，本表只列推理端的取捨。
 
 ---
 
@@ -580,6 +472,8 @@ Flip condition：下游任務對細微差異敏感（如數值計算） → BF16
 | BF16 + Flash Attn + GQA + Cache | 155 ms | 270 ms | 140 | 0.53 GB | 14 + 8.5 GB |
 | INT8 + Flash Attn + GQA + vLLM | 120 ms | 210 ms | 250 | 0.53 GB | 7 + 8.5 GB |
 
+*示意估算，非實測數據*
+
 ### 關鍵觀察
 
 1. **KV Cache 是最大單一增益**：延遲從 4100ms 降至 380ms（↓91%），代價是記憶體
@@ -587,7 +481,7 @@ Flip condition：下游任務對細微差異敏感（如數值計算） → BF16
 3. **GQA 釋放記憶體**：KV Cache 從 33.6 GB → 8.5 GB，讓更大批次成為可能，吞吐 35 → 140 req/s（↑4×）
 4. **INT8 量化**：模型記憶體減半，延遲再降 20%，品質損失 < 1%
 
-### 達到題目要求（P99 < 500ms，> 200 req/s，< 40GB）
+### 達到開頭設定的部署目標（P99 < 500ms，> 200 req/s，< 40GB）
 
 最終配置：INT8 + Flash Attention 2 + GQA + vLLM PagedAttention
 - P99 首 token：210 ms ✓（< 500ms）

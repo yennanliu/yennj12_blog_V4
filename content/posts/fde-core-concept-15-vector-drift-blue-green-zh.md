@@ -424,6 +424,10 @@ Step 4: blue_green_swap（漸進切換）
 
 > *「向量索引的精度不是靜態保證——HNSW 圖在增量插入累積後 recall@10 會加速下滑，以示意量級來說，累積 50,000 筆時可能從 94% 跌至 78%，且這個衰退完全靜默、監控面板上不會出現任何紅燈。我的標準做法是 Lambda 架構：Base Index 每晚全量重建，Delta Index 接收實時寫入，查詢時雙索引並行 ANN、merge 結果、過 Firestore Blacklist 濾掉已刪除向量、再 cross-encoder rerank 回傳 Top-K；重建完成後不直接切流量，先對 500 個 golden queries 驗證 recall@10 ≥ 90%，通過後才以 10% → 50% → 100% 的漸進 Blue-Green 切換上線，舊索引保留 24 小時作為回滾窗口，切換期間額外引入 < 5ms 延遲，對用戶完全透明。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE Interview Guide Part 49：百萬級 RAG 系統的即時資料漂移與向量索引自動更新管線](/posts/fde-interview-guide-part49-vector-drift-pipeline-zh/)
+
 ---
 
 **系列導航**

@@ -7,7 +7,7 @@ description: "深入解析 LLM 生產推論：vLLM PagedAttention、連續批次
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "LLM", "Inference", "vLLM", "Quantization", "Serving", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "17 min"
+readTime: "14 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**工程情境**：「你的團隊剛把一個 70B 參數的對話模型從研究環境搬到生產，目前 p99 延遲 18 秒、GPU 使用率 15%、每千 token 成本 $0.04。CTO 要求三個月內把成本降到 $0.008、p99 降到 4 秒。你的架構計畫是什麼？」
+這篇給已經能用 Hugging Face `generate()` 跑出模型回應、但還沒算過一張 A100 一秒鐘能吐多少 token 的工程師看。讀完你會能解釋 LLM 推論為什麼是記憶體頻寬問題而不是算力問題、說出 PagedAttention 與 continuous batching 各自消掉哪一種浪費、在 AWQ INT4 / FP8 / FP16 之間依精度與硬體做取捨，並能為「70B 模型、p99 < 4 秒、每千 token < $0.01」這類目標排出一條有數字支撐的升級路徑。
 
 ---
 
@@ -54,13 +54,14 @@ Transformer 的 attention 需要存每個 token 的 Key 和 Value 向量（KV Ca
 ┌─────────────────────────────────────────────┐
 │  使用者 → FastAPI → HuggingFace generate()  │
 │           ↓                                  │
-│       單顆 A100（或 4× A10G）               │
+│       2× A100-80GB（device_map=auto）       │
 │       model.generate(max_new_tokens=512)     │
 │       靜態批次大小 = 1                       │
 └─────────────────────────────────────────────┘
 ```
 
-- **成本**：A100 $3.09/hr，QPS 約 0.5，每千 token ≈ $0.05
+- **硬體下限**：70B FP16 的 140 GB 權重一張 A100-80GB 放不下，POC 也得兩張（或先用 8B 模型單卡驗證效果）
+- **成本**：2× A100（$3.09/hr/張），QPS 約 0.5，每千 token ≈ $0.05
 - **延遲**：p50 6 秒，p99 18 秒
 - **可接受的捷徑**：無 queue、無 SLA、無監控
 - **致命問題**：無法同時服務 > 3 個使用者
@@ -124,7 +125,7 @@ Transformer 的 attention 需要存每個 token 的 Key 和 Value 向量（KV Ca
 - **新增組件**：請求佇列、模型量化、雙軌路由（吞吐 vs 延遲）、KEDA 自動擴容
 - **成本**：每千 token ≈ $0.006（比 Phase 1 低 8×）
 - **延遲**：p50 0.9 秒，p99 3.2 秒（INT4 路由）
-- **解決問題**：量化省 50% GPU 記憶體，同機器塞兩倍並行
+- **解決問題**：INT4 量化省 75% GPU 記憶體（140 GB → 35 GB），騰出的空間留給 KV Cache，同機器塞進更多並行序列
 
 ---
 
@@ -150,11 +151,11 @@ KV Cache 是 LLM 推論記憶體問題的核心，必須深入理解。
 **Naive 分配的問題：**
 
 ```
-傳統靜態分配（問題所在）：
+傳統靜態分配（問題所在；以 AWQ INT4 量化後的 70B 為例，權重 35GB）：
 
 GPU HBM 80GB
 ┌────────────────────────────────────────────────────┐
-│ 模型權重 35GB │ Seq1(預留) │ Seq2(預留) │ 碎片     │
+│ 權重35GB(INT4)│ Seq1(預留) │ Seq2(預留) │ 碎片     │
 │               │  20GB      │  20GB      │  5GB浪費 │
 └────────────────────────────────────────────────────┘
 
@@ -334,6 +335,8 @@ H100 Tensor Core 原生支援 FP8 運算，不需要 dequantize，速度最快�
 
 ## 八、為什麼選 X 不選 Y
 
+量化（§七）與連續批次（§五）的取捨已在各自章節給出翻轉條件，這裡只留四個還需要權衡的決策。
+
 **決策 1：vLLM vs HuggingFace TGI vs TensorRT-LLM**
 
 ```
@@ -355,22 +358,7 @@ flip：若模型固定不變、追求極致吞吐，TensorRT-LLM 每秒 token �
 
 > 2026 年的候選清單還應包含 SGLang（RadixAttention 前綴快取，對多輪對話與共享前綴特別有效）；vLLM V1 引擎也已預設開啟 prefix caching 與 chunked prefill。上表的 30–40% 為示意估算。
 
-**決策 2：AWQ INT4 vs FP16**
-
-```
-選擇        選 AWQ INT4 的理由                  不選的理由
-────────────────────────────────────────────────────────────────
-AWQ INT4    記憶體降低 4×，吞吐提升 1.8×        精度損失約 0.5–1%
-            70B 模型單張 A100 可跑              量化需要校準資料集和時間
-            成本降低 ~50%
-
-FP16        零精度損失，標準訓練格式             記憶體佔用 4× 大
-                                               需要多張 GPU，成本高
-
-flip：精度關鍵場景（基準測試、科學計算）用 FP16。對話應用 AWQ INT4。
-```
-
-**決策 3：Tensor Parallelism vs Pipeline Parallelism**
+**決策 2：Tensor Parallelism vs Pipeline Parallelism**
 
 ```
 選擇        選 Tensor Parallel 的理由           不選 Pipeline Parallel 的理由
@@ -385,22 +373,7 @@ flip：跨機器（InfiniBand 以下速度）用 PP；同機器 NVLink 用 TP。
      70B 模型 2–4 GPU 用 TP；175B+ 跨 8 GPU 考慮 TP+PP 混合。
 ```
 
-**決策 4：連續批次 vs 請求排隊**
-
-```
-選擇        選 Continuous Batching 的理由       不選靜態批次的理由
-────────────────────────────────────────────────────────────────
-CB          GPU 使用率 60–75%（vs 靜態 15%）    實作複雜度較高
-            短請求不需要等長請求               需要 iteration-level 排程器
-            吞吐量提升 3–5×
-
-靜態批次    實作簡單                           短請求等待長請求，使用率低
-                                               吞吐量浪費嚴重
-
-flip：QPS < 5 且請求長度方差小，靜態批次夠用。任何生產環境都用 CB。
-```
-
-**決策 5：投機解碼 vs 標準 Autoregressive**
+**決策 3：投機解碼 vs 標準 Autoregressive**
 
 ```
 選擇        選投機解碼的理由                    不選的理由
@@ -415,7 +388,7 @@ flip：acceptance rate < 60% 的場景（高溫度生成、多語言）不要用
      先在 staging 環境量測 acceptance rate 再決定。
 ```
 
-**決策 6：KEDA 自動擴容 vs 固定副本**
+**決策 4：KEDA 自動擴容 vs 固定副本**
 
 ```
 選擇        選 KEDA 的理由                      不選固定副本的理由
@@ -451,7 +424,11 @@ flip：流量非常穩定（方差 < 20%）用固定副本。有明顯日夜流�
 1. **最大的跳躍在 Naive → vLLM FP16**：不是量化，是 PagedAttention + Continuous Batching。光這一步吞吐提升 **15×**，成本降低 **4×**。
 2. **量化的貢獻是硬體效率**：從 2 張 A100 降到 1 張就能跑，節省硬體成本，但延遲改善相對有限。
 3. **投機解碼主要改善 p50**：p99 改善較小，因為長尾往往是 draft acceptance rate 低的複雜請求。
-4. **回到開頭的問題**：從 $0.04 到 $0.008 是可以達到的（vLLM + AWQ INT4），從 p99 18s 到 4s 也是可以的（vLLM FP16 就夠了）。
+4. **對照一個常見目標**：每千 token 從 $0.04 降到 $0.008 是可以達到的（vLLM + AWQ INT4），p99 從 18s 降到 4s 也是（vLLM FP16 就夠了）。
+
+## 相關文章與正典版本
+
+- PagedAttention、KV Cache 與連續批次的深入版本（正典）— [vLLM Intro Part 2 — PagedAttention 與 KV Cache](/posts/vllm-intro-part2-paged-attention-kv-cache-zh/)、[vLLM Intro Part 3 — 連續批次與排程器](/posts/vllm-intro-part3-scheduler-continuous-batching-zh/)
 
 ---
 

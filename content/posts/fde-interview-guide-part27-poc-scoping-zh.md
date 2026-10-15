@@ -300,6 +300,10 @@ In Scope、Out of Scope、Success Criteria 和雙方需要投入的資源。
 **Scoping 不是在限制客戶的想像力。**  
 **是在讓三週後的 Demo 能夠成功——那才是建立長期信任關係的基礎。**
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — POC Scoring & ROI](/posts/fde-core-concept-24-poc-scoring-roi-zh/)
+
 ---
 
 **系列導航**

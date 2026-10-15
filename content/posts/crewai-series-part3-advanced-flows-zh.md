@@ -811,6 +811,10 @@ CrewAI 的核心價值是讓「多角色協作」這個複雜的概念，變得�
 3. 當流程需要條件分支，導入 Flows
 4. 用 FastAPI 包裝，讓團隊的其他人也能使用
 
+## 相關文章與正典版本
+
+- Agent 記憶體架構的機制（正典）— [FDE core topic — Memory Architecture：Agent 階層式記憶體設計](/posts/fde-core-concept-2-memory-architecture-zh/)
+
 ---
 
 **系列導覽**

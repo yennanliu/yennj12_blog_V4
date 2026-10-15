@@ -297,6 +297,10 @@ Noisy Neighbor 的攻擊場景：
 >
 > *Noisy Neighbor 防禦：租戶級令牌桶確保 Tenant A 的濫用不佔用其他租戶的 Quota；全域使用率超過 90% 時暫停新請求入隊；加上單次請求大小上限。」*
 
+## 相關文章與正典版本
+
+- 機制與原理（正典） — [FDE core topic — Backpressure & Fair-Share](/posts/fde-core-concept-12-backpressure-fair-share-zh/)
+
 ---
 
 **系列導航**

@@ -1,317 +1,267 @@
 ---
-title: "RAG 完全指南（一）：基礎概念與你的第一個 RAG 系統"
+title: "RAG 完全指南（一）：入門與導讀 — 每個主題該去哪裡深入"
 date: 2026-05-16T09:00:00+08:00
 draft: false
 weight: 1
-description: "從零開始理解 RAG（Retrieval-Augmented Generation）：為什麼 LLM 需要外部知識、RAG 的核心架構是什麼，以及如何用 Python 實作一個最基本的 RAG pipeline。"
+description: "RAG 壞掉時多半是檢索壞掉。本篇把 RAG 管線拆成切塊、檢索、重排、評估四個決策，附最小可跑範例，並替每個主題指向站內最深入的那篇文章。"
 categories: ["all", "ai", "engineering"]
 tags: ["RAG", "LLM", "Vector Database", "Embeddings", "Python", "繁體中文"]
 authors: ["yen"]
-readTime: "11 min"
+readTime: "8 min"
+aliases: ["/posts/rag-series-part3-advanced-retrieval-zh/", "/posts/rag-series-part4-optimization-zh/"]
 ---
 
-## 前言
+> 大多數人的第一個 RAG 壞掉時，先改的是 prompt：「請根據以下資料回答，不要編造」。
+> 改了三輪，答案還是錯——因為送進去的資料本來就不對。
+> 真正該先問的是：正確的那段文字，有沒有出現在 top-k 裡？
+> 沒有的話，再好的 prompt 也只是在請 LLM 從錯的資料裡掰出對的答案。
 
-如果你曾經問過 ChatGPT 最新的新聞，它會告訴你它的知識有截止日期（knowledge cutoff）。  
-如果你問它你公司內部的文件，它完全不知道。
+**這篇的主張只有一句：RAG 的失敗多半是檢索失敗，所以在動 prompt 之前，先把管線學成四個決策——怎麼切（chunking）、怎麼找（retrieval）、怎麼排（reranking）、怎麼量（evaluation）。**
 
-這是大型語言模型（LLM）的根本限制：**訓練資料是靜態的**。
-
-**RAG（Retrieval-Augmented Generation）** 就是解決這個問題的主流方法。它讓 LLM 在回答前先「查資料」，就像一個學生考試時可以翻開參考書——而不是完全靠記憶。
-
-這個系列共五篇，帶你從基礎到進階，完整掌握 RAG 的設計與優化。
-
----
-
-## 為什麼 LLM 需要 RAG？
-
-### LLM 的三大知識限制
-
-| 問題 | 說明 |
-|------|------|
-| **知識截止日期** | 模型只知道訓練時間點之前的資訊 |
-| **無法存取私有資料** | 公司內部文件、資料庫、個人筆記都不在訓練集裡 |
-| **幻覺（Hallucination）** | 對不確定的問題，模型會「編造」聽起來合理的答案 |
-
-### 解法比較
-
-```
-方案 A：Fine-tuning（微調）
-  優點：模型真正「學會」知識
-  缺點：成本高、資料需要大量、難以更新、模型大小增加
-
-方案 B：RAG（檢索增強生成）
-  優點：即時更新、成本低、可追溯來源
-  缺點：需要維護向量資料庫、回答品質受檢索品質影響
-```
-
-**結論**：對大多數企業應用，RAG 是更實際的選擇。Fine-tuning 適合改變模型「風格」或「推理方式」，不適合注入大量知識。
+這是系列的入門與導讀。站上已經有一批比本系列更深入的 RAG 文章（RAGFlow 原始碼導讀、FDE 核心主題、ChatPDF 優化實錄、AI 工程從零開始），每一節最後都有一行「深入請看 →」把你送到該主題最完整的那篇。原本的第三篇（進階檢索）與第四篇（查詢優化與 Context 壓縮）已併入這篇導讀，舊網址會自動轉到這裡。
 
 ---
 
-## RAG 的核心架構
+## 一、為什麼 LLM 需要 RAG
 
-一個標準的 RAG 系統分成兩個主要流程：
+LLM 的知識是**訓練時凍結的**：不知道截止日之後的事，不知道你公司的內部文件，而且對不確定的問題會編出聽起來合理的答案（幻覺）。
 
-### 1. 索引流程（Indexing Pipeline）— 離線執行
+兩種補救方式：
 
-```
-原始文件（PDF、Word、網頁）
-    ↓
-文字擷取（Text Extraction）
-    ↓
-切塊（Chunking）— 將長文件切成小片段
-    ↓
-向量化（Embedding）— 將文字轉成數字向量
-    ↓
-存入向量資料庫（Vector Store）
-```
+| 方案 | 做什麼 | 適合 | 不適合 |
+|------|--------|------|--------|
+| Fine-tuning | 用你的資料再訓練一次模型 | 改變模型的語氣、格式、推理習慣 | 注入大量、會變動的事實知識 |
+| RAG | 回答前先去外部知識庫查資料，把查到的片段放進 prompt | 知識常更新、需要引用來源、資料量大 | 需要改變模型「怎麼想」的場景 |
 
-### 2. 查詢流程（Query Pipeline）— 即時執行
-
-```
-使用者問題（Query）
-    ↓
-向量化（Query Embedding）
-    ↓
-向量搜尋（Similarity Search）— 找出最相關的文件片段
-    ↓
-組合 Prompt（Context + Question）
-    ↓
-LLM 生成答案（Generation）
-    ↓
-回傳給使用者
-```
-
-這個最基本的架構被稱為 **Naive RAG**（樸素 RAG）。
+對多數企業應用，RAG 是起點。它的代價是：**答案品質上限由檢索品質決定**——這也是整篇的主軸。
 
 ---
 
-## 核心概念解釋
+## 二、把 RAG 管線看成四個決策
 
-### Embedding（向量嵌入）
+一個標準 RAG 系統分成離線的索引流程和即時的查詢流程。下圖標出四個決策點，之後的每一節對應一個：
 
-Embedding 是把文字轉成一串數字（向量）的過程。  
-語意相近的文字，它們的向量在空間中也會很接近。
-
-```python
-# 概念示意
-"貓喜歡睡覺" → [0.12, -0.34, 0.87, ...]  # 768 維向量
-"狗喜歡跑步" → [0.15, -0.31, 0.72, ...]  # 語意不同，但都是動物，有些維度接近
-"量子物理"   → [-0.88, 0.92, -0.11, ...] # 語意差很多，向量距離遠
+```
+離線：索引流程
+┌──────────┐   ┌──────────┐   ┌──────────────┐   ┌──────────────┐
+│ 原始文件 │──▶│ 文字擷取 │──▶│ ① 切塊       │──▶│ Embedding    │
+│ PDF/網頁 │   │          │   │   chunking   │   │ → 向量資料庫 │
+└──────────┘   └──────────┘   └──────────────┘   └──────┬───────┘
+                                                        │
+即時：查詢流程                                          │
+┌──────────┐   ┌──────────────┐   ┌──────────────┐      │
+│ 使用者   │──▶│ ② 檢索       │◀──│ 向量資料庫   │◀─────┘
+│ 問題     │   │   top-k 候選 │   │ (+ BM25 索引)│
+└──────────┘   └──────┬───────┘   └──────────────┘
+                      ▼
+               ┌──────────────┐   ┌──────────────┐   ┌──────────┐
+               │ ③ 重排       │──▶│ 組 prompt    │──▶│ LLM 生成 │
+               │   reranking  │   │ context+問題 │   │          │
+               └──────────────┘   └──────────────┘   └────┬─────┘
+                                                          ▼
+                                                   ┌──────────────┐
+                                                   │ ④ 評估       │
+                                                   │   三個指標   │
+                                                   └──────────────┘
 ```
 
-### 向量相似度
+注意生成（LLM）只佔一格。只有在 ②③ 把對的片段送進 prompt 之後，prompt 工程才有用武之地；④ 則是回頭告訴你 ①②③ 哪一個壞掉。
 
-最常用的相似度計算方式是**餘弦相似度（Cosine Similarity）**：
-
-```python
-import numpy as np
-
-def cosine_similarity(vec_a, vec_b):
-    dot = np.dot(vec_a, vec_b)
-    norm = np.linalg.norm(vec_a) * np.linalg.norm(vec_b)
-    return dot / norm
-
-# 值域 -1 到 1，越接近 1 表示越相似
-```
-
-### Chunking（切塊）
-
-為什麼要切塊？
-
-1. LLM 的 context window 有限制
-2. 太長的文件會「稀釋」相關資訊，降低搜尋精準度
-3. 讓每個 chunk 專注在單一主題，提升匹配品質
+把它們當成「決策」而不是「步驟」，是因為每一個都有不只一種做法，而且換做法的時機取決於你的資料和查詢型態，不是看哪個技術比較新。
 
 ---
 
-## 實作：用 Python 建立你的第一個 RAG
+## 三、決策一：怎麼切（Chunking）
 
-### 環境安裝
+**直覺**：Embedding 把一段文字壓成一個向量。段落越長，向量就越「平均」，越難和任何一個具體問題對得上；段落太短，又會把一個完整的句意切成兩半，哪一半都答不了問題。
+
+**機制**：切塊策略從簡到繁依序是固定長度 → 遞迴字元（先按段落、再按句子、最後按字元）→ 依文件結構（標題、表格、條列）→ 語意切塊（用 embedding 偵測話題轉折）→ 父子切塊（用小塊檢索、用大塊生成）。
+
+**例子**：一份財報 PDF 裡的表格，用固定 500 字元切塊會把表頭和數字切到不同塊；依文件結構切塊會把整張表視為一個單位，表頭留在數字旁邊。
+
+**何時會壞**：切塊的失敗在索引時就發生了，查詢時只會看到「找不到」或「找到一半」；因此它是四個決策裡最早該定、最晚才會被發現的一個。
+
+深入請看 → [RAGFlow Part 2：DeepDoc 解析、Chunking 策略與 14 種模板](/posts/ragflow-intro-part2-deepdoc-chunking-zh/)（§五 `naive_merge` 切分契約）；動手版請看 [ChatPDF RAG 優化（一）：語意切塊與混合檢索](/posts/chatpdf-rag-optimization-part1-chunking-retrieval-zh/)。
+
+---
+
+## 四、向量資料庫怎麼選
+
+切好的塊要存在能做近似最近鄰（ANN）搜尋的地方。選型的三個問題依序是：資料量多大（記憶體內就夠，還是需要分散式）、要不要 metadata 過濾（依租戶、日期、文件類型縮小搜尋範圍）、以及是否要自己維運。小型專案用嵌入式資料庫（如 Chroma）就能開始，換資料庫的成本主要在重新索引，而不是程式碼。
+
+深入請看 → [RAG 完全指南（二）：Chunking 策略與向量資料庫選型](/posts/rag-series-part2-chunking-vectordb-zh/)，是站內唯一完整比較主流向量資料庫特性與選型決策樹的一篇。
+
+---
+
+## 五、決策二：怎麼找（Retrieval）
+
+### 5.1 混合搜尋：語意加關鍵字
+
+**直覺**：向量搜尋找的是「意思相近」，對「字面必須一樣」的查詢反而弱——產品型號、錯誤代碼、人名、法條編號。BM25 這類關鍵字檢索正好相反。
+
+**機制**：兩條路各自取 top-k，再用 Reciprocal Rank Fusion（RRF）把兩份排名合併：每個文件的分數是它在各份排名裡 `1 / (k + rank)` 的總和，常見的 k 取 60。RRF 只看名次不看原始分數，所以不必先把餘弦相似度和 BM25 分數對齊到同一個尺度。
+
+**何時會壞**：資料裡沒有太多專有名詞時，混合搜尋多出來的 BM25 路徑只增加延遲；反之，當使用者會貼錯誤訊息或型號來查，純向量搜尋的召回會明顯漏掉。
+
+深入請看 → [FDE core topic：Hybrid Search & RRF](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)（機制與實作層次）；生產環境的權重與查詢編譯請看 [RAGFlow Part 4：混合搜尋、Rerank、GraphRAG/RAPTOR 與引用](/posts/ragflow-intro-part4-retrieval-rerank-zh/) §二–三。
+
+### 5.2 問題本身不好搜：查詢改寫、Self-RAG、Context 壓縮
+
+有時候檢索失敗不是索引的錯，而是問題的形狀不適合直接搜：
+
+- **查詢改寫（Multi-Query、HyDE、Step-Back）**：把一個問題改寫成多個版本、或先讓 LLM 寫一段「假設性答案」再拿去搜，提高命中的機會。代價是每次查詢多幾次 LLM 呼叫。
+- **Self-RAG**：讓模型自己判斷「這題需要檢索嗎」「檢索到的東西有用嗎」「我的答案有被資料支持嗎」。這需要經過訓練的模型或對應的 judge prompt，不是接上去就有的功能。
+- **Context 壓縮**：取回的 chunk 進 prompt 之前先刪掉無關的句子，避免「塞太多反而混淆模型」。
+
+這三個都是在 ① ② 做對之後才值得加的；它們無法補救切錯的塊。
+
+深入請看 → [AI 工程從零開始｜Phase 11 Part 2：RAG 系統與 LLM 評估](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/)（§二 何時該升級、§十 診斷流程）；壓縮策略的完整比較請看 [Context 壓縮與摘要 — 打造可無限對話的 AI 系統](/posts/context-compression-summarization-guide-zh/)。
+
+---
+
+## 六、決策三：怎麼排（Reranking）
+
+**直覺**：向量搜尋用的是 bi-encoder——問題和文件各自編碼成向量，再比距離；它快，但「各自編碼」意味著它從未真正讀過問題和文件放在一起的樣子。Cross-encoder 把問題和文件串成一段輸入一起讀，判斷精準得多，但每一對都要跑一次模型，無法事先算好。
+
+**機制**：先用便宜的向量／混合搜尋取 top-k（例如 50），再用 cross-encoder 對這 k 筆逐一打分，取前幾筆進 prompt。重排是「粗召回之後的精排」，不是取代召回；召回沒找到的東西，重排也救不回來。
+
+**何時會壞**：延遲預算緊、且召回結果本來就只有幾筆時，重排只是多跑一次模型。候選一多（k 大）、或問題和文件用詞差距大時，它的價值才會顯現。
+
+深入請看 → [FDE core topic：Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)；RAGFlow 三層重排的權重公式請看 [RAGFlow Part 4](/posts/ragflow-intro-part4-retrieval-rerank-zh/) §四。
+
+---
+
+## 七、決策四：怎麼量（Evaluation）
+
+沒有量測，前三個決策就只能靠感覺調。RAG 評估的核心是把「答案好不好」拆成三段，每段對應管線的一個位置：
+
+```
+                 ┌─────────────────────────────────────┐
+                 │  測試集：(問題, 標準答案或標準片段)  │
+                 └───────────────┬─────────────────────┘
+                                 ▼
+   ┌──────────┐   ┌──────────┐   ┌──────────┐
+   │ 問題     │──▶│ 檢索     │──▶│ 生成     │──▶ 答案
+   └──────────┘   └────┬─────┘   └────┬─────┘      │
+                       │              │            │
+          Context 相關度│    忠實度    │   答案相關度│
+          (取回的片段  │  (答案是否   │  (答案有沒有│
+           和問題有關?)│   被片段支持)│   回到問題?)│
+                       ▼              ▼            ▼
+                 ┌─────────────────────────────────────┐
+                 │  指標最差的那一段 → 回去改對應決策  │
+                 │  Context 相關度低 → 改 ①②③          │
+                 │  忠實度低        → 改 prompt / 模型 │
+                 │  答案相關度低    → 改 prompt / 改寫 │
+                 └─────────────────────────────────────┘
+```
+
+這張圖也是整篇主張的來源：三個指標裡只有一個（忠實度）主要靠 prompt 和模型處理，另外兩個的根因多半在檢索側。先看 context 相關度，再決定要不要碰 prompt。
+
+RAGAS 之類的框架把這三個指標用 LLM-as-judge 自動化；也可以用傳統的 Hit@k、MRR、nDCG 單獨量檢索段，這部分不需要 LLM，便宜而且穩定。
+
+深入請看 → [FDE core topic：RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)（三個指標的定義與可觀測性）；評估框架比較請看 [AI 工程從零開始｜Phase 11 Part 2](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/) §七；一條真的跑起來的評估管線請看 [ChatPDF RAG 優化（三）：可觀測性與評估](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/)。RAGAS 的實際程式碼在本系列[第五篇](/posts/rag-series-part5-production-zh/)。
+
+---
+
+## 八、最小可跑的 RAG
+
+下面是四個決策都取最簡單選項的版本：遞迴切塊、純向量檢索、不重排、不評估。它的用途是讓你看清四個決策各自在程式碼的哪一行，之後要換掉哪一個都知道從哪下手。範例僅示意，未在本文中實際執行。
 
 ```bash
-pip install openai chromadb tiktoken langchain-text-splitters
+pip install openai chromadb langchain-text-splitters
 ```
-
-### 完整範例程式碼
 
 ```python
 import openai
 import chromadb
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-# ---- 設定 ----
-client = openai.OpenAI(api_key="your-api-key")
-chroma_client = chromadb.Client()
-collection = chroma_client.create_collection("my_docs")
-
-EMBED_MODEL = "text-embedding-3-small"
-CHAT_MODEL  = "gpt-4o-mini"
-
-# ---- 工具函式 ----
-
-def get_embedding(text: str) -> list[float]:
-    """將文字轉成向量"""
-    response = client.embeddings.create(input=text, model=EMBED_MODEL)
-    return response.data[0].embedding
+client = openai.OpenAI()                      # 讀 OPENAI_API_KEY 環境變數
+collection = chromadb.Client().create_collection("docs")
+EMBED, CHAT = "text-embedding-3-small", "gpt-4o-mini"
 
 
-def index_documents(docs: list[str]) -> None:
-    """索引流程：切塊 → 向量化 → 存入向量 DB"""
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,       # 每塊最多 500 字元
-        chunk_overlap=50,     # 前後重疊 50 字元，避免斷句
-    )
+def embed(text: str) -> list[float]:
+    return client.embeddings.create(input=text, model=EMBED).data[0].embedding
 
-    all_chunks = []
-    for doc in docs:
-        chunks = splitter.split_text(doc)
-        all_chunks.extend(chunks)
 
-    embeddings = [get_embedding(chunk) for chunk in all_chunks]
-
+def index(docs: list[str]) -> None:
+    # 決策 ①：怎麼切。這裡用遞迴字元切塊，500 字元、重疊 50
+    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    chunks = [c for d in docs for c in splitter.split_text(d)]
     collection.add(
-        documents=all_chunks,
-        embeddings=embeddings,
-        ids=[f"chunk_{i}" for i in range(len(all_chunks))],
+        documents=chunks,
+        embeddings=[embed(c) for c in chunks],
+        ids=[f"chunk_{i}" for i in range(len(chunks))],
     )
-    print(f"✅ 已索引 {len(all_chunks)} 個 chunks")
 
 
 def retrieve(query: str, top_k: int = 3) -> list[str]:
-    """查詢流程：向量搜尋，取出最相關的 chunks"""
-    query_embedding = get_embedding(query)
-    results = collection.query(
-        query_embeddings=[query_embedding],
-        n_results=top_k,
+    # 決策 ②：怎麼找。這裡只有向量搜尋；混合搜尋會在這裡多一條 BM25 路徑
+    res = collection.query(query_embeddings=[embed(query)], n_results=top_k)
+    return res["documents"][0]
+    # 決策 ③：怎麼排。這裡沒有重排；cross-encoder 會插在 return 之前
+
+
+def answer(query: str) -> str:
+    context = "\n\n---\n\n".join(retrieve(query))
+    prompt = (
+        "請只根據【參考資料】回答【問題】；資料不足就說「無法回答」。\n\n"
+        f"【參考資料】\n{context}\n\n【問題】\n{query}"
     )
-    return results["documents"][0]  # 回傳 top_k 個文字片段
-
-
-def generate_answer(query: str, context_chunks: list[str]) -> str:
-    """組合 Prompt，讓 LLM 根據 context 回答"""
-    context = "\n\n---\n\n".join(context_chunks)
-
-    prompt = f"""你是一個知識庫問答助手。請根據以下【參考資料】回答【問題】。
-如果參考資料中沒有足夠資訊，請直接說「根據現有資料無法回答」，不要自行推測。
-
-【參考資料】
-{context}
-
-【問題】
-{query}
-
-【回答】"""
-
-    response = client.chat.completions.create(
-        model=CHAT_MODEL,
+    res = client.chat.completions.create(
+        model=CHAT,
         messages=[{"role": "user", "content": prompt}],
-        temperature=0,  # RAG 場景建議設低，減少創意發揮
+        temperature=0,
     )
-    return response.choices[0].message.content
-
-
-# ---- 主程式 ----
-
-def rag_pipeline(query: str) -> str:
-    """完整的 RAG pipeline"""
-    # Step 1: 檢索
-    relevant_chunks = retrieve(query, top_k=3)
-
-    # Step 2: 生成
-    answer = generate_answer(query, relevant_chunks)
-
-    return answer
-
-
-# ---- 示範 ----
-
-if __name__ == "__main__":
-    # 準備知識文件（實際場景可以是 PDF、Markdown、資料庫內容）
-    documents = [
-        """
-        Python 是一種高階、直譯式程式語言，由 Guido van Rossum 在 1991 年發布。
-        Python 的設計哲學強調程式碼的可讀性，使用縮排來表示程式碼區塊。
-        Python 廣泛應用於資料科學、機器學習、網頁開發和自動化腳本。
-        """,
-        """
-        向量資料庫是專門儲存和搜尋向量嵌入的資料庫系統。
-        常見的向量資料庫包括：Chroma、Pinecone、Weaviate、Qdrant、Milvus。
-        向量資料庫使用近似最近鄰搜尋（ANN）演算法，可以在百萬筆資料中快速找到最相似的向量。
-        """,
-        """
-        RAG（Retrieval-Augmented Generation）是一種結合資訊檢索與文字生成的 AI 架構。
-        RAG 的主要優點是可以讓 LLM 存取外部知識庫，解決模型知識過時的問題。
-        RAG 系統通常由三個部分組成：文件索引、相似度搜尋、語言模型生成。
-        """,
-    ]
-
-    # 索引文件
-    index_documents(documents)
-
-    # 查詢
-    questions = [
-        "RAG 有哪些主要優點？",
-        "有哪些常見的向量資料庫？",
-        "Python 是誰發明的？",
-    ]
-
-    for q in questions:
-        print(f"\n❓ 問題：{q}")
-        answer = rag_pipeline(q)
-        print(f"💡 回答：{answer}")
+    return res.choices[0].message.content
+    # 決策 ④：怎麼量。這裡沒有；評估會在 retrieve() 和 answer() 各掛一個指標
 ```
 
-### 預期輸出
-
-```
-✅ 已索引 3 個 chunks
-
-❓ 問題：RAG 有哪些主要優點？
-💡 回答：根據參考資料，RAG 的主要優點是可以讓 LLM 存取外部知識庫，解決模型知識過時的問題。
-
-❓ 問題：有哪些常見的向量資料庫？
-💡 回答：常見的向量資料庫包括：Chroma、Pinecone、Weaviate、Qdrant、Milvus。
-
-❓ 問題：Python 是誰發明的？
-💡 回答：Python 是由 Guido van Rossum 發明的，並於 1991 年發布。
-```
+當它答錯時，先印出 `retrieve(query)` 的結果看對的片段在不在裡面——這一步就是整篇主張的實作版本。在就改 prompt；不在就回到 ① ② ③。
 
 ---
 
-## Naive RAG 的局限性
+## 九、再往前：GraphRAG 與生產環境
 
-這個基本實作已經可以運作，但在實際應用中會碰到幾個問題：
+**GraphRAG**：向量搜尋擅長「找一段和問題相似的文字」，不擅長「A 和 B 有什麼共同點」這種要跨多份文件串連的問題。GraphRAG 先從文件抽出實體和關係建成圖，查詢時沿著圖走；代價是建圖階段的 LLM 呼叫量和維護成本都遠高於一般索引，所以它是問題驅動的加法，不是預設選項。
 
-| 問題 | 現象 | 後續篇章 |
-|------|------|----------|
-| **Chunking 策略粗糙** | 語意被切斷，搜尋精準度低 | 第二篇 |
-| **只有語意搜尋** | 關鍵字搜尋效果有時更好 | 第三篇（混合搜尋） |
-| **單次查詢不夠** | 複雜問題需要多次查詢才能拼湊完整答案 | 第三篇（Multi-Query） |
-| **沒有 Reranking** | Top-K 結果可能不是最相關的 | 第三篇（Reranker） |
-| **Context 太長** | 塞入過多不相關 chunk，LLM 反而混淆 | 第四篇（Context Compression） |
-| **沒有評估指標** | 不知道 RAG 品質好不好 | 第五篇 |
+深入請看 → [RAGFlow Part 4](/posts/ragflow-intro-part4-retrieval-rerank-zh/) §5.1 GraphRAG 與 §5.2 RAPTOR。
+
+**生產環境與 Agentic RAG**：把評估變成自動化流程、讓 Agent 決定何時檢索、檢索什麼、要不要再查一次。
+
+深入請看 → [RAG 完全指南（五）：生產級評估、GraphRAG 與 Agentic RAG](/posts/rag-series-part5-production-zh/)（RAGAS 與 LangGraph 的完整程式碼）。
 
 ---
 
-## 小結
+## 十、小結
 
-這篇介紹了：
+- RAG 答錯時，先檢查 top-k 裡有沒有正確片段；沒有的話問題不在 prompt。
+- 把管線當四個決策學：怎麼切、怎麼找、怎麼排、怎麼量。每一個都有便宜版和精準版，換版本的時機取決於資料和查詢型態。
+- 切塊的錯誤在索引時就定了，是最早該決定、最晚才會被發現的一個。
+- 重排是召回之後的精排，救不回沒被召回的東西；查詢改寫與壓縮也一樣，都是 ①② 做對之後的加法。
+- 評估的三個指標各對應管線一段；指標最差的那段，才是該動的地方。
 
-- **為什麼需要 RAG**：LLM 的知識限制
-- **RAG 的核心架構**：索引流程 vs 查詢流程
-- **關鍵概念**：Embedding、向量相似度、Chunking
-- **第一個 RAG 實作**：用 ChromaDB + OpenAI 建立完整 pipeline
+### 相關文章
 
-下一篇我們會深入探討 **Chunking 策略**與**向量資料庫的選型**，讓 RAG 的基礎打得更扎實。
+站內 RAG 主題的深入版本，依管線順序：
+
+- 切塊與文件解析：[RAGFlow Part 2 — DeepDoc 解析與 Chunking](/posts/ragflow-intro-part2-deepdoc-chunking-zh/)、[ChatPDF RAG 優化（一）](/posts/chatpdf-rag-optimization-part1-chunking-retrieval-zh/)
+- 向量資料庫選型：[RAG 完全指南（二）](/posts/rag-series-part2-chunking-vectordb-zh/)
+- 混合搜尋與 RRF：[FDE core topic — Hybrid Search & RRF](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[RAGFlow Part 4](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
+- 查詢改寫、Self-RAG、Context 壓縮：[AI 工程從零開始 Phase 11 Part 2](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/)、[Context 壓縮與摘要](/posts/context-compression-summarization-guide-zh/)
+- 重排：[FDE core topic — Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)
+- 評估：[FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)、[ChatPDF RAG 優化（三）](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/)
+- GraphRAG / RAPTOR：[RAGFlow Part 4](/posts/ragflow-intro-part4-retrieval-rerank-zh/) §五
+- 生產與 Agentic RAG：[RAG 完全指南（五）](/posts/rag-series-part5-production-zh/)
+- 完整開源實作的全景（RAGFlow 系列總覽）：[RAGFlow Intro Part 1 — 全景架構](/posts/ragflow-intro-part1-overview-architecture-zh/)
 
 ---
 
 **系列導覽**
 
-- **第一篇（本篇）**：基礎概念與第一個 RAG 系統
+- **第一篇（本篇）**：入門與導讀
 - [第二篇](/posts/rag-series-part2-chunking-vectordb-zh/)：Chunking 策略與向量資料庫選型
-- [第三篇](/posts/rag-series-part3-advanced-retrieval-zh/)：進階檢索技術（混合搜尋、HyDE、Multi-Query、Reranker）
-- [第四篇](/posts/rag-series-part4-optimization-zh/)：查詢優化與 Context 壓縮
+- 第三、四篇（進階檢索、查詢優化與 Context 壓縮）已併入本篇導讀；深入請看上方「相關文章」
 - [第五篇](/posts/rag-series-part5-production-zh/)：生產級 RAG 評估與 Agentic RAG

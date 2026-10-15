@@ -609,6 +609,14 @@ ragflow/
 | 引用 | 靠 prompt 拜託 LLM | 事後逐句反查，閾值 0.63→0.3 遞降，每句最多 4 個 | 引用可驗證、不依賴模型服從度 |
 | 進階 | 無 | RAPTOR 摘要樹 / GraphRAG 圖檢索 / TOC 增強 | 全域性問題也能回答 |
 
+## 相關文章與正典版本
+
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+- 切塊與文件解析（正典）— [RAGFlow Intro Part 2 — DeepDoc 解析與 Chunking 策略](/posts/ragflow-intro-part2-deepdoc-chunking-zh/)、[ChatPDF RAG 優化（一）：語意切塊與混合檢索](/posts/chatpdf-rag-optimization-part1-chunking-retrieval-zh/)
+- 混合搜尋與重排：機制（正典）— [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[FDE core topic — Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)；生產實作見 [RAGFlow Intro Part 4 — 混合搜尋、Rerank 與 GraphRAG/RAPTOR](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
+- 向量資料庫選型（正典）— [RAG 完全指南（二）：Chunking 策略與向量資料庫選型](/posts/rag-series-part2-chunking-vectordb-zh/)
+- 評估（正典）— [FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)、[AI 工程從零開始 Phase 11 Part 2：RAG 系統與 LLM 評估](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/)
+
 ---
 
 ## 十、系列導航

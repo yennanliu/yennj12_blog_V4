@@ -310,6 +310,10 @@ FDE 的職責是讓客戶知道你在掌控局面，
 **事故的本質不是失敗，是信任的考驗。**  
 **處理好了，是 FDE 最快建立客戶信任的機會。**
 
+## 相關文章與正典版本
+
+- 機制與原理（正典） — [FDE core topic — Structured Troubleshooting：分層排錯與 AI 系統觀測方法論](/posts/fde-core-concept-22-structured-troubleshooting-zh/)
+
 ---
 
 **系列導航**

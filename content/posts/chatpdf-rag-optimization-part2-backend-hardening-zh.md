@@ -261,6 +261,13 @@ temperature 參數化的好處:**生成答案用 0.0(穩定),judge/評估呼叫�
 
 下一篇([第三部分](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/))處理最後一塊:**可觀測性與評估**——Langfuse 追蹤、評估歷史持久化、即時答案評分、無依賴 SVG 圖表。沒有量測,就沒有持續優化。
 
+## 相關文章與正典版本
+
+- 混合搜尋與重排：機制與生產實作（正典）— [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[FDE core topic — Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)、[RAGFlow Intro Part 4 — 混合搜尋、Rerank 與 GraphRAG/RAPTOR](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
+- 查詢改寫、Multi-Query 與評估管線（正典）— [AI 工程從零開始 Phase 11 Part 2：RAG 系統與 LLM 評估](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/)
+- 評估指標的機制（正典）— [FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+
 ---
 
 **系列導覽**

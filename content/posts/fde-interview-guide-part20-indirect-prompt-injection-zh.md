@@ -287,6 +287,10 @@ Layer 5：Audit Logging     攻擊發生後可以追蹤和告警      事後才�
 >
 > *最後，Output Validation 在工具執行前做業務規則驗證，加上完整的 Audit Log。五層疊加，即使某層被繞過，還有其他層兜底。」*
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Indirect Prompt Injection：工具鏈的隱形攻擊與沙盒隔離](/posts/fde-core-concept-7-indirect-prompt-injection-zh/)
+
 ---
 
 **系列導航**

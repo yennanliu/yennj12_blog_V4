@@ -744,6 +744,11 @@ ekm_config:
   alert_webhook: "https://pagerduty.bank.internal/alerts/kms"
 ```
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — CMEK / BYOK 信封加密](/posts/fde-core-concept-10-cmek-byok-envelope-zh/)
+- 機制與原理（正典） — [FDE core topic — Data Residence & Sovereign AI](/posts/fde-core-concept-9-data-residence-sovereign-ai-zh/)
+
 ---
 
 ## 系列導航

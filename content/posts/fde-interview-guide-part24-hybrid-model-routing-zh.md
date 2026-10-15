@@ -292,6 +292,10 @@ GKE 部署考量：
 >
 > *量化的成本節省：在 10 萬請求/天的規模，從 $7,500/月降到 $3,790/月，節省約 49%。」*
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Semantic Model Routing：置信度熵值驅動的模型分流](/posts/fde-core-concept-18-semantic-model-routing-zh/)
+
 ---
 
 **系列導航**

@@ -872,6 +872,14 @@ RAGFlow 檢索管線裡所有可調的數字，以及它們的預設值與影響
 2. **`similarity_threshold`**（0.2）— 這是「寧可說不知道」與「寧可猜」的旋鈕，直接決定使用者對系統可信度的觀感
 3. **`top_n`**（配合 log 裡的 `Not all the retrieval into prompt` 警告調整）— 超過 prompt 容量的召回是純浪費
 
+## 相關文章與正典版本
+
+- 混合搜尋與 RRF 的機制（正典）— [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)
+- 重排與 Cross-Encoder 的機制（正典）— [FDE core topic — Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)
+- 評估（正典）— [FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)、[AI 工程從零開始 Phase 11 Part 2：RAG 系統與 LLM 評估](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/)、[ChatPDF RAG 優化（三）：可觀測性與評估](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/)
+- 生產級 RAG 與 Agentic RAG — [RAG 完全指南（五）：生產級評估、GraphRAG 與 Agentic RAG](/posts/rag-series-part5-production-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+
 ---
 
 ## 十、系列導航

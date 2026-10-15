@@ -444,6 +444,10 @@ async def record_latency(endpoint: str, latency_ms: float):
 
 > *「大扇出的核心陷阱是尾部延遲由最慢者決定：15 個並行呼叫的完成時間在數學上等同於取所有延遲的最大值，任一呼叫的 P99 問題都會變成整體的 P0 問題。我的防禦策略分三層：第一，投機雙發（Hedged Request）—在 T+800ms 若工具呼叫未收到 response header，立即對備援端點發第二個請求，接受先回應者並 cancel 另一個，P99 尾部延遲可望降低約 40%（示意量級）；第二，T+1500ms 硬截止—用 asyncio.wait() 而非 gather 取得已完成的 13/15 筆資料，在 System Prompt 注入缺失標注讓 LLM 明確知道資料不完整仍繼續分析；第三，Circuit Breaker—失敗 5 次開路 30 秒，狀態存 Redis 讓所有 Pod 協同熔斷。整體效果：把 gather 約 3 秒以上的長尾壓到 1.5 秒以內（約 2 倍改善），加上 SSE 漸進推送讓用戶在 200ms 內就看到第一批結果，主觀等待感接近即時。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試指南 Part 52：百萬級 Agent Tool-Calling 的全域非同步並行優化與扇出控制](/posts/fde-interview-guide-part52-tool-fanout-optimization-zh/)、[FDE 面試準備指南（二十二）：動態並行 Tool-Calling 與依賴解析引擎](/posts/fde-interview-guide-part22-parallel-tool-calling-zh/)
+
 ---
 
 **系列導航**

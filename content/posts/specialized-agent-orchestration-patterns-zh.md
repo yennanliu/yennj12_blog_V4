@@ -1819,3 +1819,11 @@ if __name__ == "__main__":
 5. **持續監控優化**：數據驅動的效能調校
 
 透過合理的協作設計，專責化 Agent 團隊可以在保持 80%+ Token 節省的同時，提供更可靠、更快速的服務。
+
+## 相關文章與正典版本
+
+- 系列總覽與六大策略 — [多 Agent Token 優化系列 pt.1：完整指南](/posts/multi-agent-token-optimization-claude-code-zh/)
+- Agent 間的選擇性 Context 傳遞（正典） — [多 Agent Token 優化系列 pt.5：選擇性 Context 傳遞](/posts/selective-context-passing-multi-agent-guide-zh/)
+- 專責化與每次呼叫的 token 經濟（正典） — [多 Agent Token 優化系列 pt.6：Agent 專責化實戰指南](/posts/agent-specialization-multi-agent-guide-zh/)
+- 狀態管理、重試與死鎖排除（正典） — [FDE 面試準備指南（十六）：Multi-Agent 狀態管理與死鎖排除](/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh/)
+- 協調拓撲：Supervisor / Peer-to-Peer / Market（正典） — [AI 工程從零開始 Phase 16 Part 1：多 Agent 協調 — 分工、通訊與共識](/posts/ai-eng-from-scratch-phase16-part1-coordination-zh/)

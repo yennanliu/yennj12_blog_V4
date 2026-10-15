@@ -591,6 +591,10 @@ PII 外洩的損失     依事故規模              技術上大幅降低      
 >
 > *稽核日誌的設計：記錄誰、什麼時候、存取了哪類資料（patient_token 而非真實姓名），使用 Object Lock 確保不可篡改，保留 7-10 年符合醫療合規要求。LLM 服務商的 BAA 也是上線前必須確認的法律文件。」*
 
+## 相關文章與正典版本
+
+- 機制與原理（正典） — [FDE core topic — PII 去識別化與格式保留加密](/posts/fde-core-concept-8-pii-deidentification-zh/)
+
 ---
 
 **系列導航**

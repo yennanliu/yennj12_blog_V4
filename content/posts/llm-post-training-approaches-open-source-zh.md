@@ -660,3 +660,9 @@ Post-Training 不是一條路，而是一個工具箱。對大多數工程師而
 ---
 
 *本文所有程式碼以 HuggingFace TRL 框架為主，以 Qwen2.5 系列模型為範例，但概念同樣適用於 LLaMA、Mistral、Gemma 等其他開源模型。*
+
+## 相關文章與正典版本
+
+- 託管式微調的對照版本（AWS Bedrock）— [Fine-Tuning LLMs with AWS Bedrock](/posts/llm-fine-tuning-aws-bedrock-complete-guide/)
+- 微調程式碼：Datasets、Trainer 與 LoRA/QLoRA — [Hugging Face 實戰（三）：微調實戰 — Datasets、Trainer 與 LoRA/QLoRA](/posts/hugging-face-part3-fine-tuning-zh/)
+- 後訓練程式碼：SFT、DPO、ORPO 與 GRPO — [Hugging Face 實戰（四）：後訓練 — 從 SFT 到 DPO、ORPO 與 GRPO](/posts/hugging-face-part4-post-training-zh/)

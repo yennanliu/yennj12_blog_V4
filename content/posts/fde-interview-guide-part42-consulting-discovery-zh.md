@@ -601,6 +601,13 @@ FDE 差異化         客戶感覺「你真正了解我們」       客戶感覺
 >
 > *Phase 2 的 Technical Assessment：和 IT 架構師確認技術限制，評估資料品質，把 POC 範圍精確到每一個交付物。Phase 3 的 POC Proposal：用 Value Story（量化 ROI）和 Economic Buyer 談，讓預算批准有數字依據，而不是靠熱情說服。」*
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Discovery to Technical Constraints](/posts/fde-core-concept-21-discovery-to-constraints-zh/)
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Stakeholder Mapping：利害關係人圖譜](/posts/fde-core-concept-23-stakeholder-mapping-zh/)
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — POC Scoring & ROI](/posts/fde-core-concept-24-poc-scoring-roi-zh/)
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Value Story & Objection Handling](/posts/fde-core-concept-25-value-story-objection-zh/)
+
 ---
 
 **系列導航**

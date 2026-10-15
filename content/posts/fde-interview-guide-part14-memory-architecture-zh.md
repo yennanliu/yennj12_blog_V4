@@ -365,6 +365,10 @@ Precision vs Recall 的 trade-off：
        → 對話結束後非同步更新 Semantic + Episodic
 ```
 
+## 相關文章與正典版本
+
+- 機制與原理（正典） — [FDE core topic — Memory Architecture：Agent 階層式記憶體設計](/posts/fde-core-concept-2-memory-architecture-zh/)
+
 ---
 
 **系列導航**

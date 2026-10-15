@@ -284,6 +284,10 @@ AI 新手客戶         不知從哪裡開始        Vertex AI Agent Builder
 這道題的答案永遠不是規格表。  
 是：**先聽懂客戶的問題，再用他的語言說清楚 Google 能解決什麼。**
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Value Story & Objection Handling](/posts/fde-core-concept-25-value-story-objection-zh/)
+
 ---
 
 **系列導航**

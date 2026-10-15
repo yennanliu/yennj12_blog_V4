@@ -296,6 +296,10 @@ TTFT 改善（示意估算，非實測）：
 >
 > *三層合計約 5,900 tokens，對比全部塞入的 450,000 tokens，成本估計可降低約 98%，TTFT 也從秒級降到 1 秒內（示意估算）。」*
 
+## 相關文章與正典版本
+
+- 機制與原理（正典） — [FDE core topic — Memory Architecture：Agent 階層式記憶體設計](/posts/fde-core-concept-2-memory-architecture-zh/)
+
 ---
 
 **系列導航**

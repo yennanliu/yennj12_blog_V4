@@ -343,6 +343,11 @@ vertexai.init(
 **限制是設計的輸入，不是設計的障礙。**  
 **FDE 的工作是把「不能這樣」，變成「所以我們這樣做」。**
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Discovery to Technical Constraints](/posts/fde-core-concept-21-discovery-to-constraints-zh/)
+- 機制與原理（正典） — [FDE core topic — Data Residence & Sovereign AI](/posts/fde-core-concept-9-data-residence-sovereign-ai-zh/)
+
 ---
 
 **系列導航**

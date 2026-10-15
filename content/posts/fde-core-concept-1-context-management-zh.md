@@ -460,6 +460,10 @@ summary_latency_seconds{p50, p95, p99}
 
 > *「Context management 是 LLM 系統的記憶體排程問題：在固定的 Token 預算內（例如 128K 視窗中，system 8K + tools 12K + reserve 16K，history ceiling 約 92K），決定哪些資訊值得保留。純 FIFO 最簡單但會刪掉關鍵早期上下文，所以生產系統應採用 Pin 機制保護前 3 輪 + 階層式摘要壓縮——每 20 輪用 Gemini Flash 把最舊的 20 輪（約 16K tokens）壓縮到 500 tokens，實現 32:1 壓縮比，讓對話無限延伸而不失憶。工具輸出修剪同樣關鍵：用 whitelist 欄位保留策略把完整 JSON 回應從 2,400 tokens 降至 180 tokens，節省 92%，十次工具呼叫就能省下 22K tokens 的 budget。企業級再加上 tenant 分級預算與 Token 成本歸因，才能在 SaaS 場景下做到公平的多租戶資源管理，避免免費用戶壓垮付費用戶的 context 配額。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（十）：AI Agent 的 Context Management](/posts/fde-interview-guide-part10-context-management-zh/)、[FDE 面試準備指南（四十四）：長文本 LLM 與 RAG 動態混合路由架構設計](/posts/fde-interview-guide-part44-hybrid-context-rag-zh/)
+
 ---
 
 **系列導航**

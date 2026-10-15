@@ -496,12 +496,18 @@ if __name__ == "__main__":
 **混合搜尋、HyDE（假設性文件嵌入）、Multi-Query Retrieval、Reranker**——  
 讓你的 RAG 在複雜問題上也能精準命中。
 
+## 相關文章與正典版本
+
+- 切塊與文件解析（正典）— [RAGFlow Intro Part 2 — DeepDoc 解析與 Chunking 策略](/posts/ragflow-intro-part2-deepdoc-chunking-zh/)、[ChatPDF RAG 優化（一）：語意切塊與混合檢索](/posts/chatpdf-rag-optimization-part1-chunking-retrieval-zh/)
+- 混合搜尋與 RRF：機制與生產實作（正典）— [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[RAGFlow Intro Part 4 — 混合搜尋、Rerank 與 GraphRAG/RAPTOR](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
+- 評估（正典）— [FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)、[AI 工程從零開始 Phase 11 Part 2：RAG 系統與 LLM 評估](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+
 ---
 
 **系列導覽**
 
 - [第一篇](/posts/rag-series-part1-foundations-zh/)：基礎概念與第一個 RAG 系統
 - **第二篇（本篇）**：Chunking 策略與向量資料庫選型
-- [第三篇](/posts/rag-series-part3-advanced-retrieval-zh/)：進階檢索技術（混合搜尋、HyDE、Multi-Query、Reranker）
-- [第四篇](/posts/rag-series-part4-optimization-zh/)：查詢優化與 Context 壓縮
+- 第三、四篇（進階檢索、查詢優化與 Context 壓縮）已併入[第一篇的導讀](/posts/rag-series-part1-foundations-zh/)；深入請看 [Hybrid Search & RRF](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)、[AI 工程 Phase 11 Part 2](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/) 與 [Context 壓縮與摘要](/posts/context-compression-summarization-guide-zh/)
 - [第五篇](/posts/rag-series-part5-production-zh/)：生產級 RAG 評估與 Agentic RAG

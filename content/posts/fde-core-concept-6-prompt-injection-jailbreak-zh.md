@@ -208,6 +208,10 @@ Response to User
 
 > *「Prompt Injection 的根本問題在於 LLM 的 Attention 機制無法區分合法系統指令與用戶注入的惡意指令，因此防禦必須是結構性而非指令性的——我們構建四層縱深防禦：Input Classifier（fine-tuned BERT，攔截大部分已知注入模式）、XML 標籤隔離（大幅降低分隔符混淆攻擊）、Output DLP 掃描（p99 < 8ms，防止 PII 洩漏）、Tool Allowlist + Schema 驗證（防止工具呼叫越權）；單靠 system prompt 說『不要做 X』必然失敗，真正的安全來自讓惡意指令在架構層面就無法被執行。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（十三）：Prompt Injection 攻防與 Agent 安全](/posts/fde-interview-guide-part13-prompt-injection-zh/)、[FDE 面試指南 Part 45：Agent 工具鏈的間接提示詞注入防禦設計](/posts/fde-interview-guide-part45-prompt-injection-defense-zh/)
+
 ---
 
 **系列導航**

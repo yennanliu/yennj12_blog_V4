@@ -418,6 +418,10 @@ print(result.token_usage)    # token 用量統計
 
 下一篇我們會用三個**更貼近真實工作場景的應用**：競爭對手情報分析、自動化程式碼審查、以及客服需求分類系統，展示 CrewAI 如何解決實際業務問題。
 
+## 相關文章與正典版本
+
+- Agent 框架選型（AutoGen、CrewAI、LangGraph 與自建的取捨）— [AI 工程從零開始 Phase 14 Part 3：Agent 框架全景](/posts/ai-eng-from-scratch-phase14-part3-frameworks-zh/)
+
 ---
 
 **系列導覽**

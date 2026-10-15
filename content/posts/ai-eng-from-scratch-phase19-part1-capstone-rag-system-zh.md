@@ -7,7 +7,7 @@ description: "端對端構建企業級 RAG 系統：從需求分析到生產部�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "RAG", "LLM Engineering", "Vector Database", "Production", "Capstone", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "24 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,9 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 工程情境
-
-> **技術主管**：「假設你加入一家 500 人的科技公司，負責從零打造內部知識庫問答系統。有 5 萬份文件（PDF、Word、HTML 混雜），200 位同時在線用戶，SLA 要求 P95 < 3 秒，預算每月 $3,000 以內。你的第一個月怎麼規劃？第 4 週的架構長什麼樣子？最大的技術風險在哪裡？」
+這篇給已經走完前 18 個 Phase、要把 RAG 從腳本做成系統的工程師看。全文用一個貫穿的參考專案：加入一家 500 人的科技公司，從零打造內部知識庫問答系統——5 萬份 PDF、Word、HTML 混雜的文件，200 位同時在線用戶，SLA 要求 P95 < 3 秒，預算每月 $3,000 以內。讀完你會能規劃第一個月的四週路線、畫出第 4 週的架構、為解析管線、混合索引、重排序、提示與評估框架各自做出有理由的決策，並說得出最大的技術風險在哪裡。
 
 ---
 
@@ -323,7 +321,7 @@ series: ["ai-eng-from-scratch"]
 └───────────────────────────────────────────────────────────────┘
 ```
 
-### 3.2 實際性能數字
+### 3.2 示意性能數字
 
 | 文件類型 | 解析速度 | 記憶體峰值 | 主要瓶頸 |
 |----------|----------|------------|----------|
@@ -507,7 +505,7 @@ RRF_score(chunk) = 1 / (k + rank_BM25)  +  α × 1 / (k + rank_vector)
 
 **為什麼 α = 0.7？**
 
-我們跑了 grid search（α 從 0.3 到 0.9，step=0.1），在 200 個 golden QA 上測試：
+以下是示意的 grid search 結果（α 從 0.3 到 0.9，step=0.1，在 200 個 golden QA 上測試）：
 
 | α 值 | Context Recall | Precision@3 |
 |------|----------------|-------------|
@@ -516,7 +514,7 @@ RRF_score(chunk) = 1 / (k + rank_BM25)  +  α × 1 / (k + rank_vector)
 | 0.7 | 89% | 0.82 |
 | 0.9 | 87% | 0.79 |
 
-α = 0.7 在繁體中文語料上表現最好。英文語料則 α = 0.6 略勝。
+在這組示意結果裡 α = 0.7 對繁體中文語料最好，英文語料則 α = 0.6 略勝；實際值要在自己的 golden QA 上重跑。
 
 **flip condition**：如果查詢以精確術語為主（如法規條號、產品型號），α 應調低至 0.4，讓 BM25 主導。
 
@@ -575,7 +573,7 @@ def should_answer(rerank_scores: list[float], threshold: float = 0.28) -> bool:
     """
     return max(rerank_scores) >= threshold
 
-# 實際數字（在 200 golden QA 上校準）：
+# 示意數字（假設在 200 golden QA 上校準）：
 # threshold=0.35: precision=98%, recall=71%（太保守，漏掉太多）
 # threshold=0.28: precision=94%, recall=87%（選這個）
 # threshold=0.20: precision=85%, recall=95%（幻覺率上升）
@@ -590,16 +588,16 @@ def should_answer(rerank_scores: list[float], threshold: float = 0.28) -> bool:
 | Context window 壓縮 | 15% | 把 3 個 parent chunk 截短至 900 tokens 各 |
 | 串流式回應 | 0%（成本不變，體驗提升） | SSE streaming |
 
-**實際成本**：
+**示意成本**：
 - 優化前：$0.18/次（3K tokens input × $0.005 + 500 tokens output × $0.015）
 - 優化後：$0.04/次（prompt cache + mini fallback + 壓縮）
-- 月成本（40 QPS × 3600s × 8hr × 30天 ÷ 10 = 約 345,600 次）：實際約 $13,800 次 × $0.04 = $552/月
+- 月成本（40 QPS × 3600s × 8hr × 30天 ÷ 10 = 約 345,600 次）：示意約 $13,800 次 × $0.04 = $552/月
 
 ---
 
 ## 七、評估框架：RAGAS 指標 + 人工評測 + 持續監控
 
-### 7.1 RAGAS 四大指標（實際基準）
+### 7.1 RAGAS 四大指標（示意基準）
 
 | 指標 | 定義 | Week 1 POC | Week 4 Production | 達標門檻 |
 |------|------|-----------|------------------|----------|
@@ -656,12 +654,14 @@ def detect_embedding_drift(new_vectors, reference_vectors, threshold=0.05):
 
 ## 八、為什麼選 X 不選 Y
 
+兩個選擇用文字交代。文件 ingestion 的同步與非同步：上傳 100MB PDF 同步處理要等 45 秒、timeout 風險高、OCR 失敗整個 request 就失敗，所以第 4 週改成 Celery + Redis 讓上傳立即回應、失敗自動 retry、worker 可水平擴展；只有文件數 < 1000 份且單檔 < 5MB 時，同步 ingestion 才划算。評估框架用 RAGAS 而不是自製：四個指標開箱即用、有論文定義、與 LangSmith 整合好、一週內上線；需要高度客製化的指標（例如特定領域的合規檢查），或 LLM judge 成本過高（> $10/次評估）時，才值得自己寫。下面四個決策才真的需要權衡。
+
 ### 決策一：向量資料庫選擇
 
 | 選擇 | 選 Qdrant 的理由 | 不選的理由 |
 |------|-----------------|------------|
-| **Qdrant** ✓ | 原生 hybrid search（dense+sparse），int8 量化開箱即用，self-hosted 選項，$70/月 starter | — |
-| Pinecone | 全託管，zero ops | 不支援 BM25 sparse（需自行實作），$0.096/1M vectors = 在 1.2M chunks 下 $115/月，多租戶需要 namespace，查詢需帶 namespace 參數，易出錯 |
+| **Qdrant** ✓ | 原生 hybrid search（dense+sparse），int8 量化開箱即用，self-hosted 選項，$70/月 starter | 叢集要自己維運 |
+| Pinecone | 全託管，zero ops，亦有 sparse index 可做 hybrid | 多租戶靠 namespace，查詢必須帶對 namespace 參數，易出錯；費用隨讀寫單位計價，在 1.2M chunks、40 QPS 的量下需先試算 |
 | Weaviate | 功能豐富，有 BM25 | 記憶體消耗比 Qdrant 高 40%，中文分詞需要額外設定，文件不如 Qdrant 清晰 |
 
 > **Flip condition**：如果完全不想管基礎設施，或規模超過 1 億 chunks，換 Pinecone 的 serverless 方案。
@@ -683,40 +683,18 @@ def detect_embedding_drift(new_vectors, reference_vectors, threshold=0.05):
 
 | 選擇 | 選 Cross-encoder 的理由 | 不選 ColBERT 的理由 |
 |------|------------------------|---------------------|
-| **Cross-encoder** ✓ | 精度更高（MRR@3 比 ColBERT 高 6%），模型小（66MB），本地部署成本低（$30/月 CPU instance） | — |
+| **Cross-encoder** ✓ | 精度更高（MRR@3 比 ColBERT 高 6%），模型小（66MB），本地部署成本低（$30/月 CPU instance） | 每次查詢都要重算 (query, passage) 配對 |
 | ColBERT | 延遲更低（預計算 passage vectors） | Token-level interaction 需要 GPU 才能達到 < 100ms，在 CPU 上每次 rerank 450ms 超出預算；部署複雜度高 |
 
 > **Flip condition**：如果有 GPU instance 且每日查詢量 > 500K，ColBERT 的延遲優勢開始顯現。
 
 ---
 
-### 決策四：Async Queue (Celery) vs 同步 Ingestion
-
-| 選擇 | 選 Celery 的理由 | 不選同步的理由 |
-|------|----------------|---------------|
-| **Celery + Redis** ✓ | 上傳 100MB PDF 立即回應（TTFB < 200ms），失敗可自動 retry，worker 數量可彈性調整，任務狀態可查詢 | — |
-| 同步 Ingestion | 實作最簡單 | 上傳 100MB PDF 等待 45 秒，timeout 風險高；OCR 失敗整個 request 失敗，沒有重試機制；無法水平擴展 |
-
-> **Flip condition**：文件數 < 1000 份且單個文件 < 5MB 時，同步 ingestion 已足夠，不值得引入 Celery 的運維複雜度。
-
----
-
-### 決策五：RAGAS vs 自製評估框架
-
-| 選擇 | 選 RAGAS 的理由 | 不選自製的理由 |
-|------|----------------|---------------|
-| **RAGAS** ✓ | 開箱即用的 4 個指標，社群活躍，與 LangSmith 整合好，1 週內上線 | — |
-| 自製 Eval | 完全掌控，不依賴外部 LLM judge | 從零實作 Faithfulness judge 需要 3-4 週；RAGAS 有論文支撐，指標定義清晰；自製框架難以與業界對比 |
-
-> **Flip condition**：需要高度客製化指標（如特定領域的合規檢查），或 RAGAS 的 LLM judge 成本過高（> $10/次評估），才值得自製。
-
----
-
-### 決策六：Parent-Child Chunking vs 固定大小 Chunking
+### 決策四：Parent-Child Chunking vs 固定大小 Chunking
 
 | 選擇 | 選 Parent-Child 的理由 | 不選固定大小的理由 |
 |------|----------------------|------------------|
-| **Parent-Child** ✓ | Child（256）精準定位，Parent（1024）提供充足上下文；跨句子的語意完整；實測幻覺率比固定切分低 8% | — |
+| **Parent-Child** ✓ | Child（256）精準定位，Parent（1024）提供充足上下文；跨句子的語意完整；示意估算中幻覺率比固定切分低 8% | 索引要維護兩層 chunk 與 parent_id 對應 |
 | 固定大小（512） | 實作最簡單 | 語意邊界被隨機切斷；同一個答案分散在多個 chunk；重疊（overlap）雖然緩解問題但增加 50% 的 chunks 數量 |
 
 > **Flip condition**：文件結構高度統一（如資料庫 schema 文件、API 文件），固定大小 + overlap 已足夠，不值得 parent-child 的索引複雜度。
@@ -738,6 +716,8 @@ def detect_embedding_drift(new_vectors, reference_vectors, threshold=0.05):
 | **Index size** | — | 12GB（50K docs） | — | int8 量化節省 50% |
 | **查詢快取 hit rate** | 0% | 45% | — | Redis + 1hr TTL + query normalization |
 
+> *示意估算，非實測數據。*
+
 ### 9.1 幻覺率 34% → 6% 的分解
 
 | 改進項目 | 幻覺率降幅 |
@@ -746,6 +726,8 @@ def detect_embedding_drift(new_vectors, reference_vectors, threshold=0.05):
 | Confidence gate（低分時拒答）| -8% |
 | Cross-encoder reranking（排掉不相關 chunks）| -6% |
 | Parent chunk（更多上下文，LLM 不需要猜測） | -4% |
+
+> *示意估算，非實測數據。*
 
 ### 9.2 P95 8.2s → 2.9s 的分解
 
@@ -757,12 +739,17 @@ def detect_embedding_drift(new_vectors, reference_vectors, threshold=0.05):
 | asyncio parallel search（BM25 ‖ Vector）| -0.38s |
 | GPT-4o-mini fallback（35% 查詢）| -0.5s（加權） |
 
+> *示意估算，非實測數據。*
+
 ---
 
 ## 十、系列導航
 
-← [Phase 18 Part 2：AI 治理與倫理 — 工程師的責任邊界](/posts/ai-eng-from-scratch-phase18-part2-governance-zh/) | [Phase 19 Part 2：Capstone — 生產級 AI Agent 產品端對端實作 →](/posts/ai-eng-from-scratch-phase19-part2-capstone-agent-product-zh/)
+| | |
+|---|---|
+| ← 上一篇 | [Phase 18 Part 2：AI 治理與倫理 — 工程師的責任邊界](/posts/ai-eng-from-scratch-phase18-part2-governance-zh/) |
+| → 下一篇 | [Phase 19 Part 2：Capstone — 生產級 AI Agent 產品端對端實作](/posts/ai-eng-from-scratch-phase19-part2-capstone-agent-product-zh/) |
 
 ---
 
-*本文是「AI 工程從零開始」系列的第 41 篇。文中數字為參考設計的示意估算，非實際生產數據。如有任何問題，歡迎在評論區留言。*
+*本文為「AI 工程從零開始」系列 Phase 19 Part 1。文中數字為參考設計的示意估算，非實際生產數據。系列總覽：[AI 工程從零開始](/tags/ai-eng-from-scratch/)。*

@@ -7,7 +7,7 @@ description: "深入解析卷積神經網路的工程直覺：卷積運算、池
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Computer Vision", "CNN", "ResNet", "Transfer Learning", "Image Classification", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "16 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,9 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 工程情境
-
-**技術主管問：** 「你的團隊要為一個醫療 App 建立皮膚病灶分類模型，訓練集只有 8,000 張標注影像、7 個類別，部署目標是手機端推論延遲 < 200ms。請說明你的架構選擇、遷移學習策略，以及你會怎麼處理類別不平衡問題。」
+這篇給拿到影像分類任務就直接 Fine-tune ResNet50、卻說不出為什麼的工程師看。讀完你會能從卷積、池化、殘差連接的第一原理解釋每個架構選擇，並為「8,000 張標注影像、7 個類別、手機端推論 < 200ms」這種小資料醫療分類任務，依資料量與 domain 差距選出 backbone 與遷移學習策略，同時處理好類別不平衡與正規化這兩個最常見的坑。
 
 ---
 
@@ -406,23 +404,9 @@ transform = Normalize(mean=dataset_mean, std=dataset_std)
 
 ## 八、為什麼選 X 不選 Y
 
-### 決策 1：ResNet-50 vs VGG-16
+> ResNet-50 對 VGG-16 已不是真正的選擇（25M vs 138M 參數、76.1% vs 71.5% Top-1，見 §五），只有需要與多年前的 baseline 對比或維護舊系統時才會碰到 VGG，因此不列為決策。
 
-| 維度 | ResNet-50 | VGG-16 |
-|------|-----------|--------|
-| 參數量 | 25M | 138M |
-| Top-1 Acc | 76.1% | 71.5% |
-| 推論速度 (224×224) | ~10ms (GPU) | ~25ms (GPU) |
-| 記憶體佔用 | ~100MB | ~553MB |
-| Fine-tune 難易度 | 容易，Skip Connection 保護梯度 | 較難，深層梯度消失 |
-
-**選 ResNet-50 的理由：** 準確率更高、更快、更小、更容易訓練。VGG-16 在 2024 年幾乎沒有理由選用。
-
-**翻轉條件：** 若需要與 5 年前的 baseline 對比或維護舊系統，才考慮 VGG-16。
-
----
-
-### 決策 2：EfficientNet vs ResNet（行動裝置部署）
+### 決策 1：EfficientNet vs ResNet（行動裝置部署）
 
 | 維度 | EfficientNet-B0 | ResNet-50 |
 |------|-----------------|-----------|
@@ -438,7 +422,7 @@ transform = Normalize(mean=dataset_mean, std=dataset_std)
 
 ---
 
-### 決策 3：Gradual Unfreeze vs 直接 Full Fine-tune
+### 決策 2：Gradual Unfreeze vs 直接 Full Fine-tune
 
 | 維度 | Gradual Unfreeze | Full Fine-tune |
 |------|-----------------|----------------|
@@ -452,20 +436,7 @@ transform = Normalize(mean=dataset_mean, std=dataset_std)
 
 ---
 
-### 決策 4：Max Pooling vs Average Pooling
-
-| 維度 | Max Pooling | Average Pooling |
-|------|-------------|-----------------|
-| 特性 | 保留最強特徵，丟棄位置資訊 | 保留整體分布，平滑噪音 |
-| 適合任務 | 物件偵測、紋理分類 | 場景分類、風格識別 |
-| 過擬合風險 | 較高（只保留峰值） | 較低 |
-| 反向傳播 | 梯度只流向最大值位置 | 梯度均勻分配 |
-
-**工程經驗：** 中間層用 Max Pooling，最後一層用 GAP（Global Average Pooling），是 ResNet 之後的標準做法。
-
----
-
-### 決策 5：Focal Loss vs Cross-Entropy（類別不平衡）
+### 決策 3：Focal Loss vs Cross-Entropy（類別不平衡）
 
 | 維度 | Focal Loss | Cross-Entropy + Class Weight |
 |------|------------|------------------------------|
@@ -476,20 +447,6 @@ transform = Normalize(mean=dataset_mean, std=dataset_std)
 | 實作難度 | 稍高 | 內建支援 |
 
 **翻轉條件：** 資料量足夠且可以做充分 oversampling 時，Cross-Entropy 更穩定。
-
----
-
-### 決策 6：Random Augmentation vs AutoAugment
-
-| 維度 | Random Augmentation | AutoAugment / RandAugment |
-|------|---------------------|--------------------------|
-| 搜索成本 | 無（人工設計） | AutoAugment 需要 GPU 小時搜索 |
-| RandAugment | N, M 兩個超參數 | 效果接近 AutoAugment |
-| 準確率提升 | 基準 | +0.5–2.0% (ImageNet) |
-| 遷移性 | 需要針對任務設計 | RandAugment 遷移性好 |
-| 建議 | POC 階段 | MVP/Scale 階段 |
-
-**工程建議：** 直接用 `torchvision.transforms.RandAugment(num_ops=2, magnitude=9)`，幾乎無需調參，效果接近 AutoAugment。
 
 ---
 
@@ -506,6 +463,8 @@ transform = Normalize(mean=dataset_mean, std=dataset_std)
 | 推論延遲 (iPhone 14) | N/A (伺服器) | 185ms | 48ms | 42ms (CoreML) |
 | 記憶體用量 (訓練) | 22 GB | 6 GB | 4 GB | 4 GB / GPU |
 | 月度 GPU 費用 (AWS p3.2xl) | $240 | $18 | $105 | $330 (一次性訓練) |
+
+*示意估算，非實測數據*
 
 **關鍵洞察：**
 1. Feature Extraction（Phase 1）用 6% 的訓練時間，達到 Baseline 110% 的準確率

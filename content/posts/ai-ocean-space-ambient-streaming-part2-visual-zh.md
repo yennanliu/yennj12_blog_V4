@@ -8,7 +8,7 @@ categories: ["all", "ai", "business", "creative"]
 tags: ["Midjourney", "Runway", "視覺設計", "4K", "深海", "太空", "AI生成", "動態視覺", "Streaming", "visual-design"]
 summary: "系列第二篇：使用 Midjourney V7 和 Runway Gen-3 創造令人驚嘆的 4K 深海與太空視覺。從提示詞工程到動態影片生成，打造沉浸式直播體驗。"
 description: "系列第二篇：使用 Midjourney V7 和 Runway Gen-3 創造令人驚嘆的 4K 深海與太空視覺。從提示詞工程到動態影片生成，打造沉浸式直播體驗。"
-readTime: "21 min"
+readTime: "36 min"
 ---
 
 在系列第一篇中，我們掌握了 AI 音頻生成技術。本篇將聚焦於視覺設計：如何使用最新的 AI 工具創造令人屏息的深海和太空場景，並將靜態圖像轉換為流暢的動態影片。
@@ -1146,10 +1146,11 @@ DaVinci Resolve（完全免費！）
 
 ## 🔄 系列文章導航
 
-1. **【已完成】市場分析、科學原理與 AI 工具選擇**
-2. **【當前】視覺製作：8K 深海/太空場景生成** ✅
-3. **【下一篇】技術實作：OBS 設定、串流上線與自動化**
-4. **【第四篇】內容策略：Shorts 導流、社群經營與變現**
+1. [市場分析、科學原理與 AI 工具選擇](/posts/ai-ocean-space-ambient-streaming-part1-foundation-zh/)
+2. **【當前】視覺製作：4K 深海/太空場景生成** ✅
+3. [技術實作：OBS 設定、串流上線與自動化](/posts/ai-ocean-space-ambient-streaming-part3-technical-zh/)
+4. [內容策略：Shorts 導流、社群經營與變現](/posts/ai-ocean-space-ambient-streaming-part4-growth-zh/)
+- 共用基礎建設：[24/7 音樂直播共用基礎建設：編碼器、自癒串流、監控與社群管線](/posts/music-streaming-247-infrastructure-zh/)
 
 下一篇我們將進入技術實作階段，學習如何將音頻與視覺整合到 OBS，設定 24/7 串流，以及建立自動化監控系統。
 
@@ -1158,5 +1159,3 @@ DaVinci Resolve（完全免費！）
 ## 延伸閱讀
 
 - [AI 深海/太空環境音串流實戰（一）：市場分析、科學原理與 AI 工具選擇](/posts/ai-ocean-space-ambient-streaming-part1-foundation-zh/)
-
-**標籤**: #Midjourney #Runway #視覺設計 #8K #AI生成 #深海 #太空 #動態視覺 #YouTube

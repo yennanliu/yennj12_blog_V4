@@ -299,6 +299,10 @@ LLM 可能輸出：
 >
 > *錯誤策略：依業務需求選 Fail-fast（缺任何工具都不行）或 Partial Success（部分工具失敗可降級處理），並有 Retry with Fallback 機制。」*
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Speculative Tool Execution：大扇出控制與投機雙發](/posts/fde-core-concept-14-speculative-tool-fanout-zh/)
+
 ---
 
 **系列導航**

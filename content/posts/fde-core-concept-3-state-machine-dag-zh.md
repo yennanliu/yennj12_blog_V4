@@ -443,6 +443,12 @@ graph TD
 
 **FDE Interview Core Topics 系列**：本系列共 25 篇，每篇聚焦一個面試高頻核心概念，以「核心定義 → 技術深度 → 三個實作層次 → 陷阱診斷 → 選型對比 → 面試一句話」的結構幫助你在 30–60 秒內展示工程判斷力。本篇是 Part 3，涵蓋 State Machine & DAG 的所有面試必考面向。
 
+## 相關文章與正典版本
+
+- LangGraph 入門（狀態、路由、interrupt、checkpointer）— [LangGraph + LangChain 完全入門指南](/posts/langgraph-langchain-intro-zh/)
+- 完整後端範例（可恢復的執行）— [LangGraph 客服工單後端：從狀態設計到可恢復的執行](/posts/langgraph-ai-customer-ticket-system-zh/)
+- 面試情境與演進階段 — [FDE 面試準備指南（七）：Agent 深度設計——ReAct vs Planner、Tool Routing、Multi-Agent](/posts/fde-interview-guide-part7-agent-design-zh/)、[FDE 面試準備指南（二十五）：Self-Reflection 與幻覺校正迴圈設計](/posts/fde-interview-guide-part25-self-reflection-loop-zh/)
+
 **系列導航**
 
 ← [前一篇](/posts/fde-core-concept-2-memory-architecture-zh/) | [後一篇](/posts/fde-core-concept-4-hybrid-search-rrf-zh/) →

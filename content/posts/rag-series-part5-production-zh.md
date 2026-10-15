@@ -217,6 +217,8 @@ def evaluate_and_log(rag_pipeline, test_cases: list[dict], output_dir: str = "./
 
 ## Part 2：GraphRAG
 
+> 本節是概念與玩具實作。RAGFlow 實際怎麼建圖、何時用 RAPTOR 取代它，請看 [RAGFlow Part 4](/posts/ragflow-intro-part4-retrieval-rerank-zh/) §5.1–5.2。
+
 ### 向量搜尋的根本限制
 
 向量搜尋擅長找「語意相似的文件」，但對需要**跨文件推理**的問題很弱：
@@ -645,12 +647,19 @@ print(answer)
 希望這個系列能幫助你從零建立、優化並評估自己的 RAG 系統。  
 RAG 的技術仍在快速演進，但這五篇涵蓋的核心原理和思路，在可見的未來都會持續適用。
 
+## 相關文章與正典版本
+
+- RAG 評估：機制、管線與實作（正典）— [FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)、[AI 工程從零開始 Phase 11 Part 2：RAG 系統與 LLM 評估](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/)、[ChatPDF RAG 優化（三）：可觀測性與評估](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/)
+- GraphRAG / RAPTOR 的生產實作（正典）— [RAGFlow Intro Part 4 — 混合搜尋、Rerank 與 GraphRAG/RAPTOR](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
+- 向量資料庫選型（正典）— [RAG 完全指南（二）：Chunking 策略與向量資料庫選型](/posts/rag-series-part2-chunking-vectordb-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+- LangGraph 入門與完整後端範例 — [LangGraph + LangChain 完全入門指南](/posts/langgraph-langchain-intro-zh/)、[LangGraph 客服工單後端：從狀態設計到可恢復的執行](/posts/langgraph-ai-customer-ticket-system-zh/)
+
 ---
 
 **系列導覽**
 
 - [第一篇](/posts/rag-series-part1-foundations-zh/)：基礎概念與第一個 RAG 系統
 - [第二篇](/posts/rag-series-part2-chunking-vectordb-zh/)：Chunking 策略與向量資料庫選型
-- [第三篇](/posts/rag-series-part3-advanced-retrieval-zh/)：進階檢索技術（混合搜尋、HyDE、Multi-Query、Reranker）
-- [第四篇](/posts/rag-series-part4-optimization-zh/)：查詢優化與 Context 壓縮
+- 第三、四篇（進階檢索、查詢優化與 Context 壓縮）已併入[第一篇的導讀](/posts/rag-series-part1-foundations-zh/)；深入請看 [Hybrid Search & RRF](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)、[AI 工程 Phase 11 Part 2](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/) 與 [Context 壓縮與摘要](/posts/context-compression-summarization-guide-zh/)
 - **第五篇（本篇）**：生產級 RAG 評估與 Agentic RAG

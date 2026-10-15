@@ -454,6 +454,10 @@ Redis 記憶體使用（500 租戶）   N/A                         ~50 MB（每
 
 > *「Backpressure 是一個訊號機制，不是一個拒絕機制：當 GPU 配額或 LLM 速率上限被觸及時，正確的做法是讓上游放慢並將請求排入 Pub/Sub 緩衝，而不是直接丟棄。Token Bucket 用 Redis Lua 腳本在 0.5 ms 內原子地決定放行或排隊，比 DB-based 方案快 30 倍，在 50K req/s 規模下這個差距從 25 ms 放大到 750 ms，限速層本身就會成為瓶頸。Fair-Share 透過每個租戶等級獨立的 Pub/Sub subscription 加上 KEDA 自動擴縮的 worker pool，確保即使 Enterprise 客戶正在全速衝擊，Standard 租戶仍保證 5 req/s 的 floor rate；關鍵在於 floor rate 不是靠優先佇列「謙讓」來保證，而是靠完全獨立的資源池來隔離，這才是多租戶 SLA 設計的本質：優先不等於獨占。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（二十三）：多租戶 Agent 的限流、Fair-Share 與 Token 預算控制](/posts/fde-interview-guide-part23-ratelimit-fairshare-zh/)
+
 ---
 
 **系列導航**

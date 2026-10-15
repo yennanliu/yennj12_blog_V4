@@ -7,7 +7,7 @@ description: "深入解析 GAN 訓練動態、StyleGAN/CycleGAN 架構、影片�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Generative AI", "GAN", "Video Generation", "StyleGAN", "Image Synthesis", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "20 min"
+readTime: "13 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**工程情境：** 你的團隊需要為電商平台建立「商品圖片風格轉換」系統，目標是把用戶上傳的素人照自動轉成專業棚拍風格，日處理量 50 萬張，延遲要求 < 200ms。請問你會選 GAN 還是擴散模型？架構如何設計？
+這篇給知道 GAN 是「兩個網路互相對抗」、但沒親手處理過一次模式崩潰的工程師看。讀完你會能從 loss 曲線與 FID 判斷訓練是震盪、崩潰還是梯度消失，解釋 WGAN-GP 與 Spectral Norm 各自修正了什麼，看懂 StyleGAN 的風格注入與 CycleGAN 的循環一致性損失，並能為一個「日處理 50 萬張、延遲 < 200ms」的商品圖風格轉換系統，在 GAN 與擴散模型之間做出有依據的選擇。
 
 ---
 
@@ -46,101 +46,17 @@ GAN（Generative Adversarial Network）由 Ian Goodfellow 於 2014 年提出，�
 
 ---
 
-## 二、三個演進階段（含 ASCII 架構圖）
+## 二、何時該升級：從 DCGAN 到 WGAN-GP 與 StyleGAN2 的觸發條件
 
-### ╔══ Phase 1：POC / < 10K 樣本 ══╗
+單 GPU 上的 DCGAN 配 BCE loss、batch 64、lr 0.0002，足以驗證 Generator 學不學得到資料分佈的基本形狀；代價是沒有 EMA、沒有漸進式訓練，訓練有相當機率在 10K 步內崩潰，而且崩潰時 loss 看起來往往很正常。該換成 WGAN-GP（或 Spectral Norm）加 EMA 的訊號是 **BCE 已經不再是可用的訓練信號**：D loss 趨近 0 而 G loss 爆炸（梯度消失），或 FID 停滯甚至上升但 loss 曲線平穩（模式崩潰）。Wasserstein 距離給的是單調的收斂指標，這才是升級的真正收穫，而不是「更先進的架構」。
 
-**目標**：驗證 GAN 能否學到目標分佈的基本形狀。
+第二道門檻是**需求超出 DCGAN 架構本身**：要生成 512 以上解析度（從頭直接訓 1024×1024 不穩定，需要漸進式增長或 StyleGAN2 的架構），要控制屬性與插值（W 空間與 style mixing），或訓練資料少於約 1 萬張（需要 ADA 自適應增強）。部署端的門檻則是延遲 SLA：單張 < 50ms 時才值得做 TensorRT INT8 量化與 K8s 自動擴縮。
 
-```
-┌─────────────────────────────────────────────────────────┐
-│  Phase 1：Vanilla GAN / DCGAN                           │
-│                                                         │
-│  Noise z ──▶ [Generator] ──▶ Fake Image                │
-│                                   │                     │
-│  Real Image ──────────────────▶ [Discriminator]        │
-│                                   │                     │
-│              Loss: BCELoss ◀──────┘                     │
-│                                                         │
-│  訓練：單 GPU，batch_size=64，lr=0.0002                  │
-│  監控：肉眼看生成樣本，FID 每 1000 步計算一次            │
-└─────────────────────────────────────────────────────────┘
-```
-
-- 新增元件：DCGAN 架構（Conv/ConvTranspose）、BatchNorm
-- 接受的技術債：沒有 EMA、沒有漸進式訓練、FID 通常 > 50
-- 典型訓練時間：CIFAR-10（32×32）約 4 小時，CelebA（64×64）約 12 小時
-- 目標：FID < 80，樣本視覺上有意義
-
-**Phase 1 問題**：訓練不穩定，50% 機率在 10K 步內崩潰。沒有系統性診斷工具。
-
----
-
-### ╔══ Phase 2：MVP / 10K–200K 樣本 ══╗
-
-**目標**：生產可用的圖片生成，FID < 20，訓練可重現。
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  Phase 2：WGAN-GP + 漸進式訓練                                   │
-│                                                                 │
-│  Noise z ──▶ [G: 4×4 → 8×8 → ... → 256×256] ──▶ Fake          │
-│                         ↑                          │            │
-│                  Progressive                       │            │
-│                  Growing                           ▼            │
-│  Real ──────────────────────────────▶ [D: 256 → ... → 4×4]    │
-│                                                    │            │
-│              Wasserstein Loss + GP ◀───────────────┘            │
-│                                                                 │
-│  監控儀表板：                                                    │
-│  ┌──────────┬──────────┬──────────┬──────────┐                 │
-│  │ W-dist   │   FID    │  IS Score│ G/D ratio│                 │
-│  │ ↓ 好     │ ↓ 好     │  ↑ 好    │ 1:1 理想 │                 │
-│  └──────────┴──────────┴──────────┴──────────┘                 │
-│                                                                 │
-│  EMA 權重平滑：每步 μ=0.999 更新 G 的 shadow copy              │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-- 新增元件：Wasserstein Loss + Gradient Penalty、EMA、漸進式解析度增長
-- FID 目標：< 20（CelebA-HQ 256×256）
-- 訓練時間：4× A100，約 3 天
-- 成本：約 $200–400 AWS p4d 費用
-
-**Phase 2 問題**：StyleGAN 等進階架構需要更複雜的潛在空間設計。
-
----
-
-### ╔══ Phase 3：Scale / 200K–1M+ 樣本 ══╗
-
-**目標**：企業級圖片生成管線，支援條件控制、高解析度、低延遲推論。
-
-```
-┌────────────────────────────────────────────────────────────────────┐
-│  Phase 3：StyleGAN2 + 條件控制 + 推論優化                          │
-│                                                                    │
-│  訓練叢集                          推論服務                         │
-│  ┌────────────────────┐           ┌──────────────────────────┐    │
-│  │ 8× A100 80GB       │           │ TensorRT 量化模型         │    │
-│  │ StyleGAN2 1024×1024│──Export──▶│ INT8 精度                 │    │
-│  │ Mixed Precision    │           │ 512×512: ~15ms / image    │    │
-│  │ FID = 2.84         │           │ 1024×1024: ~45ms / image  │    │
-│  └────────────────────┘           └──────────────┬───────────┘    │
-│                                                   │                │
-│  資料管線                                          ▼                │
-│  ┌────────────────────┐           ┌──────────────────────────┐    │
-│  │ S3 Raw Images      │           │ Auto-scaling K8s         │    │
-│  │ → FFHQ-style 預處理│           │ 50 RPS → 500 RPS 彈性    │    │
-│  │ → Quality Filter   │           │ P99 latency < 200ms      │    │
-│  │ → ADA Augmentation │           └──────────────────────────┘    │
-│  └────────────────────┘                                            │
-└────────────────────────────────────────────────────────────────────┘
-```
-
-- 新增元件：StyleGAN2、ADA（Adaptive Data Augmentation）、TensorRT INT8、K8s HPA
-- StyleGAN2 FID：**2.84**（FFHQ 1024×1024，當時 SOTA）
-- 推論成本：約 $0.0002 / 張（A10G Spot 實例）
-- 訓練成本：約 $3,000–8,000（視資料集大小）
+| 從 | 到 | 觸發訊號 |
+|----|----|----------|
+| DCGAN + BCE loss，單 GPU | WGAN-GP（或 Spectral Norm）+ EMA + 漸進式訓練 | D loss → 0 且 G loss 爆炸；FID 停滯或上升但 loss 平穩；需要能判斷「有沒有收斂」的指標 |
+| WGAN-GP，≤ 256×256 | StyleGAN2 + ADA，1024×1024 | 需要 512 以上解析度；需要屬性控制／風格混合；訓練資料 < 1 萬張 |
+| PyTorch FP32 推論 | TensorRT INT8 + 自動擴縮 | 單張延遲 SLA < 50ms；流量峰谷差超過一個數量級 |
 
 ---
 
@@ -454,12 +370,10 @@ def temporal_consistency_loss(frames, optical_flow_net):
 
 | 選擇 | 選 X 的理由 | 不選 Y 的理由 | Flip Condition |
 |------|-------------|---------------|----------------|
-| **WGAN-GP vs Vanilla GAN** | 有意義的收斂指標（W-distance↓），梯度消失問題大幅改善，訓練穩定性 +60% | BCELoss：D 太強時 G 梯度消失，模式崩潰率 ~40%，無法知道訓練是否真正收斂 | 若計算預算極限（每步少 30% 計算量），考慮 Spectral Norm 替代 GP |
-| **GAN vs Diffusion（低延遲場景）** | 單次前向傳播 < 15ms；TensorRT 量化後 512×512 < 50ms；適合 SLA < 200ms 的商業 API | Diffusion：50–200 步去噪，即使 DDIM 加速仍需 1–5s；Consistency Model 已縮短至 ~200ms 但品質仍有差距 | 若延遲 SLA > 500ms 且品質要求極高，選 Diffusion |
-| **Diffusion vs GAN（高品質生成）** | 多樣性更好（無模式崩潰），文字條件控制精準（CLIP 對齊），FID < 2（DALL-E 3 等），訓練更穩定 | GAN：訓練不穩定，需要大量調參；StyleGAN2 FID 2.84 雖然優秀但僅限特定域（臉部）；對文字條件控制弱 | 若推論預算 < $0.001/張且延遲 < 100ms，GAN 仍是首選 |
-| **CycleGAN vs Pix2Pix（無配對資料）** | 不需要配對資料集（大幅降低標注成本，通常節省 80% 人力），兩個域的圖片即可訓練 | Pix2Pix：需要嚴格配對的輸入輸出對，資料收集成本高；配對資料不完美時品質反而更差 | 若有充足配對資料（> 5K 對），Pix2Pix 品質通常優 5–15 FID 點 |
-| **StyleGAN vs ProGAN（高解析度生成）** | W 空間解耦允許風格控制和插值；FID 2.84 vs ProGAN 8.04；Style Mixing 是獨特功能 | ProGAN：缺乏風格控制機制；W 空間不如 StyleGAN 平滑，潛在空間插值品質差 | 若計算資源極限（StyleGAN2 訓練成本約 ProGAN 的 3 倍），ProGAN 仍是可接受選擇 |
-| **TensorRT INT8 vs FP32 推論** | INT8 比 FP32 快 3–4×，記憶體減少 75%；A10G 上 512×512 從 60ms 降至 15ms；成本降低 70% | FP32：精度最高，量化無誤差，除錯更容易 | 若模型有 BN 層且資料分佈特殊，INT8 校準誤差可能 > 5%，需要 FP16 作為折衷 |
+| **WGAN-GP vs Vanilla GAN** | 有意義的收斂指標（W-distance↓），D 接近完美時 G 仍有梯度 | BCELoss：D 太強時 G 梯度消失，容易模式崩潰，無法知道訓練是否真正收斂 | 若 GP 的二階梯度計算成為瓶頸（每步約慢 30%），改用 Spectral Norm 限制 D 的 Lipschitz 常數 |
+| **GAN vs Diffusion** | 單次前向傳播 < 15ms；TensorRT 量化後 512×512 < 50ms；特定域（臉部）FID 仍領先；資料效率高 | Diffusion：50–200 步去噪，即使 DDIM 加速仍需 1–5s；但多樣性、文字條件控制與訓練穩定性全面佔優 | 延遲 SLA > 500ms、需要文字條件或開放域生成 → Diffusion；延遲 < 100ms 或固定域風格轉換 → GAN |
+| **CycleGAN vs Pix2Pix（無配對資料）** | 不需要配對資料集，兩個域的圖片各一批即可訓練 | Pix2Pix：需要嚴格配對的輸入輸出對，配對不完美時品質反而更差 | 若有充足配對資料（> 5K 對），Pix2Pix 的 L1 監督讓結構對齊更準，品質通常更好 |
+| **TensorRT INT8 vs FP32 推論** | INT8 比 FP32 快 3–4×，記憶體減少 75%；A10G 上 512×512 從 60ms 降至 15ms | FP32：精度最高，量化無誤差，除錯更容易 | 若模型有 BN 層且資料分佈特殊，INT8 校準誤差可能 > 5%，需要 FP16 作為折衷 |
 
 ---
 
@@ -480,6 +394,8 @@ def temporal_consistency_loss(frames, optical_flow_net):
 | **風格可控性** | 高（StyleGAN W 空間）| 中（需要 ControlNet）| GAN 佔優 |
 | **微調成本** | 低（DreamBooth-style 約 $5）| 低（LoRA 約 $10）| 相近 |
 
+*示意估算，非實測數據*
+
 ### 實際業務場景選型指南
 
 | 場景 | 建議選型 | 理由 |
@@ -490,6 +406,8 @@ def temporal_consistency_loss(frames, optical_flow_net):
 | 醫療影像增強（需要可解釋性）| **GAN（條件 GAN）** | 可控性高，不需要龐大算力 |
 | 影片風格轉換（每幀獨立）| **GAN + 光流後處理** | 每幀 < 50ms，光流修正閃爍 |
 | 通用圖片生成（無延遲限制）| **Diffusion** | 品質、多樣性、可控性全勝 |
+
+*示意估算，非實測數據*
 
 ---
 

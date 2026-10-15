@@ -444,3 +444,8 @@ Total: ~$32/day = ~$960/month
 ---
 
 下一篇：[FDE 面試準備指南（七）：Agent 深度設計——ReAct vs Planner、Tool Routing、Multi-Agent](/posts/fde-interview-guide-part7-agent-design-zh/)
+
+## 相關文章與正典版本
+
+- 機制與原理（正典） — [FDE core topic — Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)
+- 機制與原理（正典） — [FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)

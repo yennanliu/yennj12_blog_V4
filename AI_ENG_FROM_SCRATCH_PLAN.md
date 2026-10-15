@@ -42,7 +42,7 @@ One post per phase; larger phases split into 2–4 posts.
 | 18 | Ethics, Safety & Alignment | 30 | 2 | Technical Safety / Governance |
 | 19 | Capstone Projects | 85 | 3 | 3 flagship showcase projects |
 
-**Total: ~44 posts**
+**Total: 43 posts**
 
 ---
 
@@ -60,26 +60,29 @@ One post per phase; larger phases split into 2–4 posts.
 
 ## Standard Post Structure
 
-Every post follows this section order (using Chinese numerals 一–十):
+Posts use Chinese numerals 一–十 for top-level sections (at most ten). The recommended shape:
 
 1. **一、核心問題** — why this topic matters; what breaks without it
-2. **二、三個演進階段** — beginner / practitioner / expert framing with ASCII diagrams
-3. **三–七、Deep Dives** — major concepts, each with ASCII diagram + decision rationale
-4. **八、為什麼選 X 不選 Y** — decision tables with flip conditions
-5. **九、系統效應** — before/after numbers (accuracy, latency, cost)
-6. **十、系列導航** — previous / next phase links
+2. **二–八、Deep Dives** — the lesson's concepts in teaching order, each walking
+   intuition → mechanism → example → numbers → limits, with a diagram where structure matters
+3. **九、系統效應 / 小結** — before/after numbers (accuracy, latency, cost) and what the reader can now do
+4. **十、系列導航** — previous / next phase links
+
+「三個演進階段」 and 「為什麼選 X 不選 Y」 tables are the *interview-prep* house format
+(fde-interview-guide). They are **optional** here: use a phase section only when the topic really
+has a scale cliff, and a decision table only when there is a real alternative to weigh. Existing
+posts that already have them need not be changed; new posts must not add them to hit a count.
 
 This is **not an interview-prep series** — it is an engineering curriculum. Do **not** add a
 **十、面試答題要點** (model interview answer) section; it was removed from every post in the series.
 
 ### Quality checklist per post
 
-- [ ] 2–4 ASCII block diagrams
-- [ ] Concrete numbers throughout (ms, %, $, QPS)
-- [ ] 4–6 Why-X-not-Y decisions
-- [ ] 600–900 lines
-- [ ] No mention of "Google" (use "Cloud" in tags)
-- [ ] Tags include `"RKK"`
+- [ ] 2–4 ASCII/Mermaid diagrams that show mechanism (not feature lists)
+- [ ] Concrete numbers throughout (ms, %, $, QPS), each with its assumption or source
+- [ ] Tradeoffs explained with the condition under which the choice flips (table optional)
+- [ ] Length follows the lesson (~400–900 lines); no padding to a floor
+- [ ] Tags include `"RKK"`; no `"Interview"` tag (the "no Google" rule does not apply to this series)
 - [ ] No 面試答題要點 section
 - [ ] readTime calibrated: 500L≈18min, 700L≈23min, 900L≈28min
 - [ ] Opening 4-line contrast quote
@@ -100,74 +103,74 @@ Track status: ✅ Done | 🔄 In Progress | ⬜ Not Started
 - ✅ `ai-eng-from-scratch-phase2-part2-ensemble-optimization-zh.md` (777 lines)
 
 ### Phase 3 — Deep Learning Core
-- ⬜ `ai-eng-from-scratch-phase3-part1-neural-networks-zh.md`
+- ✅ `ai-eng-from-scratch-phase3-part1-neural-networks-zh.md` (723 lines)
 
 ### Phase 4 — Computer Vision
-- ⬜ `ai-eng-from-scratch-phase4-part1-cnn-image-fundamentals-zh.md`
-- ⬜ `ai-eng-from-scratch-phase4-part2-detection-segmentation-zh.md`
-- ⬜ `ai-eng-from-scratch-phase4-part3-vlm-3d-worldmodels-zh.md`
+- ✅ `ai-eng-from-scratch-phase4-part1-cnn-image-fundamentals-zh.md` (538 lines)
+- ✅ `ai-eng-from-scratch-phase4-part2-detection-segmentation-zh.md` (432 lines)
+- ✅ `ai-eng-from-scratch-phase4-part3-vlm-3d-worldmodels-zh.md` (577 lines)
 
 ### Phase 5 — NLP
-- ⬜ `ai-eng-from-scratch-phase5-part1-text-fundamentals-zh.md`
-- ⬜ `ai-eng-from-scratch-phase5-part2-seq2seq-attention-zh.md`
-- ⬜ `ai-eng-from-scratch-phase5-part3-advanced-nlp-zh.md`
+- ✅ `ai-eng-from-scratch-phase5-part1-text-fundamentals-zh.md` (659 lines)
+- ✅ `ai-eng-from-scratch-phase5-part2-seq2seq-attention-zh.md` (601 lines)
+- ✅ `ai-eng-from-scratch-phase5-part3-advanced-nlp-zh.md` (596 lines)
 
 ### Phase 6 — Speech & Audio
-- ⬜ `ai-eng-from-scratch-phase6-part1-asr-zh.md`
-- ⬜ `ai-eng-from-scratch-phase6-part2-tts-audio-models-zh.md`
+- ✅ `ai-eng-from-scratch-phase6-part1-asr-zh.md` (557 lines)
+- ✅ `ai-eng-from-scratch-phase6-part2-tts-audio-models-zh.md` (496 lines)
 
 ### Phase 7 — Transformers Deep Dive
-- ⬜ `ai-eng-from-scratch-phase7-part1-transformer-architecture-zh.md`
-- ⬜ `ai-eng-from-scratch-phase7-part2-training-variants-zh.md`
+- ✅ `ai-eng-from-scratch-phase7-part1-transformer-architecture-zh.md` (608 lines)
+- ✅ `ai-eng-from-scratch-phase7-part2-training-variants-zh.md` (607 lines)
 
 ### Phase 8 — Generative AI
-- ⬜ `ai-eng-from-scratch-phase8-part1-diffusion-models-zh.md`
-- ⬜ `ai-eng-from-scratch-phase8-part2-gan-video-generation-zh.md`
+- ✅ `ai-eng-from-scratch-phase8-part1-diffusion-models-zh.md` (529 lines)
+- ✅ `ai-eng-from-scratch-phase8-part2-gan-video-generation-zh.md` (508 lines)
 
 ### Phase 9 — Reinforcement Learning
-- ⬜ `ai-eng-from-scratch-phase9-part1-rl-fundamentals-zh.md`
+- ✅ `ai-eng-from-scratch-phase9-part1-rl-fundamentals-zh.md` (601 lines)
 
 ### Phase 10 — LLMs from Scratch
-- ⬜ `ai-eng-from-scratch-phase10-part1-tokenization-zh.md`
-- ⬜ `ai-eng-from-scratch-phase10-part2-pretraining-zh.md`
-- ⬜ `ai-eng-from-scratch-phase10-part3-finetuning-zh.md`
+- ✅ `ai-eng-from-scratch-phase10-part1-tokenization-zh.md` (650 lines)
+- ✅ `ai-eng-from-scratch-phase10-part2-pretraining-zh.md` (542 lines)
+- ✅ `ai-eng-from-scratch-phase10-part3-finetuning-zh.md` (517 lines)
 
 ### Phase 11 — LLM Engineering
-- ⬜ `ai-eng-from-scratch-phase11-part1-inference-serving-zh.md`
-- ⬜ `ai-eng-from-scratch-phase11-part2-rag-evals-zh.md`
+- ✅ `ai-eng-from-scratch-phase11-part1-inference-serving-zh.md` (467 lines)
+- ✅ `ai-eng-from-scratch-phase11-part2-rag-evals-zh.md` (717 lines)
 
 ### Phase 12 — Multimodal AI
-- ⬜ `ai-eng-from-scratch-phase12-part1-vit-fusion-zh.md`
-- ⬜ `ai-eng-from-scratch-phase12-part2-agents-computer-use-zh.md`
+- ✅ `ai-eng-from-scratch-phase12-part1-vit-fusion-zh.md` (539 lines)
+- ✅ `ai-eng-from-scratch-phase12-part2-agents-computer-use-zh.md` (525 lines)
 
 ### Phase 13 — Tools & Protocols
-- ⬜ `ai-eng-from-scratch-phase13-part1-mcp-apis-zh.md`
-- ⬜ `ai-eng-from-scratch-phase13-part2-orchestration-zh.md`
+- ✅ `ai-eng-from-scratch-phase13-part1-mcp-apis-zh.md` (578 lines)
+- ✅ `ai-eng-from-scratch-phase13-part2-orchestration-zh.md` (794 lines)
 
 ### Phase 14 — Agent Engineering
-- ⬜ `ai-eng-from-scratch-phase14-part1-loop-memory-zh.md`
-- ⬜ `ai-eng-from-scratch-phase14-part2-planning-zh.md`
-- ⬜ `ai-eng-from-scratch-phase14-part3-frameworks-zh.md`
-- ⬜ `ai-eng-from-scratch-phase14-part4-production-zh.md`
+- ✅ `ai-eng-from-scratch-phase14-part1-loop-memory-zh.md` (625 lines)
+- ✅ `ai-eng-from-scratch-phase14-part2-planning-zh.md` (604 lines)
+- ✅ `ai-eng-from-scratch-phase14-part3-frameworks-zh.md` (589 lines)
+- ✅ `ai-eng-from-scratch-phase14-part4-production-zh.md` (713 lines)
 
 ### Phase 15 — Autonomous Systems
-- ⬜ `ai-eng-from-scratch-phase15-part1-long-horizon-zh.md`
-- ⬜ `ai-eng-from-scratch-phase15-part2-self-improvement-safety-zh.md`
+- ✅ `ai-eng-from-scratch-phase15-part1-long-horizon-zh.md` (668 lines)
+- ✅ `ai-eng-from-scratch-phase15-part2-self-improvement-safety-zh.md` (553 lines)
 
 ### Phase 16 — Multi-Agent & Swarms
-- ⬜ `ai-eng-from-scratch-phase16-part1-coordination-zh.md`
-- ⬜ `ai-eng-from-scratch-phase16-part2-emergence-collective-zh.md`
+- ✅ `ai-eng-from-scratch-phase16-part1-coordination-zh.md` (613 lines)
+- ✅ `ai-eng-from-scratch-phase16-part2-emergence-collective-zh.md` (659 lines)
 
 ### Phase 17 — Infrastructure & Production
-- ⬜ `ai-eng-from-scratch-phase17-part1-serving-zh.md`
-- ⬜ `ai-eng-from-scratch-phase17-part2-observability-zh.md`
-- ⬜ `ai-eng-from-scratch-phase17-part3-cost-scale-zh.md`
+- ✅ `ai-eng-from-scratch-phase17-part1-serving-zh.md` (504 lines)
+- ✅ `ai-eng-from-scratch-phase17-part2-observability-zh.md` (626 lines)
+- ✅ `ai-eng-from-scratch-phase17-part3-cost-scale-zh.md` (718 lines)
 
 ### Phase 18 — Ethics, Safety & Alignment
-- ⬜ `ai-eng-from-scratch-phase18-part1-technical-safety-zh.md`
-- ⬜ `ai-eng-from-scratch-phase18-part2-governance-zh.md`
+- ✅ `ai-eng-from-scratch-phase18-part1-technical-safety-zh.md` (611 lines)
+- ✅ `ai-eng-from-scratch-phase18-part2-governance-zh.md` (651 lines)
 
 ### Phase 19 — Capstone Projects
-- ⬜ `ai-eng-from-scratch-phase19-part1-capstone-rag-system-zh.md`
-- ⬜ `ai-eng-from-scratch-phase19-part2-capstone-agent-product-zh.md`
-- ⬜ `ai-eng-from-scratch-phase19-part3-capstone-multimodal-app-zh.md`
+- ✅ `ai-eng-from-scratch-phase19-part1-capstone-rag-system-zh.md` (768 lines)
+- ✅ `ai-eng-from-scratch-phase19-part2-capstone-agent-product-zh.md` (686 lines)
+- ✅ `ai-eng-from-scratch-phase19-part3-capstone-multimodal-app-zh.md` (706 lines)

@@ -7,7 +7,7 @@ description: "深入解析擴散模型工程原理：DDPM/DDIM 前向與反向�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Generative AI", "Diffusion Models", "Stable Diffusion", "ControlNet", "Image Generation", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "16 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**工程情境**：你負責為一個電商平台設計商品圖片自動生成系統，需要在 3 秒內生成 512×512 的商品展示圖，每日峰值 10 萬張，成本預算每張 $0.002。請描述你選擇的模型架構、推論優化策略，以及如何處理風格一致性問題。
+這篇給用過 Stable Diffusion、但還沒推導過一次前向過程閉合解的工程師看。讀完你會能說明 DDPM 的訓練目標為什麼是「預測雜訊」、DDIM 為什麼能把 1000 步縮到 20 步而不用重新訓練、潛在空間為什麼讓 512×512 生成能在消費級 GPU 上跑，並能為一個「3 秒內生成 512×512 商品圖、每日峰值 10 萬張、每張成本 $0.002」的系統選出採樣器、精度與風格控制方案。
 
 ---
 
@@ -405,7 +405,7 @@ Flip：研究多樣性採樣、探索模式多樣性時，DDPM 的隨機性是�
 選擇        選 Latent 的理由                不選 Pixel 的理由
 ──────────────────────────────────────────────────────────────
 Latent      64×64 vs 512×512，計算量 64×   512×512 pixel diffusion A100 需 200s
-Diffusion   A100 可跑 512×512              DALL-E 1 pixel space：只能做 256×256
+Diffusion   A100 可跑 512×512              早期 pixel-space 擴散模型多停在 256×256
             VAE 壓縮不損失感知品質          記憶體需求超過消費級 GPU 上限
 
 Flip：256×256 低解析度任務，pixel diffusion 架構更簡單，無 VAE 引入的細節損失
@@ -423,19 +423,7 @@ LoRA        15 MB vs 3.4 GB，部署成本低     865M 參數訓練需 80GB VRAM
 Flip：需要根本性改變模型能力（如新語言、新領域）時，Full Fine-tuning 必要
 ```
 
-### 決策 4：ControlNet vs. Prompt Engineering
-
-```
-選擇        選 ControlNet 的理由            不選純 Prompt 的理由
-──────────────────────────────────────────────────────────────
-ControlNet  像素級結構控制（姿態/邊緣）     Prompt 無法精確控制手臂角度
-            生成結果與輸入骨架嚴格對齊      電商商品需精確構圖，prompt 不夠
-            可用現有圖片提取條件圖          生成品質受 prompt 措辭影響大
-
-Flip：純創意生成（無需精確結構）時，ControlNet 增加約 30% 推論時間不值得
-```
-
-### 決策 5：INT8 量化 vs. FP16
+### 決策 4：INT8 量化 vs. FP16
 
 ```
 選擇        選 INT8 的理由                  不選 FP16 的理由
@@ -447,19 +435,7 @@ INT8        比 fp16 快約 30%（0.7s vs 1.0s）fp16：每張成本高約 40%�
 Flip：極高保真需求（醫療影像、衛星圖像）時，量化誤差不可接受，保留 fp16
 ```
 
-### 決策 6：SDXL vs. SD v1.5
-
-```
-選擇        選 SDXL 的理由                  不選 SD v1.5 的理由
-──────────────────────────────────────────────────────────────
-SDXL        原生 1024×1024，細節更豐富      v1.5 最佳解析度 512×512
-            雙 text encoder，語義理解更強   v1.5 手部、文字生成較差
-            SDXL Turbo 可 4 步生成          
-
-Flip：成本敏感場景，v1.5 模型小（865M vs 3.5B），推論快 4×，LoRA 生態更成熟
-```
-
-> **2026 補充**：SD 1.5 / SDXL 都是 U-Net 架構的 LDM。2024 年後的主流開源影像模型（如 SD3、FLUX）改用 **DiT（Diffusion Transformer）** 骨幹，並以 **flow matching / rectified flow** 取代 DDPM 式的雜訊預測目標——學習從雜訊到資料的近似直線路徑，因此用更少步數就能取樣。今天新專案的真正決策更接近「U-Net LDM vs DiT/flow 模型」，上表的 SDXL vs v1.5 主要適用於既有系統。
+> **2026 補充**：SD 1.5 / SDXL 都是 U-Net 架構的 LDM。2024 年後的主流開源影像模型（如 SD3、FLUX）改用 **DiT（Diffusion Transformer）** 骨幹，並以 **flow matching / rectified flow** 取代 DDPM 式的雜訊預測目標——學習從雜訊到資料的近似直線路徑，因此用更少步數就能取樣。今天新專案的真正決策更接近「U-Net LDM vs DiT/flow 模型」；本文以 SD 1.5 / SDXL 為例的數字主要適用於既有系統。
 
 ---
 
@@ -477,6 +453,8 @@ Flip：成本敏感場景，v1.5 模型小（865M vs 3.5B），推論快 4×，L
 | LCM 4步 | 0.3s | 11.8 | 5GB | $0.06 | 快速迭代 |
 
 *成本基準：A10G $0.75/hr，GPU 利用率 70%，512×512*
+
+*示意估算，非實測數據*
 
 ### 電商場景需求對照
 

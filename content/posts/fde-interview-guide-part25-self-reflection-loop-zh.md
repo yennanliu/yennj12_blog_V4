@@ -313,6 +313,10 @@ Self-Reflection 的成本：
 >
 > *成本分析：每次反思大約 2~3x 成本，所以反思機制應該只用在高風險場景（法務、財務、醫療），不應該是所有查詢的 default。」*
 
+## 相關文章與正典版本
+
+- 機制與原理（正典） — [FDE core topic — State Machine & DAG：確定性圖結構與反思迴圈收斂](/posts/fde-core-concept-3-state-machine-dag-zh/)
+
 ---
 
 **系列導航**

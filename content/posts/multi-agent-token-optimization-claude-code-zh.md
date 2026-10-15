@@ -8,6 +8,7 @@ tags: ["AI", "Claude Code", "Multi-Agent", "token-optimization", "Cost Optimizat
 summary: "多 Agent Token 優化系列總覽：深入解析 Token 用量優化策略，涵蓋 Prompt Caching、Context 壓縮、Agent 專責化、模型分層、選擇性 Context 傳遞等方法，幫助你建構高效且低成本的多 Agent 系統。"
 description: "多 Agent Token 優化系列總覽：深入解析 Token 用量優化策略，涵蓋 Prompt Caching、Context 壓縮、Agent 專責化、模型分層、選擇性 Context 傳遞等方法，幫助你建構高效且低成本的多 Agent 系統。"
 readTime: "25 min"
+aliases: ["/posts/orchestration-agents-claude-code-comprehensive-guide/"]
 ---
 
 在使用 Claude Code API 建構多 Agent 系統時，**Token 用量**往往是影響成本、延遲與系統可靠性的關鍵因素。隨著 Agent 數量增加、任務複雜度提升，Token 消耗可能以指數級成長，若不加以優化，很快就會遇到成本爆炸或 Context Window 耗盡的問題。
@@ -1031,3 +1032,11 @@ Context 管理
 6. **優化並行架構**（提升整體吞吐量）
 
 Token 優化不是一次性的工作，而是需要根據實際使用數據持續迭代的過程。建立完善的監控機制，讓數據驅動優化決策，才能構建真正高效、低成本的多 Agent 系統。
+
+## 相關文章與正典版本
+
+- Agent 間的選擇性 Context 傳遞（正典） — [多 Agent Token 優化系列 pt.5：選擇性 Context 傳遞](/posts/selective-context-passing-multi-agent-guide-zh/)
+- 專責化與每次呼叫的 token 經濟（正典） — [多 Agent Token 優化系列 pt.6：Agent 專責化實戰指南](/posts/agent-specialization-multi-agent-guide-zh/)
+- 協作模式與 token 預算路由的完整實作 — [多 Agent Token 優化系列 pt.7：專責化 Agent 協作模式](/posts/specialized-agent-orchestration-patterns-zh/)
+- 狀態管理、重試與死鎖排除（正典） — [FDE 面試準備指南（十六）：Multi-Agent 狀態管理與死鎖排除](/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh/)
+- 協調拓撲：Supervisor / Peer-to-Peer / Market（正典） — [AI 工程從零開始 Phase 16 Part 1：多 Agent 協調 — 分工、通訊與共識](/posts/ai-eng-from-scratch-phase16-part1-coordination-zh/)
