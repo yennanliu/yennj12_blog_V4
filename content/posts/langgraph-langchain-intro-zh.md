@@ -1,696 +1,266 @@
 ---
 title: "LangGraph + LangChain 完全入門指南：從基礎到生產"
 date: 2026-04-11T10:00:00+08:00
+lastmod: 2026-10-15T09:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai"]
-tags: ["LangChain", "LangGraph", "AI", "Agent", "工作流", "RAG", "介紹"]
-summary: "全面介紹 LangChain 和 LangGraph 的核心概念、架構和實戰應用，涵蓋從簡單的 Chain 到複雜的多 Agent 工作流，幫助開發者快速掌握現代 AI 應用開發框架。"
-description: "全面介紹 LangChain 和 LangGraph 的核心概念、架構和實戰應用，涵蓋從簡單的 Chain 到複雜的多 Agent 工作流，幫助開發者快速掌握現代 AI 應用開發框架。"
-readTime: "16 min"
+tags: ["LangChain", "LangGraph", "AI", "Agent", "工作流", "介紹"]
+description: "把 LangGraph 看成「帶 checkpointer 的狀態機」，先學會 State 與 reducer、條件邊、interrupt/Command 人工介入、持久化這四件事，就能讀懂任何 LangGraph 程式並知道何時不該用它。"
+readTime: "8 min"
 ---
 
-在 AI 應用開發中，LangChain 和 LangGraph 是兩個最流行的框架：LangChain 提供組件和工具，而 LangGraph 提供編排能力。對於想要構建生產級 AI 應用的開發者來說，理解這兩個框架的區別與協作方式至關重要。本文深入講解它們的核心概念、架構和實戰應用。
+> 多數人第一次用 LangGraph，是把一條 LangChain chain 拆成幾個節點、接成一條直線，然後覺得「這跟 `|` 串起來有什麼不同？」
+> 沒有不同——直線的圖不需要 LangGraph。
+> 它真正解決的是 chain 做不到的三件事：**迴圈**（Agent 要重試）、**暫停**（要等人批准）、**接回來**（程序重啟後從上次的地方繼續）。
+> 這三件事都建立在同一個機制上：每走一步，就把狀態存一次。
 
----
+**LangGraph 是一台帶 checkpointer 的狀態機。** 圖（graph）定義狀態怎麼轉移，checkpointer 在每個節點跑完後把狀態寫下來；暫停、重試、人工介入、恢復執行，全都是「讀最後一個 checkpoint、改一改、再往下走」。看懂這一句，剩下的 API 就只是細節。
 
-## LangChain 基礎
+這篇是 ≤ 350 行的上手文，只講最值得先學的四件事：**State 與 reducer、條件邊、`interrupt`/`Command` 人工介入、持久化**。每一節末尾都指向寫得更深的文章；完整的客服工單後端在〈[LangGraph 客服工單後端：從狀態設計到可恢復的執行](/posts/langgraph-ai-customer-ticket-system-zh/)〉。
 
-### 什麼是 LangChain？
+> 本文程式碼對照 LangGraph 1.x / LangChain 1.x 的公開 API 撰寫，為示意用途、未在本文內執行。模型 ID 一律從環境變數讀，避免寫死已退役的型號。
 
-LangChain 是一個 Python 框架，用於開發由大語言模型（LLM）驅動的應用。它提供了一套標準接口和工具，使得開發者可以輕鬆構建 LLM 應用。
+## 為什麼是狀態機，不是 chain
+
+LangChain 的 chain（LCEL，`prompt | model | parser`）是一條**有向無環**的管線：資料從左流到右，不回頭。這對「摘要一段文字」夠用，對「Agent 呼叫工具、看結果、決定再呼叫一次」不夠——那是一個迴圈，而且迴圈次數在執行前不知道。
+
+LangGraph 把程式改成一張圖：節點是普通的 Python 函式，邊決定下一個節點，**狀態**是節點之間唯一的溝通管道。下面這張圖是一個最小的工具呼叫 Agent，注意 `tools → agent` 那條回頭的邊，它就是 chain 畫不出來的東西：
 
 ```
-LangChain 的核心目標：
-簡化 LLM 應用開發 = 模型 + 記憶 + 工具 + 流程
+            ┌──────────────────────────────────────────┐
+            │                                          │
+  START ──▶ │  agent  │ ──(有 tool_calls)──▶ │  tools  │
+            │ (LLM)   │                      │(執行工具)│
+            └────┬────┘                      └────┬────┘
+                 │ (沒有 tool_calls)                │
+                 ▼                                  │
+                END   ◀──── messages 累積在 State ◀──┘
 ```
 
-### LangChain 核心組件
+每個節點讀 state、回傳「要更新的欄位」；每一輪 `agent → tools → agent`，checkpointer 都會存一個版本的 state。這張圖同時也是「反思迴圈」的骨架：Agent 自評、不滿意就再來一輪，迴圈何時收斂、怎麼設上限，是圖結構的問題而不是 prompt 的問題。
 
-#### 1. Models（模型）
+**深入請看 →** 狀態機、DAG 與反思迴圈的收斂條件：[FDE core topic - State Machine & DAG](/posts/fde-core-concept-3-state-machine-dag-zh/)
+
+## 一、State 與 reducer：節點回傳的是「差異」，不是整份狀態
+
+**直覺**：把 state 想成一張共用的白板。每個節點不是擦掉重寫，而是遞一張便利貼說「這幾格改成這樣」；**reducer** 決定便利貼怎麼貼上去——覆蓋、還是接在後面。
+
+**機制**：state 用 `TypedDict` 宣告。沒有標註 reducer 的欄位，新值覆蓋舊值；用 `Annotated[list, operator.add]` 標註的欄位，新值會接在舊值後面；`add_messages` 是訊息列表專用的 reducer，會依訊息 `id` 去重與更新，而不是盲目追加。
 
 ```python
-import os
-from langchain_anthropic import ChatAnthropic
-from langchain_openai import ChatOpenAI
+import operator
+from typing import Annotated, TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.graph.message import add_messages
 
-# 初始化不同的模型（模型 ID 從環境變數讀取，請填各家文件上目前可用的模型；
-# 舊的 claude-3-5-sonnet-20241022 已退役）
-claude = ChatAnthropic(model=os.environ["ANTHROPIC_MODEL"])
-gpt = ChatOpenAI(model=os.environ["OPENAI_MODEL"])
+class State(TypedDict):
+    messages: Annotated[list, add_messages]   # 依 id 合併
+    events: Annotated[list[str], operator.add]  # 永遠追加
+    category: str                              # 覆蓋
 
-# 發送消息
-response = claude.invoke("What is LangChain?")
-print(response.content)
+def classify(state: State) -> dict:
+    text = state["messages"][-1].content
+    cat = "billing" if "發票" in text else "technical"
+    return {"category": cat, "events": [f"classified:{cat}"]}  # 只回傳差異
+
+builder = StateGraph(State)
+builder.add_node("classify", classify)
+builder.add_edge(START, "classify")
+builder.add_edge("classify", END)
+graph = builder.compile()
+
+result = graph.invoke({"messages": [("user", "我的發票金額不對")]})
+print(result["category"], result["events"])   # dict，不是物件
 ```
 
-#### 2. Prompts（提示詞）
+**兩個最常踩的坑**：
+
+1. **`invoke()` 回傳的永遠是 `dict`**，不管 state 宣告成 `TypedDict`、`dataclass` 還是 Pydantic 模型。寫 `result.category` 會得到 `AttributeError`；要寫 `result["category"]`。如果你真的想要物件，就在呼叫端 `TicketState(**result)` 轉一次，並說明為什麼。
+2. **節點回傳整份 state 不會報錯，但會讓 reducer 失效**：把 `events` 原封不動回傳，`operator.add` 會把它再接一次，列表長度翻倍。回傳差異是慣例，不是風格偏好。
+
+**數字**：state 每個 checkpoint 都會完整序列化。`messages` 若不修剪，一個跑了 30 輪、每輪帶 4 KB 工具結果的 Agent，單一 thread 的 checkpoint 總量會超過 100 KB × 30 版本；用 `add_messages` 配合 `RemoveMessage` 或在節點裡截斷，是上線前就要做的事。
+
+**深入請看 →** 工單系統的完整 state 設計（輸入／推導／控制三類欄位）：[LangGraph 客服工單後端](/posts/langgraph-ai-customer-ticket-system-zh/)
+
+## 二、條件邊：路由邏輯是一個回傳字串的函式
+
+**直覺**：固定邊是鐵軌，條件邊是轉轍器。轉轍器的邏輯是一個普通函式，讀 state、回傳下一站的名字。
+
+**機制**：`add_conditional_edges(來源節點, 路由函式, 對照表)`。路由函式回傳的字串經對照表翻成節點名；對照表的值可以是 `END`。路由函式**不能更新 state**——它的回傳值只是路名，寫 `state["retry"] += 1` 不會被存起來，這是重試迴圈失控最常見的原因。
 
 ```python
-from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
+from typing import Literal
 
-# 簡單模板
-simple_prompt = PromptTemplate.from_template(
-    "告訴我關於 {topic} 的 3 個有趣的事實。"
+def route_after_classify(state: State) -> Literal["billing", "technical"]:
+    return "billing" if state["category"] == "billing" else "technical"
+
+builder.add_conditional_edges(
+    "classify",
+    route_after_classify,
+    {"billing": "billing_agent", "technical": "tech_agent"},
 )
-
-# 聊天模板（更靈活）
-chat_prompt = ChatPromptTemplate.from_messages([
-    ("system", "你是一個知識淵博的 AI 助手。"),
-    ("human", "{user_input}"),
-    ("assistant", "我會幫你..."),
-    ("human", "{follow_up}")
-])
-
-# 使用模板
-formatted = chat_prompt.format(
-    user_input="什麼是 LangChain?",
-    follow_up="有什麼優勢?"
-)
 ```
 
-#### 3. Chains（鏈）
-
-Chain 是一系列組件的組合，按順序執行。
+**另一種寫法：`Command`**。當「決定去哪」和「要更新什麼」是同一件事（例如：分類完直接寫入類別並跳去對應節點），讓節點回傳 `Command(goto=..., update=...)`，省掉一個路由函式。回傳型別標註 `Command[Literal[...]]` 讓 LangGraph 知道可能的目的地，畫圖與驗證都靠它：
 
 ```python
-from langchain_core.output_parsers import StrOutputParser
-
-# 構建簡單的 Chain
-prompt = ChatPromptTemplate.from_template("解釋 {concept}")
-model = ChatAnthropic(model=os.environ["ANTHROPIC_MODEL"])   # model 為必填參數
-output_parser = StrOutputParser()
-
-chain = prompt | model | output_parser
-
-# 執行
-result = chain.invoke({"concept": "LangChain"})
-print(result)
-
-# 更複雜的 Chain（多步）
-from langchain_core.runnables import RunnableParallel
-
-parallel_chain = RunnableParallel(
-    summary=prompt | model,
-    examples=ChatPromptTemplate.from_template(
-        "給出 {concept} 的 3 個例子"
-    ) | model
-)
-
-result = parallel_chain.invoke({"concept": "LangChain"})
-print(f"總結: {result['summary']}")
-print(f"例子: {result['examples']}")
-```
-
-#### 4. Memory（記憶）
-
-```python
-# 注意：舊版的 ConversationBufferMemory / ConversationSummaryMemory 在 LangChain 1.0
-# 已移到 langchain-classic 套件。新程式碼建議直接保存訊息列表；
-# 需要跨請求持久化時，改用 LangGraph 的 checkpointer + thread_id（見下文「持久化和檢查點」）。
-from langchain_core.chat_history import InMemoryChatMessageHistory
-
-history = InMemoryChatMessageHistory()
-
-# 添加對話
-history.add_user_message("你好")
-history.add_ai_message("你好！有什麼我可以幫助的嗎？")
-
-# 把歷史訊息帶進下一次呼叫
-response = model.invoke(history.messages + [("human", "我剛剛說了什麼？")])
-print(response.content)
-```
-
-#### 5. Tools（工具）
-
-```python
-from langchain_core.tools import tool
-from datetime import datetime
-
-@tool
-def get_current_time(timezone: str = "UTC") -> str:
-    """獲取當前時間"""
-    return f"當前時間 ({timezone}): {datetime.now().isoformat()}"
-
-@tool
-def search_internet(query: str) -> str:
-    """搜尋互聯網"""
-    return f"搜尋結果：{query}..."
-
-@tool
-def calculate(expression: str) -> str:
-    """計算數學表達式"""
-    return str(eval(expression))
-
-# 工具列表
-tools = [get_current_time, search_internet, calculate]
-
-# 模型可以使用這些工具
-model_with_tools = claude.bind_tools(tools)
-```
-
-#### 6. Retrievers（檢索器）
-
-```python
-from langchain_community.vectorstores import FAISS
-from langchain_embeddings import OpenAIEmbeddings
-from langchain_text_splitters import CharacterTextSplitter
-
-# 準備文檔
-documents = [
-    {"text": "LangChain 是..."},
-    {"text": "LangGraph 是..."},
-    {"text": "Agents 可以..."}
-]
-
-# 分割文本
-text_splitter = CharacterTextSplitter(chunk_size=1000)
-splits = text_splitter.split_documents(documents)
-
-# 創建向量存儲
-embeddings = OpenAIEmbeddings()
-vector_store = FAISS.from_documents(splits, embeddings)
-
-# 創建檢索器
-retriever = vector_store.as_retriever(search_type="similarity", k=3)
-
-# 使用檢索器
-relevant_docs = retriever.invoke("什麼是 LangChain?")
-```
-
-### LangChain 實戰示例：RAG（檢索增強生成）
-
-```python
-from langchain_core.runnables import RunnablePassthrough
-
-# 構建 RAG Chain
-rag_prompt = ChatPromptTemplate.from_template("""
-基於以下上下文回答問題。
-
-上下文：
-{context}
-
-問題：{question}
-
-答案：
-""")
-
-def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
-
-rag_chain = (
-    {"context": retriever | format_docs, "question": RunnablePassthrough()}
-    | rag_prompt
-    | model
-    | output_parser
-)
-
-# 使用
-answer = rag_chain.invoke("LangChain 的優勢是什麼?")
-print(answer)
-```
-
----
-
-## LangGraph 進階
-
-### 什麼是 LangGraph？
-
-LangGraph 是在 LangChain 基礎上構建的框架，用於構建**可狀態追蹤、以圖結構編排、並且允許循環**的工作流（agent 迴圈正是 LangGraph 存在的主要理由，所以它不只是 DAG）。相比 Chain 的線性執行，LangGraph 提供了：
-
-1. **狀態管理**：跨步驟保持狀態
-2. **條件轉移**：根據狀態決定下一步
-3. **循環和並行**：複雜的工作流邏輯
-4. **可追蹤性**：每個步驟都可以記錄
-
-```
-LangChain Chain：線性管道
-input → [step1] → [step2] → [step3] → output
-
-LangGraph：複雜工作流
-          ┌─→ [step2a]
-input → [step1] → [路由器] → ┤
-                  └─→ [step2b]
-                         ↓
-                      [step3]
-                         ↓
-                      output
-```
-
-### LangGraph 核心概念
-
-#### 1. 定義狀態
-
-```python
-from typing import Annotated, Optional
-from dataclasses import dataclass, field
-
-@dataclass
-class WorkflowState:
-    """工作流狀態"""
-    # 輸入
-    user_input: str
-    
-    # 中間結果
-    analysis: Optional[str] = None
-    research: Optional[str] = None
-    
-    # 輸出
-    final_response: Optional[str] = None
-    
-    # 追蹤信息
-    steps_completed: list[str] = field(default_factory=list)
-    errors: list[str] = field(default_factory=list)
-```
-
-#### 2. 定義節點（Nodes）
-
-```python
-from langgraph.graph import StateGraph, END, START
-
-def analysis_node(state: WorkflowState) -> WorkflowState:
-    """分析節點"""
-    analysis = f"分析: {state.user_input}..."
-    state.analysis = analysis
-    state.steps_completed.append("analysis")
-    return state
-
-def research_node(state: WorkflowState) -> WorkflowState:
-    """研究節點"""
-    research = f"研究: 基於 {state.analysis}"
-    state.research = research
-    state.steps_completed.append("research")
-    return state
-
-def synthesis_node(state: WorkflowState) -> WorkflowState:
-    """合成節點"""
-    final = f"最終回應: {state.analysis} + {state.research}"
-    state.final_response = final
-    state.steps_completed.append("synthesis")
-    return state
-```
-
-#### 3. 定義邊（Edges）和路由
-
-```python
-from langgraph.graph import StateGraph
-
-# 構建圖
-graph = StateGraph(WorkflowState)
-
-# 添加節點
-graph.add_node("analysis", analysis_node)
-graph.add_node("research", research_node)
-graph.add_node("synthesis", synthesis_node)
-
-# 添加邊（簡單連接）
-graph.add_edge(START, "analysis")
-graph.add_edge("analysis", "research")
-graph.add_edge("research", "synthesis")
-graph.add_edge("synthesis", END)
-
-# 添加條件邊（路由）
-def should_do_research(state: WorkflowState) -> str:
-    """決定是否進行研究"""
-    if len(state.analysis) > 10:
-        return "research"
-    else:
-        return "synthesis"
-
-graph.add_conditional_edges(
-    "analysis",
-    should_do_research,
-    {
-        "research": "research",
-        "synthesis": "synthesis"
-    }
-)
-
-# 編譯圖
-workflow = graph.compile()
-```
-
-#### 4. 帶有工具的 Agent 工作流
-
-```python
-from langgraph.graph import StateGraph, END, START
 from langgraph.types import Command
-import json
 
-@dataclass
-class AgentState:
-    messages: list[dict]
-    tools_used: list[str] = field(default_factory=list)
-    final_answer: Optional[str] = None
-
-def agent_node(state: AgentState) -> AgentState:
-    """Agent 決策節點"""
-    # 調用模型
-    response = model.invoke(state.messages)
-    
-    # 檢查是否調用了工具
-    if hasattr(response, 'tool_calls') and response.tool_calls:
-        # 執行工具
-        for tool_call in response.tool_calls:
-            tool_name = tool_call['name']
-            tool_args = tool_call['args']
-            
-            # 根據工具名執行
-            if tool_name == "search":
-                result = search_internet(tool_args['query'])
-            elif tool_name == "calculate":
-                result = calculate(tool_args['expression'])
-            
-            # 添加結果到消息
-            state.messages.append({
-                "role": "assistant",
-                "content": response.content,
-                "tool_calls": response.tool_calls
-            })
-            state.messages.append({
-                "role": "tool",
-                "tool_use_id": tool_call['id'],
-                "content": result
-            })
-            state.tools_used.append(tool_name)
-    else:
-        # 模型給出最終答案
-        state.final_answer = response.content
-    
-    return state
-
-def should_continue(state: AgentState) -> str:
-    """決定是否繼續或結束"""
-    if state.final_answer:
-        return "end"
-    else:
-        return "agent"
-
-# 構建 Agent 工作流
-agent_graph = StateGraph(AgentState)
-agent_graph.add_node("agent", agent_node)
-agent_graph.add_edge(START, "agent")
-agent_graph.add_conditional_edges(
-    "agent",
-    should_continue,
-    {
-        "agent": "agent",
-        "end": END
-    }
-)
-
-agent_workflow = agent_graph.compile()
+def classify(state: State) -> Command[Literal["billing_agent", "tech_agent"]]:
+    cat = "billing" if "發票" in state["messages"][-1].content else "technical"
+    return Command(
+        update={"category": cat},
+        goto="billing_agent" if cat == "billing" else "tech_agent",
+    )
 ```
 
-### LangGraph 高級特性
+**什麼時候用哪個**：路由邏輯純粹、不改 state → 條件邊，圖的拓樸一眼看得出來；路由與更新綁在一起、或要從子圖跳回父圖（`Command(graph=Command.PARENT)`）→ `Command`。兩者混用沒問題，但同一個節點不要既有條件邊又有無條件邊指向不同節點——那會讓兩個分支**同時**執行，不是二選一。
 
-#### 1. 子圖（Sub-graphs）
+**限制**：條件邊只看目前 state，不看歷史。「連續三次路由到同一節點就升級」這類規則，要把計數器放進 state 由節點更新，路由函式只負責讀。
 
-```python
-# 創建一個子工作流
-def create_analysis_subgraph():
-    subgraph = StateGraph(AnalysisState)
-    subgraph.add_node("parse", parse_node)
-    subgraph.add_node("extract", extract_node)
-    subgraph.add_edge(START, "parse")
-    subgraph.add_edge("parse", "extract")
-    subgraph.add_edge("extract", END)
-    return subgraph.compile()
+**深入請看 →** 可執行的 Agentic RAG：`bind_tools`、`ToolNode`、`tools_condition` 接成的完整圖：[RAG 完全指南（五）](/posts/rag-series-part5-production-zh/) 的 Part 3
 
-# 在主圖中使用子圖
-main_graph.add_node("analysis", create_analysis_subgraph())
-```
+## 三、人工介入：`interrupt` 暫停，`Command(resume=)` 接回
 
-#### 2. 持久化和檢查點
+**直覺**：`interrupt()` 是在節點裡按下暫停鍵。圖把目前狀態存成 checkpoint 後**整個退出**——程序可以關掉、容器可以重啟；幾小時後人做了決定，用 `Command(resume=決定)` 再次 `invoke`，圖從同一個節點接著跑。
+
+**機制**：
 
 ```python
+from langgraph.types import interrupt, Command
 from langgraph.checkpoint.memory import InMemorySaver
 
-# 創建帶檢查點的工作流（InMemorySaver 只適合開發；production 用 Postgres 等持久化 checkpointer）
-checkpointer = InMemorySaver()
-workflow = graph.compile(checkpointer=checkpointer)
+def escalate(state: State) -> dict:
+    decision = interrupt({                      # 第一次執行到這裡：存檔、退出
+        "ticket": state["messages"][-1].content,
+        "question": "退款超過 5,000 元，是否核准？",
+    })
+    return {"events": [f"human:{decision['approve']}"]}  # 第二次執行才到這裡
 
-# 執行並保存狀態
-config = {"configurable": {"thread_id": "user_123"}}
-result = workflow.invoke(initial_state, config=config)
+# interrupt 需要 checkpointer
+graph = builder.compile(checkpointer=InMemorySaver())
+config = {"configurable": {"thread_id": "ticket-42"}}
 
-# 稍後恢復狀態
-result = workflow.invoke(updated_input, config=config)
+first = graph.invoke({"messages": [("user", "我要退 8,000 元")]}, config)
+first["__interrupt__"][0].value   # → {"ticket": ..., "question": ...}
+
+second = graph.invoke(Command(resume={"approve": True}), config)
 ```
 
-#### 3. 流式執行
+**一定要知道的三件事**：
 
-```python
-# 流式輸出每個節點的結果
-for output in workflow.stream(initial_state):
-    node_name, result = next(iter(output.items()))
-    print(f"節點 {node_name} 完成")
-    print(f"  結果: {result}")
+1. **恢復時整個節點會從頭重跑**，`interrupt()` 之前的程式碼會執行第二次。所以 `interrupt()` 之前不要放不可重複的副作用（寄信、扣款）；要嘛放到它之後，要嘛讓它冪等。
+2. **沒有 checkpointer 就沒有 interrupt**。暫停的本質是「把 state 存起來然後退出」，沒地方存就做不到。
+3. `thread_id` 是恢復的鑰匙。同一個 `thread_id` 才能接回同一條執行；換一個就是全新的工單。
+
+下面是這個暫停／恢復循環在 checkpointer 眼中的樣子：
+
+```
+  invoke(input, thread=42)                  invoke(Command(resume=…), thread=42)
+          │                                                     │
+          ▼                                                     ▼
+   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
+   │ ckpt #1     │──▶│ ckpt #2     │──▶│ ckpt #3     │──▶│ ckpt #4     │
+   │ after intake│   │ after       │   │ at interrupt│   │ after       │
+   │             │   │ classify    │   │ next=escal. │   │ escalate    │
+   └─────────────┘   └─────────────┘   └──────┬──────┘   └─────────────┘
+                                              │
+                          程序退出；幾小時後人做決定  ◀──────┘
+                          （get_state(config).next == ("escalate",)）
 ```
 
----
+**數字**：一次人工審核平均要等多久，決定你能不能用 `InMemorySaver`。等 30 秒內的批准、單一程序，記憶體夠用；等 4 小時、服務會重新部署，就必須是資料庫 checkpointer（下一節）。
 
-## LangChain + LangGraph 實戰：多 Agent 系統
+**深入請看 →** 升級節點、審核佇列與 `/resume` API 的完整接法：[LangGraph 客服工單後端](/posts/langgraph-ai-customer-ticket-system-zh/)
 
-### 場景：研究和報告生成系統
+## 四、持久化：從 `InMemorySaver` 到 `PostgresSaver`
+
+**直覺**：checkpointer 是圖的存檔槽。`InMemorySaver` 存在程序記憶體裡，程序一關就沒了；`PostgresSaver` 存進資料庫，任何一台機器都能接著跑。
+
+**機制**：兩者介面相同，差別只在建構方式。`PostgresSaver.from_conn_string()` 回傳的是一個 **context manager**，而且第一次使用前要呼叫 `.setup()` 建表——漏掉其中一個，不是連線沒開就是找不到資料表：
 
 ```python
-from dataclasses import dataclass, field
-from typing import Annotated, Optional
+# pip install langgraph-checkpoint-postgres
+from langgraph.checkpoint.postgres import PostgresSaver
+
+DB_URI = "postgresql://user:pass@localhost:5432/tickets"
+
+with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
+    checkpointer.setup()                       # 建表；可重複呼叫
+    graph = builder.compile(checkpointer=checkpointer)
+
+    config = {"configurable": {"thread_id": "ticket-42"}}
+    graph.invoke({"messages": [("user", "發票開錯抬頭")]}, config)
+
+    snapshot = graph.get_state(config)         # 最新 checkpoint
+    snapshot.values["category"]                # state 內容
+    snapshot.next                              # 下一個要跑的節點；() 代表已結束
+    for s in graph.get_state_history(config):  # 由新到舊，每個節點一個版本
+        print(s.config["configurable"]["checkpoint_id"], s.next)
+```
+
+在 FastAPI 這類長駐服務裡，`with` 區塊要包住整個應用生命週期（lifespan），而不是每個 request 開一次連線；非同步版本是 `AsyncPostgresSaver`，介面對稱。
+
+**數字**：每個節點執行後寫一次 checkpoint，一個 6 節點的工單流程、一天 10 萬張工單，就是 60 萬筆 checkpoint 寫入；單筆 state 10–50 KB 時，一天約 6–30 GB。要嘛定期清掉已結束 thread 的歷史，要嘛只保留最後 N 個版本。
+
+**限制**：checkpointer 存的是 LangGraph 的 state，不是你的業務資料庫。工單的最終狀態、客戶看得到的回覆，仍然要由節點明確寫進你自己的資料表；不要用 `get_state()` 當查詢 API。
+
+**深入請看 →** checkpointer 在 FastAPI lifespan 裡的接法、`thread_id` 與工單 ID 的對應、歷史清理：[LangGraph 客服工單後端](/posts/langgraph-ai-customer-ticket-system-zh/)
+
+## 不想自己畫圖：`create_agent`
+
+多數「LLM + 幾個工具」的需求不需要手畫圖。LangChain 1.x 的 `create_agent` 會建好上面第一張圖（agent ⇄ tools 迴圈），回傳的就是一個編譯好的 LangGraph 圖，`invoke`、`stream`、`checkpointer`、`interrupt` 全部適用：
+
+```python
+from langchain.agents import create_agent
+from langchain_core.tools import tool
 import os
-from langgraph.graph import StateGraph, START, END
-from langchain_core.runnables import RunnablePassthrough
 
-@dataclass
-class ResearchState:
-    """研究工作流狀態"""
-    topic: str
-    research_queries: list[str] = field(default_factory=list)
-    research_results: dict = field(default_factory=dict)
-    analysis: Optional[str] = None
-    report: Optional[str] = None
-    quality_score: float = 0.0
+@tool
+def lookup_order(order_id: str) -> str:
+    """查詢訂單狀態。"""
+    return f"{order_id}: 已出貨"
 
-class ResearchAgents:
-    def __init__(self):
-        self.model = ChatAnthropic(model=os.environ["ANTHROPIC_MODEL"])   # 目前可用的 Claude 模型 ID
-        self.research_tool = self._create_research_tool()
-    
-    def _create_research_tool(self):
-        @tool
-        def search_knowledge(query: str) -> str:
-            """搜尋知識庫"""
-            return f"搜尋 '{query}' 的結果..."
-        return search_knowledge
-    
-    # Agent 1: 查詢規劃 Agent
-    def query_planner(self, state: ResearchState) -> ResearchState:
-        """根據主題規劃搜尋查詢"""
-        prompt = ChatPromptTemplate.from_template("""
-        為以下主題規劃 5 個搜尋查詢：
-        主題: {topic}
-        
-        返回 JSON 列表：
-        ["查詢1", "查詢2", ...]
-        """)
-        
-        chain = prompt | self.model
-        response = chain.invoke({"topic": state.topic})
-        
-        import json
-        queries = json.loads(response.content)
-        state.research_queries = queries
-        return state
-    
-    # Agent 2: 研究 Agent
-    def researcher(self, state: ResearchState) -> ResearchState:
-        """執行搜尋和收集信息"""
-        for query in state.research_queries:
-            result = self.research_tool.invoke(query)
-            state.research_results[query] = result
-        return state
-    
-    # Agent 3: 分析 Agent
-    def analyzer(self, state: ResearchState) -> ResearchState:
-        """分析收集的信息"""
-        prompt = ChatPromptTemplate.from_template("""
-        基於以下研究結果分析主題：
-        
-        主題: {topic}
-        研究結果: {results}
-        
-        提供深入的分析：
-        """)
-        
-        chain = prompt | self.model
-        response = chain.invoke({
-            "topic": state.topic,
-            "results": str(state.research_results)
-        })
-        
-        state.analysis = response.content
-        return state
-    
-    # Agent 4: 報告生成 Agent
-    def report_generator(self, state: ResearchState) -> ResearchState:
-        """生成最終報告"""
-        prompt = ChatPromptTemplate.from_template("""
-        基於以下信息生成專業報告：
-        
-        主題: {topic}
-        分析: {analysis}
-        
-        格式：
-        1. 執行摘要
-        2. 背景
-        3. 主要發現
-        4. 建議
-        5. 結論
-        """)
-        
-        chain = prompt | self.model
-        response = chain.invoke({
-            "topic": state.topic,
-            "analysis": state.analysis
-        })
-        
-        state.report = response.content
-        return state
-    
-    # Agent 5: 質量檢查 Agent
-    def quality_checker(self, state: ResearchState) -> ResearchState:
-        """檢查報告質量"""
-        prompt = ChatPromptTemplate.from_template("""
-        評估報告質量 (0-1)：
-        
-        報告：{report}
-        
-        評估維度：
-        1. 完整性
-        2. 準確性
-        3. 清晰性
-        4. 相關性
-        
-        返回平均分數：
-        """)
-        
-        chain = prompt | self.model
-        response = chain.invoke({"report": state.report})
-        
-        score = float(response.content.strip())
-        state.quality_score = score
-        return state
-
-# 構建多 Agent 工作流
-def build_research_workflow():
-    workflow = StateGraph(ResearchState)
-    agents = ResearchAgents()
-    
-    # 添加節點
-    workflow.add_node("plan", agents.query_planner)
-    workflow.add_node("research", agents.researcher)
-    workflow.add_node("analyze", agents.analyzer)
-    workflow.add_node("report", agents.report_generator)
-    workflow.add_node("quality_check", agents.quality_checker)
-    
-    # 連接節點
-    workflow.add_edge(START, "plan")
-    workflow.add_edge("plan", "research")
-    workflow.add_edge("research", "analyze")
-    workflow.add_edge("analyze", "report")
-    workflow.add_edge("report", "quality_check")
-    
-    # 質量檢查的條件轉移
-    def check_quality(state: ResearchState):
-        return "end" if state.quality_score >= 0.8 else "analyze"
-    
-    workflow.add_conditional_edges(
-        "quality_check",
-        check_quality,
-        {"end": END, "analyze": "analyze"}
-    )
-    
-    return workflow.compile()
-
-# 使用
-research_workflow = build_research_workflow()
-initial_state = ResearchState(topic="人工智能的未來")
-result = research_workflow.invoke(initial_state)
-
-print(f"主題: {result.topic}")
-print(f"質量分數: {result.quality_score:.2f}")
-print(f"報告:\n{result.report}")
+agent = create_agent(
+    model=os.environ["LLM_MODEL"],             # 例如 "anthropic:<模型 ID>"
+    tools=[lookup_order],
+    system_prompt="你是客服助理，查不到的事不要猜。",
+    checkpointer=InMemorySaver(),
+)
+out = agent.invoke(
+    {"messages": [("user", "訂單 A123 到哪了？")]},
+    {"configurable": {"thread_id": "u-1"}},
+)
+print(out["messages"][-1].content)
 ```
 
----
+舊的 `langgraph.prebuilt.create_react_agent` 在 1.x 仍然可用，功能相同；新程式建議用 `create_agent`，它多了 middleware（在模型呼叫前後掛鉤子）與 `response_format` 結構化輸出。**自己畫圖的時機**是：流程有業務上固定的階段（分類 → 路由 → 解決 → 結案）、某些步驟要暫停等人、或你需要在特定節點上掛重試與監控——這些在預建 Agent 裡做得到但不順手。
 
-## 最佳實踐
+**深入請看 →** LangChain、LlamaIndex、自建編排的選型與生產管線：[AI 工程從零開始｜Phase 13 Part 2：AI 工作流程編排](/posts/ai-eng-from-scratch-phase13-part2-orchestration-zh/)
 
-### 1. 錯誤處理和恢復
+## 什麼時候不該用 LangGraph
 
-```python
-from langgraph.graph import StateGraph
+| 情況 | 用什麼 | 翻轉條件 |
+|---|---|---|
+| 單次呼叫、沒有分支和迴圈 | 直接呼叫模型 SDK，或一條 LCEL chain | 一出現「失敗就重試一次」的需求，就值得改成圖 |
+| 固定順序的批次管線（ETL 式） | Airflow / Prefect 等排程器 | 需要在步驟之間用 LLM 決定下一步時 |
+| 多個獨立 Agent 各跑各的、靠訊息佇列溝通 | 佇列 + 各自的小圖 | 需要「全局狀態可查、可回溯」時，改成一張圖加子圖 |
+| 團隊只有一個人、流程兩週後就會改 | 先寫純 Python 函式 | 第一次需要「中途暫停等人」就是遷移點 |
 
-try:
-    result = workflow.invoke(state)
-except Exception as e:
-    # 記錄錯誤
-    state.errors.append(str(e))
-    
-    # 重試或升級
-    if should_retry(e):
-        result = workflow.invoke(state)
-    else:
-        escalate_to_human(state)
-```
-
-### 2. 性能優化
-
-```python
-# 並行執行節點
-parallel_graph = StateGraph(State)
-parallel_graph.add_node("task1", node1)
-parallel_graph.add_node("task2", node2)
-parallel_graph.add_node("task3", node3)
-
-# 所有任務同時執行
-parallel_graph.add_edge(START, "task1")
-parallel_graph.add_edge(START, "task2")
-parallel_graph.add_edge(START, "task3")
-parallel_graph.add_edge("task1", "combine")
-parallel_graph.add_edge("task2", "combine")
-parallel_graph.add_edge("task3", "combine")
-```
-
-### 3. 監控和日誌
-
-```python
-def log_node_execution(state: State, node_name: str):
-    """記錄節點執行信息"""
-    log_entry = {
-        "timestamp": datetime.now().isoformat(),
-        "node": node_name,
-        "state_keys": list(state.__dict__.keys()),
-        "errors": getattr(state, 'errors', [])
-    }
-    logger.info(json.dumps(log_entry))
-```
-
----
+**總體判斷**：有迴圈、要暫停、要接回來——三者有其一，LangGraph 的成本就划算；三者皆無，它只是多一層抽象。
 
 ## 總結
 
-| 方面 | LangChain | LangGraph |
-|------|----------|----------|
-| 用途 | 構建 LLM 應用組件 | 編排複雜工作流 |
-| 結構 | 線性 Chain | 圖結構（支援循環） |
-| 狀態管理 | 隱式 | 顯式 |
-| 適用場景 | 簡單應用 | 複雜、多步驟應用 |
-| 學習曲線 | 平緩 | 中等 |
+- LangGraph = 狀態機 + checkpointer。節點是函式，邊是轉移，state 是唯一的溝通管道，每步存檔。
+- State 用 `TypedDict` + reducer 宣告；節點回傳差異；`invoke()` 回傳 `dict`，用 `result["key"]`。
+- 路由是回傳字串的函式（條件邊），或讓節點回傳 `Command(goto=, update=)`；路由函式不能更新 state。
+- `interrupt()` 存檔退出、`Command(resume=)` 接回；恢復時節點從頭重跑，副作用要放在 `interrupt()` 之後。
+- `InMemorySaver` 開發用；上線用 `PostgresSaver`，記得 `with … as` 與 `.setup()`，並規劃 checkpoint 的清理。
 
-## 何時使用
+## 相關文章
 
-- **只用 LangChain**：簡單的 QA、摘要、翻譯
-- **LangChain + LangGraph**：多步驟工作流、多 Agent 系統、複雜決策邏輯
-
-兩個框架的結合提供了強大的能力，是構建現代 AI 應用的最佳選擇。
+- [LangGraph 客服工單後端：從狀態設計到可恢復的執行](/posts/langgraph-ai-customer-ticket-system-zh/) — 本文四個概念在一個完整後端裡的接法
+- [FDE core topic - State Machine & DAG：確定性圖結構與 Agent 反思迴圈收斂](/posts/fde-core-concept-3-state-machine-dag-zh/) — 圖結構與迴圈收斂的理論
+- [RAG 完全指南（五）：生產級評估、GraphRAG 與 Agentic RAG](/posts/rag-series-part5-production-zh/) — 用 LangGraph 寫的 Agentic RAG
+- [AI 工程從零開始｜Phase 13 Part 2：AI 工作流程編排](/posts/ai-eng-from-scratch-phase13-part2-orchestration-zh/) — 編排框架的選型
