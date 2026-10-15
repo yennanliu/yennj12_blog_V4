@@ -7,7 +7,7 @@ description: "端對端構建生產級 AI Agent 產品：從架構設計到上�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Agent", "LLM Engineering", "Production", "Capstone", "ReAct", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "22 min"
+readTime: "21 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,9 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 工程情境
-
-> 你的公司想把電商客服從人工轉為 AI Agent，日均客服量約 30K sessions，高峰期（雙 11）可能到 80K。客服範圍包含訂單查詢、退換貨申請、產品推薦以及升級至人工。請描述你會如何設計這個系統，從 MVP 到可以承受 80K sessions/day 的生產架構，並說明關鍵的工程決策與取捨。
+這篇給已經能讓 LLM 呼叫工具、但還沒讓它碰過真金白銀的工程師看。全文用一個貫穿的參考專案：電商平台把客服從人工轉為 AI Agent，日均約 30K sessions、雙 11 高峰可能到 80K，範圍涵蓋訂單查詢、退換貨、產品推薦與升級至人工。讀完你會能從 MVP 一路規劃到承受 80K sessions/day 的生產架構：把 ReAct 迴圈的邊界條件收緊、按副作用風險分級工具並加上冪等與確認、設計短期與長期記憶的邊界、在 Agent 前面放 Guardrails，並讓每一次執行都有可追溯的 trace。
 
 ---
 
@@ -53,9 +51,9 @@ series: ["ai-eng-from-scratch"]
 ### Phase 1：Sprint 1 / POC / < 1K sessions/day
 
 ```
-╔══════════════════════════════════════╗
-║  Phase 1：Sprint 1 / POC / < 1K sessions/day  ║
-╚══════════════════════════════════════╝
+╔══════════════════════════════════════════════╗
+║  Phase 1：Sprint 1 / POC / < 1K sessions/day ║
+╚══════════════════════════════════════════════╝
 ```
 
 **目標**：讓 Agent 能跑起來，能走完一個退款流程端對端。
@@ -109,9 +107,9 @@ series: ["ai-eng-from-scratch"]
 ### Phase 2：Sprint 2–3 / MVP / 1K–20K sessions/day
 
 ```
-╔══════════════════════════════════════╗
-║  Phase 2：Sprint 2–3 / MVP / 1K–20K sessions/day  ║
-╚══════════════════════════════════════╝
+╔══════════════════════════════════════════════════╗
+║  Phase 2：Sprint 2–3 / MVP / 1K–20K sessions/day ║
+╚══════════════════════════════════════════════════╝
 ```
 
 **目標**：生產安全，讓客服主管敢讓真實客戶使用。
@@ -174,9 +172,9 @@ series: ["ai-eng-from-scratch"]
 ### Phase 3：Sprint 4 / Scale / 20K–100K sessions/day
 
 ```
-╔══════════════════════════════════════╗
-║  Phase 3：Sprint 4 / Scale / 20K–100K sessions/day  ║
-╚══════════════════════════════════════╝
+╔════════════════════════════════════════════════════╗
+║  Phase 3：Sprint 4 / Scale / 20K–100K sessions/day ║
+╚════════════════════════════════════════════════════╝
 ```
 
 **目標**：企業級，支援雙 11 峰值 80K sessions/day，成本可預期。
@@ -551,29 +549,21 @@ Grafana 上追蹤的核心指標：
 
 ---
 
-## 八、為什麼選 X 不選 Y（6 個決策表）
+## 八、為什麼選 X 不選 Y
+
+兩個選擇用文字交代。向量資料庫用 pgvector：已有 PostgreSQL、運維熟悉、ACID 事務讓知識庫更新不會有骯髒讀，12K 文件的規模不值得多養一個 Pinecone（$200+/月）或 Weaviate；知識庫超過 5M 文件、或純向量 QPS > 500 時再遷移。知識庫搜尋用 Hybrid（Vector + BM25 + RRF + reranker）：型號、SKU、條款編號這類精確詞彙靠 BM25，Top-3 Precision 84% vs 純向量 61%（§二 Sprint 3）；完整取捨與 flip condition 見 [Phase 19 Part 1](/posts/ai-eng-from-scratch-phase19-part1-capstone-rag-system-zh/) §八 決策二。下面四個決策才真的需要權衡。
 
 ### 決策 1：LLM 選型
 
 | 選擇 | 選 Claude Sonnet 的理由 | 不選其他的理由 |
 |------|------------------------|---------------|
-| LLM 主力 | 工具呼叫格式穩定，JSON schema 遵循率 > 99%；長 context 表現好；輸出結構化程度高 | GPT-4o 工具呼叫在高並發下偶有格式錯誤（約 0.3%）；開源模型工具呼叫 quality 落差大 |
+| LLM 主力 | 工具呼叫格式穩定，JSON schema 遵循率 > 99%；長 context 表現好；輸出結構化程度高 | 其他閉源模型在高並發下的工具呼叫格式錯誤率要自己量；開源模型工具呼叫 quality 落差大 |
 
 **Flip condition**：若成本是唯一考量，且工具呼叫複雜度低（< 5 個工具），可考慮較小的開源模型部署在本地，節省約 60% 成本。
 
 ---
 
-### 決策 2：向量資料庫
-
-| 選擇 | 選 pgvector 的理由 | 不選 Pinecone/Weaviate 的理由 |
-|------|-------------------|-------------------------------|
-| 知識庫存儲 | 已有 PostgreSQL 基礎設施，運維熟悉；支援 ACID 事務，知識庫更新不會有骯髒讀；12K 文件規模不需要專門 vector DB | Pinecone：額外服務費用 $200+/月，知識庫規模不值得；Weaviate：運維複雜度高，需要額外學習 |
-
-**Flip condition**：知識庫超過 5M 文件，或 QPS > 500 純向量搜尋，pgvector 效能開始落後，此時遷移至 Pinecone 或 Qdrant 合理。
-
----
-
-### 決策 3：Session 存儲
+### 決策 2：Session 存儲
 
 | 選擇 | 選 Redis 的理由 | 不選 PostgreSQL/DynamoDB 的理由 |
 |------|----------------|--------------------------------|
@@ -583,7 +573,7 @@ Grafana 上追蹤的核心指標：
 
 ---
 
-### 決策 4：Guardrails 架構
+### 決策 3：Guardrails 架構
 
 | 選擇 | 選獨立服務的理由 | 不選內嵌 Agent 的理由 |
 |------|----------------|----------------------|
@@ -593,21 +583,11 @@ Grafana 上追蹤的核心指標：
 
 ---
 
-### 決策 5：知識庫搜尋策略
-
-| 選擇 | 選 Hybrid (Vector + BM25) 的理由 | 不選純 Vector 的理由 |
-|------|----------------------------------|---------------------|
-| KB 搜尋 | 型號（AX-3200）、SKU、條款編號等精確詞彙 recall 高；RRF fusion 簡單且效果好；Top-3 Precision 84% vs 純 Vector 的 61% | 純 Vector 對「退換貨政策第 3 條」這類精確查詢 recall 差；純 BM25 對語意相近但用詞不同的查詢 recall 差 |
-
-**Flip condition**：知識庫全部是非結構化長文（無型號/代碼），純 Vector 效果已夠好，不需維護額外的 BM25 index。
-
----
-
-### 決策 6：退款工具設計
+### 決策 4：退款工具設計
 
 | 選擇 | 選「申請式」退款的理由 | 不選「直接執行」退款的理由 |
 |------|----------------------|--------------------------|
-| `issue_refund` 語意 | AI Agent 只建立退款申請，由人工審核系統最終決定；錯誤可以在審核階段攔截；合規要求（金融操作需人工授權） | 直接執行：Phase 1 曾試過，測試中就有誤退款 3 筆，總金額 $420；合規風險極高 |
+| `issue_refund` 語意 | AI Agent 只建立退款申請，由人工審核系統最終決定；錯誤可以在審核階段攔截；合規要求（金融操作需人工授權） | 直接執行：Phase 1 曾試過，測試中就有誤退款 3 筆，總金額 $420（示意）；合規風險極高 |
 
 **Flip condition**：退款金額 < $10 且訂單狀態明確符合退換條件（由 `check_return_eligibility` 確認），可考慮設計小額自動退款通道，減少人工審核負擔。
 
@@ -628,7 +608,9 @@ Grafana 上追蹤的核心指標：
 | 退換貨誤操作率 | 0.8%（人工失誤） | 0.09% | **-88.8%** |
 | 平均 session 解決率 | 91%（人工） | 78%（AI alone）/ 95%（AI + 升級） | AI 單獨略低 |
 
-### 技術指標（90 天平均）
+> *示意估算，非實測數據。*
+
+### 技術指標（90 天平均，示意）
 
 | 指標 | P50 | P95 | P99 |
 |------|-----|-----|-----|
@@ -636,6 +618,8 @@ Grafana 上追蹤的核心指標：
 | LLM 呼叫 latency | 1.1s | 3.4s | 6.2s |
 | 工具呼叫 latency | 210ms | 780ms | 1.9s |
 | Guardrails latency | 18ms | 42ms | 88ms |
+
+> *示意估算，非實測數據。*
 
 ### 失敗與學習
 
@@ -669,18 +653,19 @@ Grafana 上追蹤的核心指標：
 | 其他 infra（API GW、monitoring） | $440 |
 | **AI 總成本** | **$14,000** |
 
+> *示意估算，非實測數據。*
+
 Haiku 用於低複雜度任務（純查詢、格式化輸出），Sonnet 用於需要推理的任務（退換貨決策、情緒分析）。這個 routing 讓 LLM 成本降低了約 38%。
 
 ---
 
 ## 十、系列導航
 
-本文是 **AI 工程從零開始** 系列 Phase 19 的第 2 篇。
-
-← **Phase 19 Part 1**：[Phase 19 Part 1：Capstone — 企業級 RAG 知識庫系統端對端實作](/posts/ai-eng-from-scratch-phase19-part1-capstone-rag-system-zh/)
-
-→ **Phase 19 Part 3**：[Phase 19 Part 3：Capstone — 多模態 AI 應用端對端實作與系列總結](/posts/ai-eng-from-scratch-phase19-part3-capstone-multimodal-app-zh/)
+| | |
+|---|---|
+| ← 上一篇 | [Phase 19 Part 1：Capstone — 企業級 RAG 知識庫系統端對端實作](/posts/ai-eng-from-scratch-phase19-part1-capstone-rag-system-zh/) |
+| → 下一篇 | [Phase 19 Part 3：Capstone — 多模態 AI 應用端對端實作與系列總結](/posts/ai-eng-from-scratch-phase19-part3-capstone-multimodal-app-zh/) |
 
 ---
 
-*本文撰寫於 2026 年 6 月，是以參考設計形式呈現的工程回顧；文中數字為示意估算，用來說明量級與取捨，非真實專案資料。*
+*本文為「AI 工程從零開始」系列 Phase 19 Part 2，以參考設計形式呈現；文中數字為示意估算，用來說明量級與取捨，非真實專案資料。系列總覽：[AI 工程從零開始](/tags/ai-eng-from-scratch/)。*

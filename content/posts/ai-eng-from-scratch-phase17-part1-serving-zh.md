@@ -7,7 +7,7 @@ description: "深入解析 AI 推論服務工程：模型服務器選型（Trito
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Infrastructure", "Serving", "Triton", "GPU", "Kubernetes", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "15 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,9 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 工程情境
-
-> 你的電商平台每天有 500 萬次商品推薦請求，目前用一台 A100 跑 PyTorch 模型，P99 延遲 1.2s，GPU 使用率只有 23%。CTO 說三個月後要支援 10 倍流量，同時把 P99 壓到 200ms 以內，預算只能增加 2 倍。你會如何重新設計推論服務架構？請解釋你在服務框架選型、擴縮容策略、GPU 共享、以及多租戶隔離四個面向的決策依據。
+這篇給已經能把模型包成 HTTP 端點、但 GPU 使用率卡在兩成、P99 動輒一秒的工程師看。全文用一個貫穿的例子：電商平台每天 500 萬次商品推薦請求，一台 A100 跑 PyTorch，P99 1.2 s、GPU 使用率 23%；三個月後要撐 10 倍流量、P99 壓到 200 ms 以內，預算只能增加 2 倍。讀完你會能在服務框架、擴縮容策略、GPU 共享與多租戶隔離四個面向說出自己的決策依據，並且知道每一層的 SLO 該量什麼。
 
 ---
 
@@ -394,33 +392,22 @@ DCGM 指標收集每個 Pod 的 GPU 時間使用量，配合 Kubernetes Cost All
 
 ## 八、為什麼選 X 不選 Y
 
-### 決策 1：Triton vs TorchServe
+兩個選擇先用文字交代。服務框架在 Triton 與 TorchServe 之間已經不太算是選擇：TorchServe 自 2025 年起進入有限維護（§三的註記），新專案只有在團隊 100% PyTorch、沒有 Ensemble Pipeline 需求、而且能接受這個維護狀態時，才值得用它換取較直覺的 handler 開發體驗。流量層在 Istio 與純 NGINX Ingress 之間：需要 header-based 的模型版本親和性路由、權重式 A/B、自動 mTLS 與 Envoy 內建的熔斷限流時選 Istio；小型部署（< 10 個服務、< 3 個 GPU 節點）用 NGINX Ingress Controller 就夠，sidecar 與 control plane 的額外資源與維運在這個規模不划算。下面四個決策才真的需要權衡。
 
-| 選擇 | 選 Triton 的理由 | 不選 TorchServe 的理由 |
-|------|-----------------|----------------------|
-| 服務框架 | 支援 TF/ONNX/TensorRT/Custom，Ensemble Pipeline 原生 DAG | 只支援 PyTorch；Ensemble 需自行實現 |
-| 多模型共用 | Model Repository 熱載入，無需重啟 | 跨框架模型共存複雜 |
-| 效能 | ResNet50 18,000 req/s；P99 4ms | ResNet50 12,000 req/s；P99 8ms |
-| 生產可靠性 | NVIDIA 原生維護，與 CUDA/TensorRT 深度整合 | Facebook 主導，PyTorch 生態強但非 GPU 廠商 |
-
-**Flip Condition**：若團隊 100% PyTorch 且沒有 Ensemble Pipeline 需求，TorchServe 的開發體驗更友好（handler 撰寫更直覺），應選 TorchServe。（前提是能接受它已進入有限維護狀態；見上方註記。）
-
----
-
-### 決策 2：vLLM vs Triton（LLM 服務）
+### 決策 1：vLLM vs Triton（LLM 服務）
 
 | 選擇 | 選 vLLM 的理由 | 不選 Triton 的理由 |
 |------|---------------|------------------|
 | LLM 推論 | PagedAttention 消除 KV Cache 碎片，記憶體利用率 82% vs 34% | Triton 無內建 PagedAttention；需自行整合 |
-| 吞吐量 | Llama-7B 2,400 tok/s vs HF 原生 320 tok/s（7.5×） | Triton 做 LLM 需額外配置 FasterTransformer backend |
+| 吞吐量 | Llama-7B 2,400 tok/s vs HF 原生 320 tok/s（7.5×） | Triton 做 LLM 需額外配置 TensorRT-LLM 或 vLLM backend |
 | 連續批次 | Continuous Batching 原生支援，動態合併流式請求 | Triton 動態批次對 variable-length LLM 效果差 |
 | 運維簡單 | 一個 Docker 映像搞定 LLM 服務 | Triton 配置複雜（config.pbtxt，多 backend） |
 
-**Flip Condition**：若需要在同一個節點同時服務 LLM + CNN + 傳統 ML 模型（混合工作負載），Triton 的多框架能力優先，vLLM 作為 Triton 的 Custom Backend 整合。
+**Flip Condition**：若需要在同一個節點同時服務 LLM + CNN + 傳統 ML 模型（混合工作負載），Triton 的多框架能力優先，以 Triton 的 vLLM backend 承載 LLM 部分。
 
 ---
 
-### 決策 3：MIG vs MPS（GPU 共享）
+### 決策 2：MIG vs MPS（GPU 共享）
 
 | 選擇 | 選 MIG 的理由 | 不選 MPS 的理由 |
 |------|-------------|---------------|
@@ -433,12 +420,12 @@ DCGM 指標收集每個 Pod 的 GPU 時間使用量，配合 Kubernetes Cost All
 
 ---
 
-### 決策 4：KEDA vs HPA（自動擴縮容）
+### 決策 3：KEDA vs HPA（自動擴縮容）
 
 | 選擇 | 選 KEDA 的理由 | 不選純 HPA 的理由 |
 |------|--------------|----------------|
 | 指標來源 | 支援 Prometheus/SQS/Kafka 等 50+ 事件源 | HPA 原生只支援 CPU/Memory，需額外 Custom Metrics Adapter |
-| 佇列深度觸發 | 可直接基於 `triton_pending_request_count` 擴容 | HPA 感知佇列深度需要 Prometheus Adapter 額外配置 |
+| 佇列深度觸發 | 可直接基於 Triton 匯出的待處理請求數指標擴容 | HPA 感知佇列深度需要 Prometheus Adapter 額外配置 |
 | Scale-to-Zero | 支援縮容至 0（離峰省成本） | HPA 最小值通常設 1，無法真正 Scale-to-Zero |
 | 預熱感知 | 結合 Warm Pool 可實現預測性擴容 | HPA 是反應式，無預測能力 |
 
@@ -446,7 +433,7 @@ DCGM 指標收集每個 Pod 的 GPU 時間使用量，配合 Kubernetes Cost All
 
 ---
 
-### 決策 5：S3 + CDN 模型快取 vs 模型打包進容器映像
+### 決策 4：S3 + CDN 模型快取 vs 模型打包進容器映像
 
 | 選擇 | 選 S3+CDN 的理由 | 不選打包進映像的理由 |
 |------|----------------|-------------------|
@@ -456,19 +443,6 @@ DCGM 指標收集每個 Pod 的 GPU 時間使用量，配合 Kubernetes Cost All
 | A/B 測試 | 同一映像可動態切換載入 v1.0 或 v2.0 | 需要兩個不同映像標籤，調度更複雜 |
 
 **Flip Condition**：若模型極小（< 500MB，如輕量 embedding 模型），且 CI/CD 流程已整合模型訓練，打包進映像可以簡化部署流程，不必額外維護 S3 版本管理。
-
----
-
-### 決策 6：Istio Service Mesh vs 純 NGINX 負載均衡
-
-| 選擇 | 選 Istio 的理由 | 不選純 NGINX 的理由 |
-|------|--------------|-------------------|
-| 流量觀測 | 自動 distributed tracing（Jaeger），無需改動應用代碼 | NGINX 需要手動埋點或 OpenTelemetry SDK |
-| 細粒度路由 | 支援 Header-based routing（模型版本親和性）、Weight-based A/B | NGINX upstream 設定較靜態 |
-| mTLS | 服務間通訊自動加密，零代碼改動 | NGINX 需手動配置 SSL Termination，維運複雜 |
-| 限流熔斷 | Envoy 內建 Circuit Breaker、Rate Limiting | NGINX 限流功能有限，複雜策略需要 Lua 插件 |
-
-**Flip Condition**：小型部署（< 10 個服務，< 3 個 GPU 節點），Istio 的 control plane 資源消耗（~1 CPU, 1.5GB RAM per node sidecar）不划算，純 NGINX Ingress Controller 已足夠。
 
 ---
 
@@ -487,7 +461,7 @@ DCGM 指標收集每個 Pod 的 GPU 時間使用量，配合 Kubernetes Cost All
 | 同時支援模型數量 | 1 | 12 | 200+ |
 | 多租戶隔離 | 無 | Namespace 級別 | MIG 硬體級別 |
 
-> 以上為示意估算，非實測數據。
+> *示意估算，非實測數據。*
 
 **成本效益分析**：從 Phase 1 到 Phase 3，雖然 GPU 數量從 1 台增加到 12 台（成本 12×），但每 100 萬請求的服務成本從 $4.12 降至 $0.68（降低 83%），吞吐量提升 146 倍。這是 GPU 使用率從 23% → 78% 帶來的複利效應：相同的 GPU 資源，透過批次、共享、擴縮容最佳化，可以服務 3.4 倍的請求量。
 
@@ -495,10 +469,11 @@ DCGM 指標收集每個 Pod 的 GPU 時間使用量，配合 Kubernetes Cost All
 
 ## 十、系列導航
 
-← [Phase 16 Part 2：湧現與集體智慧 — 群體行為的工程設計](/posts/ai-eng-from-scratch-phase16-part2-emergence-collective-zh/)
-
-→ [Phase 17 Part 2：AI 系統可觀測性 — 當模型行為成為監控對象](/posts/ai-eng-from-scratch-phase17-part2-observability-zh/)
+| | |
+|---|---|
+| ← 上一篇 | [Phase 16 Part 2：湧現與集體智慧 — 群體行為的工程設計](/posts/ai-eng-from-scratch-phase16-part2-emergence-collective-zh/) |
+| → 下一篇 | [Phase 17 Part 2：AI 系統可觀測性 — 當模型行為成為監控對象](/posts/ai-eng-from-scratch-phase17-part2-observability-zh/) |
 
 ---
 
-*本文為「AI 工程從零開始」系列第 17 階段第 1 篇，聚焦 AI 推論服務的工程架構設計。歡迎在下方留言分享你的實際部署經驗。*
+*本文為「AI 工程從零開始」系列 Phase 17 Part 1。系列總覽：[AI 工程從零開始](/tags/ai-eng-from-scratch/)。*
