@@ -7,7 +7,7 @@ description: "深入解析 RAG 架構設計：向量資料庫選型、Hybrid Sea
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "LLM", "RAG", "Vector Database", "Evaluation", "LLM Engineering", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "18 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,9 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-## 工程情境
-
-> 你們公司的法律文件問答系統上線三個月，客服每週回報大約 15% 的回答「聽起來合理但內容有誤」。CTO 要你在四週內把幻覺率降到 5% 以下，且 P95 延遲不能超過 2 秒。請說明你會怎麼診斷現況、選擇改進方向，以及如何證明改善確實發生了。
+這篇給已經把 RAG demo 跑起來、但還說不出「回答為什麼錯」的工程師看。讀完你會能把 RAG 拆成 Indexing 與 Query 兩條管線並說出各自的延遲與瓶頸、依文件型態選 Chunking 與 Hybrid Search、判斷何時值得付 +80 ms 做 Re-ranking，並用 RAGAS 這類評估管線把 Faithfulness 門檻接進 CI/CD，讓「幻覺率從 15% 降到 5%」變成可量測、可門控的工程目標。
 
 ---
 
@@ -38,128 +36,17 @@ LLM 有兩個先天限制，工程師必須正視：
 
 ---
 
-## 二、三個演進階段（POC / MVP / Scale）
+## 二、何時該升級：從 Dense-only 到 Hybrid、Re-rank 與評估門控的觸發條件
 
-### ╔══ Phase 1：POC / < 1K 文件 ══╗
+「固定 512 token chunk + Chroma + Dense 向量 + 人工抽查 20 筆」這組起步配置，兩三天就能跑通，而且在文件同質、問題都是語意型的情境下可以用很久。該升級的訊號不是文件數，而是**失敗型態**：客服回報「聽起來合理但內容有誤」的比例穩定在兩位數、含型號／條號的查詢經常找不到正確段落（Dense 向量對精確字串的召回差，§五）、或是 Chunk 邊界切斷了「第三條…應視為無效」這類跨句語意（§四）。這三個訊號各自對應一個升級動作——加 BM25 做 Hybrid、換 Semantic/Hierarchical Chunking、建 RAGAS 評估集——而不是一次全上。
 
-**目標**：兩週內驗證 RAG 在這個領域是否可行。
+第二道門檻在**高風險查詢**與**部署節奏**：法規、數字對比這類答錯代價高的問題，Hybrid + 好的 Chunking 仍可能把正確段落排在第 4–10 名，此時才值得付 +80 ms 加 Cross-Encoder Re-ranker（§六）；而當每週都有文件或 Prompt 變更、沒人能保證改動不會讓 Faithfulness 退步時，就該把 RAGAS 門控接進 CI/CD（§七）。百萬級文件、500 QPS 的分片與托管向量庫是最後才需要考慮的事。
 
-```
-┌─────────────────────────────────────────────────────┐
-│  Phase 1 RAG 架構（POC）                             │
-│                                                     │
-│  PDF / Markdown  ──▶  固定 512 Token Chunking        │
-│                              │                      │
-│                              ▼                      │
-│                    ┌──────────────────┐             │
-│                    │  Chroma / SQLite │  (本機)      │
-│                    │  Dense Vector    │             │
-│                    └────────┬─────────┘             │
-│                             │  Top-K ANN            │
-│                             ▼                       │
-│                    ┌──────────────────┐             │
-│                    │  LLM（API）       │             │
-│                    │  GPT-4o / Claude │             │
-│                    └──────────────────┘             │
-└─────────────────────────────────────────────────────┘
-```
-
-| 項目 | 數值 |
-|------|------|
-| 文件量 | < 1K docs |
-| 向量 DB | Chroma（本機，免費）|
-| Embedding | text-embedding-3-small（$0.00002/1K token）|
-| 評估方式 | 人工抽查 20 筆 |
-| 建置時間 | 2–3 天 |
-
-**解決的問題**：驗證端到端可行性，取得利害關係人信任。  
-**遺留的問題**：無法處理專有名詞（BM25 稀疏缺失）、Chunking 切斷上下文、無系統化評估。
-
----
-
-### ╔══ Phase 2：MVP / 1K–100K 文件 ══╗
-
-**目標**：生產安全、Faithfulness ≥ 0.80、P95 < 1.5s。
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│  Phase 2 RAG 架構（MVP）                                      │
-│                                                              │
-│  ┌────────────┐    ┌─────────────┐    ┌──────────────────┐  │
-│  │  Document  │───▶│  Semantic   │───▶│  Pgvector /      │  │
-│  │  Loader    │    │  Chunking   │    │  Weaviate        │  │
-│  └────────────┘    └─────────────┘    └────────┬─────────┘  │
-│                                                │             │
-│  使用者問題 ─────────────────────────────────▶ │             │
-│       │                                        │             │
-│       ├──▶ Dense Embedding ──▶ ANN Search ─────┤             │
-│       │                                        │             │
-│       └──▶ BM25 Index ──────▶ Keyword Search ──┤             │
-│                                                │             │
-│                              ┌─────────────────▼──────────┐ │
-│                              │  RRF Fusion（Hybrid）       │ │
-│                              └──────────────┬─────────────┘ │
-│                                             │               │
-│                              ┌──────────────▼─────────────┐ │
-│                              │  LLM 生成 + RAGAS 評估      │ │
-│                              └────────────────────────────┘ │
-└──────────────────────────────────────────────────────────────┘
-```
-
-| 項目 | 數值 |
-|------|------|
-| 文件量 | 1K–100K docs |
-| 向量 DB | Pgvector（已有 PostgreSQL）或 Weaviate |
-| Search | Hybrid（BM25 + Dense，RRF Fusion）|
-| 評估 | RAGAS 自動化，Faithfulness / Relevancy |
-| 建置時間 | 2–3 週 |
-
-**解決的問題**：Recall@5 比 Phase 1 提升 ~12%，專有名詞命中率改善，有量化評估基準。  
-**遺留的問題**：高風險查詢（法律條文、數字對比）需要更精準的 Re-ranking；百萬文件時 ANN 精度下降。
-
----
-
-### ╔══ Phase 3：Scale / 100K+ 文件 ══╗
-
-**目標**：企業級，自動化評估 CI/CD 門控，多索引分片，P95 < 2s @ 500 QPS。
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  Phase 3 RAG 架構（Scale）                                       │
-│                                                                 │
-│  ┌──────────────┐  ┌────────────────┐  ┌──────────────────┐   │
-│  │  Doc Ingestion│  │  Index Manager │  │  Multi-index     │   │
-│  │  Pipeline    │─▶│  (by doc type) │─▶│  Shard A / B / C │   │
-│  └──────────────┘  └────────────────┘  └────────┬─────────┘   │
-│                                                  │              │
-│  Query ──▶ Query Router ──────────────────────▶  │              │
-│                │                                 │              │
-│                ├──▶ Dense Retriever ─────────────┤              │
-│                └──▶ Sparse Retriever ────────────┤              │
-│                                                  │              │
-│                         ┌────────────────────────▼───────────┐ │
-│                         │  Cross-Encoder Re-ranker           │ │
-│                         │  (Top-50 → Top-5, +80ms)           │ │
-│                         └────────────────┬───────────────────┘ │
-│                                          │                      │
-│                         ┌────────────────▼───────────────────┐ │
-│                         │  LLM 生成                           │ │
-│                         └────────────────┬───────────────────┘ │
-│                                          │                      │
-│                         ┌────────────────▼───────────────────┐ │
-│                         │  RAGAS Eval → CI/CD Gate            │ │
-│                         │  Faithfulness ≥ 0.80 才可部署        │ │
-│                         └────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-| 項目 | 數值 |
-|------|------|
-| 文件量 | 100K+ docs |
-| 向量 DB | Weaviate / Pinecone（托管，自動 Shard）|
-| Re-ranker | Cross-Encoder（+80ms，MRR@10 +15%）|
-| 評估 | RAGAS + LLM-as-Judge，CI/CD 自動門控 |
-| 成本 | ~$0.008/query（含 Re-rank + Eval）|
+| 從 | 到 | 觸發訊號 |
+|----|----|----------|
+| Dense-only + 固定 Chunk | Hybrid（BM25 + Dense，RRF）+ Semantic Chunking | 專有名詞／條號查詢召回差；抽查發現 Chunk 切斷語意 |
+| Hybrid，無評估管線 | RAGAS 評估集 + CI/CD 門控（Faithfulness ≥ 0.80） | 每次改 Prompt 或更新文件後品質忽好忽壞，沒人能證明改善 |
+| Top-K 直接餵 LLM | Cross-Encoder Re-rank（Top-50 → Top-5） | 高風險查詢的正確段落常落在第 4–10 名；P95 預算還容得下 +80 ms |
 
 ---
 
@@ -222,6 +109,53 @@ RAG 系統分為兩條獨立管線，時序不同、瓶頸不同。
 | RRF Fusion | 1ms | 2ms | 否 |
 | Cross-Encoder Re-rank | 60ms | 120ms | 否 |
 | LLM Generation | 400ms | 1,200ms | 否 |
+
+### Embedding 模型選型：開源 vs 閉源
+
+Embedder 是兩條管線共用的元件（換模型就得全量重建索引），選擇直接影響召回品質和成本結構。
+
+```
+┌───────────────────────────────────────────────────────────────────┐
+│  Embedding 模型選型決策樹                                          │
+│                                                                   │
+│  文件語言？                                                        │
+│      │                                                            │
+│      ├── 純英文 ──▶  text-embedding-3-large（OpenAI）             │
+│      │               或 E5-large-v2（開源，MTEB 頂尖）             │
+│      │                                                            │
+│      ├── 中英混合 ──▶  BGE-M3（開源）                              │
+│      │                或 text-embedding-3-small（閉源，多語言）    │
+│      │                                                            │
+│      └── 高隱私需求（不能送出 API）──▶  BGE-M3 自部署              │
+│                                          或 E5-mistral-7b-instruct│
+└───────────────────────────────────────────────────────────────────┘
+```
+
+#### 主流 Embedding 模型比較
+
+| 模型 | 維度 | MTEB 中文 | 成本 | 自部署 | 適合場景 |
+|------|-----|---------|------|-------|---------|
+| text-embedding-3-small | 1,536 | 良 | $0.00002/1K token | 否 | 快速原型，成本敏感 |
+| text-embedding-3-large | 3,072 | 優 | $0.00013/1K token | 否 | 高準確度，英文為主 |
+| BGE-M3 | 1,024 | 頂尖 | $0（自部署）| 是 | 中文為主，隱私要求高 |
+| E5-large-v2 | 1,024 | 良 | $0（自部署）| 是 | 英文，低成本 |
+| Cohere embed-v3 | 1,024 | 優 | $0.0001/1K token | 否 | 多語言，含壓縮模式 |
+
+> 此表為 2024 年的模型與價格快照：Cohere 已推出 embed-v4，Qwen3-Embedding 等新一代開源模型也已進入 MTEB 前段。選型前請以當前 MTEB 排行與官方定價為準。
+
+**自部署 BGE-M3 成本估算**（中等規模）：  
+- 1 台 A10G GPU（4 vCPU, 24GB VRAM）：~$1.5/hr（AWS g5.xlarge）  
+- 日均 200K 次 Embedding 查詢：~$36/day vs text-embedding-3-small $4/day  
+- 換算：API 每次約 $0.00002（$4 ÷ 200K），自部署是約 $36/day 的固定成本，損益平衡點約在 $36 ÷ $0.00002 ≈ 1.8M queries/day
+- 建議：< 約 1.8M queries/day 用閉源 API 更划算；超過後自部署才開始有成本優勢（隱私或資料落地要求則不受此門檻限制）
+
+#### Embedding 維度壓縮（Matryoshka Representation Learning）
+
+OpenAI text-embedding-3 系列支援 MRL，可將 1,536 維向量壓縮為 256 維，犧牲 3–5% 精度但：
+
+- 儲存成本降低 83%（1,536 → 256 維）
+- ANN Search 速度提升 ~4x
+- 適合起步階段、成本優先的場景
 
 ---
 
@@ -434,7 +368,9 @@ if p95_latency > 2000ms:
 
 ---
 
-## 八、為什麼選 X 不選 Y（6 個關鍵決策）
+## 八、為什麼選 X 不選 Y
+
+Chunking 與 Re-ranking 的取捨已在 §四、§六 的比較表中給出，這裡只留三個真正需要權衡的決策。
 
 ### 決策 1：Hybrid Search vs Dense-only
 
@@ -445,16 +381,7 @@ if p95_latency > 2000ms:
 | 成本 | 略高（BM25 存儲）| 低 | 預算緊張 → Dense-only |
 | 專有名詞命中 | 優秀 | 差 | 無專有名詞場景 → Dense-only |
 
-### 決策 2：Cross-Encoder Re-ranker vs Bi-Encoder
-
-| 面向 | Cross-Encoder | Bi-Encoder | Flip Condition |
-|------|-------------|-----------|---------------|
-| MRR@10 | +15% 提升 | 基準 | QPS > 200，無法承受 +80ms → Bi-Encoder |
-| 延遲 | +80ms | +0ms | P95 預算 < 1s → 跳過 Re-ranking |
-| 高風險查詢 | 必要 | 不足 | 低風險 FAQ → Bi-Encoder 夠用 |
-| GPU 加速 | +20ms | N/A | 有 GPU 資源 → Cross-Encoder 划算 |
-
-### 決策 3：Pgvector vs Pinecone vs Weaviate
+### 決策 2：Pgvector vs Pinecone vs Weaviate
 
 | 面向 | Pgvector | Pinecone | Weaviate |
 |------|---------|---------|---------|
@@ -464,27 +391,7 @@ if p95_latency > 2000ms:
 | 維護負擔 | 高（自管）| 零（托管）| 中 |
 | **Flip Condition** | 超過 5M vectors 或需托管 → Pinecone | 成本敏感 + 已有 PG → Pgvector | 需要 Hybrid 且不想用 Pinecone → Weaviate |
 
-### 決策 4：RAGAS vs 自定義評估指標
-
-| 面向 | RAGAS | 自定義指標 |
-|------|-------|---------|
-| 上手速度 | 快（1 天）| 慢（2–3 週）|
-| 領域適配 | 通用，可能不符行業 | 完全客製 |
-| 與人類一致率 | ~74% | 依實作而定 |
-| 維護成本 | 低（開源維護）| 高 |
-| **Flip Condition** | 高度專業領域（醫療法規）且通用指標失準 → 自定義 |
-
-### 決策 5：Hierarchical Chunking vs Fixed-size
-
-| 面向 | Hierarchical | Fixed-size |
-|------|------------|-----------|
-| Recall@5 | 0.84 | 0.71 |
-| Faithfulness | 0.87 | 0.72 |
-| 索引大小 | ~2x | 1x |
-| 實作複雜度 | 高 | 低 |
-| **Flip Condition** | 文件 < 5K 且 Fixed-size Faithfulness > 0.80 → Fixed-size 夠用 |
-
-### 決策 6：LLM-as-Judge vs 人工評估
+### 決策 3：LLM-as-Judge vs 人工評估
 
 | 面向 | LLM-as-Judge | 人工評估 |
 |------|------------|---------|
@@ -498,7 +405,7 @@ if p95_latency > 2000ms:
 
 ## 九、系統效應：Naive RAG vs Advanced RAG 量化比較
 
-| 指標 | Naive RAG（Phase 1）| Advanced RAG（Phase 3）| 改善幅度 |
+| 指標 | Naive RAG（固定 Chunk + Dense-only）| Advanced RAG（Hybrid + Re-rank + 評估門控）| 改善幅度 |
 |------|-------------------|---------------------|---------|
 | 幻覺率（Hallucination）| 15% | 4% | **−73%** |
 | Faithfulness Score | 0.65 | 0.89 | +37% |
@@ -513,7 +420,7 @@ if p95_latency > 2000ms:
 
 > 以上為示意估算，非實測數據。
 
-**重要 Trade-off**：Advanced RAG 的延遲比 Naive RAG 高（因為 Re-ranking），需要確保 P95 在 SLA 內（本案例 2 秒）。如果延遲預算緊張，可考慮跳過 Re-ranking，用 Hybrid Search + 好的 Chunking 也能達到 Faithfulness 0.82。
+**重要 Trade-off**：Advanced RAG 的延遲比 Naive RAG 高（因為 Re-ranking），需要確保 P95 在 SLA 內（例如 2 秒）。如果延遲預算緊張，可考慮跳過 Re-ranking，用 Hybrid Search + 好的 Chunking 也能達到 Faithfulness 0.82。
 
 ---
 
@@ -624,55 +531,6 @@ Context：
 | 每季 | 從生產查詢採樣 100 筆加入評估集 |
 | 客服投訴 spike | 立即將投訴問題加入評估集 |
 | 模型升級 | 全量重跑評估，確認分數不退步 |
-
----
-
-## 十一、Embedding 模型選型：開源 vs 閉源
-
-Embedding 模型的選擇直接影響召回品質和成本結構。
-
-```
-┌───────────────────────────────────────────────────────────────────┐
-│  Embedding 模型選型決策樹                                          │
-│                                                                   │
-│  文件語言？                                                        │
-│      │                                                            │
-│      ├── 純英文 ──▶  text-embedding-3-large（OpenAI）             │
-│      │               或 E5-large-v2（開源，MTEB 頂尖）             │
-│      │                                                            │
-│      ├── 中英混合 ──▶  BGE-M3（開源）                              │
-│      │                或 text-embedding-3-small（閉源，多語言）    │
-│      │                                                            │
-│      └── 高隱私需求（不能送出 API）──▶  BGE-M3 自部署              │
-│                                          或 E5-mistral-7b-instruct│
-└───────────────────────────────────────────────────────────────────┘
-```
-
-### 主流 Embedding 模型比較
-
-| 模型 | 維度 | MTEB 中文 | 成本 | 自部署 | 適合場景 |
-|------|-----|---------|------|-------|---------|
-| text-embedding-3-small | 1,536 | 良 | $0.00002/1K token | 否 | 快速原型，成本敏感 |
-| text-embedding-3-large | 3,072 | 優 | $0.00013/1K token | 否 | 高準確度，英文為主 |
-| BGE-M3 | 1,024 | 頂尖 | $0（自部署）| 是 | 中文為主，隱私要求高 |
-| E5-large-v2 | 1,024 | 良 | $0（自部署）| 是 | 英文，低成本 |
-| Cohere embed-v3 | 1,024 | 優 | $0.0001/1K token | 否 | 多語言，含壓縮模式 |
-
-> 此表為 2024 年的模型與價格快照：Cohere 已推出 embed-v4，Qwen3-Embedding 等新一代開源模型也已進入 MTEB 前段。選型前請以當前 MTEB 排行與官方定價為準。
-
-**自部署 BGE-M3 成本估算**（中等規模）：  
-- 1 台 A10G GPU（4 vCPU, 24GB VRAM）：~$1.5/hr（AWS g5.xlarge）  
-- 日均 200K 次 Embedding 查詢：~$36/day vs text-embedding-3-small $4/day  
-- 換算：API 每次約 $0.00002（$4 ÷ 200K），自部署是約 $36/day 的固定成本，損益平衡點約在 $36 ÷ $0.00002 ≈ 1.8M queries/day
-- 建議：< 約 1.8M queries/day 用閉源 API 更划算；超過後自部署才開始有成本優勢（隱私或資料落地要求則不受此門檻限制）
-
-### Embedding 維度壓縮（Matryoshka Representation Learning）
-
-OpenAI text-embedding-3 系列支援 MRL，可將 1,536 維向量壓縮為 256 維，犧牲 3–5% 精度但：
-
-- 儲存成本降低 83%（1,536 → 256 維）
-- ANN Search 速度提升 ~4x
-- 適合 Phase 1–2 的成本優先場景
 
 ---
 
