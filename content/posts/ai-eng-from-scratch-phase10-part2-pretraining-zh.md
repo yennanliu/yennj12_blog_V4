@@ -7,7 +7,7 @@ description: "深入解析 LLM 預訓練工程：資料清洗管線、Scaling La
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "LLM", "Pretraining", "Scaling Laws", "Distributed Training", "Data Pipeline", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "17 min"
 series: ["ai-eng-from-scratch"]
 ---
 
@@ -18,7 +18,7 @@ series: ["ai-eng-from-scratch"]
 
 ---
 
-**工程情境：** 假設你是某 AI 新創的基礎架構工程師，團隊計畫訓練一個 7B 參數的 LLM，預算 $500K，目標是在 3 個月內完成預訓練。請說明你會如何規劃資料管線、選擇分散式訓練策略，以及如何監控並從 Loss Spike 中恢復？
+這篇給已經跑過微調、但還沒碰過從零預訓練的工程師看。讀完你會能說明一條從 Common Crawl 到乾淨語料的清洗管線每一步丟掉什麼、用 Chinchilla 法則算出參數量與 token 數的分配、分辨 DP／TP／PP／ZeRO 各自切的是什麼，並能為一個「7B 參數、$500K 預算、3 個月內完成」的預訓練計畫規劃資料管線、平行化策略與 loss spike 的監控與恢復。
 
 ---
 
@@ -472,16 +472,15 @@ dist_checkpoint.save(
 
 ---
 
-## 八、為什麼選 X 不選 Y（六個關鍵決策）
+## 八、為什麼選 X 不選 Y（三個關鍵決策）
 
 | 選擇 | 選 X 的理由 | 不選 Y 的理由 | 翻轉條件 |
 |------|-----------|-------------|---------|
-| **BPE Tokenizer（SentencePiece）** vs 字元級 Tokenizer | 詞彙表 32K–100K，序列長度最小化（1 Token ≈ 4 字元），訓練效率高 | 字元級：序列長 4–5×，注意力計算量增加 16–25× | 若目標語言形態複雜（如阿拉伯語），可考慮 Unigram LM |
-| **AdamW** vs SGD | 自適應學習率，對超參數不敏感，大 batch 訓練穩定 | SGD：需精確調 LR，在 Transformer 訓練中收斂慢 2–3× | 超大 batch（> 64M token）時 SGD 可能更穩定 |
-| **BF16 混合精度** vs FP16 | BF16 動態範圍更大（指數位 8 vs 5），幾乎不發生 overflow，無需 Loss Scaling | FP16：精度高但 overflow 頻繁，需要複雜的 Loss Scale | H100 以前的硬體（V100）僅支援 FP16，必須用 FP16 |
-| **Cosine LR Schedule + Warmup** vs 固定 LR | 訓練後期 LR 自然衰減，避免震盪；warmup 防止初期梯度爆炸 | 固定 LR：後期容易震盪，最終 Loss 高 5–15% | 訓練步數 < 5000 的小實驗可以用 Linear Decay |
-| **Flash Attention 2** vs 標準 Attention | 記憶體 O(N) 而非 O(N²)，速度快 2–4×，支援更長上下文 | 標準 Attention：128K token 的 sequence 需要 > 100 GB 記憶體 | 序列長度 < 2048 時差距不明顯，但 Flash Attention 2 幾乎無負面影響 |
+| **BF16 混合精度** vs FP16 | BF16 動態範圍更大（指數位 8 vs 5），幾乎不發生 overflow，無需 Loss Scaling | FP16：尾數精度高但 overflow 頻繁，需要動態 Loss Scale | V100 / T4 等沒有 BF16 硬體支援的 GPU 必須用 FP16 + loss scaling（A100 起原生支援 BF16） |
+| **Cosine LR Schedule + Warmup** vs 固定 LR | 訓練後期 LR 自然衰減，避免震盪；warmup 防止初期梯度爆炸 | 固定 LR：後期容易震盪，最終 Loss 高 5–15% | 訓練步數 < 5000 的小實驗可以用 Linear Decay；要從中途 checkpoint 延長訓練時，WSD（穩定期 LR 不變）比 cosine 方便 |
 | **ZeRO-2** vs ZeRO-3 | 通訊量少 30–50%，MFU 高；多數 7B–70B 訓練已足夠 | ZeRO-3：AllGather 參數開銷大，通訊瓶頸明顯，MFU 低 10–20% | 模型 > 200B 或 GPU 記憶體嚴重不足時，ZeRO-3 是唯一選擇 |
+
+浮點格式的位元配置與 FP8 見 [Phase 7 Part 2 §四](/posts/ai-eng-from-scratch-phase7-part2-training-variants-zh/)；Flash Attention 與 tokenizer 的取捨分別見 [Phase 7 Part 1 §八](/posts/ai-eng-from-scratch-phase7-part1-transformer-architecture-zh/) 與 [Phase 10 Part 1 §八](/posts/ai-eng-from-scratch-phase10-part1-tokenization-zh/)，這裡不再重複。
 
 ---
 
@@ -498,6 +497,8 @@ dist_checkpoint.save(
 | Loss Spike 恢復時間 | 4–8 小時（人工） | 0.5–1 小時（自動） | -85% |
 | 資料清洗吞吐量 | 5 TB/hr（單機） | 80 TB/hr（Spark 集群） | +1500% |
 
+*示意估算，非實測數據*
+
 ### 9.2 硬體選擇的成本效益
 
 | GPU | FP16 TFLOPS | 記憶體 | NVLink 頻寬 | 每小時成本 | TFLOPS/$ |
@@ -507,11 +508,11 @@ dist_checkpoint.save(
 | H100 NVL 94GB | 989 | 94 GB | 900 GB/s | $5–9 | 110–198 |
 | A10G 24GB | 125 | 24 GB | PCIe only | $1–1.5 | 83–125 |
 
+*示意估算，非實測數據*
+
 **結論：** H100 的 TFLOPS/$ 是 A100 的 1.6–2×，但實際 MFU 也更高，總體訓練成本可降低 40–50%。對於 70B+ 模型，切換到 H100 叢集通常能回收成本。（上表價格為示意區間；2026 年新建叢集多已轉向 Blackwell 世代 B200/GB200，並可用 FP8/MXFP8 訓練，比較基準應隨之更新。）
 
 ### 9.3 資料品質對最終 Loss 的影響
-
-> 下表為示意估算，用來說明各清洗步驟的相對量級，非實測數據。
 
 | 資料品質策略 | 最終 Validation Loss（7B/1T Token） | 相對提升 |
 |-----------|----------------------------------|--------|
@@ -520,6 +521,8 @@ dist_checkpoint.save(
 | + 去重 | 2.64 | +7.4% |
 | + 品質分類器 | 2.58 | +9.5% |
 | + 最優資料混合 | 2.51 | +11.9% |
+
+*示意估算，非實測數據——用來說明各清洗步驟的相對量級*
 
 ---
 

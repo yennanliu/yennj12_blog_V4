@@ -7,20 +7,18 @@ description: "深入解析 Transformer 訓練：學習率 Warmup/Schedule、梯�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "Transformer", "Training", "MoE", "BERT", "GPT", "T5", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "15 min"
 series: ["ai-eng-from-scratch"]
 ---
 
 > *大多數人認為：Transformer 就是 attention + FFN，照抄論文程式碼就能訓練起來。*
 > *真實情況是：沒有 LR warmup 模型在第 100 步就 loss 爆炸；沒有梯度裁剪 NaN 讓你懷疑人生。*
 > *進階工程師知道：訓練策略與架構選型決定了 90% 的成敗，程式碼只佔 10%。*
-> *本文要解決的是：為什麼這些技巧存在、何時用哪個、以及三個演進階段的工程落地路徑。*
+> *本文要解決的是：為什麼這些技巧存在、何時用哪個、以及什麼訊號告訴你該從單機實驗升級到多機訓練。*
 
 ---
 
-## 工程情境
-
-> 技術主管問：「你要為一個電商平台設計一套 NLP 系統，需要同時支援商品描述生成（生成任務）、評論情感分析（分類任務）、以及跨語言商品搜尋（語義匹配）。你會選擇哪種 Transformer 架構？訓練時的學習率策略和精度選擇是什麼？如果預算只有 $50K，怎麼做？」
+這篇給已經能把 Transformer 跑起來、但 loss 一爆炸就只能重跑的工程師看。讀完你會能解釋 LR warmup、梯度裁剪與 BF16 各自擋住哪一種訓練崩潰，為 BERT 式、GPT 式與 T5 式架構各找到正確的任務，看懂 MoE 的 load balancing 為什麼是工程問題而非數學問題，並能為一個同時要做生成、分類與跨語言檢索的 NLP 系統，在 $50K 預算內選出架構與訓練配方。
 
 ---
 
@@ -55,114 +53,17 @@ FP16 的最大值約 65504，一旦梯度超過就 overflow 變 NaN，整批訓�
 
 ---
 
-## 二、三個演進階段（POC/MVP/Scale）
+## 二、何時該升級：從單機實驗到多機與 3D 平行的觸發條件
 
-### ╔══ Phase 1：POC（< 1B token，單機實驗）══╗
+單機 4–8 張 A100、DDP、固定學習率、FP32 或 BF16，足以驗證任務可行性：模型在 1–3B 參數、資料在 1B token 以內時，偶發的 loss spike 重跑一次就好。該把 warmup、梯度裁剪、BF16 與 ZeRO-2/FSDP 全部補上的訊號有兩個——**參數加上 Adam 狀態（約 16 bytes/param）放不進單卡**，以及**一次實驗貴到不能接受偶發崩潰**：當一次訓練要燒掉數萬美元，「40% 的 run 在 step 200 前崩潰」就從可忍受的實驗噪音變成不可接受的成本，穩定性技巧也從選配變成必備。
 
-**目標**：快速驗證任務可行性，不追求最優效能。
+第二道門檻是資料平行本身不夠用：ZeRO-2 仍要求每張卡放得下完整的前向啟動值與一層的權重。當模型大到單卡連一層都放不下（約 13–20B 起），就要在節點內切 Tensor Parallel；當模型超過整個節點的記憶體（70B 以上），再跨節點切 Pipeline Parallel，組成 3D 平行。DP／TP／PP／ZeRO 各切什麼、通訊拓撲怎麼擺，完整說明見 [Phase 10 Part 2 §五](/posts/ai-eng-from-scratch-phase10-part2-pretraining-zh/)。
 
-```
-┌──────────────────────────────────────────────────────────┐
-│  POC 訓練堆疊（單機 4×A100）                              │
-│                                                          │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐  │
-│  │  資料載入    │───▶│  Model      │───▶│  Optimizer  │  │
-│  │  DataLoader │    │  (HF/PyTorch│    │  AdamW      │  │
-│  │  num_workers│    │   小 config)│    │  固定 LR    │  │
-│  └─────────────┘    └─────────────┘    └─────────────┘  │
-│                              │                           │
-│                              ▼                           │
-│                    ┌─────────────────┐                   │
-│                    │  WandB / TBoard │                   │
-│                    │  loss / grad_norm│                  │
-│                    └─────────────────┘                   │
-│                                                          │
-│  LR: cosine decay 無 warmup（接受偶發崩潰）               │
-│  精度: FP32（穩定，速度慢 ~2x）                           │
-│  Batch: 32–64，gradient accumulation 關閉                │
-└──────────────────────────────────────────────────────────┘
-```
-
-**成本估算**：4×A100 40GB 單次實驗約 $20–50（AWS p4d.xlarge 按需）。  
-**可接受的妥協**：偶發 loss spike、訓練速度未最佳化、無分散式。  
-**遺留問題**：無法處理 > 1B token 資料集；無法訓練 > 3B 參數模型。
-
----
-
-### ╔══ Phase 2：MVP（1B–100B token，多機訓練）══╗
-
-**目標**：生產可用、團隊可操作、無持續救火。
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│  MVP 訓練堆疊（4–16 × 8×A100 節點）                          │
-│                                                              │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │  資料管線                                             │   │
-│  │  Streaming Dataset ──▶ Tokenizer ──▶ PackedSequence  │   │
-│  └───────────────────────────┬──────────────────────────┘   │
-│                              │                               │
-│  ┌───────────────────────────▼──────────────────────────┐   │
-│  │  分散式訓練（DeepSpeed ZeRO-2 / FSDP）               │   │
-│  │                                                      │   │
-│  │  Node 0        Node 1        Node 2        Node 3   │   │
-│  │  ┌────────┐   ┌────────┐   ┌────────┐   ┌────────┐ │   │
-│  │  │8×A100  │   │8×A100  │   │8×A100  │   │8×A100  │ │   │
-│  │  │DP+TP   │   │DP+TP   │   │DP+TP   │   │DP+TP   │ │   │
-│  │  └────────┘   └────────┘   └────────┘   └────────┘ │   │
-│  │         NVLink（節點內） / InfiniBand（節點間）       │   │
-│  └───────────────────────────┬──────────────────────────┘   │
-│                              │                               │
-│  ┌───────────────────────────▼──────────────────────────┐   │
-│  │  訓練策略                                             │   │
-│  │  • LR Warmup 2000 steps + cosine decay               │   │
-│  │  • Gradient clip norm = 1.0                          │   │
-│  │  • BF16 混合精度（A100/H100 原生支援）                │   │
-│  │  • Checkpoint 每 1000 steps                          │   │
-│  └──────────────────────────────────────────────────────┘   │
-└──────────────────────────────────────────────────────────────┘
-```
-
-**成本估算**：32×A100 訓練 7B 模型 100B token，約 $40K–$60K。  
-**新增組件**：ZeRO-2 分片、LR schedule、grad clip、BF16。  
-**遺留問題**：單次失敗成本高；超過 70B 參數需要 Pipeline Parallelism。
-
----
-
-### ╔══ Phase 3：Scale（> 100B token，超大規模）══╗
-
-**目標**：企業級，自動化恢復，成本最佳化，支援 MoE/長序列。
-
-```
-┌────────────────────────────────────────────────────────────────┐
-│  Scale 訓練堆疊（數百到數千 GPU）                               │
-│                                                                │
-│  ┌─────────────────────────────────────────────────────────┐  │
-│  │  三維並行（3D Parallelism）                              │  │
-│  │                                                         │  │
-│  │  Data Parallel (DP)                                     │  │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │  │
-│  │  │  Pipeline 0  │  │  Pipeline 1  │  │  Pipeline 2  │  │  │
-│  │  │ ┌──┐ ┌──┐   │  │ ┌──┐ ┌──┐   │  │ ┌──┐ ┌──┐   │  │  │
-│  │  │ │L1│▶│L2│PP │  │ │L1│▶│L2│PP │  │ │L1│▶│L2│PP │  │  │
-│  │  │ └──┘ └──┘   │  │ └──┘ └──┘   │  │ └──┘ └──┘   │  │  │
-│  │  │ Tensor Parallel│  │ Tensor Parallel│  │ Tensor Parallel│  │  │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  │  │
-│  └─────────────────────────────────────────────────────────┘  │
-│                                                                │
-│  ┌─────────────────────────────────────────────────────────┐  │
-│  │  進階策略                                               │  │
-│  │  • ZeRO-3 + Offload（優化器狀態到 CPU/NVMe）            │  │
-│  │  • FP8 量化訓練（H100 Transformer Engine）              │  │
-│  │  • 自動 checkpoint 恢復（Fault Tolerance）              │  │
-│  │  • 動態 LR scaling（根據 batch size 線性縮放）          │  │
-│  │  • MoE routing（Expert Parallelism 獨立維度）          │  │
-│  └─────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────────────────────────────────┘
-```
-
-**成本估算**：1000×H100 訓練 70B 模型 1T token，約 $2M–$5M。  
-**關鍵新增**：三維並行、FP8 訓練、自動故障恢復、MoE Expert Parallelism。
+| 從 | 到 | 觸發訊號 |
+|----|----|----------|
+| 單機 DDP，固定 LR，FP32 | ZeRO-2/FSDP + warmup + 梯度裁剪 + BF16 | 參數 + 優化器狀態（約 16 bytes/param）放不進單卡；單次實驗費用高到不能接受偶發崩潰 |
+| ZeRO-2 資料平行 | TP（節點內）+ PP（跨節點）的 3D 平行 | 單卡放不下一層的權重與啟動值；模型超過單節點記憶體（> 70B） |
+| BF16 | FP8（H100 Transformer Engine） | 矩陣乘吞吐成為成本主因且硬體支援；願意承擔 per-tensor scale 的工程複雜度 |
 
 ---
 
@@ -461,6 +362,8 @@ Flash Attention 不降低 attention 的計算複雜度，但大幅降低 HBM 讀
 - 實際速度提升：2–4×（記憶體頻寬瓶頸下更明顯）
 - Flash Attention 2 / 3 進一步最佳化 warp-level 平行度
 
+> Tiling 的完整推導、HBM/SRAM 頻寬數字與 FA1/2/3 的差異見 [Phase 7 Part 1 §七](/posts/ai-eng-from-scratch-phase7-part1-transformer-architecture-zh/)，此處只做摘要。
+
 ### 7.3 Mamba（SSM 架構）
 
 Mamba 用 Selective State Space Model 取代 attention：
@@ -492,21 +395,7 @@ Mamba 用 Selective State Space Model 取代 attention：
 
 ---
 
-### 決策 2：AdamW vs SGD with Momentum
-
-| 維度 | AdamW | SGD + Momentum |
-|------|-------|---------------|
-| LR 敏感度 | 低（adaptive step） | 高，需要精細調 LR |
-| 收斂速度 | 快，100K steps 內明顯 | 需要更多 steps |
-| 訓練穩定性 | 高 | 較低，尤其深層 Transformer |
-| 最終精度 | 略低於 SGD（有文獻） | 理論上更好但需充分訓練 |
-| 記憶體 | 需存 m/v 狀態（2× 模型大小） | 只需 momentum（1× 模型大小） |
-
-**Flip Condition**：超大規模訓練且記憶體極度受限時（如 ZeRO-3 + Offload 仍不夠），考慮 Adafactor（無 second moment 存儲）。
-
----
-
-### 決策 3：Decoder-only vs Encoder-Decoder（生成任務）
+### 決策 2：Decoder-only vs Encoder-Decoder（生成任務）
 
 | 維度 | Decoder-only | Encoder-Decoder |
 |------|-------------|----------------|
@@ -520,7 +409,7 @@ Mamba 用 Selective State Space Model 取代 attention：
 
 ---
 
-### 決策 4：MoE vs Dense（相同推論 FLOPs）
+### 決策 3：MoE vs Dense（相同推論 FLOPs）
 
 | 維度 | MoE | Dense |
 |------|-----|-------|
@@ -534,30 +423,7 @@ Mamba 用 Selective State Space Model 取代 attention：
 
 ---
 
-### 決策 5：Warmup Steps 2000 vs 500
-
-| 維度 | 2000 Steps Warmup | 500 Steps Warmup |
-|------|------------------|-----------------|
-| 大模型（> 1B）穩定性 | 高 | 容易前期崩潰 |
-| 小模型（< 125M）效率 | 浪費步數 | 足夠 |
-| Batch Size 影響 | Global batch 大時需更多 warmup | - |
-| 繼續訓練（resume） | 從 checkpoint 繼續時可縮短 | - |
-
-**Flip Condition**：若從已訓練 checkpoint fine-tune，warmup 可縮短至 100–500 steps；若 global batch size 超過 4M token，warmup 需延長到 4000+。
-
----
-
-### 決策 6：Flash Attention vs 標準 Attention
-
-| 維度 | Flash Attention | 標準 Attention |
-|------|----------------|--------------|
-| 記憶體使用 | O(n)（Tiling） | O(n²)（存中間矩陣） |
-| 計算複雜度 | 同為 O(n²) | O(n²) |
-| 實際速度 | 2–4× 快（IO 優化） | 基準 |
-| 實現複雜度 | 需要 CUDA kernel（已有開源） | 簡單 |
-| 支援序列長度 | 64K+（搭配 RoPE） | 8K 以上 OOM |
-
-**Flip Condition**：幾乎沒有不用 Flash Attention 的理由（2023 年後的框架預設開啟）。唯一例外：需要精確 attention 權重用於解釋性研究時，Tiling 計算的中間值無法直接獲取。
+Flash Attention vs 標準 Attention 的取捨見 [Phase 7 Part 1 §八](/posts/ai-eng-from-scratch-phase7-part1-transformer-architecture-zh/)；2023 年後的訓練框架預設開啟，唯一要關掉它的理由是解釋性研究需要讀出完整的 attention 權重矩陣。
 
 ---
 
@@ -567,7 +433,7 @@ Mamba 用 Selective State Space Model 取代 attention：
 
 | 配置 | 訓練時間 | GPU 費用 | 最終 PPL | 說明 |
 |------|---------|---------|---------|------|
-| FP32，無 Flash Attn | 960 hrs | $115K | 8.2 | POC 基準 |
+| FP32，無 Flash Attn | 960 hrs | $115K | 8.2 | FP32 基準 |
 | BF16 + Flash Attn | 240 hrs | $29K | 8.3 | -75% 成本，+0.1 PPL |
 | BF16 + Flash Attn + ZeRO-2 | 180 hrs | $22K | 8.3 | 多機高效 |
 | BF16 + FP8 + ZeRO-3（H100） | 80 hrs | $12K | 8.4 | H100 最佳 |
@@ -585,6 +451,8 @@ Mamba 用 Selective State Space Model 取代 attention：
 | 程式碼生成（HumanEval） | N/A | 48.1%（CodeLlama-34B） | 42.3%（CodeT5+） |
 | 語義搜尋（NDCG@10） | 0.794（BGE-large） | 0.741（E5-mistral） | 0.768（GTR-XXL） |
 
+*示意估算，非實測數據*
+
 ### 9.3 推論速度（7B 模型，A100 單卡，batch=1）
 
 | 配置 | Prefill 延遲 | Decode 速度 | KV Cache（4K ctx） |
@@ -593,6 +461,8 @@ Mamba 用 Selective State Space Model 取代 attention：
 | BF16 + Flash Attn 2 | 18ms | 35 tok/s | 3.8GB（節省 IO） |
 | INT8 量化（AWQ） | 20ms | 52 tok/s | 2.1GB |
 | INT4 量化（GPTQ） | 22ms | 68 tok/s | 1.2GB |
+
+*示意估算，非實測數據*
 
 ---
 
