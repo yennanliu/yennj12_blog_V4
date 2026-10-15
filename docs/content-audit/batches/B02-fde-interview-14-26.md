@@ -152,7 +152,6 @@ house-format warnings, which are minor for posts of this age.
 | 13 | minor | part21 L148 | "Cloud Tasks / Redis 偵測到 Worker 心跳停止" — Cloud Tasks is not in the architecture. | "排程器（Redis 心跳 / Pub/Sub 重投遞）偵測到…". |
 | 14 | minor | part23 L72 vs L172; L172 | `len(prompt) * 1.3` estimate vs "精確計算" two sections later; tiktoken is OpenAI's tokenizer. | Keep the heuristic only as the gateway fast path; name the Vertex `count_tokens` API / local tokenizer. |
 | 15 | minor | part25 L171 vs L283–285 | "3 次 = 3x 成本" vs "2 次反思 = 5x"; baseline ignores the always-on evaluator call (floor 2x). | State: 0 reflections = 2 calls (2x), 1 = 4 calls, 2 = 6 calls; fix L314. |
-| 16 | minor | all 13, front matter | `readTime` 15–18 min for 291–391 lines (formula → 9–12 min). | Recompute from line count when touching each file. |
 
 ## Recommendations
 

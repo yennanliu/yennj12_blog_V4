@@ -55,6 +55,7 @@ FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 HEADING = re.compile(r"^(#{1,6})\s+(.*)$")
 MD_IMAGE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)")
 BOX_CHARS = re.compile(r"[┌┐└┘├┤│─═╔╗╚╝▶▼]")
+MERMAID_FENCE = re.compile(r"^\s*(`{3,}|~{3,})\s*mermaid\b")
 # Case-sensitive on purpose: "Todo List" and `todo_write` are real prose.
 PLACEHOLDER = re.compile(r"\b(TODO|TBD|FIXME)\b|(?i:lorem ipsum)|待補|待填")
 INLINE_CODE = re.compile(r"`[^`]*`")
@@ -299,7 +300,10 @@ def check_series(r: Report, fm: dict, lines: list[str], prose, blocks) -> None:
     cats = fm.get("categories") if isinstance(fm.get("categories"), list) else []
     total = len(lines)
     sections = [(n, SECTION.match(l).group(1)) for n, l in prose if SECTION.match(l)]
+    # A diagram is an ASCII box drawing (a fenced block with enough box characters) or a
+    # Mermaid fence; both are accepted by the series rules in CLAUDE.md.
     diagrams = sum(1 for b in blocks if len(BOX_CHARS.findall("\n".join(b))) >= 8)
+    diagrams += sum(1 for l in lines if MERMAID_FENCE.match(l))
     decisions = count_decisions(lines)
 
     def house_rules(min_lines: int, max_lines: int, interview_format: bool) -> None:
@@ -312,7 +316,7 @@ def check_series(r: Report, fm: dict, lines: list[str], prose, blocks) -> None:
             if num not in ZH_NUMERALS:
                 r.warn(n, f"section 「{num}」 exceeds the 十-section cap")
         if diagrams < 2:
-            r.warn(1, f"{diagrams} ASCII box diagrams; the series standard is 2-4")
+            r.warn(1, f"{diagrams} diagrams (ASCII box or Mermaid); the series standard is 2-4")
         if interview_format and not any("三個演進階段" in l for _, l in prose):
             r.warn(1, "no 「三個演進階段」 section")
         if interview_format and decisions < 4:
@@ -321,9 +325,9 @@ def check_series(r: Report, fm: dict, lines: list[str], prose, blocks) -> None:
             if "面試答題要點" in l and l.startswith("#"):
                 r.warn(n, "「面試答題要點」 section was dropped from the standard format")
 
-    # The "no Google" rule covers every interview-prep post: the fde-interview-guide series
-    # by file name, and any other post that tags itself "Interview" (fde-core-concept today).
-    if name.startswith("fde-interview-guide") or "Interview" in tags:
+    # The "no Google" rule covers every interview-prep post: the fde-interview-guide and
+    # fde-core-concept series by file name, and any other post that tags itself "Interview".
+    if name.startswith(("fde-interview-guide", "fde-core-concept")) or "Interview" in tags:
         for n, l in enumerate(lines, start=1):
             if re.search(r"google", l, re.I):
                 r.warn(n, "interview posts must not mention Google (CLAUDE.md style rule)")

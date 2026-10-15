@@ -1,6 +1,21 @@
 # DONE-k8s-docker-redis-mkdocs — kubernetes-complete-guide ×3, docker-complete-guide ×3, docker-mount, mkdocs, redis-sentinel
 
-Reviewed 2026-10-03 (parallel pass). 9 posts: 1 Ready / 5 Needs revision / 3 Not ready.
+Reviewed 2026-10-03 (parallel pass).
+
+## Batch summary
+
+Nine posts, 11,681 lines: 1 Ready (mkdocs) / 5 Needs revision / 3 Not ready (docker p3,
+docker-mount, redis-sentinel). The docker and kubernetes "complete guides" are the same scaffold
+with different nouns — identical intro, FAQ table, checklist and 🎉 closing — and none of the six
+states a thesis; they are command and YAML references of 960–1,720 lines. Accuracy is the weak
+dimension: each series mixes correct 2026 patches (ingress-nginx retirement, VirtioFS, Redis
+address trap, BuildKit default) with 2023-era commands that were never revised (`docker scan`,
+`kubectl get componentstatuses`, `--record`, `helm repo add stable`, in-tree `aws-ebs`). Three
+posts contain configuration a reader would copy that does the opposite of what the prose says
+(a NetworkPolicy that ORs instead of ANDs, Bitnami replication env vars on the official postgres
+image, SELinux `:z`/`:Z` swapped), and the redis post's Java does not compile and its Spring
+Boot property keys are silently ignored on Boot 3. mkdocs is the model: a dated PR, a real
+thesis, decision tables with flip conditions and percentages that recompute.
 
 ## Per-post scorecard
 
@@ -23,6 +38,24 @@ Reviewed 2026-10-03 (parallel pass). 9 posts: 1 Ready / 5 Needs revision / 3 Not
 - **Direction — overlap with kubernetes-autoscaling series.** k8s p3 L47-231 echoes autoscaling part1 L220-228 and part5; k8s p3 L1044-1067 duplicates autoscaling part4's kube-prometheus-stack install. Neither series links to the other.
 - **Accuracy — point patches on a stale base.** Good 2026 notes (ingress-nginx retirement k8s p2 L851, VirtioFS docker-mount L441, Redis address trap L400, BuildKit default docker p3 L992) sit next to 2023-era content (`controller-v1.8.1` k8s p2 L984, `docker scan` ×3, `helm repo add stable` k8s p3 L945, `actions/checkout@v3`).
 - **Format.** Descriptions describe scope not payoff; only mkdocs sells a result. `weight:` set correctly on both series. k8s p3 mixes zh and en tags. redis readTime 29 min for 1751 lines (~55 min).
+
+## Top findings
+
+| # | severity | file:line | finding | suggested fix |
+|---|---|---|---|---|
+| 1 | blocker | kubernetes-complete-guide-part3 L620-638 | "allow DNS" NetworkPolicy lists `namespaceSelector` and `podSelector` as separate `to:` items — an OR that admits every pod in kube-system and any `k8s-app=kube-dns` pod in the local namespace | Put both selectors in one `to:` item (AND), as L559-565 already does |
+| 2 | blocker | docker-complete-guide-part3 L1155-1170 | `POSTGRES_REPLICATION_MODE` / `POSTGRES_MASTER_HOST` are Bitnami env vars; the official `postgres:15` image ignores them, so the "HA" compose starts two unrelated databases | Use `bitnami/postgresql` with those vars, or configure streaming replication explicitly |
+| 3 | blocker | docker-mount-complete-guide L483-484 | SELinux labels inverted: `:z` is shared, `:Z` is private | Swap the two definitions; also L463 default propagation is `rprivate`, L903 `--userns-remap` is a `dockerd` flag |
+| 4 | blocker | redis-sentinel L211, L494-513, L700/L707 | Quorum conflated with the failover majority vote; `spring.redis.*` keys ignored on Spring Boot 3 (`spring.data.redis.*`); Micrometer `Counter.increment(Tags)` / `redisOperationTimer.builder()` do not exist | Explain quorum (ODOWN) vs majority (leader election) and `min-replicas-to-write`; migrate keys; fix the 14 Micrometer calls |
+| 5 | major | redis-sentinel L1454-1480 | Gauge re-registered every 30 s with a captured String (value freezes); `Counter.increment(total_commands_processed)` adds the cumulative total each tick | Register once with a supplier; use a `FunctionCounter` on the monotonic total |
+| 6 | major | kubernetes-complete-guide-part2 L507, L612, L1045 | `--record` (deprecated), `node-role.kubernetes.io/master` taint (renamed `control-plane` in 1.24), `kubernetes.io/aws-ebs` in-tree provisioner (removed) | `kubectl annotate` / `kubernetes.io/change-cause`; `control-plane`; `ebs.csi.aws.com` |
+| 7 | major | docker-complete-guide-part2 L626, L1207; part3 L850, L923 | `docker scan` removed in Docker Desktop 4.17 (2023) | `docker scout cves` |
+| 8 | major | kubernetes-complete-guide-part1 L635-637, L892 | `kubectl get componentstatuses` deprecated since 1.19; Katacoda link (shut down 2022) | Point to `/livez` and `/readyz`; drop the link |
+| 9 | major | kubernetes-complete-guide-part3 L1119-1127 | `rate(container_cpu_usage_seconds_total) > 0.8` is 0.8 cores, rendered with `humanizePercentage` | Divide by the CPU limit or alert on cores |
+| 10 | major | docker-complete-guide-part3 L1307/L1330, L933, L1122-1178 | `docker/compose:latest` is the Compose V1 image the same post declares dead; legacy `--link`; Swarm-only `update_config`/`placement` under "高可用性配置" without saying `docker compose up` ignores them | Use `docker compose` plugin; networks instead of `--link`; label the Swarm section |
+| 11 | major | docker-complete-guide-part1 L414, L417, L548-549, L561 | Stale platform notes (HyperKit/VirtualBox; Windows Pro-only; dead `registry.docker-cn.com`; obsolete `overlay2.override_kernel_check`) | Rewrite the install section with an "as of" date |
+| 12 | minor | mkdocs L37 vs L32 vs L383 | "5,000 頁 × 1 MB" (≈5 GB) vs 3.1 GB built site vs 752 MB payload, never reconciled | One sentence relating the three figures |
+| 13 | minor | both series, closing sections | Identical FAQ, checklist, 學習資源 and 🎉 結語 blocks copy-pasted across six posts; feature-list Mermaid (k8s p1 ×14) | Cut the boilerplate; keep the 1–2 mechanism diagrams per post |
 
 ## Verified / unverified claims (abridged)
 - ✅ k8s p1 L133/L209 dockershim removal 1.24; ✅ k8s p2 L851 ingress-nginx retirement March 2026; ✅ `autoscaling/v2`, `networking.k8s.io/v1`, `batch/v1` CronJob `timeZone`, `ReadWriteOncePod` current.

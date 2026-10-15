@@ -107,10 +107,17 @@ Default structure for a standalone post:
    rollout checklist.
 6. **Summary** — the thesis restated as 3–5 bullets a reader could act on. Then related posts.
 
-**Series posts override this.** For `fde-interview-guide-*` and `ai-eng-from-scratch-*`, the
-section order, 「三個演進階段」 phase section, 600–900 line target, 一…十 section cap, tag rules
-and the "no Google" rule for interview posts are all in `CLAUDE.md` — read that section and
-follow it exactly; it wins over anything here.
+**Series posts override this.** The rules live in `CLAUDE.md`; read the relevant section and
+follow it exactly, it wins over anything here. The two series differ:
+
+- `fde-interview-guide-*` (interview prep): the full house format — section order,
+  「三個演進階段」, 4–6 「為什麼選 X 不選 Y」 tables with flip conditions, 600–900 lines, 一…十
+  section cap, `RKK` + `Interview` tags, and the "no Google" rule.
+- `ai-eng-from-scratch-*` (curriculum, not interview prep): 2–4 diagrams, concrete numbers with
+  their assumptions, the 一…十 cap, the `RKK` tag and series nav. 「三個演進階段」 and decision
+  tables are **optional** — use them only when the topic has a real scale cliff or a real
+  alternative to weigh. Length follows the lesson (~400–900 lines); never pad to a floor. No
+  interviewer-question opener, no model-answer section, and the "no Google" rule does not apply.
 
 ## Hugo mechanics (this repo)
 

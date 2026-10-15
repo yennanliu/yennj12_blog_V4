@@ -107,7 +107,7 @@ editor's judgement and are most useful relative to each other.
 | posts with zero internal links | 99 | series and related posts don't reinforce each other |
 | descriptions > 160 chars | 92 | SEO snippet and card text truncated |
 | readTime off by > 50 % vs. ~32 lines/min | 26 | five posts under 200 lines claim 12–13 min |
-| mechanical warnings (after this PR's checker change) | 208, 0 errors | 55 → 38 line-count, 42 decision-table, 40 phase-section, 28 leftover 面試答題要點, 29 Google-in-interview-post, 16 over the 十 cap, 5 finance posts without a disclaimer |
+| mechanical warnings (after this PR's checker change) | 208, 0 errors | 42 decision-table + 40 phase-section + 38 line-count (was 55) + 29 Google-in-interview-post + 28 leftover 面試答題要點 + 16 over the 十 cap + 5 fewer than 2 diagrams + 5 finance posts without a disclaimer + 2 readTime drift + 1 placeholder text + 1 H1 in body + 1 over-long description = 208 |
 | unique tags / used once | 1,067 / 713 (67 %) | the tag cloud that the "Series" menu points at is unusable at this size; `繁體中文` is a tag on 70 posts |
 | category spread | engineering 277 · ai 223 · finance 41 · infrastructure 36 · architecture 32 · business 28 · tools 19 · creative 9 | `engineering` on 77 % of posts is not a filter |
 
