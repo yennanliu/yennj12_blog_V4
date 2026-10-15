@@ -1326,6 +1326,12 @@ Sources:
 - [Prepare your training datasets for fine-tuning and continued pre-training - Amazon Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/model-customization-prepare.html)
 - [Fine-tune LLMs with synthetic data for context-based Q&A using Amazon Bedrock | Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/fine-tune-llms-with-synthetic-data-for-context-based-qa-using-amazon-bedrock/)
 
+## 相關文章與正典版本
+
+- Open-source counterpart (SFT, DPO, RLHF with TRL, in Traditional Chinese) — [開源 LLM Post-Training 全攻略：從 SFT 到 RLHF](/posts/llm-post-training-approaches-open-source-zh/)
+- Fine-tuning code: Datasets, Trainer and LoRA/QLoRA — [Hugging Face 實戰（三）：微調實戰 — Datasets、Trainer 與 LoRA/QLoRA](/posts/hugging-face-part3-fine-tuning-zh/)
+- Post-training code: SFT, DPO, ORPO and GRPO — [Hugging Face 實戰（四）：後訓練 — 從 SFT 到 DPO、ORPO 與 GRPO](/posts/hugging-face-part4-post-training-zh/)
+
 ---
 
 ## 🏷️ Tags & Categories

@@ -496,6 +496,13 @@ if __name__ == "__main__":
 **混合搜尋、HyDE（假設性文件嵌入）、Multi-Query Retrieval、Reranker**——  
 讓你的 RAG 在複雜問題上也能精準命中。
 
+## 相關文章與正典版本
+
+- 切塊與文件解析（正典）— [RAGFlow Intro Part 2 — DeepDoc 解析與 Chunking 策略](/posts/ragflow-intro-part2-deepdoc-chunking-zh/)、[ChatPDF RAG 優化（一）：語意切塊與混合檢索](/posts/chatpdf-rag-optimization-part1-chunking-retrieval-zh/)
+- 混合搜尋與 RRF：機制與生產實作（正典）— [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[RAGFlow Intro Part 4 — 混合搜尋、Rerank 與 GraphRAG/RAPTOR](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
+- 評估（正典）— [FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)、[AI 工程從零開始 Phase 11 Part 2：RAG 系統與 LLM 評估](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+
 ---
 
 **系列導覽**

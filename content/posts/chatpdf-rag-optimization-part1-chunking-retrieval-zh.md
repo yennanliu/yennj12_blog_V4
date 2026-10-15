@@ -336,6 +336,13 @@ def _minmax(by_key: dict) -> dict:
 
 下一篇([第二部分](/posts/chatpdf-rag-optimization-part2-backend-hardening-zh/))會進入**後端強化與進階 RAG**:上傳安全驗證、資源邊界、多查詢擴展、檢索評分過濾、頁碼引用、LRU 快取——把這套 pipeline 從「能跑」變成「能上線」。
 
+## 相關文章與正典版本
+
+- 切塊的另一個正典實作（DeepDoc 與 14 種模板）— [RAGFlow Intro Part 2 — DeepDoc 解析與 Chunking 策略](/posts/ragflow-intro-part2-deepdoc-chunking-zh/)
+- 混合搜尋與 RRF：機制（正典）— [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)；生產實作見 [RAGFlow Intro Part 4 — 混合搜尋、Rerank 與 GraphRAG/RAPTOR](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
+- 重排與 Cross-Encoder（正典）— [FDE core topic — Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+
 ---
 
 **系列導覽**

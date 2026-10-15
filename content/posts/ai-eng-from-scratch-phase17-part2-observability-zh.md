@@ -459,6 +459,10 @@ THEN: send_pagerduty_alert(severity="high")
 
 > 在 100K MAU 規模，依這組示意數字，完整可觀測性平台的 ROI 轉正約在上線後第 2 個月。
 
+## 相關文章與正典版本
+
+- LLM 可觀測性的資料模型（Trace / Observation / Score / Dataset）— [Langfuse 入門 Part 1 — 核心概念與資料模型](/posts/langfuse-intro-part1-concepts-zh/)
+
 ---
 
 ## 十、系列導航

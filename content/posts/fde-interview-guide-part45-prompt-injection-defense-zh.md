@@ -628,6 +628,11 @@ spec:
 
 每一層都有對應的「攻擊者需要額外付出的成本」。Layer 3（沙盒推理引擎）是質的跳躍，因為它讓攻擊者不再只需要「找到一個繞過 Prompt 的詞語」，而是需要讓一個只輸出固定 Schema JSON 的模型，輸出的 JSON 能通過 Pydantic 校驗，且能讓主模型產生攻擊者想要的決策——這是指數級困難的組合攻擊。
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Indirect Prompt Injection：工具鏈的隱形攻擊與沙盒隔離](/posts/fde-core-concept-7-indirect-prompt-injection-zh/)
+- 機制與原理（正典） — [FDE core topic — Prompt Injection & Jailbreak Defense](/posts/fde-core-concept-6-prompt-injection-jailbreak-zh/)
+
 ---
 
 **系列導航**

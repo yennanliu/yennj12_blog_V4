@@ -401,3 +401,8 @@ Context Window Overflow：
 ---
 
 下一篇：[FDE 面試準備指南（六）：RAG 進階——檢索失敗、Grounding、評估指標與成本控制](/posts/fde-interview-guide-part6-rag-eval-zh/)
+
+## 相關文章與正典版本
+
+- 機制與原理（正典） — [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)
+- 機制與原理（正典） — [FDE core topic — Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)

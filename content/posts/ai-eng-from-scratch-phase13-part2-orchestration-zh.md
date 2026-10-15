@@ -585,6 +585,11 @@ Level 4：蒸餾/微調（難度：高）
   注意：需要 1K+ 標記樣本，品質評估複雜
 ```
 
+## 相關文章與正典版本
+
+- LangGraph 入門（狀態、路由、interrupt、checkpointer）— [LangGraph + LangChain 完全入門指南](/posts/langgraph-langchain-intro-zh/)
+- 完整後端範例（可恢復的執行）— [LangGraph 客服工單後端：從狀態設計到可恢復的執行](/posts/langgraph-ai-customer-ticket-system-zh/)
+
 ---
 
 ## 十、系列導航

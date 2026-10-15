@@ -803,6 +803,11 @@ KV Cache 在 GPU 層面共享記憶體，理論上存在跨用戶讀取的風險
 
 > *「這題的核心是把 KV Cache 管理從『技術問題』升維成『財務工程問題』。我會設計三層架構：L1 是 Redis Cluster，存最近 3 輪對話，LRU 驅逐保證 < 2ms 讀取；L2 是 Vertex AI Context Caching，但觸發條件是雙重門檻——對話必須超過 32K tokens 且過去 60 分鐘頻率超過 3 輪/小時，用 Redis 滑動窗口驗證，這樣精確避開短對話的計費陷阱；L3 是 Firestore 存放 Flash 模型壓縮的 Core Memory Snapshot，不超過 1K tokens。驅逐邏輯同樣有精確數字：閒置超過 15 分鐘，異步觸發 Flash 壓縮任務，壓縮成功後主動呼叫 API 釋放 L2，不等 TTL 自然過期。這套架構在 100 萬用戶規模下，GPU VRAM 使用率從 92% 降至 41%，每 MAU 每天費用從 $1.20 降至 $0.30，月帳單從 $120K 直接砍到 $36K，CFO 的目標兩個月內完全達成。關鍵 Why-X-not-Y：選 Flash 不選 Pro 做壓縮，因為 Context Recall 差距只有 12%（78% vs 90%），但成本差 10 倍，在壓縮任務這個 batch 場景完全值得。」*
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Context Cache Eviction：快取驅逐策略與計費陷阱](/posts/fde-core-concept-17-context-caching-eviction-zh/)
+- 機制與原理（正典） — [FDE core topic — Memory Architecture：Agent 階層式記憶體設計](/posts/fde-core-concept-2-memory-architecture-zh/)
+
 ---
 
 ## 系列導航

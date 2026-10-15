@@ -775,6 +775,11 @@ Worker B: T+500ms 讀到 is_committed=true，跳過該節點，繼續 version=6
 | 精確一次扣款 | Stripe Idempotency-Key | 24h 去重，100% 安全 |
 | 多租戶隔離 | Spanner Row Key 前綴 | 防熱點 + 資料隔離 |
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Idempotency & State Recovery](/posts/fde-core-concept-13-idempotency-state-recovery-zh/)
+- 機制與原理（正典） — [FDE core topic — Async Event-Driven Pipeline](/posts/fde-core-concept-11-async-event-driven-pipeline-zh/)
+
 ---
 
 **系列導航**

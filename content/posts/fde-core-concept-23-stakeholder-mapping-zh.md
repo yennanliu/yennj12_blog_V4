@@ -447,6 +447,10 @@ Layer 3     8–12 h/月      $50–$300      8–12 週        > $500K ARR
 
 > *「Stakeholder Mapping 是在第一次正式會議之前，把所有能影響決策的人識別出來並分配原型——Champion 需要內部傳遞的彈藥，Economic Buyer 需要 $ 數字和 payback period，Technical Evaluator 需要主動提交的文件包，Blocker 需要被直接點名處理而不是被繞過。我的標準流程是：Discovery Call 結束後建立有向影響力圖，確認預算持有人、CISO 型阻擋者、以及法務 / 採購型阻擋者是否都已被接觸；針對每個 Blocker 在主要 Demo 之前安排專屬 1:1，把顧慮從『資料主權或廠商鎖定』層面直接化解，不讓他在提案審查階段第一次現身。這個流程在實際客戶案例中把成交週期縮短了 6 到 8 週，因為主要 Demo 上所有關鍵人物都已有立場，消除了那種永無止境的『我需要把這個帶回去內部討論』的拖延循環。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（四十二）：顧問技能：從「要 AI」到 POC 範圍定義的 Discovery 框架](/posts/fde-interview-guide-part42-consulting-discovery-zh/)
+
 ---
 
 **系列導航**

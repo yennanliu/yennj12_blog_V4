@@ -807,6 +807,10 @@ def embed_with_cache(chunks: List[str]) -> List[np.ndarray]:
 
 不要按照文件 ID 雜湊分片（會讓語意相近的文件分散在不同 Shard，查詢時需要廣播到所有 Shard）。應按照**文件語意類別**分片（例如：法規類、產品類、技術類），使得 90% 的查詢只需打 1–2 個 Shard，而非全廣播。
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Vector Drift & Blue-Green Indexing](/posts/fde-core-concept-15-vector-drift-blue-green-zh/)
+
 ---
 
 ## 十三、系列回顧：FDE Interview Guide 知識地圖

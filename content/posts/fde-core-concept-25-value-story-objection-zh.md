@@ -407,6 +407,10 @@ Feature Demo（功能展示）          Value Story Demo（價值故事展示）
 
 > *「Value Story 的本質是因果鏈的建構——從客戶現在浪費的每一分鐘出發，算出一個可驗證的月度節省數字，讓高管不需要相信 AI，只需要相信數學。五大異議本質上都是資訊不對稱：客戶說『數據太敏感』，是因為他們不知道 VPC-SC 加 CMEK 能給出什麼保障；客戶說『LLM 會幻覺』，是因為他們沒看過 Groundedness 分數。我的工作是把對的資訊，在對的時間，用對的語言，給到對的人——所以我在開場 30 秒先判斷受眾角色，再決定 Impact 先說還是 Resolution 先說。以客服 RAG 案例為例：6,000 張工單 × 3.2 分鐘 = \$19,200/月，4 個月回本——這個數字客戶自己在試算表裡算出來，比我說一百遍『我們的 AI 很準』更有說服力。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（四十二）：顧問技能：從「要 AI」到 POC 範圍定義的 Discovery 框架](/posts/fde-interview-guide-part42-consulting-discovery-zh/)、[FDE 面試準備指南（二十六）：「我們現在用 OpenAI，為什麼要換 Vertex AI？」](/posts/fde-interview-guide-part26-competitive-positioning-zh/)、[FDE 面試準備指南（二十九）：AI 系統 TCO 估算與 ROI 說服框架](/posts/fde-interview-guide-part29-tco-roi-zh/)
+
 ---
 
 **系列導航**

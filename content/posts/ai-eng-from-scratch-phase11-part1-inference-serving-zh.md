@@ -426,6 +426,10 @@ flip：流量非常穩定（方差 < 20%）用固定副本。有明顯日夜流�
 3. **投機解碼主要改善 p50**：p99 改善較小，因為長尾往往是 draft acceptance rate 低的複雜請求。
 4. **對照一個常見目標**：每千 token 從 $0.04 降到 $0.008 是可以達到的（vLLM + AWQ INT4），p99 從 18s 降到 4s 也是（vLLM FP16 就夠了）。
 
+## 相關文章與正典版本
+
+- PagedAttention、KV Cache 與連續批次的深入版本（正典）— [vLLM Intro Part 2 — PagedAttention 與 KV Cache](/posts/vllm-intro-part2-paged-attention-kv-cache-zh/)、[vLLM Intro Part 3 — 連續批次與排程器](/posts/vllm-intro-part3-scheduler-continuous-batching-zh/)
+
 ---
 
 ## 十、系列導航

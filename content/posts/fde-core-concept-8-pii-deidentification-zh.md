@@ -450,6 +450,10 @@ Token 攜帶同意狀態元資料 `consent_status: {active | withdrawn | expired
 根因：KMS 配額限流（預設 600 req/min），需要申請提升或加入本地 DEK 快取
 ```
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（四十）：AI 系統的 PII 保護：假名化設計、最小存取原則與合規稽核](/posts/fde-interview-guide-part40-pii-security-zh/)
+
 ---
 
 **系列導航**

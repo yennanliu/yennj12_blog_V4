@@ -320,6 +320,13 @@ groups:
 
 > *「RAG 系統的品質評估不能只看一個數字——我使用 RAG Triad 三角指標：Context Relevance 衡量 retriever 是否拿到相關文本（門檻 > 0.75），Groundedness 衡量 LLM 是否忠於 context 而非憑空捏造（< 0.80 觸發 warning，< 0.70 觸發 oncall），Answer Relevance 衡量答案是否真正回答了問題。在生產環境中，我把這三個指標作為 OpenTelemetry span attributes 非同步發送，用 Prometheus 聚合 7 天滾動平均，在 Grafana 按 intent class 與 model version 分群監控——這樣才能在幻覺率惡化的早期發現問題，而非等到用戶投訴。實測數據顯示，加入 hybrid search 與 reranker 後，Groundedness 從 0.71 提升至 0.89，幻覺相關客訴下降了約 60%。」*
 
+## 相關文章與正典版本
+
+- 評估管線與實作（正典）— [AI 工程從零開始 Phase 11 Part 2：RAG 系統與 LLM 評估](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/)、[ChatPDF RAG 優化（三）：可觀測性與評估](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/)
+- 混合搜尋與重排的機制（正典）— [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[FDE core topic — Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+- 面試情境與演進階段 — [FDE 面試準備指南（六）：RAG 進階——檢索失敗、Grounding、評估指標與成本控制](/posts/fde-interview-guide-part6-rag-eval-zh/)、[FDE 面試指南 Part 50：生產環境 GenAI 自動化評估管線與 LLM-as-a-Judge 漂移監控](/posts/fde-interview-guide-part50-llm-judge-evaluation-zh/)
+
 ---
 
 **系列導航**

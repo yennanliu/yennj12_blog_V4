@@ -561,6 +561,14 @@ Context：
 - [ ] 每查詢成本上限設定（建議 $0.01/query 為警戒線）  
 - [ ] LLM API Rate Limit 監控，避免突發流量超限導致降級
 
+## 相關文章與正典版本
+
+- 評估指標的機制（正典）— [FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)；實作見 [ChatPDF RAG 優化（三）：可觀測性與評估](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/)
+- 混合搜尋與 RRF：機制與生產實作（正典）— [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[RAGFlow Intro Part 4 — 混合搜尋、Rerank 與 GraphRAG/RAPTOR](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
+- 重排與 Cross-Encoder（正典）— [FDE core topic — Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)
+- 切塊與向量資料庫選型（正典）— [RAGFlow Intro Part 2 — DeepDoc 解析與 Chunking 策略](/posts/ragflow-intro-part2-deepdoc-chunking-zh/)、[RAG 完全指南（二）：Chunking 策略與向量資料庫選型](/posts/rag-series-part2-chunking-vectordb-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+
 ---
 
 ## 系列導航

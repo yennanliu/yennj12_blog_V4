@@ -647,6 +647,14 @@ print(answer)
 希望這個系列能幫助你從零建立、優化並評估自己的 RAG 系統。  
 RAG 的技術仍在快速演進，但這五篇涵蓋的核心原理和思路，在可見的未來都會持續適用。
 
+## 相關文章與正典版本
+
+- RAG 評估：機制、管線與實作（正典）— [FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)、[AI 工程從零開始 Phase 11 Part 2：RAG 系統與 LLM 評估](/posts/ai-eng-from-scratch-phase11-part2-rag-evals-zh/)、[ChatPDF RAG 優化（三）：可觀測性與評估](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/)
+- GraphRAG / RAPTOR 的生產實作（正典）— [RAGFlow Intro Part 4 — 混合搜尋、Rerank 與 GraphRAG/RAPTOR](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
+- 向量資料庫選型（正典）— [RAG 完全指南（二）：Chunking 策略與向量資料庫選型](/posts/rag-series-part2-chunking-vectordb-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+- LangGraph 入門與完整後端範例 — [LangGraph + LangChain 完全入門指南](/posts/langgraph-langchain-intro-zh/)、[LangGraph 客服工單後端：從狀態設計到可恢復的執行](/posts/langgraph-ai-customer-ticket-system-zh/)
+
 ---
 
 **系列導覽**

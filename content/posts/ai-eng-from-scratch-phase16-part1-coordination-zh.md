@@ -441,6 +441,14 @@ if safety_agent.verdict == "unsafe":
 - 3–20 個 Agent：加入訊息佇列 + 樂觀鎖
 - > 20 個 Agent：分片 Supervisor + Kafka + 動態負載均衡
 
+## 相關文章與正典版本
+
+- 系列總覽與六大策略 — [多 Agent Token 優化系列 pt.1：完整指南](/posts/multi-agent-token-optimization-claude-code-zh/)
+- Agent 間的選擇性 Context 傳遞（正典） — [多 Agent Token 優化系列 pt.5：選擇性 Context 傳遞](/posts/selective-context-passing-multi-agent-guide-zh/)
+- 專責化與每次呼叫的 token 經濟（正典） — [多 Agent Token 優化系列 pt.6：Agent 專責化實戰指南](/posts/agent-specialization-multi-agent-guide-zh/)
+- 協作模式與 token 預算路由的完整實作 — [多 Agent Token 優化系列 pt.7：專責化 Agent 協作模式](/posts/specialized-agent-orchestration-patterns-zh/)
+- 狀態管理、重試與死鎖排除（正典） — [FDE 面試準備指南（十六）：Multi-Agent 狀態管理與死鎖排除](/posts/fde-interview-guide-part16-multiagent-state-deadlock-zh/)
+
 ---
 
 ## 十、系列導航

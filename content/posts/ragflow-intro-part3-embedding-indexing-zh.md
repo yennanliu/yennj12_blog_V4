@@ -648,6 +648,13 @@ vs 只支援 ES            （國企要信創、雲廠要自家服務）；     
 | 人工停用雜訊 chunk | `available_int` + low-cardinality 二級索引 | 只能刪除，無法可逆停用 |
 | metadata 條件過濾 | 獨立的 `doc_meta_*` 索引 | 過濾條件要跟 chunk 一起重建 |
 
+## 相關文章與正典版本
+
+- 向量資料庫選型（正典）— [RAG 完全指南（二）：Chunking 策略與向量資料庫選型](/posts/rag-series-part2-chunking-vectordb-zh/)
+- 切塊與文件解析（正典）— [RAGFlow Intro Part 2 — DeepDoc 解析與 Chunking 策略](/posts/ragflow-intro-part2-deepdoc-chunking-zh/)、[ChatPDF RAG 優化（一）：語意切塊與混合檢索](/posts/chatpdf-rag-optimization-part1-chunking-retrieval-zh/)
+- 混合搜尋與 RRF：機制與生產實作（正典）— [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[RAGFlow Intro Part 4 — 混合搜尋、Rerank 與 GraphRAG/RAPTOR](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+
 ---
 
 ## 十、系列導航

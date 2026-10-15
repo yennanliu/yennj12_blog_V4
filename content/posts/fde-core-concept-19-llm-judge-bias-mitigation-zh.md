@@ -458,6 +458,10 @@ CREATE TABLE evaluation_results (
 
 > *「LLM-as-Judge 的核心挑戰不是『讓 LLM 評分』，而是讓裁判的偏見可量測、可消除，並以最低成本達到統計有效性。我的方案是三層架構：100% 流量跑免費輕量指標（長度、工具失敗率）做崩潰偵測；5% 流量按 intent_class × tenant 分層抽樣送 LLM Judge，裁判強制 CoT 先推理再評分，pairwise 比較做雙向排列取一致結果，裁判必須與被評估模型不同家族以消除自增強偏見；每週 500 條人工校準維持 Cohen's κ ≥ 0.6。Prompt 中明確加入冗長懲罰規則，使冗長偏見從 +0.35 分降至 +0.08 分。7 日滾動均值 ±2σ 漂移告警接 PagerDuty，30 分鐘內觸發 on-call。整體成本從全量評估的 $2,000/日降至 $100/日，裁判-人工 Spearman ρ = 0.84。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試指南 Part 50：生產環境 GenAI 自動化評估管線與 LLM-as-a-Judge 漂移監控](/posts/fde-interview-guide-part50-llm-judge-evaluation-zh/)
+
 ---
 
 **系列導航**

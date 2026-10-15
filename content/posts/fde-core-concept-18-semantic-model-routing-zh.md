@@ -447,6 +447,10 @@ Gemma-2B（$0.00003/q）→ Gemma-9B（$0.0001/q）→ Gemini Pro（$0.015/q）
 
 > *「Semantic Model Routing 的核心洞察是：不需要額外分類器，因為模型在生成第一個 token 時就已透過 logprobs 告訴你它有多大把握——Shannon 熵就是這個信號，且是零額外計算成本的。我的實作是從 vLLM stream 讀取前 10 個 token 的 logprobs，計算平均熵值，H < 1.5 本地直接完成，H > 2.5 立刻 TCP RST 中斷並升級 Vertex AI Gemini Pro；但在這之前，PII 偵測層必須先執行，含個資的請求強制留在 on-premise，不管熵值多高、模型多不確定，數據絕不出境。這個架構在 75% 本地處理率下，blended cost 降至 $0.00388/query，對比全雲端 $0.015 節省 74%；但本地模型必須 keep-alive 熱機，GPU idle 成本是 TCO 的一部分，break-even 在 3,200 queries/day 以上才划算，這個數字需要在架構決策時明確對齊。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（四十七）：大模型與地端微型模型的智慧混合路由與冷啟動優化](/posts/fde-interview-guide-part47-edge-model-routing-zh/)、[FDE 面試準備指南（二十四）：混合模型路由與語意路由器設計](/posts/fde-interview-guide-part24-hybrid-model-routing-zh/)
+
 ---
 
 **系列導航**

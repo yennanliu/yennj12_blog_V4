@@ -456,6 +456,10 @@ resource "google_monitoring_uptime_check_config" "search_api_check" {
 
 > *「當用戶回報 Agent 很慢，我的第一步不是翻 application log，而是打開 Vertex AI quota dashboard 確認 TPM 消耗率——因為依經驗 slow-agent 案例最常見的根因是 Layer 4 quota 耗盡，而非程式碼 bug，先看 quota 平均 3 分鐘就能確認或排除。確認 quota 正常後，我才按照決策樹往上走：看 Cloud Trace 找哪個 tool call span 攜帶 status_code=429 或 retry_after 屬性，這樣覆蓋了次常見的 Layer 3 案例。這個自上而下、逐層消除的方法讓 MTTR 從沒有 OTel 時的 60 分鐘降至 8 分鐘，前提是架構設計階段就要求每個 tool wrapper 攜帶結構化 OTel span，把可觀測性成本從事後採集轉移到事前設計。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（四十一）：分散式 AI 系統的故障排查：結構化診斷框架與五種常見失效模式](/posts/fde-interview-guide-part41-troubleshooting-zh/)、[FDE 面試準備指南（二十八）：生產事故診斷與客戶溝通語言](/posts/fde-interview-guide-part28-incident-communication-zh/)
+
 ---
 
 **系列導航**

@@ -341,6 +341,11 @@ ROI：154,000 / 46,000 = 335%（年化）
 **它是 FDE 幫助客戶做決策的工具。**  
 **會算，才能推進。**
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — POC Scoring & ROI](/posts/fde-core-concept-24-poc-scoring-roi-zh/)
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Value Story & Objection Handling](/posts/fde-core-concept-25-value-story-objection-zh/)
+
 ---
 
 **系列導航**

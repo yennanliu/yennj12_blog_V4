@@ -441,6 +441,10 @@ BigQuery 分析每日費用：
 
 > *「同步 LLM 架構的根本問題不是速度，而是資源佔用時間：一個 15 秒的推論請求讓 HTTP 連線整整被持有 15 秒，1,000 個並發用戶就需要 1,000 個同時持有的連線，超過連線池上限後整個系統雪崩，加機器也無法解決因為瓶頸在 LLM endpoint 的連線數上限。Async Event-Driven Pipeline 的核心是將『接受請求』與『完成運算』的生命週期完全解耦——Web Server 在 50ms 內寫訊息到 Cloud Pub/Sub 並回 202，Worker Pool 獨立訂閱並處理，以 Pub/Sub message_id 作為 idempotency key 防止重複 LLM 呼叫，結果透過 SSE 推送給 Client；再搭配 KEDA 依 unacked message 數量在 90 秒內從 0 自動擴到 100 個 Pod，整體架構讓相同的後端資源從支撐 200 個並發用戶提升到 50,000 個，改善幅度 250 倍，而且 idle 期間 Pod 縮到 0，費用幾乎為零。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（二十一）：長任務 Agent 的異步分散式架構](/posts/fde-interview-guide-part21-async-longrunning-agent-zh/)、[FDE 面試指南 Part 43：跨國電商百萬級購物車 Agent 的分散式動態權限與狀態回復](/posts/fde-interview-guide-part43-async-cart-agent-zh/)
+
 ---
 
 **系列導航**

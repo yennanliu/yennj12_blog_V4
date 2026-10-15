@@ -455,6 +455,10 @@ Cloud Audit Logs 的完整性保護：日誌一旦寫入後，即使 Project Own
 
 > *「資料主權的核心挑戰是：LLM 推論預設在全球分散式 TPU 叢集執行，而金融醫療客戶需要的是可被稽核機關驗證的地理邊界保證，而非紙面承諾。我的做法是五層技術控制疊加：最底層的 Region Pinning 確保所有 Vertex AI API 呼叫顯式設定 location="asia-east1"——最常踩的陷阱是 Batch Prediction Job 若不設 region 欄位，預設會在全球工作節點執行，讓整套合規設計失效；第二層 VPC Service Controls 在控制平面攔截跨邊界 API 呼叫，執行延遲 < 5ms，即使持有合法 Token 的 Insider 也無法繞過；第三層 Organization Policy 的 constraints/gcp.resourceLocations 在 60 秒內全組織生效，防止誤配置；第四層 Cloud KMS regional key 搭配 CMEK 確保金鑰主權，雲端服務商無法解密；第五層 Cloud Audit Logs 的 DATA_READ/DATA_WRITE 提供帶時間戳的可驗證稽核鏈條。對於政府或金融主管機關要求「資料不離客戶機房」的場景，Distributed Cloud（GDC）是唯一讓 Vertex AI 工作負載完全在客戶自有硬體執行的方案，代價是 8–12 週部署時間和 $200K–$500K 初始投入。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（三十）：Constraint-First 架構設計：VPC 限制下的 GCP AI 系統](/posts/fde-interview-guide-part30-constraint-driven-architecture-zh/)、[FDE 面試指南 Part 46：高規格金融業的數據無痕化與自主密鑰管理（BYOK / CMEK）](/posts/fde-interview-guide-part46-byok-cmek-zh/)
+
 ---
 
 **系列導航**

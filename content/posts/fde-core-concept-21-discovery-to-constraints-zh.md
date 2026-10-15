@@ -455,6 +455,10 @@ vs 用例故事         User Story 描述功能，不描述技術邊界       �
 
 > *「Discovery to Constraints 的核心不是問功能需求，而是問能排除架構方案的邊界條件。我用 SCALE 框架——規模、合規、現有架構、延遲、經濟性——在 30 分鐘內確認 10 個關鍵問題，然後輸出約束矩陣，用矩陣的勾選結果驅動架構推薦，而不是靠直覺。舉例來說，客戶說「需要即時回應」，弱 FDE 直接選串流架構，強 FDE 先問 TTFT 上限——如果答案是 2 秒，標準非串流已經夠用，可以省下約 30% 的月基礎設施成本，大約 $1,500/月。最常見的顧問失誤是跳過 Compliance 問題，等到 PoC 做完才發現客戶的法務要求資料不能出境，這會讓整個架構打掉重練，損失 4–6 週工程時間。建立在精確約束上的架構推薦，才能讓客戶在第一次 PoC 就看到業務價值，而不是在第六週才發現方向錯了。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（四十二）：顧問技能：從「要 AI」到 POC 範圍定義的 Discovery 框架](/posts/fde-interview-guide-part42-consulting-discovery-zh/)、[FDE 面試準備指南（三十）：Constraint-First 架構設計：VPC 限制下的 GCP AI 系統](/posts/fde-interview-guide-part30-constraint-driven-architecture-zh/)
+
 ---
 
 **系列導航**

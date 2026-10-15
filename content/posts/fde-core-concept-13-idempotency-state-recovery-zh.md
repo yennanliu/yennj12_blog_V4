@@ -462,6 +462,10 @@ SLA 要求？
 
 > *「分佈式 Agent 最容易被忽略的問題是『部分執行』——Pod 可能在工具已產生副作用之後崩潰，導致重啟時無法判斷該步驟是否已完成。我的解法是三段式 Checkpoint 協議：執行前寫 pending 到 Cloud Spanner，執行後用 Compare-And-Swap 更新 completed；CAS 的 version_id 條件寫入同時解決 split-brain 問題，防止兩個 Worker 各自推進狀態。恢復時，新 Worker 讀最新快照，透過 LangGraph 的 `StateGraph.update_state()` 注入已完成步驟的輸出，精確從中斷點續傳。Spanner external consistency 保證跨區域故障下快照不會被錯過；5 次失敗後送 Dead Letter Topic 觸發人工介入。以典型量級估算：Spanner 寫入 ~10ms，總恢復時間 < 100ms，絕大多數 Pod 失敗都能無重複副作用地恢復。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試指南 Part 43：跨國電商百萬級購物車 Agent 的分散式動態權限與狀態回復](/posts/fde-interview-guide-part43-async-cart-agent-zh/)、[FDE 面試準備指南（二十一）：長任務 Agent 的異步分散式架構](/posts/fde-interview-guide-part21-async-longrunning-agent-zh/)
+
 ---
 
 **系列導航**

@@ -428,6 +428,10 @@ def validate_url(url: str) -> str:
 
 > *「Indirect Prompt Injection 比直接注入危險十倍，原因在於攻擊面從『能登入系統的人』擴展到『任何能在網路上放內容的人』——防禦的本質不是過濾關鍵字，而是讓惡意指令從架構層面就無法抵達有特權的執行環境。我的設計是三層隔離：Tier 1 無特權 Cloud Run 跑 Flash 模型，system prompt 鎖定只輸出 JSON，且無內部 VPC 存取；Tier 2 Pydantic strict schema 以 extra=forbid 拒絕任何 allowlist 外的欄位；Tier 3 特權 Agent 只讀已驗證的結構化 Python object，永遠不接觸原始外部文字。配合 NFC Unicode 正規化覆蓋絕大多數隱形字元攻擊、2048 token 輸出上限防止 exfiltration。網路隔離從架構上切斷對內部服務的網路路徑——這是系統性防禦，不是和攻擊者玩無窮盡的關鍵字貓鼠遊戲。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（二十）：間接 Prompt Injection 與 Dual-LLM 防禦架構](/posts/fde-interview-guide-part20-indirect-prompt-injection-zh/)、[FDE 面試指南 Part 45：Agent 工具鏈的間接提示詞注入防禦設計](/posts/fde-interview-guide-part45-prompt-injection-defense-zh/)
+
 ---
 
 **系列導航**

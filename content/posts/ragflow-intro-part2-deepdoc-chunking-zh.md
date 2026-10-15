@@ -592,6 +592,13 @@ vs 預設全開            呼叫；使用者應該明確選擇付這筆錢     
 
 **要記住的取捨**：DeepDoc 不是免費的。它把「解析」從一個 O(檔案大小) 的字串操作，變成一個 O(頁數 × 模型推論) 的計算任務。這是 RAGFlow 一定要有非同步 worker 架構的根本原因——也是 Part 5 的主題。
 
+## 相關文章與正典版本
+
+- 切塊的另一個正典實作（語意切塊）— [ChatPDF RAG 優化（一）：語意切塊與混合檢索](/posts/chatpdf-rag-optimization-part1-chunking-retrieval-zh/)
+- 向量資料庫選型（正典）— [RAG 完全指南（二）：Chunking 策略與向量資料庫選型](/posts/rag-series-part2-chunking-vectordb-zh/)
+- 混合搜尋與 RRF：機制與生產實作（正典）— [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[RAGFlow Intro Part 4 — 混合搜尋、Rerank 與 GraphRAG/RAPTOR](/posts/ragflow-intro-part4-retrieval-rerank-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+
 ---
 
 ## 十、系列導航

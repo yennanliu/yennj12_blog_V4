@@ -344,6 +344,10 @@ Agent 要執行「刪除」「發送」「修改」類操作時
   Human-in-the-loop 是最後防線
 ```
 
+## 相關文章與正典版本
+
+- 機制與原理（正典） — [FDE core topic — Prompt Injection & Jailbreak Defense](/posts/fde-core-concept-6-prompt-injection-jailbreak-zh/)
+
 ---
 
 **系列導航**

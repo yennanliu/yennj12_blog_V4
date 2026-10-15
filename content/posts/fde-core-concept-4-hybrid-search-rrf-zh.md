@@ -426,6 +426,14 @@ LIMIT 10
 
 > *「Hybrid Search 的本質是承認沒有任何單一相關性信號能覆蓋所有查詢類型——Dense 向量搜尋擅長語意等價但對精確字串盲目，BM25 擅長精確匹配但對語意變體無感，兩者各自的 Recall@10 分別只有 72% 和 68%。RRF 的聰明之處是用排名而非原始分數做融合，k=60 的平滑常數讓排名差距被壓縮，防止任何一個信號的極端排名主導最終結果，融合後 Recall@10 達到 84%，多了 12 個百分點。在生產上我會先用 Vertex AI Search 的內建 hybrid mode 快速驗證資料集上的 Recall 提升是否顯著，確認值得投資後再根據 QPS 和成本評估是否自建 Weaviate + SPLADE 方案，並用 A/B 實驗動態調整 k 值——k=60 是良好起點，但若兩個模態的 Recall 差距超過 20pp 就應該調低 k 讓強模態主導。」*
 
+## 相關文章與正典版本
+
+- 混合搜尋的生產實作（正典）— [RAGFlow Intro Part 4 — 混合搜尋、Rerank 與 GraphRAG/RAPTOR](/posts/ragflow-intro-part4-retrieval-rerank-zh/)；輕量自建版本見 [ChatPDF RAG 優化（一）：語意切塊與混合檢索](/posts/chatpdf-rag-optimization-part1-chunking-retrieval-zh/)
+- 重排與 Cross-Encoder（正典）— [FDE core topic — Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)
+- 評估（正典）— [FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)
+- 入門與導讀 — [RAG 完全指南（一）：入門與導讀](/posts/rag-series-part1-foundations-zh/)
+- 面試情境與演進階段 — [FDE 面試準備指南（一）：RAG 完全解析](/posts/fde-interview-guide-part1-rag-zh/)、[FDE 面試準備指南（五）：RAG 深度技術——Chunking、Embedding、向量資料庫與混合搜尋](/posts/fde-interview-guide-part5-rag-deep-dive-zh/)
+
 ---
 
 **系列導航**

@@ -255,6 +255,7 @@ def answer(query: str) -> str:
 - 評估：[FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)、[ChatPDF RAG 優化（三）](/posts/chatpdf-rag-optimization-part3-observability-eval-zh/)
 - GraphRAG / RAPTOR：[RAGFlow Part 4](/posts/ragflow-intro-part4-retrieval-rerank-zh/) §五
 - 生產與 Agentic RAG：[RAG 完全指南（五）](/posts/rag-series-part5-production-zh/)
+- 完整開源實作的全景（RAGFlow 系列總覽）：[RAGFlow Intro Part 1 — 全景架構](/posts/ragflow-intro-part1-overview-architecture-zh/)
 
 ---
 

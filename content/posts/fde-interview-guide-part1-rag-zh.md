@@ -385,3 +385,8 @@ RAG 是 FDE 必考的第一題。
 而是你在遇到問題時，能不能系統性地定位根因，說清楚改善方向。
 
 下一篇：[**Agent System Design**](/posts/fde-interview-guide-part2-agent-zh/) — 如何設計一個不會失控的 AI Agent 系統。
+
+## 相關文章與正典版本
+
+- 機制與原理（正典） — [FDE core topic — Hybrid Search & RRF：混合檢索與倒數排名融合](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)
+- 重排與評估的機制（正典）— [FDE core topic — Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)、[FDE core topic — RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)

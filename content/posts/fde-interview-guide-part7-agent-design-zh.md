@@ -446,3 +446,7 @@ Memory 設計：
 **還是「知道這些工具的邊界在哪裡的人」。**
 
 下一篇：[**ML 基礎必備**](/posts/fde-interview-guide-part8-ml-fundamentals-zh/) — Transformer、Embedding 與評估指標的工程視角。
+
+## 相關文章與正典版本
+
+- 機制與原理（正典） — [FDE core topic — State Machine & DAG：確定性圖結構與反思迴圈收斂](/posts/fde-core-concept-3-state-machine-dag-zh/)

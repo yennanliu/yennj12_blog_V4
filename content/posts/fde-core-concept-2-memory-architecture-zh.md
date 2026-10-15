@@ -284,6 +284,10 @@ Score < 0.1 → 直接 evict（hard delete from Vector Search）
 
 > *「Agent 的記憶體需要三層設計：Episodic 存當前 session 的對話輪次，用 Redis TTL = 2h 管理，讀取延遲 < 2ms；Semantic 存壓縮後的長期知識，用 Vertex AI Vector Search 做 ANN 檢索，p99 延遲 < 15ms；Procedural 存 System Prompt 和 Tool 定義，幾乎靜態。每個 turn 結束後非同步 write-through 到 Episodic，nightly consolidation job 用 Gemini Flash 從 Episodic 萃取事實、去重後 upsert 到 Semantic；月度 eviction 用 Importance × Recency 衰減評分來控制 index 大小，避免 hub problem。企業級場景還需要 per-tenant namespace 隔離、RBAC filter 和 CMEK 加密，否則記憶體洩漏就是 P0 資安事故。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試準備指南（十四）：AI Agent Memory 架構設計](/posts/fde-interview-guide-part14-memory-architecture-zh/)、[FDE 面試準備指南（十八）：三層記憶體架構與 LLM 成本調優](/posts/fde-interview-guide-part18-memory-cost-tuning-zh/)、[FDE 面試指南 Part 51：百萬級多輪對話的 KV Cache 驅逐機制與記憶體架構優化](/posts/fde-interview-guide-part51-kv-cache-memory-zh/)
+
 ---
 
 **系列導航**

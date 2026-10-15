@@ -491,6 +491,10 @@ AES-256-GCM  wrap/unwrap 速度極快（< 0.1ms）         需要安全信道預
 
 > *「CMEK 的核心設計意圖是把密鑰控制權和資料控制權分開：雲端平台持有加密後的 DEK（encrypted_DEK），但只有客戶的 KEK 能解開它——明文 DEK 只在 Confidential Computing enclave 的記憶體中短暫存活（TTL 1 小時），解密完畢立即清零，永不落盤。BYOK 再進一步，把 KEK 本身也移到客戶 on-premise HSM，透過 Cloud EKM 和 Dedicated Interconnect（往返延遲 < 5ms）代理 unwrap 請求，讓雲端平台沒有技術能力單方解密。效能上，KEK 每小時只需調用一次（= 24 次 / 天），與數百萬次推論相比開銷不到 0.003%，推論 p99 延遲幾乎不受影響。最關鍵的取捨是：EKM 把密鑰主權還給客戶，但也把 HSM 可用性加入了推論服務的關鍵路徑——HSM 宕機等於整個推論管線無法解密新 DEK，因此 HSM Active-Active HA 設計和 DEK 快取 TTL 必須一起規劃，而不是分開考量。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試指南 Part 46：高規格金融業的數據無痕化與自主密鑰管理（BYOK / CMEK）](/posts/fde-interview-guide-part46-byok-cmek-zh/)
+
 ---
 
 **系列導航**

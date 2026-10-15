@@ -438,6 +438,10 @@ $0.3125/M  CachedContent.create()
 
 > *「Vertex AI Context Cache 把 1M token prefix 的 KV activations 固定在 TPU HBM，讓後續呼叫跳過 prefill，token 成本從 $1.25 降到 $0.3125 per 1M——但它按小時收 $4.50 儲存費，閒置用戶的快取每小時無聲燒錢，這是最常見的成本失控點。我的設計是三層架構：L1 Redis 存最近三輪對話（延遲 < 1ms、成本近零），L2 Vertex AI Context Cache 只在對話超過 32K token 且 Redis 活躍度計數器確認 >5 req/10min 時才啟動（精確控制 break-even），L3 閒置 15 分鐘後觸發 Gemini Flash 非同步壓縮 Job 把 1M token 壓縮到 1K token 的核心快照寫入 Firestore，同時呼叫 `CachedContent.delete()` 主動釋放 L2——這樣閒置成本歸零，用戶回歸時從 Firestore 冷啟動仍保有完整上下文，在成本與用戶體驗之間找到最佳均衡。」*
 
+## 相關文章與正典版本
+
+- 面試情境與演進階段 — [FDE 面試指南 Part 51：百萬級多輪對話的 KV Cache 驅逐機制與記憶體架構優化](/posts/fde-interview-guide-part51-kv-cache-memory-zh/)
+
 ---
 
 **系列導航**

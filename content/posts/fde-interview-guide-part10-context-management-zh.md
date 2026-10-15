@@ -353,6 +353,10 @@ E → Edge      你的策略在什麼情況下會失效？
 >
 > *失效場景：壓縮時可能丟掉關鍵的錯誤碼。所以壓縮 prompt 要明確標記「以下欄位必須保留」，並在 structured state 同步儲存關鍵數值。另外加 token 監控，超過 80% 自動觸發壓縮。」*
 
+## 相關文章與正典版本
+
+- 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Context Management：Token 預算管理與上下文修剪策略](/posts/fde-core-concept-1-context-management-zh/)
+
 ---
 
 **系列導航**
