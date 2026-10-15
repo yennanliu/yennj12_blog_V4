@@ -8,7 +8,7 @@ categories: ["all", "business", "creative"]
 tags: ["Synthwave", "AI音樂", "Suno", "合成器", "音樂製作", "BPM", "音色設計", "Streaming", "music-production"]
 summary: "系列第二篇：掌握 AI 生成 Synthwave 音樂的核心技巧、80 年代經典合成器音色重現、BPM 與節奏設計、以及如何策展出讓程式設計師進入心流的完美播放列表。"
 description: "系列第二篇：掌握 AI 生成 Synthwave 音樂的核心技巧、80 年代經典合成器音色重現、BPM 與節奏設計、以及如何策展出讓程式設計師進入心流的完美播放列表。"
-readTime: "19 min"
+readTime: "29 min"
 ---
 
 在系列第一篇中，我們定位了 Synthwave 的黃金受眾。本篇將深入音樂製作的核心：如何使用 AI 工具生成專業級 Synthwave 音樂，以及如何策展出真正適合專注工作的播放列表。
@@ -921,10 +921,11 @@ Total: 537 minutes (8 hours 57 minutes)
 
 ## 🔄 系列導航
 
-1. **【已完成】80 年代復古文化、市場分析與目標受眾定位**
+1. [80 年代復古文化、市場分析與目標受眾定位](/posts/synthwave-study-streaming-part1-market-culture-zh/)
 2. **【當前】AI 音樂生成與 Synthwave 音色設計** ✅
-3. **【下一篇】賽博龐克視覺製作：霓虹燈與復古美學**
-4. **【第四篇】社群策略與開發者生態系統建立**
+3. [賽博龐克視覺製作：霓虹燈與復古美學](/posts/synthwave-study-streaming-part3-cyberpunk-visual-zh/)
+4. [社群策略與開發者生態系統建立](/posts/synthwave-study-streaming-part4-community-monetization-zh/)
+- 共用基礎建設：[24/7 音樂直播共用基礎建設：編碼器、自癒串流、監控與社群管線](/posts/music-streaming-247-infrastructure-zh/)
 
 下一篇將深入探討如何使用 Midjourney 和 After Effects 打造令人驚嘆的賽博龐克視覺效果。
 
@@ -934,5 +935,3 @@ Total: 537 minutes (8 hours 57 minutes)
 
 - [Synthwave 讀書會串流實戰（一）：市場分析與目標受眾](/posts/synthwave-study-streaming-part1-market-culture-zh/)
 - [AI 深海/太空環境音串流實戰（二）：音頻生成指南](/posts/ai-ocean-space-ambient-streaming-part1-foundation-zh/)
-
-**標籤**: #Synthwave #AI音樂 #Suno #合成器 #音樂製作 #BPM #程式設計師音樂

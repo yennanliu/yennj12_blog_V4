@@ -7,7 +7,7 @@ categories: ["all", "business", "creative"]
 tags: ["ADHD", "專注音樂", "YouTube", "24/7直播", "實作指南", "雙耳節拍", "音頻設計", "Streaming", "Tutorial"]
 summary: "手把手教你建立 ADHD 友善專注音樂 24/7 直播頻道：從科學原理、音頻設計、視覺製作到實際上線，包含完整技術實作步驟與優化策略。"
 description: "手把手教你建立 ADHD 友善專注音樂 24/7 直播頻道：從科學原理、音頻設計、視覺製作到實際上線，包含完整技術實作步驟與優化策略。"
-readTime: "39 min"
+readTime: "60 min"
 ---
 
 本文將手把手帶你建立一個專門針對 ADHD（注意力不足過動症）受眾的 24/7 音樂直播頻道。從科學原理到技術實作，從內容設計到市場推廣，提供完整的實戰指南。
@@ -731,390 +731,17 @@ comp_main（主合成）
 
 ## 🖥️ 步驟三：技術設定與上線
 
-### OBS Studio 完整設定
+### 共用的串流堆疊
 
-**基礎設定**：
+OBS 的編碼參數（CBR 6,000 Kbps、Keyframe 2 s、1080p30、48 kHz）、主機選擇、YouTube 串流金鑰、obs-websocket 看門狗與每日 04:00 排程重啟、時鐘疊加層，三個音樂直播系列完全相同，統一寫在 [24/7 音樂直播共用基礎建設：編碼器、自癒串流、監控與社群管線](/posts/music-streaming-247-infrastructure-zh/)。請先照那篇把串流跑起來，再回到這裡。
 
-````markdown
-# Step 1: 安裝 OBS Studio
+ADHD 頻道在那套堆疊上只有三個自己的參數：
 
-下載: https://obsproject.com/
-版本: 30.0+（2026 年最新穩定版）
-系統需求:
-  • Windows 10/11, macOS 12+, Linux
-  • 8GB RAM（最低）
-  • 上傳網速 >5 Mbps
-
-# Step 2: 場景建立
-
-Scene 結構:
-
-[Scene: ADHD Focus - Main]
-├── Source 1: Video Loop（視覺背景）
-├── Source 2: Audio Input（音樂播放列表）
-├── Source 3: Text (GDI+)（標題）
-├── Source 4: Browser Source（即時時鐘）
-├── Source 5: Image（Logo/浮水印）
-└── Source 6: Browser Source（聊天室，可選）
-
-詳細設定:
-
-Source 1 - Video Loop:
-  Add → Media Source
-  設定:
-    ☑ Local File: [你的視覺影片.mp4]
-    ☑ Loop（循環播放）
-    ☑ Restart playback when source becomes active
-    ☐ 不勾選 Show nothing when playback ends
-
-  Transform:
-    Stretch to screen（填滿畫面）
-
-Source 2 - Audio Input:
-  Add → Media Source（新增多個，建立播放列表）
-
-  或使用 VLC Video Source:
-    Add → VLC Video Source
-    Playlist: 添加你的 50 首音樂
-    ☑ Loop playlist（循環播放列表）
-    ☑ Shuffle playlist（隨機播放，可選）
-
-Source 3 - 標題文字:
-  Add → Text (GDI+)
-  設定:
-    Text: "ADHD Focus Music 24/7 🎧
-           Deep Work • Study • Concentration"
-
-    Font:
-      Family: Arial 或 Montserrat
-      Size: 48
-      Style: Bold
-      Color: #FFFFFF
-
-    Background:
-      Color: #000000
-      Opacity: 50%
-      Padding: 20
-
-  Position: 上方中央
-
-Source 4 - 即時時鐘:
-  Add → Browser Source
-  設定:
-    ☑ Local file（使用本地 HTML）
-    或 URL: 使用線上時鐘服務
-
-  本地 HTML 範例（clock.html）:
-  ```html
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <style>
-      body {
-        background: transparent;
-        margin: 0;
-        font-family: 'Arial', sans-serif;
-      }
-      #clock {
-        font-size: 48px;
-        color: white;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-        padding: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="clock"></div>
-    <script>
-      function updateClock() {
-        const now = new Date();
-        const time = now.toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
-        });
-        document.getElementById('clock').textContent = time;
-      }
-      setInterval(updateClock, 1000);
-      updateClock();
-    </script>
-  </body>
-  </html>
-  ```
-
-  Browser Source 設定:
-    Width: 300
-    Height: 100
-    ☑ Shutdown source when not visible
-    Refresh browser when scene becomes active
-
-  Position: 右上角
-
-Source 5 - Logo/浮水印:
-  Add → Image
-  設定:
-    Image File: [你的 Logo.png]
-    確保是 PNG 格式（透明背景）
-
-  Transform:
-    縮小到適當大小（200x200 左右）
-
-  Position: 左下角或右下角
-  Opacity: 70%（不要太搶眼）
-
-# Step 3: 進階設定 - 番茄鐘計時器（可選）
-
-使用 Browser Source + JavaScript:
-
-pomodoro.html:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    body {
-      background: transparent;
-      font-family: 'Roboto Mono', monospace;
-      color: white;
-      text-align: center;
-      margin: 0;
-      padding: 20px;
-    }
-    #timer {
-      font-size: 64px;
-      text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
-    }
-    #label {
-      font-size: 24px;
-      margin-top: 10px;
-      opacity: 0.8;
-    }
-  </style>
-</head>
-<body>
-  <div id="timer">25:00</div>
-  <div id="label">Focus Time</div>
-  <script>
-    let minutes = 25;
-    let seconds = 0;
-    let isWork = true;
-
-    function updateTimer() {
-      if (seconds === 0) {
-        if (minutes === 0) {
-          // 切換工作/休息
-          if (isWork) {
-            minutes = 5;
-            document.getElementById('label').textContent = 'Break Time';
-          } else {
-            minutes = 25;
-            document.getElementById('label').textContent = 'Focus Time';
-          }
-          isWork = !isWork;
-        } else {
-          minutes--;
-          seconds = 59;
-        }
-      } else {
-        seconds--;
-      }
-
-      const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-      document.getElementById('timer').textContent = display;
-    }
-
-    setInterval(updateTimer, 1000);
-  </script>
-</body>
-</html>
-```
-
-OBS 中添加:
-  Add → Browser Source
-  Local file: pomodoro.html
-  Width: 400, Height: 200
-  Position: 左上角或中上方
-````
-
-### 串流設定
-
-```markdown
-# Step 4: 輸出設定
-
-Settings → Output
-
-Streaming:
-  Output Mode: Advanced
-
-  Encoder:
-    • NVIDIA NVENC H.264（如有 Nvidia 顯卡）
-    • x264（CPU 編碼）
-
-  Rate Control: CBR（固定比特率）
-  Bitrate: 6000 Kbps（Full HD）
-  Keyframe Interval: 2
-  Preset: Quality（或 Max Quality）
-  Profile: high
-
-Recording（可選，用於備份）:
-  Recording Path: 選擇足夠空間的硬碟
-  Recording Format: mp4
-  Encoder: 與 Streaming 相同
-
-# Step 5: 音頻設定
-
-Settings → Audio
-
-Sample Rate: 48 kHz（標準）
-
-Audio Channels:
-  Desktop Audio: Default（用於播放音樂）
-  Mic/Auxiliary Audio: Disabled（音樂頻道不需要麥克風）
-
-Advanced:
-  Monitoring Device: 選擇你的耳機（監聽用）
-
-在 Mixer 中:
-  Desktop Audio:
-    • Volume: 設為 0 dB
-    • Filters:
-      - Add → Compressor（壓縮器）
-        Ratio: 3:1
-        Threshold: -18 dB
-        Attack: 6 ms
-        Release: 60 ms
-
-      - Add → Limiter（限制器）
-        Threshold: -1.0 dB
-        （防止爆音）
-
-# Step 6: 影片設定
-
-Settings → Video
-
-Base (Canvas) Resolution: 1920x1080
-Output (Scaled) Resolution: 1920x1080
-Downscale Filter: Lanczos（最高品質）
-FPS: 30（音樂直播不需要 60fps）
-
-# Step 7: 連接 YouTube
-
-Settings → Stream
-
-Service: YouTube - RTMPS
-Server: Primary YouTube ingest server
-
-Stream Key:
-  1. 前往 YouTube Studio
-  2. 左側選單 → 直播 → 管理
-  3. 建立串流 → 複製串流金鑰
-  4. 貼到 OBS
-
-重要設定:
-  ☑ Enable Auto-Reconnect
-  Retry Delay: 2 seconds
-  Maximum Retries: 30
-
-# Step 8: 測試與優化
-
-開始串流前:
-  1. 點擊 "Start Streaming"
-  2. 等待 10-15 秒
-  3. 在 YouTube Studio 確認直播上線
-  4. 用另一台設備或手機查看直播
-
-  檢查清單:
-    ☐ 視覺正常顯示
-    ☐ 音訊清晰無雜音
-    ☐ 無掉幀（Frame drops）
-    ☐ 時鐘正確顯示
-    ☐ 文字清晰可讀
-
-  如有問題:
-    • 降低 Bitrate（5000 → 4000 Kbps）
-    • 降低解析度（1080p → 720p）
-    • 更換 Encoder preset
-    • 檢查網路連線
-```
-
-### 自動化與監控
-
-````markdown
-# 自動重啟腳本（避免長時間運行崩潰）
-
-Windows 排程工作:
-
-1. 開啟 Task Scheduler
-2. Create Basic Task
-3. 名稱: "OBS Auto Restart"
-4. Trigger: Daily, 4:00 AM（用戶流量最低時）
-5. Action: Start a program
-   Program: C:\path\to\restart_obs.bat
-
-restart_obs.bat 內容:
-```batch
-@echo off
-taskkill /IM obs64.exe /F
-timeout /t 5
-start "" "C:\Program Files\obs-studio\bin\64bit\obs64.exe" --startstreaming --profile "ADHD Music" --scene "ADHD Focus - Main"
-```
-
-macOS / Linux:
-使用 cron job:
-```bash
-0 4 * * * /path/to/restart_obs.sh
-```
-
-# 監控健康狀態
-
-使用 OBS Websocket + Python 監控:
-
-install:
-```bash
-pip install obs-websocket-py
-```
-
-monitor.py:
-```python
-from obswebsocket import obsws, requests
-import time
-
-host = "localhost"
-port = 4455
-password = "your_password"
-
-ws = obsws(host, port, password)
-ws.connect()
-
-def check_streaming():
-    try:
-        status = ws.call(requests.GetStreamStatus())
-        if not status.getOutputActive():
-            print("⚠️ 串流已中斷！")
-            # 發送通知（Discord, Email）
-            send_alert()
-        else:
-            print(f"✅ 串流正常 - {status.getOutputDuration()} 秒")
-    except Exception as e:
-        print(f"❌ 錯誤: {e}")
-
-while True:
-    check_streaming()
-    time.sleep(300)  # 每 5 分鐘檢查一次
-
-ws.disconnect()
-```
-
-運行:
-```bash
-python monitor.py
-```
-
-設為開機自動啟動
-````
+- **場景**：單一主場景「ADHD Focus - Main」，來源依序是視覺循環影片、VLC 播放列表（步驟一產出的音軌，已含 40 Hz 雙耳節拍與褐噪音層）、標題文字「ADHD Focus Music 24/7 · Deep Work • Study • Concentration」、時鐘與 Logo。
+- **番茄鐘疊加層**：把共用篇的 `clock.html` 改成 25/5 倒數（Focus Time / Break Time 交替），Browser Source 400×200，放左上角。
+- **音量**：雙耳節拍層的相對音量在步驟一已經調好，OBS Mixer 只保留 -6 dB headroom、Compressor 與 Limiter -1 dB，不要再加 EQ 去動低頻。
 
 ---
-
 ## 📢 步驟四：內容策略與 SEO
 
 ### YouTube 頻道設定
@@ -1148,7 +775,7 @@ python monitor.py
 ```
 🎧 專為 ADHD 族群設計的 24/7 專注音樂直播
 
-我們提供科學支持的音樂，結合：
+我們提供為 ADHD 聽眾設計的音樂，結合：
 ✓ 40Hz 雙耳節拍（提升專注力）
 ✓ 褐噪音（遮蔽環境干擾）
 ✓ 70-75 BPM 節奏（穩定心率）
@@ -1159,8 +786,8 @@ python monitor.py
 • 編程寫作（Coding/Writing）
 • 考試複習（Exam Preparation）
 
-🔬 科學研究支持：
-我們的音樂基於神經科學研究，特別針對 ADHD 大腦的多巴胺需求設計。
+🔬 關於科學依據：
+這些音樂是為 ADHD 聽眾設計的；目前的研究證據並不一致，請把它當作輔助工具，而非治療。
 
 ⏰ 24/7 不間斷直播
 💬 友善社群（歡迎分享你的專注時刻）
@@ -1224,7 +851,7 @@ Instagram: [連結]
 [循環]
 
 🔬 Science Behind:
-This stream uses 40Hz binaural beats proven to enhance focus in ADHD individuals. Combined with brown noise to mask environmental distractions.
+This stream uses 40Hz binaural beats designed for ADHD listeners (the evidence is mixed, so treat it as a tool rather than a treatment), combined with brown noise to mask environmental distractions.
 
 Research: [連結到研究論文]
 
@@ -1393,76 +1020,11 @@ Type 4: 前後對比（Before/After）
   點贊率: 12-18%
   訂閱轉換: 7-10%
 
-# Shorts 製作工作流程
+```
 
-工具選擇:
-  初學者: CapCut（免費，簡單）
-  進階: Adobe Premiere Pro
-  快速製作: Canva Pro（模板）
+**製作與排程**：21 則一週份的 Shorts 在週日一天內批次做完（CapCut 模板、1080×1920、30 fps）、每天 3 則排程發佈的流程，與其他系列相同，見 [24/7 音樂直播共用基礎建設：編碼器、自癒串流、監控與社群管線](/posts/music-streaming-247-infrastructure-zh/) 的「Shorts 批次流程」。ADHD 頻道每週 21 則的配比：9 則氛圍情境、6 則教育科普、4 則社群共鳴、2 則前後對比；描述固定帶 `#ADHD #FocusMusic` 與直播間連結。
 
-CapCut 範例流程:
-
-1. 準備素材:
-   • 15 秒視覺片段（從直播畫面截取）
-   • 音樂片段（15-20 秒）
-   • 文字腳本
-
-2. 匯入 CapCut:
-   New Project → 9:16 ratio
-
-3. 編輯:
-   • 拖入視覺到時間軸
-   • Overlay → Text → 添加文字
-   • 文字動畫: "Pop", "Typewriter"（不要太花俏）
-   • 調整文字時機（關鍵字在前 3 秒出現）
-
-4. 音頻:
-   • 添加你的音樂
-   • 確保音量平衡（-3dB 不會太大聲）
-   • 結尾淡出
-
-5. 色彩調整:
-   • Adjust → Brightness: +5%
-   • Saturation: +10%（手機螢幕適配）
-   • Contrast: +8%
-
-6. 導出:
-   Resolution: 1080 x 1920
-   Frame rate: 30fps
-   Format: MP4
-   Quality: High
-
-7. 上傳:
-   YouTube Shorts → Upload
-   Title: 吸引人的標題（60 字元內）
-   Description: 引導到直播間
-   Hashtags: #Shorts #ADHD #FocusMusic
-
-# Shorts 發佈時程表
-
-頻率: 每日 3 則（最低 2 則）
-
-最佳發佈時間（美國東岸時間）:
-  • 早上 8-9 AM（通勤時間）
-  • 中午 12-1 PM（午休）
-  • 晚上 7-9 PM（下班放鬆）
-
-對應台灣時間:
-  • 晚上 9-10 PM
-  • 凌晨 1-2 AM
-  • 早上 8-10 AM
-
-自動化策略:
-  • 週日批次製作 21 則 Shorts
-  • 使用排程工具（稍後發佈）
-  • 保持一致性
-
-內容組合（每週 21 則）:
-  • 9 則氛圍情境
-  • 6 則教育科普
-  • 4 則社群共鳴
-  • 2 則前後對比
-
+```markdown
 # Shorts 優化檢查清單
 
 上傳後 24 小時檢查:
@@ -1723,73 +1285,9 @@ Social Blade:
 
 ### Discord 社群建立
 
+Discord 的伺服器骨架（公告／聊天／音樂／共學語音／會員專屬／bot 與 alerts）和機器人組合（MEE6、Dyno、番茄鐘 bot、Webhook 通知）三個系列共用，見 [24/7 音樂直播共用基礎建設：編碼器、自癒串流、監控與社群管線](/posts/music-streaming-247-infrastructure-zh/) 的「Discord」一節。ADHD 頻道在骨架上多開兩個主題頻道：`#adhd-support`（互助，置頂「不提供醫療建議」）與 `#productivity-tips`；MEE6 的等級獎勵把 Lv 10 設為點歌優先權、Lv 50 設為終身 VIP。
+
 ```markdown
-# 伺服器架構
-
-📢 公告區
-├── 📣 announcements（直播更新、新音樂發佈）
-├── 📰 community-news（社群動態）
-└── 🎉 milestones（里程碑慶祝）
-
-💬 聊天區
-├── 💬 general-chat（閒聊）
-├── 🎧 music-discussion（音樂討論）
-├── 🧠 adhd-support（ADHD 互助）
-└── 💡 productivity-tips（生產力分享）
-
-🎵 音樂互動
-├── 🎵 song-requests（點歌）
-├── ⭐ feedback（回饋建議）
-└── 🎼 your-music（分享你的音樂）
-
-🎯 專注會議室（語音頻道）
-├── 🔇 Silent Study Room 1（靜音共學）
-├── 🔇 Silent Study Room 2
-└── 🗣️ Casual Hangout（輕鬆聊天）
-
-🏆 會員專屬（付費會員）
-├── 💎 vip-lounge（會員休息室）
-├── 🎵 exclusive-playlists（獨家播放列表）
-└── 🎤 monthly-ama（每月問答）
-
-# 機器人設定
-
-MEE6（等級系統）:
-  設定:
-    • 每 1 分鐘活躍 = 15-25 XP
-    • 等級獎勵:
-      Lv 5: @Active Member 身份組
-      Lv 10: 點歌優先權
-      Lv 20: 專屬顏色身份組
-      Lv 50: 終身 VIP
-
-  Command:
-    !rank - 查看自己的等級
-    !leaderboard - 排行榜
-
-Dyno（自動化管理）:
-  功能:
-    • 自動歡迎新成員
-    • 自動給予 @Community 身份組
-    • 垃圾訊息過濾
-    • 自訂指令
-
-  自訂指令:
-    !stream - 顯示直播連結
-    !music - 顯示 Spotify 播放列表
-    !pomodoro - 開始番茄鐘共學
-
-Pomodoro Bot（番茄鐘）:
-  功能:
-    • 集體番茄鐘計時
-    • 自動語音頻道靜音/解除
-    • 統計每日專注時數
-
-  使用:
-    /pomodoro start - 開始 25 分鐘專注
-    /pomodoro status - 查看當前狀態
-    /pomodoro stats - 查看個人統計
-
 # 社群活動
 
 每週活動:
@@ -2158,80 +1656,9 @@ Gold: 50,000 × 0.3% × $14.99 = $2,248/月
     ⚠️ 遵守 FTC 規範（必須標示贊助）
     ⚠️ 只推廣自己真實使用的產品
 
-# 如何獲得贊助
-
-Step 1: 建立媒體包（Media Kit）
-
-內容:
-  • 頻道數據（訂閱、觀看、CCV）
-  • 觀眾分析（年齡、地區、興趣）
-  • 參與度數據（留言率、點贊率）
-  • 過往合作案例（如有）
-  • 合作方案與報價
-  • 聯繫方式
-
-設計:
-  使用 Canva 或 PPT
-  保持專業、簡潔
-  重點呈現數據
-
-Step 2: 主動聯繫
-
-管道:
-  1. 品牌官網「合作夥伴」頁面
-  2. LinkedIn 聯繫行銷經理
-  3. Instagram/Twitter DM
-  4. 創作者網絡平台（Grapevine, AspireIQ）
-
-Email 模板:
-```
-Subject: Partnership Opportunity - ADHD Focus Music Community
-
-Hi [Name],
-
-I'm [你的名字], creator of [頻道名稱], a YouTube channel
-dedicated to ADHD-friendly focus music with [X] subscribers
-and [Y] monthly views.
-
-Our community consists primarily of:
-• ADHD individuals seeking productivity solutions
-• Students and professionals (ages 18-35)
-• Based in [主要國家/地區]
-• Highly engaged (avg. 45min watch time)
-
-I believe [品牌名稱]'s [產品] aligns perfectly with our
-audience's needs, and I'd love to discuss a potential partnership.
-
-I've attached our media kit with detailed metrics and
-collaboration options. Would you be open to a brief call
-next week?
-
-Looking forward to hearing from you!
-
-Best regards,
-[你的名字]
-[聯繫方式]
-```
-
-Step 3: 談判與執行
-
-報價參考（50,000 訂閱者）:
-  • 直播間 Logo 展示: $300-800/月
-  • 影片描述欄推薦: $200-500/月
-  • 專屬 Short 製作: $500-1,500/支
-  • 整合套裝: $1,500-3,000/月
-
-不要:
-  ❌ 一開始報價太低（貶低自己價值）
-  ❌ 接受「曝光」作為報酬（要實際金錢）
-  ❌ 簽獨家條款（限制未來機會）
-
-應該:
-  ✅ 強調觀眾參與度（而非只看訂閱數）
-  ✅ 提供多種合作方案
-  ✅ 設定合約期限（3-6 個月）
-  ✅ 保留內容創作自由
 ````
+
+**如何獲得贊助**：媒體包的頁面順序、第一封信的範本、談判時的三個「不要」，見 [24/7 音樂直播共用基礎建設：編碼器、自癒串流、監控與社群管線](/posts/music-streaming-247-infrastructure-zh/) 的「贊助提案」一節。寫信時把受眾那一段換成 ADHD 頻道的版本（ADHD individuals seeking focus tools, students and professionals aged 18–35），並附上 YouTube Studio 的平均觀看時長——對生產力工具類品牌，這個數字比訂閱數有說服力。
 
 ---
 
@@ -2485,5 +1912,4 @@ Day 7: 正式啟動！
 ## 延伸閱讀
 
 - [AI 音樂生成基礎架構](/posts/ai-music-generation-aws-cdk-infrastructure/)
-
-**標籤**: #ADHD #專注音樂 #YouTube直播 #實作指南 #雙耳節拍 #褐噪音 #創業教學 #被動收入 #內容創作
+- 共用基礎建設：[24/7 音樂直播共用基礎建設：編碼器、自癒串流、監控與社群管線](/posts/music-streaming-247-infrastructure-zh/)
