@@ -7,7 +7,7 @@ description: "以系統設計視角拆解 AI 系統從內部試點到百萬外�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Scalability", "Architecture", "Cache", "Queue", "RateLimit", "Autoscaling", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "25 min"
+readTime: "22 min"
 ---
 
 > 10,000 個內部員工用，一切都很順。  
@@ -705,17 +705,13 @@ Phase 3 架構投入的 ROI 計算（示意估算）：
   ROI：約 50x
 ```
 
----
+### 答題骨架
 
-## 十一、面試答題要點
-
-> *「這道題的核心不是『加幾台機器』，而是找出哪些架構假設在 10K 時成立、在 1M 時失效——然後系統性地替換它們。*
->
-> *我會用三個演進階段來回答：Phase 1 是 POC，接受有狀態設計；Phase 2 是生產試點，核心改動是無狀態化（Session 移到 Redis）+ 讀寫分離；Phase 3 是規模化，加入語意快取、非同步佇列和三層速率限制。*
->
-> *四個關鍵技術決策：第一，用 Redis 做 Session 儲存而不是 DB，因為 < 1ms 延遲 + 原生 TTL 是 Session 場景的必要條件。第二，語意快取而不是 Exact-match，因為用戶自然語言查詢的字面多樣但語義重複，Exact-match 命中率 < 5%，語意快取可達 40-60%。第三，Token Bucket Rate Limiting 而不是 Fixed Window，因為 Fixed Window 有跨邊界的 2x 漏洞。第四，用 Concurrency 而不是 CPU 作為 Auto-scaling 指標，因為 AI 服務等 LLM 時 CPU 幾乎是 0，但連接槽可能已滿。*
->
-> *成本視角：在 1M MAU 規模，Phase 3 架構每月額外架構成本約 $4,000，但 55% 的快取命中率讓 LLM 成本降低超過 $800,000/月。這個架構投入的 ROI 超過 200x。」*
+- 開場用 §一 定調：不是加機器，是找出哪些假設在 10K 成立、在 1M 失效。
+- 主幹照 §二 的三個演進階段講，每個階段只點新增元件與解決的問題。
+- 被追問細節時各接一節：無狀態化（§三）、非同步佇列（§四）、語意快取（§五）、速率限制（§六）、資料庫（§七）、Auto-scaling（§八）。
+- 關鍵選型用 §九 的決策表回答，每個決策帶 flip condition。
+- 收尾用 §十 的前後對比給成本與 ROI 數字。
 
 ---
 

@@ -7,7 +7,7 @@ description: "以系統設計視角拆解 AI 系統的 PII 保護：三個安全
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Security", "Privacy", "PII", "RBAC", "Compliance", "Anonymization", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "19 min"
 ---
 
 > 傳統系統的 PII：存在資料庫，加密，控制誰能查。  
@@ -581,15 +581,13 @@ PII 外洩的損失     依事故規模              技術上大幅降低      
 
 ---
 
-## 十、面試答題要點
+## 十、答題骨架
 
-> *「這道題的核心是：AI 系統的 PII 有七個流動節點，每個節點的保護方式不同。不是加密資料庫就搞定，而是要在每個節點設計相應的保護機制。*
->
-> *我會按三個演進階段回答：Phase 1（POC）做基本 TLS + RBAC + Log 不記原文；Phase 2（生產）加入假名化（PII 在進 LLM 前替換為 Token）+ CMEK + 不可篡改稽核日誌；Phase 3（高合規）考慮私有部署 LLM + 零信任網路 + 即時輸出 PII 掃描。*
->
-> *關鍵選型決策：選假名化而不是匿名化，因為醫護人員需要看到真實姓名才能使用結果，匿名化是不可逆的，用在這裡等於讓系統無用。選 Vector DB 服務端 Filter 而不是 Application 層過濾，因為必須讓 LLM 根本拿不到未授權的文件，而不是 LLM 看完再過濾。選 NER + Regex 組合做 PII 偵測而不是純 Regex，因為病患姓名是非結構化文字，純 Regex 無法識別。*
->
-> *稽核日誌的設計：記錄誰、什麼時候、存取了哪類資料（patient_token 而非真實姓名），使用 Object Lock 確保不可篡改，保留 7-10 年符合醫療合規要求。LLM 服務商的 BAA 也是上線前必須確認的法律文件。」*
+- 開場用 §一 的七個 PII 流動節點定調：不是加密資料庫就結束，每個節點各有保護機制。
+- 主幹照 §二 的三個安全強化階段講，再用 §三 的敏感度矩陣說明哪些欄位先處理。
+- 核心機制分別接 §四 假名化（為何不選匿名化）與 §五 RBAC（為何在 Vector DB 服務端過濾）。
+- 技術棧與稽核用 §六 和 §七 回答，點出不可篡改日誌、保留年限與 BAA。
+- 選型理由用 §八 的決策表，收尾引 §九 的代價與回報數字。
 
 ## 相關文章與正典版本
 

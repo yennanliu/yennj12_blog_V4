@@ -7,7 +7,7 @@ description: "深度剖析 LangGraph Agent 在高並發場景下的 Tool Fan-Out
 categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "Agent", "AsyncIO", "Tool Calling", "Fan-Out", "Circuit-Breaker", "LangGraph", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "21 min"
 ---
 
 > 大多數工程師遇到「Agent 要並行呼叫 15 個 API」時，第一反應是 `asyncio.gather()`，然後假設「全部回來再合併」。  
@@ -649,13 +649,13 @@ circuit_breaker_state{state="OPEN"} count > 2 → PagerDuty
 | 零結果率 | 10%（全部超時時）| 0.1%（幾乎總有部分結果）|
 | 用戶放棄率（> 10s 無回應）| 45% | 2% |
 
----
+### 10.5 答題骨架
 
-## 十一、面試答題要點
-
-**面試官問**：「asyncio.gather() 有什麼問題？你會如何設計一個生產級的 Tool Fan-Out 引擎？」
-
-> *「asyncio.gather() 的根本問題是『木桶短板』語意：它等待所有 coroutine 完成，一個慢 API 就能拖垮全部。我的解法分三層：第一，用 asyncio.wait() 替代 gather，它的 done/pending 分離讓我能在硬截止時間（1500ms）到達時，立刻取走已完成的結果，不等剩餘的；第二，在 800ms 閾值觸發 Speculative Execution，對超時的 API 同時向備用節點發起複製請求賽跑，誰先回傳用誰，P99 延遲從 1500ms 降至 900ms；第三，Redis-backed Circuit Breaker 追蹤各 API 節點的失敗狀態，連續失敗 3 次立即熔斷 30 秒，讓後續請求不再傻等已知壞節點的超時；最後，前端用 SSE 實現 Partial Rendering，每完成一個股票立刻推送，用戶在 180ms 後就看到第一個結果，整體從用戶等 30 秒變成 1.5 秒內交出 12 檔高品質分析——20 倍的延遲改善，成本僅增加 5%。」*
+- 第（1）問用 §一 回答：gather() 的三個致命缺陷，以及為何在百萬級場景被放大。
+- 第（2）問照 §二 的三個演進階段展開，架構維度接 §六 的 Semaphore 與背壓、§四 的 Circuit Breaker。
+- 程式碼模式維度接 §三：wait() 取代 gather() 的 done/pending 分離，加 Speculative Execution。
+- 降級策略維度接 §五：Hard Deadline、PartialResult 傳給 LLM、前端 SSE 逐筆渲染。
+- 可觀測性與症狀鏈接 §七；選型與熔斷配置用 §八、§九；收尾用 10.1–10.4 的前後對比。
 
 ## 相關文章與正典版本
 

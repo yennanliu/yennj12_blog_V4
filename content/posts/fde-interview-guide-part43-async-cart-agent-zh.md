@@ -7,7 +7,7 @@ description: "深度剖析黑五大促銷期間 200 萬在線用戶購物車 Age
 categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "LangGraph", "GKE", "Pub/Sub", "Spanner", "Agent", "Distributed Systems", "Async Architecture", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "25 min"
 ---
 
 > 大多數工程師看到「購物車 Agent」，第一反應是加一個 HTTP 呼叫。
@@ -756,11 +756,13 @@ Worker B: T+500ms 讀到 is_committed=true，跳過該節點，繼續 version=6
 
 > 以上為示意估算，用來說明各階段的量級差異，非實測結果。
 
----
+### 答題骨架
 
-## 十一、面試答題要點
-
-> *「面對 200 萬并發購物車 Agent，我的核心設計圍繞三個演進階段展開。Phase 1 用 Celery + Redis + LangGraph MemorySaver 快速驗證談判邏輯，但無狀態持久化，適合 < 500 并發的 POC；Phase 2 引入 Cloud Pub/Sub 替代 Redis Queue 獲得 at-least-once 保證，並以 MongoDBSaver 作為 Checkpointer，支撐 5 萬用戶但 MongoDB 跨區 15ms 寫延遲在高并發下仍是瓶頸；Phase 3 的核心突破是以 Cloud Spanner 的 TrueTime 強一致性替代 MongoDB，搭配單調遞增的 version_id 實現 CAS 語義，確保雙 Worker 並發寫入時只有一個成功，徹底解決 Exactly-Once 問題。當 Pod 因搶佔蒸發後，Pub/Sub Ack Deadline（600s）超時觸發 Redelivery，新 Worker 在 18ms 內從 Spanner 讀出最後已 committed 的 StateSnapshot，透過 StateGraph.update_state() 將執行游標跳至正確節點 Resume，已完成的工具節點透過 tool_output_hash 比對直接 Skip，LLM 重複呼叫節省高達 60%；最終 KEDA 基於 Pub/Sub 佇列深度觸發 scale-out，將反應時間從 HPA 的 3 分鐘壓縮至 45 秒，重複扣款率（示意估算）從約 2% 降到趨近於零。」*
+- 先用 §一 說明規模的物理上限、Agent 狀態的特殊性與業務紅線，再照 §二 的三個演進階段展開。
+- Pod 搶佔與彈性伸縮接 §三（KEDA vs HPA）；狀態持久化與 Exactly-Once 接 §四 的 Checkpointer 與 §九 的保證鏈。
+- 中斷後如何續跑用 §五 的 Skip 與 Resume 機制回答；多租戶與限流用 §六。
+- 供應鏈 Agent 的協調與反射循環接 §七，選型理由用 §八。
+- 收尾用 §十 的大促前後對比給數字，並可引用下方速查表。
 
 ---
 

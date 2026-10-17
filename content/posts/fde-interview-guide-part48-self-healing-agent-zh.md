@@ -7,7 +7,7 @@ description: "深入解析如何在 LangGraph 中設計 Compiler-Validator Patte
 categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "LangGraph", "Agent", "Self-Healing", "LLM", "Reliability", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "21 min"
 ---
 
 > 大多數工程師的方法：在工具呼叫外面包一層 `try-catch`，失敗就 retry 三次。
@@ -661,25 +661,14 @@ Trace: task_id=ORD-2026-00431
 
 ---
 
-## 十、面試答題要點
+## 十、答題骨架
 
-> *「我會在 LangGraph 中引入 Compiler-Validator Pattern：每個工具輸出都綁定一個 Pydantic BaseModel，Validator Node 做強型別硬校驗，成功走下一節點，失敗導向 Critic Agent。Critic Agent 拿到三份上下文——原始意圖、失敗日誌、備用工具清單——重新推理修正參數或切換工具，修正後回到 Worker 重試。State 機器設定 max_retries=3 護欄防無限循環，這一層預估能覆蓋約七成的自動修復場景（示意估算）。底層我還會部署 Circuit Breaker（Redis 共享狀態），連續 5 次失敗自動隔離問題 API，防止雪崩。若 3 次修復全部失敗，Dead Letter State 發布事件到 Cloud Pub/Sub，依訂單金額決定升級至 Slack 或 PagerDuty。這套架構的核心價值是：把「偵測」和「推理」分離，讓反思循環成為架構一等公民，而不是在業務邏輯裡散落一堆 try-catch，預期可將 MTTD 從數小時降到分鐘級，並在寫入前攔截資料庫污染。」*
-
----
-
-## 十一、面試常見追問與應對
-
-**Q：Critic Agent 自己呼叫 LLM 會不會也出錯？你如何確保 Critic Agent 的輸出可靠？**
-
-應對：Critic Agent 的輸出同樣需要 Schema 校驗。Critic 必須輸出嚴格 JSON（`strategy`、`tool_name`、`corrected_params`），若 JSON 解析失敗或不符合 Schema，直接跳過修復，進入 Dead Letter，不讓 Critic 本身的 Bug 再引發新的修復循環（「修復者的修復者」的無窮遞歸問題）。
-
-**Q：如果備用 API 也壞了，靜態快取數據有多久的時效性？業務可以接受嗎？**
-
-應對：這取決於業務 SLA。在供應鏈場景中，我們設定快取 TTL = 4 小時，並在回應中明確標注 `cached_at` 時間戳，讓下游業務邏輯自行判斷是否接受。對於「包裹到哪了」這種查詢，4 小時前的數據可能還可以接受（告知用戶「最後更新於 XX:XX」）；但對於「庫存是否足夠接單」，快取數據可能造成超賣，此時必須阻斷並上報人工。
-
-**Q：Critic Agent 每次呼叫 LLM 有額外延遲，如何保證端對端 SLA？**
-
-應對：Critic Agent 使用輕量模型（gemini-1.5-flash，P99 < 3.2 秒），且只在異常路徑觸發，正常路徑延遲不受影響（仍是 < 300ms）。異常路徑的 SLA 可以放寬：使用者寧可等 3 秒收到正確數據，也不要立刻收到錯誤數據。在 SLA 合約中，我們將自動修復路徑的 P99 設為 5 秒，與正常路徑的 300ms 分開計算。
+- 先用 §一 拆出兩種性質的故障，說明為何純 Retry 不夠。
+- 主幹照 §二 的三個演進階段講，核心模式接 §三 的 Pydantic Validator Node（偵測）與 §四 的 Critic Agent（推理），強調兩者分離。
+- 防雪崩與降級接 §五 的 Circuit Breaker 與 Fallback Matrix；三次修復失敗後的路徑接 §六 的 Dead Letter State 與 Human-in-the-Loop。
+- 追問「Critic 自己出錯怎麼辦」：Critic 的輸出同樣過 Schema 校驗，解析失敗直接進 Dead Letter，避免修復者的無窮遞歸（見 §四、§六）。
+- 追問「備用 API 也壞、快取多舊可接受」與「Critic 的額外延遲」：答案取決於業務 SLA——快取回應標注時間戳由下游判斷，異常路徑的 P99 與正常路徑分開計算（見 §五 的 Fallback Matrix、§七 的指標）。
+- 選型理由用 §八，收尾用 §九 的前後對比給 MTTD 與自動修復覆蓋率數字。
 
 ---
 
