@@ -115,12 +115,12 @@ def check_token_bucket(tenant_id: str, cost: int = 1) -> bool:
 ### 2.3 延遲數字：為什麼 Redis 是唯一選擇
 
 ```
-方案              P50 延遲    P99 延遲    50K req/s 總開銷
-──────────────────────────────────────────────────────────
-Redis（同區域）   0.3 ms      0.8 ms      40 ms（P99 視角）
-Redis（跨區域）   2 ms        5 ms        250 ms
-Cloud Spanner    5 ms        20 ms       1,000 ms  ← 成為瓶頸
-PostgreSQL       3 ms        15 ms       750 ms    ← 成為瓶頸
+方案              P50 延遲    P99 延遲    50K req/s 時同時在途的限速查詢數（Little's law：QPS × P99）
+────────────────────────────────────────────────────────────────────────────────
+Redis（同區域）   0.3 ms      0.8 ms      50,000 × 0.0008 s = 40 個
+Redis（跨區域）   2 ms        5 ms        50,000 × 0.005 s = 250 個
+Cloud Spanner    5 ms        20 ms       50,000 × 0.020 s = 1,000 個  ← 超過連線池，成為瓶頸
+PostgreSQL       3 ms        15 ms       50,000 × 0.015 s = 750 個    ← 超過連線池，成為瓶頸
 本地 pod 記憶體   0.01 ms     0.1 ms      N/A（無法分散式）
 ```
 
@@ -221,8 +221,8 @@ API Gateway 感知 queue depth → 動態調低 burst headroom（可選）
 
 **突發吸收數字**：假設平常流量 3K req/s，flash sale 觸發 15× 突發（45K req/s），持續 30 秒：
 - Token Bucket 在前 5 秒吸收 ~25K 請求（Enterprise 桶容量 5K × 5 個 shard）
-- 剩餘 ~1.1M 請求排入 Pub/Sub（45K × 30 - 25K = ~1.1M）
-- Worker pool 以穩態速率 3K req/s 處理，約 367 秒（6 分鐘）清空佇列
+- 剩餘 ~1.3M 請求排入 Pub/Sub（45K × 30 − 25K = 1,325K）
+- 若 Worker pool 只維持穩態 3K req/s，需 1,325K ÷ 3K ≈ 442 秒（約 7.4 分鐘）清空佇列；KEDA 依 queue depth 擴容後時間按比例縮短（擴到 15K req/s 約 90 秒）
 - 整個過程系統不崩潰，Standard 租戶 floor rate 5 req/s 全程保持
 
 ### 2.7 KEDA ScaledObject 配置
@@ -428,12 +428,12 @@ def check_rate_limit(tenant_id: str) -> bool:
 ```
 指標                         Before（無 Backpressure）    After（Token Bucket + Fair-Share）
 ──────────────────────────────────────────────────────────────────────────────────────────
-15× 突發下 P99 延遲           > 30 秒（大量 timeout）      < 2 秒（Pub/Sub 緩衝 + KEDA 擴縮）
+15× 突發下的結果              > 30 秒 P99（大量 timeout）   無 503 / timeout；佇列等待 ≤ 數分鐘（依 KEDA 擴縮速度，見 2.6 推算）
 Standard 租戶 floor rate      0 req/s（被 Enterprise 餓死） 5 req/s（獨立 worker pool 保證）
 突發流量遺失率                 40–60%（直接丟棄）           < 0.1%（7 天 Pub/Sub 保留）
 LLM 配額超限告警次數/月        8–12 次                     0–1 次（Token Bucket 精確控制）
 Rate-limit 層自身延遲增加      N/A                         + 0.5 ms P99（Redis Lua）
-Redis 記憶體使用（500 租戶）   N/A                         ~50 MB（每桶 ~100 bytes × 500）
+Redis 記憶體使用（500 租戶）   N/A                         ~50 KB（每桶 ~100 bytes × 500）
 工程師 on-call 事件數/月       15+（系統崩潰 + 恢復）        2–3（監控告警，無崩潰）
 ```
 
@@ -443,16 +443,16 @@ Redis 記憶體使用（500 租戶）   N/A                         ~50 MB（每
 
 ## 五、與其他核心主題的關聯
 
-- **Part 11 非同步事件驅動管線**（`fde-interview-core-topic-11-async-event-driven-pipeline-zh`）：Backpressure 的佇列緩衝層（Pub/Sub）正是非同步管線的核心基礎設施；Fair-Share worker pool 即為事件驅動管線的消費者端，兩篇合起來構成完整的「非同步 + 限速」架構藍圖。
-- **Part 3 狀態機 & DAG**（`fde-interview-core-topic-3-state-machine-dag-zh`）：多步驟 AI 工作流中，每個 DAG 節點的 LLM 呼叫都需過 Token Bucket；Backpressure 訊號可觸發 DAG 狀態機進入 `WAITING` 狀態而非直接失敗，讓工作流在配額恢復後自動重試。
-- **Part 9 資料主權 & Sovereign AI**（`fde-interview-core-topic-9-data-residence-sovereign-ai-zh`）：不同地理區域的租戶需要獨立的 Redis Cluster 與 Pub/Sub topic；Backpressure 架構必須在跨區域部署時確保 bucket 狀態不跨境同步（避免 GDPR 問題）。
+- **非同步事件驅動管線**（本系列 [Async Event-Driven Pipeline](/posts/fde-core-concept-11-async-event-driven-pipeline-zh/)）：Backpressure 的佇列緩衝層（Pub/Sub）正是非同步管線的核心基礎設施；Fair-Share worker pool 即為事件驅動管線的消費者端，兩篇合起來構成完整的「非同步 + 限速」架構藍圖。
+- **狀態機 & DAG**（本系列 [State Machine & DAG](/posts/fde-core-concept-3-state-machine-dag-zh/)）：多步驟 AI 工作流中，每個 DAG 節點的 LLM 呼叫都需過 Token Bucket；Backpressure 訊號可觸發 DAG 狀態機進入 `WAITING` 狀態而非直接失敗，讓工作流在配額恢復後自動重試。
+- **資料主權 & Sovereign AI**（本系列 [Data Residence & Sovereign AI](/posts/fde-core-concept-9-data-residence-sovereign-ai-zh/)）：不同地理區域的租戶需要獨立的 Redis Cluster 與 Pub/Sub topic；Backpressure 架構必須在跨區域部署時確保 bucket 狀態不跨境同步（避免 GDPR 問題）。
 - **FDE Interview Guide Part 35–38（Production Engineering）**：限速層的 Prometheus 指標設計（throttle_rate、bucket_utilization）、KEDA ScaledObject 的 HPA 參數調優、Redis Cluster 的記憶體容量規劃，直接對應 Production Engineering 章節的 SRE 日常實踐。
 
 ---
 
 ## 六、面試一句話（Killer Phrase）
 
-> *「Backpressure 是一個訊號機制，不是一個拒絕機制：當 GPU 配額或 LLM 速率上限被觸及時，正確的做法是讓上游放慢並將請求排入 Pub/Sub 緩衝，而不是直接丟棄。Token Bucket 用 Redis Lua 腳本在 0.5 ms 內原子地決定放行或排隊，比 DB-based 方案快 30 倍，在 50K req/s 規模下這個差距從 25 ms 放大到 750 ms，限速層本身就會成為瓶頸。Fair-Share 透過每個租戶等級獨立的 Pub/Sub subscription 加上 KEDA 自動擴縮的 worker pool，確保即使 Enterprise 客戶正在全速衝擊，Standard 租戶仍保證 5 req/s 的 floor rate；關鍵在於 floor rate 不是靠優先佇列「謙讓」來保證，而是靠完全獨立的資源池來隔離，這才是多租戶 SLA 設計的本質：優先不等於獨占。」*
+> *「Backpressure 是一個訊號機制，不是一個拒絕機制：當 GPU 配額或 LLM 速率上限被觸及時，正確的做法是讓上游放慢並將請求排入 Pub/Sub 緩衝，而不是直接丟棄。Token Bucket 用 Redis Lua 腳本在 0.5 ms 內原子地決定放行或排隊，比 DB-based 方案快 30 倍，在 50K req/s 規模下依 Little's law 同時在途的限速查詢會從 40 個（Redis）放大到 750 個（PostgreSQL），限速層本身就會成為瓶頸。Fair-Share 透過每個租戶等級獨立的 Pub/Sub subscription 加上 KEDA 自動擴縮的 worker pool，確保即使 Enterprise 客戶正在全速衝擊，Standard 租戶仍保證 5 req/s 的 floor rate；關鍵在於 floor rate 不是靠優先佇列「謙讓」來保證，而是靠完全獨立的資源池來隔離，這才是多租戶 SLA 設計的本質：優先不等於獨占。」*
 
 ## 相關文章與正典版本
 

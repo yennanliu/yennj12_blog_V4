@@ -26,7 +26,7 @@ readTime: "18 min"
 
 弱答案：「我會把兩個結果合併起來，這樣召回率會更高。」
 
-強答案：「dense-only recall@10 = 72%，sparse-only recall@10 = 68%，hybrid RRF = 84%。關鍵在 k=60 的平滑常數讓兩個信號貢獻均衡；若某個模態明顯更優（差距 > 15pp），改用 k=10–20 放大強模態影響力。」
+強答案：「dense-only recall@10 = 72%，sparse-only recall@10 = 68%，hybrid RRF = 84%。關鍵在 k=60 的平滑常數決定排名差距被壓縮的程度；k 對兩路列表是對稱的，無法偏袒任一模態——若某個模態明顯更優（差距 > 15pp），改用加權 RRF（w_dense/(k+r_dense) + w_sparse/(k+r_sparse)，例如 0.7/0.3）提高強模態權重。」
 
 **測試點三：你是否了解雲端具體實作路徑**
 
@@ -156,11 +156,11 @@ k=60   1/61 = 0.0164   1/70 = 0.0143   1.15x  ← 差異最小（均衡）
 k=200  1/201= 0.0050   1/210= 0.0048   1.04x  ← 幾乎相等（極度均衡）
 ```
 
-- `k=10`：排名差距放大約 1.8x，適合一個模態明顯更優的情況
+- `k=10`：排名差距放大約 1.8x，rank 1 與 rank 10 的區分更銳利（對兩路同時生效）
 - `k=60`：標準均衡選擇，推薦預設值
-- `k=200`：差距壓縮至接近平等，適合完全不確定哪個模態更好時
+- `k=200`：差距壓縮至接近平等，排名位置幾乎不影響結果（對兩路同時生效）
 
-**何時應調整 k 值**：線下跑 Recall 評估，若 Dense Recall = 82%、Sparse Recall = 55%，兩者差距 27pp，這時 k=60 讓 Sparse 貢獻過多雜訊，應調低 k 至 20–30。反之若兩者 Recall 接近，k=60 是最優選擇。
+**何時調 k、何時改用加權**：k 是「排名壓縮」旋鈕，對 Dense 與 Sparse 兩路同時作用，調低 k 不會讓任一模態主導。線下跑 Recall 評估，若 Dense Recall = 82%、Sparse Recall = 55%，兩者差距 27pp，k=60 會讓 Sparse 貢獻過多雜訊——正確解法是加權 RRF：`score = w_dense/(k+r_dense) + w_sparse/(k+r_sparse)`，例如 w = 0.7/0.3（Elasticsearch 9.2+ 的 `linear` retriever / per-retriever `weight` 亦同）。兩者 Recall 接近時，等權 RRF + k=60 是最優選擇。
 
 ---
 
@@ -369,7 +369,7 @@ LIMIT 10
     ┌────┴────┐
     ▼         ▼
 ┌───────┐  ┌───────┐
-│Weaviate│  │Weaviate│   ← 租戶 A / 租戶 B（class 隔離）
+│Weaviate│  │Weaviate│   ← Dense / Sparse 雙索引（租戶以 class 隔離）
 │Dense  │  │Sparse │     Cloud KMS 各自加密金鑰
 │(HNSW) │  │(BM25) │
 └───────┘  └───────┘
@@ -405,7 +405,7 @@ LIMIT 10
 |---------|------|---------|
 | 用加權平均原始分數做 score fusion（如 `0.7 × cosine_sim + 0.3 × bm25_score`） | Dense 分數範圍 [0,1]，BM25 分數無上界（可能是 25.7），量級完全不同，加權平均被 BM25 主導，效果比單模態更差 | 改用 RRF（只用排名，不依賴原始分數）；或對兩路分數各自做 min-max 正規化後再加權 |
 | Chunk 級別搜尋後忘記在文件級別去重 | 同一長文被切成 10 個 Chunk，Top-10 結果中 7 個來自同一篇文件，LLM 拿到重複 context，答案品質下降，有效 context 窗口浪費 | Chunk 搜尋後按 `parent_doc_id` group by，取每個父文件中 RRF score 最高的 chunk，再做父文件級別排名 |
-| k=60 套用在所有場景不根據資料特性調整 | 當 Dense Recall = 82%、Sparse Recall = 55%，差距 27pp，k=60 讓弱勢的 Sparse 貢獻過多雜訊，融合後 Recall 反而低於單用 Dense | 先在 evaluation set 上測試 k={10, 20, 40, 60, 100}，選 Recall@10 最高的 k 值；Recall 差距 > 20pp 時通常 k=20–30 更優 |
+| 等權 RRF、k=60 套用在所有場景不根據資料特性調整 | 當 Dense Recall = 82%、Sparse Recall = 55%，差距 27pp，等權融合讓弱勢的 Sparse 貢獻過多雜訊，融合後 Recall 可能低於單用 Dense | 先在 evaluation set 上測試 k={10, 20, 40, 60, 100} 與 w_dense={0.5, 0.6, 0.7, 0.8}，選 Recall@10 最高的組合；Recall 差距 > 20pp 時用加權 RRF 提高強模態權重，而不是調 k（k 對兩路對稱） |
 | 未建立 offline Recall 評估 pipeline，只靠用戶回饋 | 無法量化每次 embedding 模型升級、索引參數調整對 Recall 的影響；優化方向靠直覺，失去實驗可重複性 | 建立 golden dataset（≥200 個 query-relevant_doc pair），每次部署前自動跑 Recall@5、Recall@10、MRR，存入 BigQuery 比較趨勢 |
 | Reranker 放在 RRF 之前（對 Dense Top-K 重排再做 RRF） | Reranker 已包含語意精排信息，再與 Sparse 做 RRF 造成 Dense 信號被雙重計算，排名偏差加劇 | Reranker 永遠放在 RRF 之後，作為最終精排步驟；正確順序：Dense retrieval → Sparse retrieval → RRF fusion → Reranker → LLM |
 | 用 cosine similarity threshold 過濾 Dense 結果後再送 RRF（例如「相似度 < 0.7 的過濾掉」） | 低相似度但高 BM25（精確字串命中）的文件被提前丟棄，Hybrid 的互補效益消失，退化為純 Sparse | 不做閾值過濾；RRF 本身已處理低排名（分母大、貢獻小）；若需控制品質，在 RRF 之後設最終 score 的下界 |
@@ -416,15 +416,15 @@ LIMIT 10
 ## 五、與其他核心主題的關聯
 
 - **RAG Pipeline 整體架構**（fde-interview-guide Part 31–32）：Hybrid Search 是 RAG 的 Retrieval 階段核心。Recall 的上限直接決定 Generation 的品質上限——LLM 無法從未檢索到的文件中生成正確答案，任何 prompt engineering 都無法彌補 Retrieval 的失誤。
-- **Embedding 模型選型與微調**（fde-core-topics Part 3）：Dense 檢索的品質取決於 Bi-encoder 的領域適配性；對垂直領域語料做 contrastive fine-tuning 可將 Dense Recall 從 72% 提升至 78–80%，縮小與 Hybrid 的差距，影響是否值得維護兩套索引的架構決策。
-- **向量資料庫選型**（fde-core-topics Part 5）：HNSW 的 `ef_construction` 和 `M` 超參數直接影響 Dense Recall vs 延遲的 tradeoff；Weaviate、Qdrant、Milvus 對 Sparse 向量的原生支援程度各異，選型時需確認是否支援 SPLADE 格式的稀疏向量。
-- **Reranking 與 Cross-Encoder**（fde-core-topics Part 6）：RRF 是輕量級排名融合（純計算，< 1 ms，無需推理），Cross-encoder Reranker 是重量級精排（需模型推理，60–120 ms）；兩者分工明確——RRF 負責廣度（Recall），Reranker 負責精度（Precision@5）。
+- **Embedding 模型選型與微調**：Dense 檢索的品質取決於 Bi-encoder 的領域適配性；對垂直領域語料做 contrastive fine-tuning 可將 Dense Recall 從 72% 提升至 78–80%，縮小與 Hybrid 的差距，影響是否值得維護兩套索引的架構決策。
+- **向量資料庫選型**（本系列 [Vector Drift & Blue-Green Indexing](/posts/fde-core-concept-15-vector-drift-blue-green-zh/)）：HNSW 的 `ef_construction` 和 `M` 超參數直接影響 Dense Recall vs 延遲的 tradeoff；Weaviate、Qdrant、Milvus 對 Sparse 向量的原生支援程度各異，選型時需確認是否支援 SPLADE 格式的稀疏向量。
+- **Reranking 與 Cross-Encoder**（本系列 [Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)）：RRF 是輕量級排名融合（純計算，< 1 ms，無需推理），Cross-encoder Reranker 是重量級精排（需模型推理，60–120 ms）；兩者分工明確——RRF 負責廣度（Recall），Reranker 負責精度（Precision@5）。
 
 ---
 
 ## 六、面試一句話（Killer Phrase）
 
-> *「Hybrid Search 的本質是承認沒有任何單一相關性信號能覆蓋所有查詢類型——Dense 向量搜尋擅長語意等價但對精確字串盲目，BM25 擅長精確匹配但對語意變體無感，兩者各自的 Recall@10 分別只有 72% 和 68%。RRF 的聰明之處是用排名而非原始分數做融合，k=60 的平滑常數讓排名差距被壓縮，防止任何一個信號的極端排名主導最終結果，融合後 Recall@10 達到 84%，多了 12 個百分點。在生產上我會先用 Vertex AI Search 的內建 hybrid mode 快速驗證資料集上的 Recall 提升是否顯著，確認值得投資後再根據 QPS 和成本評估是否自建 Weaviate + SPLADE 方案，並用 A/B 實驗動態調整 k 值——k=60 是良好起點，但若兩個模態的 Recall 差距超過 20pp 就應該調低 k 讓強模態主導。」*
+> *「Hybrid Search 的本質是承認沒有任何單一相關性信號能覆蓋所有查詢類型——Dense 向量搜尋擅長語意等價但對精確字串盲目，BM25 擅長精確匹配但對語意變體無感，兩者各自的 Recall@10 分別只有 72% 和 68%。RRF 的聰明之處是用排名而非原始分數做融合，k=60 的平滑常數讓排名差距被壓縮，防止任何一個信號的極端排名主導最終結果，融合後 Recall@10 達到 84%，多了 12 個百分點。在生產上我會先用 Vertex AI Search 的內建 hybrid mode 快速驗證資料集上的 Recall 提升是否顯著，確認值得投資後再根據 QPS 和成本評估是否自建 Weaviate + SPLADE 方案，並用 A/B 實驗動態調整 k 值——k=60 是良好起點，但若兩個模態的 Recall 差距超過 20pp，就應該改用加權 RRF 提高強模態權重——k 對兩路對稱，調 k 做不到這件事。」*
 
 ## 相關文章與正典版本
 

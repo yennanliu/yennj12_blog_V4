@@ -161,7 +161,7 @@ Response to User
 
 **未解決的問題**：零日攻擊（未知注入模式）、LLM 被誘導呼叫越權工具（需 Layer 3）。
 
-**成本/複雜度**：開發 1–2 週，Cloud DLP API $1/1000 次掃描，BERT 推理需 1 個 T4 GPU（$0.35/hr on Cloud Run）。
+**成本/複雜度**：開發 1–2 週，Sensitive Data Protection（原 Cloud DLP）內容檢查約 $3/GB（按掃描量計費，不是按次），BERT 分類器需 1 張 GPU（Cloud Run GPU 只提供 NVIDIA L4 等型號，沒有 T4；費用依 GPU 時數計費）。
 
 ---
 
@@ -197,9 +197,9 @@ Response to User
 
 ## 五、與其他核心主題的關聯
 
-- **RAG 系統安全**（本系列 Part 9）：RAG 從外部知識庫檢索的內容本身可能包含惡意指令（Indirect Prompt Injection），需在 retrieval 結果上同樣套用 Layer 1 Input Classifier。
-- **Agent 工具呼叫設計**（本系列 Part 11）：Layer 4 Tool Allowlist 是 Agent 架構的核心安全元件；工具的 Schema 設計直接決定攻擊面大小。
-- **LLM Observability & Monitoring**（本系列 Part 14）：攔截率、誤報率、灰色地帶佔比都需要納入 AI 系統的 SLO Dashboard，與延遲、可用性並列監控。
+- **RAG 系統安全**（本系列 [Indirect Prompt Injection](/posts/fde-core-concept-7-indirect-prompt-injection-zh/)）：RAG 從外部知識庫檢索的內容本身可能包含惡意指令（Indirect Prompt Injection），需在 retrieval 結果上同樣套用 Layer 1 Input Classifier。
+- **Agent 工具呼叫設計**（本系列 [Speculative Tool Execution](/posts/fde-core-concept-14-speculative-tool-fanout-zh/)）：Layer 4 Tool Allowlist 是 Agent 架構的核心安全元件；工具的 Schema 設計直接決定攻擊面大小。
+- **LLM Observability & Monitoring**（本系列 [RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)、[Structured Troubleshooting](/posts/fde-core-concept-22-structured-troubleshooting-zh/)）：攔截率、誤報率、灰色地帶佔比都需要納入 AI 系統的 SLO Dashboard，與延遲、可用性並列監控。
 - **fde-interview-guide Part 36**：生產環境 LLM Pipeline 設計中有具體的 Cloud Armor + Vertex AI 整合範例，與本篇防禦架構直接對應。
 
 ---

@@ -24,7 +24,7 @@ readTime: "18 min"
 
 **弱答案長這樣**：「我們用滑動視窗，把最舊的訊息刪掉就好。」——沒有量化 Token 預算、沒有解釋為什麼 FIFO 在長對話中會丟失關鍵系統指令。
 
-**強答案長這樣**：「128K context 視窗中，system prompt 佔 8K、tools schema 佔 12K，剩餘 108K 給 history + answer。我們設 history ceiling 為 80K、answer reserve 為 28K。超過 history ceiling 時觸發階層式摘要：先壓縮最舊的 20 輪，~16K tokens 壓成 ~500 tokens，然後再做 FIFO。這樣能維持對話連貫性同時控制成本。壓縮比約 32:1，每次摘要呼叫用 Gemini Flash，成本不到主對話的 5%。」
+**強答案長這樣**：「128K context 視窗中，system prompt 佔 8K、tools schema 佔 12K，剩餘 108K 給 history + answer。我們設 history ceiling 為 92K、answer reserve 為 16K。超過 history ceiling 時觸發階層式摘要：先壓縮最舊的 20 輪，~16K tokens 壓成 ~500 tokens，然後再做 FIFO。這樣能維持對話連貫性同時控制成本。壓縮比約 32:1，每次摘要呼叫用 Gemini Flash，成本不到主對話的 5%。」
 
 ---
 
@@ -120,10 +120,10 @@ FIFO 截斷前：                    FIFO 截斷後（超出 ceiling）：
   marker_score   = 1.0 if contains("記住", "重要", "必須") else 0.0
   α=0.3, β=0.5, γ=0.2
 
-典型分數範例：
-  Turn  1 [角色定義]   → recency=0.08, semantic=0.9, marker=1.0 → score=0.75  ← 高，保留
-  Turn 20 [普通問答]   → recency=0.37, semantic=0.2, marker=0.0 → score=0.21  ← 低，可刪
-  Turn 49 [相關討論]   → recency=0.90, semantic=0.8, marker=0.0 → score=0.67  ← 高，保留
+典型分數範例（以第 51 輪為當前輪，age = 51 − i；recency = exp(−0.05 × age)）：
+  Turn  1 [角色定義]   → recency=0.08, semantic=0.9, marker=1.0 → score=0.3×0.08+0.5×0.9+0.2×1.0 = 0.67  ← 高，保留
+  Turn 20 [普通問答]   → recency=0.21, semantic=0.2, marker=0.0 → score=0.3×0.21+0.5×0.2+0.2×0.0 = 0.16  ← 低，可刪
+  Turn 49 [相關討論]   → recency=0.90, semantic=0.8, marker=0.0 → score=0.3×0.90+0.5×0.8+0.2×0.0 = 0.67  ← 高，保留
 ```
 
 代價：每次截斷需要做 embedding 計算，約 +5–10ms latency（可用 cache 優化到 <1ms）。
@@ -176,7 +176,7 @@ FIFO 截斷前：                    FIFO 截斷後（超出 ceiling）：
 
 呼叫前  ──────── 工具呼叫（搜尋 20 筆結果）──────── 呼叫後（未修剪）
 history=30K                                           history=30K + 工具輸出
-                                                      = 30K + 2,400 = 32,400K
+                                                      = 30K + 2,400 = 32,400 tokens
 
 若連續 10 次工具呼叫，未修剪：
   history = 30K + (10 × 2,400) = 54,000 tokens  ← 工具輸出佔 55%
@@ -330,7 +330,7 @@ async def summarize_node(state: AgentState) -> AgentState:
 
 **新增元件**：Pin 機制、摘要觸發邏輯、輕量摘要模型呼叫、摘要 token 驗證。
 **解決的問題**：大幅延長可用對話輪數（理論上無限輪）、保護早期關鍵上下文、維持對話語意連貫性。
-**代價**：每次摘要 ~0.5–1 秒額外 latency（異步不阻塞主流程），摘要模型 API 成本（Gemini Flash 輸入 $0.075/1M tokens，20 輪對話 ~16K tokens ≈ $0.0012，成本極低）。
+**代價**：每次摘要 ~0.5–1 秒額外 latency（異步不阻塞主流程），摘要模型 API 成本（示意：以 Gemini 1.5 Flash 當時牌價 $0.075/1M tokens 計，20 輪對話 ~16K tokens ≈ $0.0012，成本極低；現行 Flash 模型價格請以價目表為準）。
 **適用場景**：生產 chatbot、客服系統、法律/醫療助理（需要長期記憶）、10K–200K DAU。
 
 ---
@@ -411,7 +411,7 @@ summary_latency_seconds{p50, p95, p99}
 | 決策 | 選擇 X | 選 X 的理由 | 不選 Y 的理由 | 翻轉條件（何時選 Y）|
 |------|--------|------------|--------------|-------------------|
 | 截斷策略 | 階層式摘要 | 保留語意，對話可無限延伸，32:1 壓縮比 | FIFO：刪掉早期關鍵 turns，對話失憶 | 對話 < 20 輪、角色設定不重要時選 FIFO |
-| 摘要模型 | Gemini Flash | 成本 $0.075/1M tokens，延遲 ~300ms | 主模型（Claude Sonnet 4 $3/1M）：摘要成本佔主對話 40 倍 | 摘要品質極為關鍵（法律/醫療）時才考慮主模型 |
+| 摘要模型 | Gemini Flash | 成本 $0.075/1M tokens（1.5 Flash 牌價，示意），延遲 ~300ms | 主模型（Claude Sonnet 4 $3/1M）：摘要成本佔主對話 40 倍 | 摘要品質極為關鍵（法律/醫療）時才考慮主模型 |
 | 觸發機制 | 每 N 輪 + Token 閾值 雙觸發 | 兼顧固定節奏與動態保護 | 僅每 N 輪：工具呼叫密集時可能在 N 輪內就超限 | 對話輪次與 token 消耗高度相關時單觸發即可 |
 | 工具輸出 | Whitelist 欄位保留 | 只留推理所需欄位，安全可控 | Blacklist 欄位刪除：新工具欄位容易遺漏，token 膨脹難發現 | 工具輸出結構極不穩定時用 blacklist 作為補充 |
 | Pinning 策略 | 前 N 輪固定保護 | 角色設定/任務目標通常在開頭，永不丟失 | 依重要性分數決定：計算複雜，且初始 turns 在早期可能分數不高 | 對話中途才有關鍵設定時改用重要性加權 |
@@ -449,7 +449,7 @@ summary_latency_seconds{p50, p95, p99}
 
 ## 七、與其他核心主題的關聯
 
-- **RAG 架構設計**（本系列 Part 2）：RAG 的 retrieved chunks 是 context 最大的動態消耗來源之一；chunk size 策略（256 vs 512 tokens）與 top-K 設定直接影響 context budget 分配。Context management 的 budget 計算必須為 RAG chunks 預留空間。
+- **RAG 檢索架構**（本系列 [Hybrid Search & RRF](/posts/fde-core-concept-4-hybrid-search-rrf-zh/) 與 [Re-ranking & Cross-Encoder](/posts/fde-core-concept-5-reranking-cross-encoder-zh/)）：RAG 的 retrieved chunks 是 context 最大的動態消耗來源之一；chunk size 策略（256 vs 512 tokens）與 top-K 設定直接影響 context budget 分配。Context management 的 budget 計算必須為 RAG chunks 預留空間。
 - **工具呼叫（Tool Use / Function Calling）**（fde-interview-guide Part 31，ADK 深度解析）：每個工具的 schema 定義消耗靜態 Token（12K for 15 tools），工具回傳結果消耗動態 Token；Tool Output Trimming 是 context management 的必要子策略，兩者緊密耦合。
 - **Agent 記憶體架構（Memory Architecture）**（本系列後續 Part）：長期記憶（episodic memory store / vector DB）與短期 context window 的分工——什麼存 Vertex AI Vector Search、什麼留在 context，是 context management 的上游架構決策。若記憶體分層設計正確，context 壓力可大幅降低。
 - **成本最佳化（Cost Optimization）**（fde-interview-guide Part 35–38）：Token 預算管理直接等於成本控制。Prompt caching（系統提示快取，Claude / Gemini 均支援）可讓靜態 system prompt 的 Token 成本降低 90%，是 context management 的重要補充策略。
