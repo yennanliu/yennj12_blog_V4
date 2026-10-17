@@ -20,7 +20,7 @@ readTime: "13 min"
 
 - **測試診斷紀律**：弱答案是「我會先看 logs」或「我會重啟服務」——沒有層次、沒有假說優先順序、沒有消除邏輯。強答案明確說出「Agent 變慢最常見的根因是 Layer 4 quota 耗盡，而且檢查成本最低，所以我的第一個動作是打開 Vertex AI quota dashboard 看 TPM 消耗曲線，而不是翻 application log」。這句話背後是「先查最常見、最便宜的假說」的排序邏輯。
 - **測試可觀測性設計意識**：面試官想知道你是否在架構設計時就預埋了排錯所需的 trace / metric / log，而不是等到出事才臨時加 `print()`。可觀測性是一個設計決策，需要在 Day 1 就被納入 API 規格、tool wrapper 合約、和部署 checklist。
-- **測試成本意識**：每一層的排錯工具有不同的費用曲線（Cloud Trace ingestion $0.20/百萬 spans、外部 HTTP check 每分鐘觸發一次約 $0.01/check/月）。強候選人知道在什麼層次停下來，不做過度觀測，也知道哪些 error path 值得 100% 採樣。
+- **測試成本意識**：每一層的排錯工具有不同的費用曲線（Cloud Trace ingestion $0.20/百萬 spans、外部 uptime check 每月前 100 萬次執行免費、之後 $0.30/千次，每分鐘一次的 check 約 43,200 次/月、落在免費額度內）。強候選人知道在什麼層次停下來，不做過度觀測，也知道哪些 error path 值得 100% 採樣。
 
 > 弱回答：「我會看 error logs，然後試著在本地重現問題。」
 >
@@ -270,7 +270,6 @@ def call_search_api(query: str) -> dict:
                 span.set_attribute("error.type", "rate_limited")
                 retry_after = resp.headers.get("Retry-After", "unknown")
                 span.set_attribute("http.retry_after_sec", retry_after)
-                # error path 強制升為 always-sample
                 span.set_attribute("sampling.priority", 1)
             resp.raise_for_status()
             return resp.json()
@@ -323,15 +322,15 @@ Error Budget = 0.1% * 30天 = 43.2 分鐘/月
 Burn Rate 告警層級：
 ┌─────────────────────────────────────────────────────────┐
 │  Level 3 — CRITICAL：14x burn rate（1hr 視窗）          │
-│  剩餘 error budget < 1 小時                              │
+│  1hr 內燒掉 2% 月預算；照此速率約 2 天耗盡               │
 │  行動：立即 PagerDuty，auto-rollback，通知 CTO           │
 ├─────────────────────────────────────────────────────────┤
 │  Level 2 — HIGH：6x burn rate（6hr 視窗）               │
-│  按此速率 5 小時後 error budget 耗盡                      │
+│  按此速率 5 天後 error budget 耗盡（30 天/6）             │
 │  行動：Slack + 建立 P1 Incident ticket                   │
 ├─────────────────────────────────────────────────────────┤
 │  Level 1 — WARNING：3x burn rate（24hr 視窗）            │
-│  按此速率 10 小時後 error budget 耗盡                     │
+│  按此速率 10 天後 error budget 耗盡（30 天/3）            │
 │  行動：建立 P2 ticket，排入下個 sprint 修復              │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -425,7 +424,7 @@ resource "google_monitoring_uptime_check_config" "search_api_check" {
 }
 ```
 
-**成本/複雜度**：高。完整 SLO + runbook + uptime check 建置約 2–3 工程師週；Cloud Workflows $0.01/千次執行；外部 HTTP check 每個 check 約 $0.30/月。總計每月觀測基礎設施約 $80–$200，換取 MTTR 從 60 分鐘降至 8 分鐘的效益。
+**成本/複雜度**：高。完整 SLO + runbook + uptime check 建置約 2–3 工程師週；Cloud Workflows $0.01/千次執行；外部 uptime check 在每月 100 萬次免費額度內通常為 $0。總計每月觀測基礎設施約 $80–$200，換取 MTTR 從 60 分鐘降至 8 分鐘的效益。
 
 ---
 
@@ -438,7 +437,7 @@ resource "google_monitoring_uptime_check_config" "search_api_check" {
 | OTel span 不設 `error: true` attribute | Trace 看起來全部 OK，Cloud Trace 的 error 過濾器失效，無法快速定位失敗 span | 在所有 non-2xx 和 exception 路徑顯式設 `span.set_attribute("error", True)` |
 | Agent 無限迴圈沒有 `max_iterations` 保護 | Layer 2 trace span 深度失控（>200 spans），TPM 被迴圈耗盡，Layer 4 quota 被誤診為根因 | ADK / LangGraph 設 `max_iterations=25`，並在每次迭代用 span attribute 記錄 `loop_count` |
 | 第三方 API 失敗直接拋錯，不讀 `Retry-After` header | 立即重試觸發重試風暴，加劇 429 頻率，累計 TPM 消耗 5–10x 正常值 | 讀取 `Retry-After` header 並寫入 span；實作 exponential backoff（初始 1s，最大 32s，jitter ±20%）|
-| 所有 span 使用 100% 採樣率 | 高流量（1,000 QPS）下 Cloud Trace 每月費用達 $1,200+，超出可觀測性預算 | Layer 1 採樣 1%，Layer 2/3 採樣 10%，error path 強制 100% 採樣（用 `sampling.priority=1`）|
+| 所有 span 使用 100% 採樣率 | 高流量（1,000 QPS）下 Cloud Trace 每月費用達 $1,200+，超出可觀測性預算 | Layer 1 採樣 1%，Layer 2/3 採樣 10%，error path 強制 100% 採樣（SDK 的 head sampling 在 span 建立時就決定了，事後設 attribute 改不了；要在 OTel Collector 用 tail sampling processor 依 `error=true` 保留整條 trace）|
 | 同時修改多個系統變數後才重測 | 無法判斷是哪個改動修復了問題，下次同類故障仍需重新摸索 | 每次只改一個變數；在改動前後各截取 5 分鐘的 p50/p99 latency 基準，記錄在 Incident log |
 
 ---

@@ -74,9 +74,9 @@ LLM 推理分為兩個階段，具有完全不同的計算特性：
 
 | 指標 | 數值 |
 |------|------|
-| Prefill 延遲（1024 token prompt） | ~120ms |
+| Prefill 延遲（1024 token prompt，單卡） | ~0.5 s（理論下限：2 × 70B × 1024 ≈ 143 TFLOP ÷ 312 TFLOPS ≈ 460ms；多卡約略線性縮短） |
 | Decode 速度（FP16，batch=1） | ~22 tokens/sec |
-| KV Cache 大小（70B，每 1000 tokens） | ~1.3 GB |
+| KV Cache 大小（70B，每 1000 tokens） | ~0.33 GB（GQA：2 × 80 層 × 8 KV heads × 128 dim × 2 B = 320 KB/token；若為 MHA 則 ~2.6 GB） |
 | A100 HBM Bandwidth | 2 TB/s |
 | H100 HBM Bandwidth | 3.35 TB/s |
 
@@ -124,7 +124,7 @@ INT4  (4-bit): ████                               每個參數 0.5 byte 
 | INT8 | 70 GB    | 1.4x      | -30%     | < 1%         |
 | INT4 | 35 GB    | 1.7x      | -45%     | 1–3%         |
 
-INT8 是大多數任務的最佳平衡點：VRAM 減半、Throughput 提升 40%、精度損失幾乎不可感知。
+INT8 是大多數任務的最佳平衡點：VRAM 減半、Throughput 提升 40%、精度損失幾乎不可感知。注意工具對應：GPTQ 與 AWQ（`autoawq`）都是 **INT4（W4A16）** 權重量化；INT8 走的是 LLM.int8() / SmoothQuant，或在 H100 上直接用 FP8。
 
 > 2026 註：本文以 LLaMA-2 / A100 為例說明原理。目前的新部署多半已改用 H100/B200 上的 FP8，並搭配 prefix caching、prefill/decode 分離與 EAGLE 類 speculative decoding，選型時請以最新基準為準。
 
@@ -226,7 +226,7 @@ Target(70B) 並行驗證：
 期望加速比（α = 接受率）：
   E[tokens per step] = (1 - α^(N+1)) / (1 - α)
   α=0.85, N=5 → E = ~4.0 tokens per Target step
-  α=0.65, N=5 → E = ~2.2 tokens per Target step（不划算）
+  α=0.65, N=5 → E = ~2.6 tokens per Target step（不划算）
 ```
 
 **適用條件判斷：**
@@ -281,7 +281,8 @@ SRAM（片上完成所有計算）
 
 記憶體：O(N)   ← 從未有過完整的 NxN 矩陣
 速度：  2–4x faster（減少 HBM 讀寫次數）
-VRAM：  N=128K context 需要 ~2 GB vs 標準的 ~32 TB（不可能）
+VRAM：  N=128K 時標準 attention 的 Score Matrix = 131,072² × 2 bytes ≈ 34 GB（單層、單 head，
+        已超過一整張 A100）；Flash Attention 從未實體化這個矩陣，只需 O(N) 的 Tile 暫存
 ```
 
 **Flash Attention 2 vs Flash Attention 1：**
@@ -302,7 +303,7 @@ VRAM：  N=128K context 需要 ~2 GB vs 標準的 ~32 TB（不可能）
 - 部署 vLLM（`pip install vllm`，單張 A100 或 H100）
 - 啟用 Continuous Batching（vLLM 預設開啟）
 - 使用 FP16 精度（不量化，避免除錯複雜度）
-- Flash Attention 通過 `--enable-chunked-prefill` 旗標啟用
+- Flash Attention：vLLM 預設即使用 FlashAttention backend，不需額外旗標（`--enable-chunked-prefill` 是另一項功能——把長 Prompt 的 Prefill 切塊與 Decode 交錯——留到 Layer 3）
 
 **不做：** Speculative Decoding（需額外 Draft Model 維運）、INT4 量化（精度風險未評估）、PagedAttention 細粒度調優。
 
@@ -322,10 +323,10 @@ VRAM：  N=128K context 需要 ~2 GB vs 標準的 ~32 TB（不可能）
 
 **在 Layer 1 基礎上新增：**
 
-**1. AWQ INT8 Quantization：**
-- 使用 `autoawq` 套件對模型做一次性量化（70B 模型約 4–8 小時）
-- VRAM 從 140 GB 降至 70 GB → 同一台 2x A100 可服務更大 Batch
-- Throughput 提升 40%，TTFT 改善 30%
+**1. AWQ INT4（W4A16）Quantization：**
+- 使用 `autoawq` 套件對模型做一次性量化（70B 模型約 4–8 小時）；AutoAWQ 只支援 4-bit，若要 INT8 請改用 SmoothQuant 或 H100 上的 FP8
+- VRAM 從 140 GB 降至 35 GB（140 ÷ 4）→ 同一台 2x A100 可服務更大 Batch
+- 依 2.2 節示意表：Throughput 提升約 70%，TTFT 改善約 45%，MMLU 精度損失 1–3%——上線前務必跑自家 eval set 驗證
 
 **2. 確認 PagedAttention 版本（vLLM >= 0.2.x）：**
 - GPU 記憶體利用率從 ~45% 提升至 ~80%
@@ -409,23 +410,23 @@ Decode Pool（Bandwidth 優先，A100）：
 | 分不清 TTFT 和 E2E Latency | 以為系統正常，實際 Decode 速度崩潰（OOM 後 Swap 到 CPU DRAM） | 分別設獨立告警：TTFT P95 < 500ms；Decode Speed > 10 tok/sec |
 | Speculative Decoding 用於開放式對話 | Draft 接受率 < 60%，Target Model 重算比例高，比不用 Speculative 更慢 | 先測接受率；< 75% 不啟用；對話任務幾乎永遠不應啟用 |
 | 未設定 KV Cache 的 Session 記憶體上限 | 長 session 保留完整 KV Cache → 數小時內記憶體耗盡，服務崩潰 | 設定 max_model_len；對非活躍 session 實施 KV 驅逐（LRU） |
-| FP32 推理（完全沒有量化意識） | VRAM 是 FP16 的 2x，同一 GPU 只能跑 batch=1，Throughput 只有最優解的 10% | 最低標準：FP16；生產環境至少評估 INT8 AWQ |
+| FP32 推理（完全沒有量化意識） | VRAM 是 FP16 的 2x，同一 GPU 只能跑 batch=1，Throughput 只有最優解的 10% | 最低標準：FP16；生產環境至少評估 INT8（SmoothQuant / FP8）或 INT4（AWQ / GPTQ） |
 | 把 Prefill 和 Decode 的瓶頸混為一談 | 以為換更快 GPU 就能同時改善兩個指標，結果優化方向錯誤浪費預算 | Prefill 優先買 FLOPS（H100 vs A100 3x FLOPS）；Decode 優先買 HBM Bandwidth |
 
 ---
 
 ## 五、與其他核心主題的關聯
 
-- **KV Cache 管理 & 記憶體架構（Core Topic 15）：** PagedAttention 的正確性依賴精確的 KV Cache 生命週期管理；Part 15 深入 KV Cache 資料結構，本篇從優化角度延伸應用層面。
+- **KV Cache 管理 & Context Caching（Core Topic 17、FDE Guide Part 51）：** PagedAttention 的正確性依賴精確的 KV Cache 生命週期管理；Core Topic 17 與 Part 51 深入 KV Cache 的驅逐與計費，本篇從優化角度延伸應用層面。
 - **LLM 服務化架構（FDE Guide Part 31–32）：** Continuous Batching 與 vLLM 是 Vertex AI Model Garden 的底層推理引擎；企業級推理服務的佇列設計建立於本篇 Batch Size 調控策略之上。
-- **GPU 成本優化與選型（Core Topic 17）：** INT8/INT4 量化效果直接決定 GPU SKU 選型的 ROI（A100 vs H100 vs L4 的 $/token 比較），本篇提供量化效能基準數字。
+- **GPU 成本優化與選型（FDE Guide Part 18、Part 29）：** INT8/INT4 量化效果直接決定 GPU SKU 選型的 ROI（A100 vs H100 vs L4 的 $/token 比較），本篇提供量化效能基準數字。
 - **可觀測性與 SLA 設計（FDE Guide Part 35–38）：** TTFT 與 Throughput 的 Prometheus 指標是 LLM 服務 SLO 定義的基礎；告警閾值設定依賴本篇建立的數字基準（P95 TTFT < 500ms、Decode Speed > 10 tok/sec）。
 
 ---
 
 ## 六、面試一句話（Killer Phrase）
 
-> *「LLM 推理有兩個截然不同的瓶頸：Prefill 受限於 FLOPS（NxN Attention 計算量隨輸入平方增長），決定 TTFT；Decode 受限於 Memory Bandwidth（每步都要讀完整個 KV Cache），決定吞吐量。我的標準優化棧是：用 AWQ INT8 Quantization 把 VRAM 減半同時 Throughput 提升 40%，用 vLLM 的 PagedAttention 把 GPU 利用率從 40% 推到 80%，再用 Continuous Batching 讓吞吐量再乘以 3–5 倍。TTFT 和 Throughput 之間本質上是 Batch Size 的取捨——互動式聊天我會把 Batch 上限壓在 16 以確保 TTFT P95 < 500ms，批次任務則開放到 128 最大化 GPU 吞吐；Speculative Decoding 只在接受率驗證超過 80% 後啟用，通常限於 coding 和翻譯場景。」*
+> *「LLM 推理有兩個截然不同的瓶頸：Prefill 受限於 FLOPS（NxN Attention 計算量隨輸入平方增長），決定 TTFT；Decode 受限於 Memory Bandwidth（每步都要讀完整個 KV Cache），決定吞吐量。我的標準優化棧是：用 AWQ/GPTQ INT4 量化把 VRAM 降到四分之一、Throughput 提升約 70%（精度敏感的任務則退回 FP8 或 SmoothQuant INT8：VRAM 減半、Throughput +40%），用 vLLM 的 PagedAttention 把 GPU 利用率從 40% 推到 80%，再用 Continuous Batching 讓吞吐量再乘以 3–5 倍。TTFT 和 Throughput 之間本質上是 Batch Size 的取捨——互動式聊天我會把 Batch 上限壓在 16 以確保 TTFT P95 < 500ms，批次任務則開放到 128 最大化 GPU 吞吐；Speculative Decoding 只在接受率驗證超過 80% 後啟用，通常限於 coding 和翻譯場景。」*
 
 ---
 
