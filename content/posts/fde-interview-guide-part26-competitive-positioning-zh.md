@@ -5,9 +5,9 @@ draft: false
 weight: 26
 description: "以 Google FDE 顧問視角拆解競品定位對話：如何回應客戶的 OpenAI / AWS 比較、用場景驅動而非規格比較的說服框架、Vertex AI 的差異化優勢在哪裡，以及如何避免常見的定位陷阱"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Consultant", "Vertex AI", "GCP", "Competitive", "Interview", "Cloud", "RKK"]
+tags: ["AI", "FDE", "Consultant", "Vertex AI", "GCP", "Competitive", "Interview", "Cloud", "RKK", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "15 min"
+readTime: "9 min"
 ---
 
 > 這是 FDE RKK 最常被忽略的題型。  
@@ -232,29 +232,13 @@ vs.
 
 ---
 
-## 六、面試官最想聽到的一句話
+## 六、答題骨架
 
-這道題面試官真正在測的，不是你知不知道 Vertex AI 的功能清單。
-
-他在測：**你能不能讓一個不想被說服的人，願意坐下來做一個 POC？**
-
-```
-最後的 CTA（Call to Action）框架：
-
-「基於你剛才說的，我不會請你今天做決定。
- 我想建議的是：我們花兩週時間，針對你們的
- [具體場景：例如合約審閱 Agent]，
- 在 Vertex AI 上做一個最小可行的 Proof of Concept。
- 評估標準由你們的工程師定，我來幫你們跑。
- 如果數字不讓你滿意，你們繼續用 OpenAI，沒有任何損失。
- 如果數字讓你有興趣，我們再談下一步。」
-
-這個框架的邏輯：
-├── 降低客戶決策風險（不要求立刻承諾）
-├── 把控制權還給客戶（你們的工程師定標準）
-├── 給一個具體的下一步（POC，不是繼續開會）
-└── 讓數字說話，而不是你說話
-```
+- 開場先避開 §一 的規格戰陷阱，改用 §二 的 SCQA 讓客戶先說出自己的痛點。
+- 聽到痛點後才切 §三：合規走論點 A、Workspace 整合走論點 B、用量成本走論點 C，不要三個都講。
+- 「工程師不想換」用 §四 的三個做法回應：不換只加、SDK 互通、把決定還給工程師。
+- 全程遵守 §五 的四個禁忌，不貶低競品、不否定現有選擇。
+- 收尾以一個低風險的下一步（POC）結束對話，而不是要求當場決定；客戶類型對照見 §七。
 
 ---
 

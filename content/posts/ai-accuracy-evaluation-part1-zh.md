@@ -5,9 +5,9 @@ draft: false
 weight: 1
 description: "AI 準確度不是一個數字就能說清楚的。本文從分類與回歸任務出發，介紹 Precision、Recall、F1-Score、RMSE 等核心指標，幫助你建立客觀評估 AI 模型的基礎框架。"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Machine Learning", "Evaluation", "Precision", "Recall", "F1-Score", "RMSE", "繁體中文"]
+tags: ["AI", "Machine Learning", "Evaluation", "Precision", "Recall", "F1-Score", "RMSE"]
 authors: ["yen"]
-readTime: "12 min"
+readTime: "5 min"
 ---
 
 ## 前言：「準確率 90%」到底代表什麼？

@@ -5,14 +5,14 @@ draft: false
 weight: 52
 description: "深度剖析 LangGraph Agent 在高並發場景下的 Tool Fan-Out 架構設計：Speculative Execution、Circuit Breaker、Graceful Degradation 與 Partial Rendering 的工程實踐，含三個演進階段與完整 Staff 級解答。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "Agent", "AsyncIO", "Tool Calling", "Fan-Out", "Circuit-Breaker", "LangGraph"]
+tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "Agent", "AsyncIO", "Tool Calling", "Fan-Out", "Circuit-Breaker", "LangGraph", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "21 min"
 ---
 
 > 大多數工程師遇到「Agent 要並行呼叫 15 個 API」時，第一反應是 `asyncio.gather()`，然後假設「全部回來再合併」。  
 > 真正的 Staff FDE 知道：**gather 是把所有雞蛋放進同一個計時炸彈**。  
-> 正確答案不是「更快地等待」，而是**動態熔斷、投機複製、強制截止、局部渲染**——在 1.5 秒內交出 80% 的答案，比等 30 秒的「完美答案」更有價值。  
+> 正確答案不是「更快地等待」，而是**動態熔斷、投機複製、強制截止、局部渲染**——在 1.5 秒內交出 80% 的答案，比等 18 秒的「完美答案」更有價值。  
 > 系統設計的成熟度，體現在你如何**優雅地處理你控制不了的那 20%**。
 
 ---
@@ -39,7 +39,7 @@ results = await asyncio.gather(
 )
 ```
 
-**順序執行**的基準延遲：15 calls × 平均 2s per call = **30 秒**。用戶體驗直接崩潰。
+**順序執行**的基準延遲：外部股票 API 的 P50 約 300ms、P90 約 600ms、P99 約 2s，逾時 5s（本文所有延遲數字都用這一組分佈）。15 calls × P50 300ms = **4.5 秒**；只要其中一個踩到 P99 或逾時，就是 **7–10 秒**，三個故障就 **18 秒以上**。用戶體驗直接崩潰。
 
 **asyncio.gather() 並行**理論延遲：最慢那一個請求的時間 = 如果有一個卡住 10 秒，整體就是 10 秒。
 
@@ -105,7 +105,7 @@ gather() 是全有或全無。12 個股票數據早已就緒，前端卻必須�
 **成本 / 複雜度**：
 - 開發成本：2 天
 - 基礎設施：單台 Cloud Run 服務，無額外依賴
-- 延遲改善：30s → 約 5s（最慢的 API 5 秒逾時）
+- 延遲改善：4.5–18s（順序）→ 約 5s（最慢的 API 5 秒逾時）
 - 殘留問題：沒有熔斷（已死 API 每次都等 5 秒）；沒有投機執行；前端等全部完成才渲染
 
 ---
@@ -131,7 +131,7 @@ gather() 是全有或全無。12 個股票數據早已就緒，前端卻必須�
 │                     │  跳過 OPEN 狀態的 API        │
 │                     ▼                             │
 │  asyncio.wait(tasks, timeout=5.0,                 │
-│               return_when=FIRST_EXCEPTION)        │
+│               return_when=ALL_COMPLETED)          │
 │                                                   │
 │  ┌──────┐ ┌──────┐ ┌──────┐  ┌──────────────┐    │
 │  │AAPL  │ │TSLA  │ │NVDA  │  │[OPEN: 跳過]  │    │
@@ -226,7 +226,7 @@ gather() 是全有或全無。12 個股票數據早已就緒，前端卻必須�
 - 開發成本：3 週
 - 基礎設施：Cloud Run (Gateway) + Redis (CB 狀態) + Pub/Sub (非同步回調) + SSE 推送層
 - 月成本增量：約 $200–400/月（Redis + 額外 Cloud Run 費用）
-- 延遲：從最差 30s（順序）→ **P50: 800ms，P99: 1.5s（硬截止）**
+- 延遲：從最差 ~18.6s（順序，3 個 API 逾時）→ **P50: 800ms，P99: 1.5s（硬截止）**
 - 殘留問題：Speculative Execution 增加 API 呼叫成本（最多 2× 某些請求）；備用節點池需維運
 
 ---
@@ -235,7 +235,7 @@ gather() 是全有或全無。12 個股票數據早已就緒，前端卻必須�
 
 ### 3.1 核心思路：用冗餘換延遲
 
-Speculative Execution 的概念來自 CPU 分支預測與 Bigtable 論文中的「Hedged Request」。核心思路是：
+Speculative Execution 的概念來自 CPU 分支預測與 Dean & Barroso 的《The Tail at Scale》論文中的「Hedged Request」。核心思路是：
 
 **與其等一個慢節點，不如同時多問一個，誰先回答就用誰的。**
 
@@ -300,7 +300,7 @@ async def speculative_tool_call(
 
 | 維度 | asyncio.gather() | asyncio.wait() |
 |------|-----------------|----------------|
-| 異常處理 | 預設第一個異常立刻傳播，終止所有 | 異常存在 task 物件中，可選擇性處理 |
+| 異常處理 | 預設第一個異常立刻傳播給 await 端，但其餘協程不會被取消、仍在背景跑 | 異常存在 task 物件中，可選擇性處理 |
 | 部分結果 | 無法在完成前取得中間結果 | done/pending 分開，隨時可取 done 的結果 |
 | 取消控制 | return_exceptions=True 才不爆炸 | 天然支援對 pending 集合個別 cancel |
 | 超時語意 | asyncio.wait_for(gather(...)) 超時會取消全部 | timeout 參數回傳當下 done/pending，不取消 |
@@ -451,7 +451,7 @@ LLM（Gemini）接收此提示後，能夠：
 2. 根據 12 檔股票提供完整的技術分析
 3. 建議用戶稍後重新查詢缺失的 3 檔股票
 
-**這比「等 30 秒後回傳 0 個結果」或「等 30 秒後回傳 15 個結果」都要好得多。**
+**這比「等 18 秒後回傳 0 個結果」或「等 18 秒後回傳 15 個結果」都要好得多。**
 
 ### 5.3 前端 SSE Partial Rendering
 
@@ -470,7 +470,7 @@ T=1500ms → SSE event: {type: "complete", llm_analysis: "..."}
 T=1500ms → SSE 連線關閉
 ```
 
-用戶實際感知：前 200ms 就看到第一個結果出現，而非盯著空白等 30 秒。
+用戶實際感知：前 200ms 就看到第一個結果出現，而非盯著空白等 18 秒。
 
 ---
 
@@ -615,28 +615,28 @@ circuit_breaker_state{state="OPEN"} count > 2 → PagerDuty
 
 | 場景 | 順序執行 | Phase 1 gather | Phase 2 wait+CB | Phase 3 完整引擎 |
 |------|---------|----------------|-----------------|-----------------|
-| 全部 API 正常（P50）| 30,000ms | 400ms | 380ms | 300ms |
-| 1 個 API 抖動（P90）| 30,000ms | 5,000ms（等超時）| 1,800ms（CB 跳過）| 900ms（投機賽跑）|
-| 3 個 API 故障（P99）| 30,000ms | 15,000ms | 2,000ms | 1,500ms（硬截止）|
-| 全部 API 正常（P99）| 30,000ms | 2,000ms | 900ms | 800ms |
+| 全部 API 正常（P50）| 4,500ms（15 × 300）| 400ms | 380ms | 300ms |
+| 1 個 API 抖動（P90）| 9,200ms（14 × 300 + 5,000）| 5,000ms（等超時）| 1,800ms（CB 跳過）| 900ms（投機賽跑）|
+| 3 個 API 故障（P99）| 18,600ms（12 × 300 + 3 × 5,000）| 15,000ms | 2,000ms | 1,500ms（硬截止）|
+| 全部 API 正常（P99）| ~9,000ms（多數呼叫落在 P90）| 2,000ms | 900ms | 800ms |
 
-**核心改善**：從最差 30s → Phase 3 的硬截止 1.5s，**20 倍延遲改善**。
+**核心改善**：從順序執行最差 ~18.6s → Phase 3 的硬截止 1.5s，**約 12 倍延遲改善**（同一組 300ms / 600ms / 2s / 5s 的延遲分佈）。
 
 ### 10.2 成本對比
 
 | 方案 | API 呼叫次數（15 檔股票）| 月費（10萬次查詢）| 工程複雜度 |
 |------|----------------------|-----------------|-----------|
-| 順序執行 | 15 次（串行）| $150 | 低 |
-| Phase 1 gather | 15 次（並行）| $150 | 低 |
-| Phase 2 wait+CB | 15 次（並行，CB 跳過壞節點）| $135（省 10%：CB 跳過避免無效呼叫）| 中 |
-| Phase 3 完整引擎 | 15–16 次（約 5% 投機複製）| $142（比 Phase 2 多 5% 投機）| 高 |
+| 順序執行 | 15 次（串行）| $1,500（100K × 15 × $0.001）| 低 |
+| Phase 1 gather | 15 次（並行）| $1,500 | 低 |
+| Phase 2 wait+CB | 15 次（並行，CB 跳過壞節點）| $1,350（省 10%：CB 跳過避免無效呼叫）| 中 |
+| Phase 3 完整引擎 | 15–16 次（約 5% 投機複製）| $1,420（比 Phase 2 多 5% 投機）| 高 |
 
 ### 10.3 可靠性對比
 
 | 指標 | 順序執行 | Phase 1 | Phase 2 | Phase 3 |
 |------|---------|---------|---------|---------|
 | 單 API 故障時系統可用率 | 60%（1/15 失敗即卡死）| 80%（gather 等超時）| 95%（CB 快速切換）| 99%（CB + 投機）|
-| P99 響應時間 | 30,000ms | 15,000ms | 2,000ms | 1,500ms |
+| P99 響應時間 | 18,600ms | 15,000ms | 2,000ms | 1,500ms |
 | 部分結果可用率 | 0%（全有全無）| 0%（gather 等最慢）| 85% | 99% |
 | Rate Limit 觸發率 | < 1%（串行）| 35%（瞬間爆發）| 8%（Semaphore 限流）| 2%（雙層限流）|
 
@@ -644,18 +644,18 @@ circuit_breaker_state{state="OPEN"} count > 2 → PagerDuty
 
 | 體驗指標 | 舊版（順序）| Phase 3 |
 |---------|-----------|---------|
-| 首個數據可見時間 (FCP) | 30,000ms | 180ms（第一個 SSE event）|
-| 全部數據可見時間 | 30,000ms | 1,500ms（硬截止）|
+| 首個數據可見時間 (FCP) | 18,600ms（順序執行）| 180ms（第一個 SSE event）|
+| 全部數據可見時間 | 18,600ms | 1,500ms（硬截止）|
 | 零結果率 | 10%（全部超時時）| 0.1%（幾乎總有部分結果）|
 | 用戶放棄率（> 10s 無回應）| 45% | 2% |
 
----
+### 10.5 答題骨架
 
-## 十一、面試答題要點
-
-**面試官問**：「asyncio.gather() 有什麼問題？你會如何設計一個生產級的 Tool Fan-Out 引擎？」
-
-> *「asyncio.gather() 的根本問題是『木桶短板』語意：它等待所有 coroutine 完成，一個慢 API 就能拖垮全部。我的解法分三層：第一，用 asyncio.wait() 替代 gather，它的 done/pending 分離讓我能在硬截止時間（1500ms）到達時，立刻取走已完成的結果，不等剩餘的；第二，在 800ms 閾值觸發 Speculative Execution，對超時的 API 同時向備用節點發起複製請求賽跑，誰先回傳用誰，P99 延遲從 1500ms 降至 900ms；第三，Redis-backed Circuit Breaker 追蹤各 API 節點的失敗狀態，連續失敗 3 次立即熔斷 30 秒，讓後續請求不再傻等已知壞節點的超時；最後，前端用 SSE 實現 Partial Rendering，每完成一個股票立刻推送，用戶在 180ms 後就看到第一個結果，整體從用戶等 30 秒變成 1.5 秒內交出 12 檔高品質分析——20 倍的延遲改善，成本僅增加 5%。」*
+- 第（1）問用 §一 回答：gather() 的三個致命缺陷，以及為何在百萬級場景被放大。
+- 第（2）問照 §二 的三個演進階段展開，架構維度接 §六 的 Semaphore 與背壓、§四 的 Circuit Breaker。
+- 程式碼模式維度接 §三：wait() 取代 gather() 的 done/pending 分離，加 Speculative Execution。
+- 降級策略維度接 §五：Hard Deadline、PartialResult 傳給 LLM、前端 SSE 逐筆渲染。
+- 可觀測性與症狀鏈接 §七；選型與熔斷配置用 §八、§九；收尾用 10.1–10.4 的前後對比。
 
 ## 相關文章與正典版本
 

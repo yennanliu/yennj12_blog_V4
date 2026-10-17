@@ -3,11 +3,11 @@ title: "FDE 面試準備指南（四十）：RKK 實戰——AI 系統的 PII �
 date: 2026-06-08T10:00:00+08:00
 draft: false
 weight: 40
-description: "以系統設計視角拆解 AI 系統的 PII 保護：三個安全強化階段（POC → MVP → Enterprise）、PII 敏感度分類矩陣、假名化架構、RBAC 最小存取、Why X not Y 技術選型決策（假名化 vs 匿名化、CMEK vs 預設加密、NER+Regex vs 純規則），以及 AI 系統 PII 保護的代價與回報量化"
+description: "醫院 AI 助手如何讓 PII 不流進 Prompt、Log 與向量索引:POC → MVP → Enterprise 三階段強化、敏感度分類矩陣、假名化架構、RBAC 最小存取,以及假名化 vs 匿名化、CMEK vs 預設加密的選型與成本量化。"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Security", "Privacy", "PII", "RBAC", "Compliance", "Anonymization", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Security", "Privacy", "PII", "RBAC", "Compliance", "Anonymization", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "19 min"
 ---
 
 > 傳統系統的 PII：存在資料庫，加密，控制誰能查。  
@@ -219,6 +219,13 @@ PII 偵測技術選擇（依精確度需求）：
 
   儲存位置：Secret Manager 或加密的 Redis（不是一般 DB）
   Vault 範圍：Session 範圍（每個 Session 生成新 Token，Session 結束清除）
+
+  兩種識別碼，各司其職（不要混用）：
+  ├── Session Token（PATIENT-A7B3）：隨機、每個 Session 重新生成，只給 LLM 看，
+  │   Session 結束即作廢——所以它不能當跨 Session 的查詢鍵
+  └── 穩定假名 ID（PID-7F2C…）：HMAC-SHA256(病歷號, KMS 金鑰)，跨 Session 不變、
+      不可逆；用於 Vector DB 過濾（§五）與稽核日誌（§七），稽核時以同一把金鑰
+      重算病歷號的 HMAC 即可對應，不需要在任何地方存對照表
   
   Session 結束時：
   ├── Vault 中的對應關係被清除（不持久化）
@@ -276,7 +283,7 @@ PII 偵測技術選擇（依精確度需求）：
   │  JWT payload: {                                              │
   │    "user_id": "nurse_123",                                   │
   │    "role": "nursing_staff",                                  │
-  │    "allowed_patient_ids": ["A7B3", "C8D4", "E2F1"],          │
+  │    "allowed_pids": ["PID-7F2C", "PID-C8D4", "PID-E2F1"],     │
   │    "allowed_doc_types": ["nursing_records", "vital_signs"],  │
   │    "shift_end": "2026-06-08T20:00:00Z"  // 當班結束後失效     │
   │  }                                                           │
@@ -289,7 +296,7 @@ PII 偵測技術選擇（依精確度需求）：
   │  2. 確認 Token 未過期且在班別時間內                            │
   │  3. 提取訪問控制參數，注入 Agent System Prompt：              │
   │     「你是護理師。只能回應關於以下病患的問題：                │
-  │      [A7B3, C8D4, E2F1]。只能存取護理記錄和生命徵象。        │
+  │      [PID-7F2C, PID-C8D4, …]。只能存取護理記錄和生命徵象。   │
   │      若用戶詢問其他病患，回應『您沒有存取此病患的權限』」     │
   └──────────────────────┬───────────────────────────────────────┘
                          │
@@ -298,7 +305,7 @@ PII 偵測技術選擇（依精確度需求）：
   │  Vector DB Retrieval（服務端強制過濾，LLM 無法繞過）           │
   │                                                              │
   │  filter = {                                                  │
-  │    "patient_id": {"$in": ["A7B3", "C8D4", "E2F1"]},         │
+  │    "patient_pid": {"$in": jwt.allowed_pids},  // PID-7F2C…  │
   │    "doc_type": {"$in": ["nursing_records", "vital_signs"]}   │
   │  }                                                           │
   │                                                              │
@@ -398,7 +405,7 @@ PII 偵測技術選擇（依精確度需求）：
     "user_role": "nursing_staff",
     "shift_id": "SHIFT-20260608-AM",          // 當班班次（便於稽核）
     "action": "patient_record_query",
-    "patient_token": "PATIENT-A7B3",          // Token，不是真實姓名
+    "patient_pid": "PID-7F2C",                // 穩定假名 ID，不是真實姓名
     "query_category": "vital_signs",          // 分類（不是原文）
     "data_types_accessed": ["nursing_records"],
     "result_returned": true,
@@ -427,7 +434,7 @@ PII 偵測技術選擇（依精確度需求）：
   ✅ 應記錄：
   "query_category": "lab_results",  // 分類
   "query_length": 14,               // 長度
-  "patient_token": "PATIENT-A7B3"   // Token（可追溯，不含 PII）
+  "patient_pid": "PID-7F2C"         // 穩定假名 ID（可追溯，不含 PII）
 
   要求 3：資料保留與分層存儲
 
@@ -439,10 +446,11 @@ PII 偵測技術選擇（依精確度需求）：
   ──────────────────────────────────────────────────────────────
 
 合規查詢範例：
-  「2026-05-10，哪些人存取了 PATIENT-A7B3 的資料？」
+  「2026-05-10，哪些人存取了病歷號 MRN-00123 的資料？」
+  先算 pid = HMAC-SHA256('MRN-00123', KMS 金鑰) = 'PID-7F2C'，再查：
   SQL: SELECT user_id, user_role, action, data_types_accessed, timestamp
        FROM audit_log
-       WHERE patient_token = 'PATIENT-A7B3'
+       WHERE patient_pid = 'PID-7F2C'
          AND timestamp BETWEEN '2026-05-10' AND '2026-05-11'
        ORDER BY timestamp;
 
@@ -566,8 +574,8 @@ Log 洩漏風險       PII 在 Log 中           只有 Token 和分類標籤   
 ──────────────────────────────────────────────────────────────────────────────────
 查詢延遲影響       無                     +20-50ms（Scrubber）      +20-80ms（全鏈路）
 ──────────────────────────────────────────────────────────────────────────────────
-月工程成本         -                      +$5,000-20,000           +$50,000-200,000
-                                         （實作 + 維護）          （私有 GPU + 工程）
+工程成本           -                      $20,000 一次性           +$50,000-200,000/月
+                                         + $5,000/月維護          （私有 GPU + 工程）
 ──────────────────────────────────────────────────────────────────────────────────
 PII 外洩的損失     依事故規模              技術上大幅降低           技術上趨近於零
 估算               $100,000-10,000,000+   洩漏機率                洩漏機率
@@ -581,15 +589,13 @@ PII 外洩的損失     依事故規模              技術上大幅降低      
 
 ---
 
-## 十、面試答題要點
+## 十、答題骨架
 
-> *「這道題的核心是：AI 系統的 PII 有七個流動節點，每個節點的保護方式不同。不是加密資料庫就搞定，而是要在每個節點設計相應的保護機制。*
->
-> *我會按三個演進階段回答：Phase 1（POC）做基本 TLS + RBAC + Log 不記原文；Phase 2（生產）加入假名化（PII 在進 LLM 前替換為 Token）+ CMEK + 不可篡改稽核日誌；Phase 3（高合規）考慮私有部署 LLM + 零信任網路 + 即時輸出 PII 掃描。*
->
-> *關鍵選型決策：選假名化而不是匿名化，因為醫護人員需要看到真實姓名才能使用結果，匿名化是不可逆的，用在這裡等於讓系統無用。選 Vector DB 服務端 Filter 而不是 Application 層過濾，因為必須讓 LLM 根本拿不到未授權的文件，而不是 LLM 看完再過濾。選 NER + Regex 組合做 PII 偵測而不是純 Regex，因為病患姓名是非結構化文字，純 Regex 無法識別。*
->
-> *稽核日誌的設計：記錄誰、什麼時候、存取了哪類資料（patient_token 而非真實姓名），使用 Object Lock 確保不可篡改，保留 7-10 年符合醫療合規要求。LLM 服務商的 BAA 也是上線前必須確認的法律文件。」*
+- 開場用 §一 的七個 PII 流動節點定調：不是加密資料庫就結束，每個節點各有保護機制。
+- 主幹照 §二 的三個安全強化階段講，再用 §三 的敏感度矩陣說明哪些欄位先處理。
+- 核心機制分別接 §四 假名化（為何不選匿名化）與 §五 RBAC（為何在 Vector DB 服務端過濾）。
+- 技術棧與稽核用 §六 和 §七 回答，點出不可篡改日誌、保留年限與 BAA。
+- 選型理由用 §八 的決策表，收尾引 §九 的代價與回報數字。
 
 ## 相關文章與正典版本
 

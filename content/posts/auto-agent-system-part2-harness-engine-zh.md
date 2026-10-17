@@ -2,7 +2,7 @@
 title: "Auto Agent System - Part 2 - Harness 引擎:多模型容錯、自我修正與 LLM 評審"
 date: 2026-07-04T10:00:00+08:00
 draft: false
-description: "深入 agent_auto_system 的心臟——Harness 引擎。從第一個 PR「解析被 markdown 包住的 JSON」開始,一路講到跨模型 fallback 重試(PR #3)、驗證失敗後的自我修正、獨立 LLM 評審打分,以及每次執行的 token/成本追蹤。這是把 LLM 這匹野馬套上挽具的完整工程。"
+description: "拆解 agent_auto_system 的 Harness 引擎如何把不可靠的 LLM 變成可預測的服務:解析被 markdown 包住的 JSON、跨模型 fallback 重試、驗證失敗後自我修正、獨立 LLM 評審打分,以及每次執行的 token 成本追蹤。"
 categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "LLM", "Harness", "Reliability", "Retry", "LLM-as-Judge", "AI Engineering", "Fallback"]
 authors: ["yen"]

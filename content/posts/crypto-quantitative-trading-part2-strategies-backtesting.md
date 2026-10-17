@@ -6,12 +6,14 @@ weight: 2
 authors: ["yen"]
 categories: ["all", "engineering", "finance"]
 tags: ["Cryptocurrency", "Bitcoin", "Ethereum", "Backtesting", "Trading Strategies", "Risk Management", "Python", "Portfolio Optimization", "Mean Reversion", "Trend Following"]
-summary: "Build production-ready cryptocurrency trading strategies with comprehensive backtesting. Learn trend following, mean reversion, pairs trading, and arbitrage strategies. Master risk management, position sizing, and performance evaluation with real Bitcoin and Ethereum examples."
-description: "Advanced guide to cryptocurrency trading strategy development and backtesting. Implement multiple strategy types, build robust backtesting frameworks, apply proper risk management, and evaluate performance with industry-standard metrics. Complete with Python implementations."
+summary: "Build demo-grade (no backtest reported) cryptocurrency trading strategies with comprehensive backtesting. Learn trend following, mean reversion, pairs trading, and arbitrage strategies. Master risk management, position sizing, and performance evaluation with real Bitcoin and Ethereum examples."
+description: "Build a crypto backtesting framework in Python and test trend following, mean reversion and pairs trading on it, with metrics that catch overfitting."
 readTime: "21 min"
 ---
 
 In Part 1, we established the fundamentals of cryptocurrency quantitative trading and built data collection infrastructure. Now we'll develop actual trading strategies and build a robust backtesting framework to evaluate their performance before risking real capital.
+
+> ⚠️ **Disclaimer**: Educational analysis only — not investment advice. The code in this series is a teaching demo: it has not been run against live markets, no backtest or live result is reported, and nothing here is a recommendation to buy, sell or trade any asset. Trading cryptocurrencies can lose all of your capital. Do your own research and consult a licensed professional before risking money.
 
 ## Why Backtesting is Critical
 
@@ -490,6 +492,8 @@ print(f"Total Return: {(result.calculate_total_equity() / result.initial_capital
 print(f"Number of Trades: {len(trades)}")
 ```
 
+> **Backtest results: none reported.** This post does not report a backtest for this strategy — no return, Sharpe ratio, drawdown or trade count — so read the code as a demonstration of the mechanics, not as evidence that the strategy makes money. Before trusting it you must supply, and disclose alongside any result, four things: (1) the **data source and symbol** (e.g. Binance BTC/USDT 1h via ccxt — which exchange, which candle size, how gaps were handled); (2) the **period**, including at least one bear market and one sideways market, not just 2023; (3) **fees and slippage** matched to your own exchange tier — the engine defaults to 0.1% commission and 0.05% slippage, which is optimistic for market orders in thin books; (4) an **out-of-sample window** that was never used to pick the parameters. A strategy without those four is an untested idea.
+
 ### **Trend Following with ADX Filter**
 
 ```python
@@ -564,6 +568,8 @@ class ADXTrendFollowing(TradingStrategy):
 
         return quantity
 ```
+
+> **Backtest results: none reported** for this strategy either. The same four disclosures apply before trusting it: data source and symbol, period (bear and sideways regimes included), fees and slippage matched to your exchange, and an out-of-sample window the parameters never saw.
 
 ## Trading Strategy #2: Mean Reversion
 
@@ -642,6 +648,8 @@ class BollingerMeanReversion(TradingStrategy):
         return quantity
 ```
 
+> **Backtest results: none reported** for this strategy either. The same four disclosures apply before trusting it: data source and symbol, period (bear and sideways regimes included), fees and slippage matched to your exchange, and an out-of-sample window the parameters never saw.
+
 ### **RSI Mean Reversion with Volume Confirmation**
 
 ```python
@@ -699,6 +707,8 @@ class RSIVolumeMeanReversion(TradingStrategy):
         base_size = capital * 0.02 / current_price
         return base_size
 ```
+
+> **Backtest results: none reported** for this strategy either. The same four disclosures apply before trusting it: data source and symbol, period (bear and sideways regimes included), fees and slippage matched to your exchange, and an out-of-sample window the parameters never saw.
 
 ## Trading Strategy #3: Pairs Trading
 
@@ -778,6 +788,8 @@ class BTCETHPairsTrad(TradingStrategy):
 
         return quantity
 ```
+
+> **Backtest results: none reported** for this strategy either. The same four disclosures apply before trusting it: data source and symbol, period (bear and sideways regimes included), fees and slippage matched to your exchange, and an out-of-sample window the parameters never saw.
 
 ## Risk Management
 
@@ -1150,6 +1162,8 @@ In Part 2, we've built a complete backtesting framework and implemented multiple
 - ✅ Comprehensive risk management
 - ✅ Professional performance metrics
 - ✅ Strategy comparison framework
+
+What this post does **not** contain is a single backtest result. None of the five strategies above has a reported return, Sharpe ratio or drawdown, so the framework is demonstrated, not validated — the strategies should be treated as untested until you run them on your own data with your own cost assumptions.
 
 ### **Key Takeaways**
 

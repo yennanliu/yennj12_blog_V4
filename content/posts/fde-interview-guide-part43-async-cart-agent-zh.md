@@ -5,9 +5,9 @@ draft: false
 weight: 43
 description: "深度剖析黑五大促銷期間 200 萬在線用戶購物車 Agent 的異步架構設計：GKE Autopilot + KEDA + Cloud Pub/Sub 彈性伸縮、Cloud Spanner 強一致性 Checkpointer、LangGraph StateGraph 精確一次冪等恢復，以及多租戶隔離與流量整形策略。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "LangGraph", "GKE", "Pub/Sub", "Spanner", "Agent", "Distributed Systems", "Async Architecture"]
+tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "LangGraph", "GKE", "Pub/Sub", "Spanner", "Agent", "Distributed Systems", "Async Architecture", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "28 min"
+readTime: "25 min"
 ---
 
 > 大多數工程師看到「購物車 Agent」，第一反應是加一個 HTTP 呼叫。
@@ -37,13 +37,16 @@ readTime: "28 min"
 200 萬在線用戶同時觸發購物車事件，假設每個 Agent 執行一次完整談判流程需要 **8–15 秒**（含多輪 LLM 推理、供應鏈 API 呼叫），同步模型意味著：
 
 ```
-同步 HTTP 模型的致命算術
+同步 HTTP 模型的致命算術（Little's law：在途請求 = 到達率 × 停留時間）
 ─────────────────────────────────────────────────────
-並發請求量     ：2,000,000 個用戶 × 黑五流量因子 3× = 6M req
-平均持續時間   ：~12s（5 輪反思 × 2.4s/輪）
-所需最低 Worker：6,000,000 req / (1 Worker 每 12s) = 500,000 Workers
-成本估算       ：500K pods × $0.024/hr (n2-standard-2) ≈ $12,000/小時
-結論           ：系統在第一波流量就 OOM → 全場崩潰
+總請求量       ：2,000,000 個用戶 × 黑五流量因子 3× = 6M req
+到達率         ：假設 6M req 集中在開賣後 10 分鐘 → 10,000 req/s
+平均停留時間   ：~12s（5 輪反思 × 2.4s/輪）
+同時在途請求   ：10,000 req/s × 12s = 120,000 條被佔住的 HTTP 連線
+結論           ：每條連線都要在 LB / Gateway / Worker 上掛 12 秒，
+                 任何一層的 timeout（通常 30–60s）或一次 Pod 重啟，
+                 都讓用戶直接拿到 5xx 而且 Agent 狀態跟著連線一起消失——
+                 這是「狀態綁死在連線上」的問題，加 Worker 買不回來
 ```
 
 ### 1.2 Agent 狀態的特殊性
@@ -104,7 +107,7 @@ Phase 1 架構（POC）
 - **Checkpointer**：`MemorySaver`，狀態存在 Worker 記憶體中
 - **Queue**：Redis List，單點、無持久化保證
 - **Worker**：單節點 Celery，無水平擴展
-- **成本**：~$50/月（1 台 n2-standard-4 VM）
+- **成本**：~$140/月（1 台 n2-standard-4 VM，$0.194/hr × 730h）
 
 **Phase 1 殘留問題：**
 - Worker 重啟 → 所有進行中的 Agent 狀態全部遺失
@@ -282,7 +285,7 @@ spec:
 
 ### 3.2 GKE Autopilot 搶佔（Preemption）的本質
 
-GKE Autopilot 使用 Spot node pool 降低成本，搶佔（Preemption）是設計的一部分，不是 Bug：
+Worker Pod 以 Spot Pod 部署（Autopilot 的 Spot 是逐 Pod 選用，透過 `gke-spot: "true"` 這個 nodeSelector 開啟，不是叢集預設）以降低成本，搶佔（Preemption）是設計的一部分，不是 Bug：
 
 ```
 搶佔事件時序
@@ -291,16 +294,17 @@ T+0s    GCP 基礎設施決定收回節點（30 秒預告）
 T+0s    Kubelet 收到 SIGTERM，發送給所有 Pod
 T+2s    Pod 的 preStop hook 執行（最多 30 秒窗口）
 T+15s   Worker 完成當前 LLM 呼叫，flush Checkpoint 到 Spanner
+T+16s   Worker 對手上未 ack 的訊息呼叫 modifyAckDeadline(0)（nack），立即釋放
+T+17s   訊息重新入隊（redelivery），新 Pod 拾取，從 Spanner 讀取最後 Checkpoint，Resume
 T+30s   強制 SIGKILL，Pod 被終止
-T+35s   Pub/Sub Ack Deadline（600s）倒計時繼續
-T+580s  Ack Deadline 超時，訊息重新入隊（redelivery）
-T+581s  新 Pod 拾取訊息，從 Spanner 讀取最後 Checkpoint，Resume
+（只有 Pod 來不及 nack——例如 SIGKILL 先到——才會等到 Ack Deadline（600s）到期後重投）
 ```
 
 `preStop` hook 是關鍵：在 SIGTERM 到 SIGKILL 之間的 30 秒窗口內，Worker 必須：
 1. 停止拉取新訊息（stop new pulls）
 2. 等待當前 LLM 呼叫完成（或超時 abort）
-3. 將 `StateSnapshot` 寫入 Spanner（< 10ms，Spanner 承諾 SLA）
+3. 將 `StateSnapshot` 寫入 Spanner（單行寫入通常 < 10ms；注意 Spanner 的 SLA 是可用性，不承諾延遲）
+4. 對未完成的訊息呼叫 `modifyAckDeadline(0)` 讓它立刻重投，而不是等 600s
 
 ---
 
@@ -385,6 +389,8 @@ async def execute_agent_step(
 ```
 
 ### 4.3 新 Pod 的 Resume 邏輯
+
+以下是偽代碼：其中的 `update_state(..., skip_nodes_before=…)` 與 `resume_from=…` **不是** LangGraph 的真實參數。真實 API 是 `graph.update_state(config, values, as_node=…)`，再以同一個 `thread_id` 的 config 呼叫 `ainvoke()` 從 checkpoint 續跑（見 §5.2）。
 
 ```python
 # 新 Pod 接管後的恢復邏輯
@@ -527,7 +533,7 @@ payment_charge      Stripe 扣款        Idempotency-Key = order_id（全域唯�
 
 ### 5.2 update_state() 的 Skip 機制原理
 
-`StateGraph.update_state()` 允許外部注入狀態並覆寫圖的執行游標，這是實現 Resume 的關鍵 API：
+`StateGraph.update_state(config, values, as_node=…)` 允許外部注入狀態，並以 `as_node` 宣告「這份狀態是哪個節點的輸出」，圖就會從該節點的下一條邊繼續。真正決定續跑位置的是 `as_node` 與 checkpoint 中的 `thread_id`，LangGraph **沒有** `__next__`、`skip_nodes_before` 或 `resume_from` 這類參數——下面程式碼裡的 `"__next__"` 是示意，實作時刪掉即可：
 
 ```python
 # 假設 Agent 在 discount_calculation 節點後崩潰
@@ -574,8 +580,9 @@ Layer 2 - Spanner Row Key 層
 
 Layer 3 - GKE Namespace 層
   namespace: tenant-{tier}
-  ResourceQuota: Premium 租戶可使用 max 200 pods
+  ResourceQuota: VIP + Premium 租戶 namespace 最多 700 pods（VIP 200 + Premium 500）
                  Standard 租戶共用 300 pods pool
+                 （三個 Subscription 的 Pod 上限加總 = 1,000，與 §6.2 的路由表一致）
 
 Layer 4 - Application 層
   每個 Worker Pod 的 context 包含 tenant_id
@@ -603,9 +610,10 @@ Token Bucket 限流架構
 Priority Queue 路由規則
 ───────────────────────────────────────────────────────────
 用戶等級      訂閱名稱                    最大 Pod 數  Ack Timeout
-VIP (>$1000)  cart-agent-high-sub         200         900s
-Premium       cart-agent-normal-sub       300         600s
-Standard      cart-agent-low-sub          500         300s
+VIP (>$1000)  cart-agent-high-sub         200         600s（Pub/Sub 上限）
+Premium       cart-agent-normal-sub       500         600s
+Standard      cart-agent-low-sub          300         300s
+（Pub/Sub Ack Deadline 最大 600s；更長的任務靠 modifyAckDeadline 心跳續期，不是調大 Deadline）
 ```
 
 **黑五流量整形的實際效果（Phase 3 測試數據）：**
@@ -682,7 +690,7 @@ async def reflection_loop_node(state: CartAgentState) -> CartAgentState:
 **崩潰恢復場景：**
 - 若在第 3 輪反思後崩潰：Spanner 有 version 3 的 Checkpoint
 - 新 Pod Resume：從第 4 輪反思開始，不重跑前 3 輪（節省 LLM 呼叫成本）
-- LLM 成本節省估算：每輪 ~$0.01（GPT-4o）× 200 萬用戶 × 平均 2.5 輪被節省 = **$50,000 節省/次黑五**
+- LLM 成本節省估算：每輪 ~$0.01（GPT-4o）× 200 萬用戶 × 被搶佔／崩潰的 Session 比例（Spot 場景假設 5%）× 平均省下 2.5 輪 = **~$2,500/次黑五**（$0.01 × 2,000,000 × 0.05 × 2.5）；只有在「每個 Agent 都在中途崩潰一次」的極端情況才會逼近 $50,000
 
 ---
 
@@ -694,7 +702,7 @@ async def reflection_loop_node(state: CartAgentState) -> CartAgentState:
 | **Cloud Pub/Sub** vs **Redis Streams** | 7 天訊息保留，天然支援 Dead Letter Topic；全託管，無需管理 broker；Ack Deadline 可達 600s | Redis Streams 無原生 DLT；Redis Cluster 在高寫入下易產生 hot key；大促期間需手動擴展 Shard | 若訊息量 < 1K QPS 且延遲容忍 < 5s：Redis Streams 延遲更低（< 1ms vs ~5ms for Pub/Sub） |
 | **GKE Autopilot** vs **GKE Standard** | 節點自動管理，無需維護 node pool；bin packing 更優，成本節省 20–30%；搶佔節點自動補充 | Standard 需手動配置 node pool、設定 taints/tolerations；節點安全補丁需手動觸發；管理複雜度高 | 若需要特定硬體（GPU A100）或自定義 kernel 參數：必須用 Standard Cluster |
 | **KEDA (Pub/Sub 觸發)** vs **HPA (CPU 觸發)** | 直接反映業務積壓量；scale-out 決策基於真實工作量；支援 scale-to-zero（黑五後省錢） | HPA 對 I/O bound LLM 工作負載 CPU 信號失真；scale-out lag 2–3 分鐘；無法 scale-to-zero | 若工作負載是純計算密集（如圖像編碼）：HPA by CPU 更直接，不需要額外 KEDA 部署複雜度 |
-| **LangGraph MongoDBSaver / SpannerCheckpointer** vs **自行實作 Checkpoint** | 原生整合 StateGraph API；`update_state()` / `get_state()` 無縫對接；社區維護，減少 Bug | 自行實作需處理序列化版本升級、並發寫入競態、Schema migration；維護成本高；易遺漏 edge case | 若 StateGraph 非常簡單（< 3 個節點，無 Loop）：直接 Redis Hash 儲存更輕量，無需引入 LangGraph Checkpointer 框架開銷 |
+| **LangGraph MongoDBSaver / 自製 Spanner Checkpointer（繼承 `BaseCheckpointSaver`）** vs **從零自行實作 Checkpoint** | 原生整合 StateGraph API；`update_state()` / `get_state()` 無縫對接；社區維護，減少 Bug | 自行實作需處理序列化版本升級、並發寫入競態、Schema migration；維護成本高；易遺漏 edge case | 若 StateGraph 非常簡單（< 3 個節點，無 Loop）：直接 Redis Hash 儲存更輕量，無需引入 LangGraph Checkpointer 框架開銷 |
 | **version_id CAS** vs **分佈式鎖（Redlock）** | Spanner 原生支援條件寫入，無需額外鎖服務；版本號可用於 Skip 判斷；無鎖超時問題 | Redlock 需 5 個 Redis 節點多數決；網路分區時可能同時產生兩個 Leader；釋放鎖失敗需 TTL 自動過期，期間資源被浪費 | 若需要真正的排他性跨服務臨界區（如資料庫 schema 遷移協調）：Redlock 或 Cloud Spanner 悲觀鎖更合適 |
 
 ---
@@ -748,7 +756,7 @@ Worker B: T+500ms 讀到 is_committed=true，跳過該節點，繼續 version=6
 | **重複通知率** | ~8%（無冪等）| ~0.5% | < 0.001% |
 | **重複扣款率** | ~2%（無冪等）| ~0.1% | 0%（Idempotency-Key）|
 | **Scale-out 延遲** | N/A | 3–5 分鐘（HPA CPU）| < 45 秒（KEDA Pub/Sub）|
-| **黑五峰值成本** | $50/月 | $2,400/天（手動擴展）| $1,800/天（Autopilot 優化）|
+| **黑五峰值成本** | $140/月（見 §二）| $2,400/天（手動擴展）| $1,800/天（Autopilot 優化）|
 | **DLQ 訊息比例** | N/A | ~3% | < 0.5% |
 | **LLM 冗余呼叫節省** | 0% | ~15% | **~60%**（Checkpoint Skip）|
 | **Ack Timeout 導致的重試** | N/A | ~12% | ~0.8% |
@@ -756,11 +764,13 @@ Worker B: T+500ms 讀到 is_committed=true，跳過該節點，繼續 version=6
 
 > 以上為示意估算，用來說明各階段的量級差異，非實測結果。
 
----
+### 答題骨架
 
-## 十一、面試答題要點
-
-> *「面對 200 萬并發購物車 Agent，我的核心設計圍繞三個演進階段展開。Phase 1 用 Celery + Redis + LangGraph MemorySaver 快速驗證談判邏輯，但無狀態持久化，適合 < 500 并發的 POC；Phase 2 引入 Cloud Pub/Sub 替代 Redis Queue 獲得 at-least-once 保證，並以 MongoDBSaver 作為 Checkpointer，支撐 5 萬用戶但 MongoDB 跨區 15ms 寫延遲在高并發下仍是瓶頸；Phase 3 的核心突破是以 Cloud Spanner 的 TrueTime 強一致性替代 MongoDB，搭配單調遞增的 version_id 實現 CAS 語義，確保雙 Worker 並發寫入時只有一個成功，徹底解決 Exactly-Once 問題。當 Pod 因搶佔蒸發後，Pub/Sub Ack Deadline（600s）超時觸發 Redelivery，新 Worker 在 18ms 內從 Spanner 讀出最後已 committed 的 StateSnapshot，透過 StateGraph.update_state() 將執行游標跳至正確節點 Resume，已完成的工具節點透過 tool_output_hash 比對直接 Skip，LLM 重複呼叫節省高達 60%；最終 KEDA 基於 Pub/Sub 佇列深度觸發 scale-out，將反應時間從 HPA 的 3 分鐘壓縮至 45 秒，重複扣款率（示意估算）從約 2% 降到趨近於零。」*
+- 先用 §一 說明規模的物理上限、Agent 狀態的特殊性與業務紅線，再照 §二 的三個演進階段展開。
+- Pod 搶佔與彈性伸縮接 §三（KEDA vs HPA）；狀態持久化與 Exactly-Once 接 §四 的 Checkpointer 與 §九 的保證鏈。
+- 中斷後如何續跑用 §五 的 Skip 與 Resume 機制回答；多租戶與限流用 §六。
+- 供應鏈 Agent 的協調與反射循環接 §七，選型理由用 §八。
+- 收尾用 §十 的大促前後對比給數字，並可引用下方速查表。
 
 ---
 

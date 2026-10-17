@@ -3,11 +3,11 @@ title: "FDE 面試準備指南（三十八）：RKK 實戰——從 POC 到 Prod
 date: 2026-06-05T16:00:00+08:00
 draft: false
 weight: 38
-description: "以系統設計視角拆解 AI 系統從 POC 到生產最容易失敗的五個差距：Token Budget 失控、延遲 SLA 差距、Session State 消失、錯誤處理不完整、Rollback 機制缺席；包含生產化 Go-Live 清單、Prompt 版本控制、模型版本釘選、Canary 部署設計，以及每個差距對系統效能和穩定性的量化影響"
+description: "RAG + Agent POC 上線前必須補的五個差距:Token Budget 失控、冷啟動拖垮延遲 SLA、Session State 消失、外部 API 錯誤處理、Rollback 缺席,附 Go-Live 清單、Prompt 版本控制、模型釘選與 Canary 部署設計。"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Production", "POC", "Deployment", "Rollback", "SLA", "Token Budget", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Production", "POC", "Deployment", "Rollback", "SLA", "Token Budget", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "10 min"
 ---
 
 > 同一個 Agent，Demo 時跑得很好。  
@@ -314,17 +314,13 @@ Rollback 時間 < 5 分鐘（環境變數切換）    30-60 分鐘（改代碼�
 
 ---
 
-## 八、面試答題要點
+## 八、答題骨架
 
-> *「這道題考的是：知道 POC 和 Production 之間有哪些具體差距，以及如何系統性地填補它們——而不只是說『還需要測試』。*
->
-> *五個差距：Token Budget 失控（需要截斷策略和 Cost Alert）；延遲 SLA 差距（需要 min-instances 和 Tool Timeout）；Session State 消失（需要 Firestore 持久化）；錯誤處理不完整（需要 Graceful Fallback 和全域 Exception Handler）；Rollback 機制缺席（需要 Prompt 版本控制、模型版本釘選、Canary 部署）。*
->
-> *和客戶 CTO 的溝通方式：不說「還沒準備好」，說「下個月上線可以，但建議先做 2 週 Internal Pilot，同時並行處理這 5 件事，8 個工作天可以完成。Pilot 讓我們在真實流量下驗證，把影響範圍控制在 50 個內部用戶，而不是第一天就開放給所有用戶出問題。」*
->
-> *Rollback 的設計邏輯：Prompt 版本控制讓我在 1 分鐘內 Rollback，不需要改代碼重新部署。模型版本釘選防止 Google 的更新悄悄改變系統行為。Canary 部署讓我在 10% 流量上驗證 24 小時，確認沒問題再全量。」*
-
----
+- 先用 §一 說明這題考的是具體差距，不是「還需要測試」。
+- 逐一列差距並給對應解法：Token Budget（§二）、延遲 SLA（§三）、Session State（§四）、錯誤處理與 Rollback（§五）。
+- 對 CTO 的說法用 §六 的 Go-Live 清單：不說「還沒準備好」，說 Internal Pilot 加並行處理清單、幾個工作天完成。
+- Rollback 的三個機制（Prompt 版本控制、模型版本釘選、Canary）依 §五 的順序講。
+- 收尾用 §七 的量化數字說明生產化是基本門檻而不是優化。
 
 **系列導航**
 

@@ -6,7 +6,7 @@ description: "深拆半導體下游的系統 / 伺服器 OEM 與 ODM 這一層:�
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "伺服器", "Dell", "SMCI", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "10 min"
 ---
 
 > 大部分人看到美超微(SMCI)營收一年翻三倍、戴爾 AI 伺服器訂單塞爆,就以為這層在 AI 浪潮裡大賺。

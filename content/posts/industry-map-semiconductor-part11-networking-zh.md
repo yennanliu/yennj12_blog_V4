@@ -6,7 +6,7 @@ description: "深拆半導體產業鏈的網通/互連這一層:交換晶片、�
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "網通互連", "Broadcom", "Arista", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "10 min"
 ---
 
 > 大部分人看 AI 資料中心,只數「買了幾顆 GPU」。

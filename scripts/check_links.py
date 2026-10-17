@@ -71,6 +71,7 @@ HOST = _BASE.netloc                              # "yennj12.js.org"
 HAS_SUBPATH = BASE_PATH != "/"
 
 MD_LINK = re.compile(r"\]\(([^)\s]+)")
+RELATIVE_MD = re.compile(r"^(?:\.{1,2}/)?[A-Za-z0-9_./-]*[A-Za-z0-9_-]\.md(?:#.*)?$")
 ATTR = re.compile(r"""(?:href|src)=(?:"([^"]*)"|'([^']*)'|([^\s>]+))""", re.I)
 FENCE = re.compile(r"^\s*(```+|~~~+)")
 
@@ -146,6 +147,14 @@ def check_content() -> list[str]:
                     f"{path.relative_to(ROOT)}:{line_no}: hard-coded baseURL in "
                     f"link {url!r} — drop the {BASE_PATH} prefix and let the "
                     f"render hook resolve it"
+                )
+            # A relative Markdown-file link (`./slug.md`, `../x.md`, `slug.md`) is
+            # left untouched by the render hook, so Hugo emits it verbatim and it
+            # 404s on the site. Write `/posts/<slug>/` instead.
+            if RELATIVE_MD.match(url):
+                errors.append(
+                    f"{path.relative_to(ROOT)}:{line_no}: relative Markdown link "
+                    f"{url!r} renders verbatim and 404s — use /posts/<slug>/"
                 )
     return errors
 

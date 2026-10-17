@@ -3,7 +3,7 @@ title: "Java Concurrency Deep Dive Part 2: Mastering Runnable, Callable Patterns
 date: 2025-01-28T03:00:00+08:00
 draft: false
 weight: 2
-description: "Deep dive into Java concurrency fundamentals: Runnable and Callable internals, thread synchronization mechanisms, memory models, and advanced patterns. Master the building blocks of Java concurrent programming."
+description: "How Runnable and Callable really execute: thread lifecycle, the Java Memory Model, happens-before, synchronisation patterns and testing concurrent code."
 categories: ["all", "ai", "engineering", "architecture"]
 tags: ["Java", "Concurrency", "Threading", "Runnable", "Callable", "Synchronization", "Memory Model", "Thread Safety", "AI"]
 authors: ["yen"]

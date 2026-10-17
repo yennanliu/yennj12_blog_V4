@@ -3,7 +3,7 @@ title: "Java Concurrency Part 3: Design Patterns with Thread Interfaces - Produc
 date: 2025-01-28T04:00:00+08:00
 draft: false
 weight: 3
-description: "Master concurrent design patterns using Java thread interfaces: Producer-Consumer, Observer, Command, Strategy, and Enterprise patterns. Learn practical implementations with Runnable and Callable, including pros/cons and real-world use cases."
+description: "Implement Producer-Consumer, Observer, Command, Strategy and enterprise patterns on Java thread interfaces, with BlockingQueue and executor code."
 categories: ["all", "engineering", "architecture"]
 tags: ["Java", "Concurrency", "Design Patterns", "Threading", "Runnable", "Callable", "Producer-Consumer", "Observer", "Command Pattern"]
 authors: ["yen"]

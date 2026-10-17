@@ -6,7 +6,7 @@ description: "深拆半導體記憶體這一層:三強寡占(美光、SK 海力�
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "記憶體", "HBM", "Micron", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "10 min"
 ---
 
 > 大部分人看記憶體,只記得一句話:「記憶體是景氣循環股,便宜就買、貴就賣。」

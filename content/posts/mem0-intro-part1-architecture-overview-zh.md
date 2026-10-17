@@ -5,7 +5,7 @@ draft: false
 weight: 1
 description: "Mem0 原始碼導讀系列第一篇：用一張全景圖說清楚這個 6.5 萬星的 AI Agent 記憶層由哪些子系統組成、寫入與讀取兩條路徑各自經過哪些階段、記憶的作用域模型怎麼設計，以及為什麼「把歷史全部塞進 context」在生產環境會失效。"
 categories: ["all", "ai", "engineering", "architecture"]
-tags: ["Mem0", "AI Agent", "Memory", "LLM", "RAG", "Vector Database", "Architecture", "繁體中文"]
+tags: ["Mem0", "AI Agent", "Memory", "LLM", "RAG", "Vector Database", "Architecture"]
 authors: ["yen"]
 readTime: "17 min"
 ---

@@ -5,9 +5,9 @@ draft: false
 weight: 18
 description: "以系統設計視角拆解企業級 Agent 的三層記憶體設計：Working Memory 成本控制、Semantic Long-term Memory 的異步壓縮流程、Profile Memory 的結構化提取——以及每個設計決策背後的成本與延遲 trade-off"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Memory", "Cost Optimization", "Context Cache", "LLM", "System Design", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Agent", "Memory", "Cost Optimization", "Context Cache", "LLM", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "9 min"
 ---
 
 > 「把所有歷史對話塞進 Context 再問 LLM」  
@@ -284,17 +284,13 @@ TTFT 改善（示意估算，非實測）：
 
 ---
 
-## 七、面試答題要點
+## 七、答題骨架
 
-> *「這個問題的核心是：用最少的 token 讓 LLM 感覺上記得三個月的對話。我的設計是三層記憶體：*
->
-> *Layer 1，Working Memory：最近 5~10 輪完整對話存在 Redis，固定前綴夠長、達到可快取門檻時，再用 Vertex AI Context Caching 降低這部分的 token 費用。*
->
-> *Layer 2，Semantic Long-term Memory：對話結束後，異步用 Gemini Flash 壓縮成摘要、向量化後存入 Vertex AI Vector Search。下次對話時，用當前 Query 做語意搜尋，召回最相關的 3~5 條歷史摘要（約 2,000 tokens）。*
->
-> *Layer 3，Profile Memory：Extraction Agent 從對話中提煉結構化的 Key-Value 客戶資訊，存入 Firestore，每次對話固定帶入（約 300 tokens，成本完全可預測）。*
->
-> *三層合計約 5,900 tokens，對比全部塞入的 450,000 tokens，成本估計可降低約 98%，TTFT 也從秒級降到 1 秒內（示意估算）。」*
+- 先用 §一 的估算量化問題：全塞 Context 的成本、延遲與 Lost-in-the-Middle 三個代價。
+- 架構按 §二 的三層逐一講，每層說清楚存哪裡、token 上限與 TTL，最後給組合後的 Context 帳。
+- Layer 2 的機制接 §三 的異步壓縮管線，並說明為什麼異步而不是同步。
+- Layer 1 與 Layer 3 分別補 §四 的 Context Caching 門檻與 §五 的 Extraction Agent 更新邏輯。
+- 收尾用 §六 的方案 A/B 對比給出成本與 TTFT 的改善量級。
 
 ## 相關文章與正典版本
 
