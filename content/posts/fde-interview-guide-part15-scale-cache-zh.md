@@ -84,7 +84,7 @@ LLM 系統的規模化現實：
 │  L2：Semantic Cache（Vector DB）                       │
 │                                                       │
 │  用途：語意相似的問題複用答案                           │
-│  命中條件：cosine similarity ≥ 0.92                   │
+│  命中條件：cosine similarity ≥ 0.90（推薦起點，見三） │
 │  TTL：1~24 小時（依問題類型）                          │
 │  預期 hit rate：~35%（FAQ 類場景可達 50%+）            │
 │  延遲：50~150ms（含 embedding + 向量搜尋）             │
@@ -368,7 +368,7 @@ LLM 規模化的三個不同點：
 
 三層 Cache：
   L1 Redis         → Exact match，< 5ms
-  L2 Semantic Cache → 語意相似，50~150ms，threshold 0.90~0.92
+  L2 Semantic Cache → 語意相似，50~150ms，threshold 0.90 起步、依場景調
   L3 KV Cache      → LLM prefix 共享，prefix tokens 省 75%
 
 Stateful 的水平擴展：

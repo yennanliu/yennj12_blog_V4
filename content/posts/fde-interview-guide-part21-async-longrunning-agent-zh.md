@@ -145,7 +145,7 @@ Step 3：爬取第 31~50 個網頁
 
 故障恢復流程：
 
-  Cloud Tasks / Redis 偵測到 Worker 心跳停止（30 秒內）
+  排程器（Redis 心跳逾時 / Pub/Sub ack 逾時重投遞）偵測到 Worker 心跳停止（30 秒內）
        │
        ▼
   將 task_abc123 重新放回 Queue

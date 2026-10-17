@@ -271,7 +271,7 @@ ADK vs LangGraph 的核心差異：
 ──────────────────────────────────────────────────────────────
 抽象層次        低（細粒度控制）             高（開箱即用）
 Gemini 整合     需要自己配置                 原生支援
-Multi-Agent     需要自己設計通信              內建 AgentTeam
+Multi-Agent     需要自己設計通信              內建 Sequential/Parallel/LoopAgent + sub_agents 委派
 工具生態        LangChain Tools              Google Cloud Tools
 適合場景        複雜自定義工作流              快速原型、GCP 生態系
 

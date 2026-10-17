@@ -83,7 +83,7 @@ readTime: "9 min"
 │  最近 5~10 輪的完整對話                                       │
 │  ├── 直接存在 Redis（Session Cache）                          │
 │  ├── 利用 Vertex AI Context Caching 降低重複計算成本           │
-│  └── Token 上限：~5,000 tokens（可控、快速）                  │
+│  └── Token 上限：~3,000 tokens（可控、快速）                  │
 │                                                              │
 │  TTL：當次 Session（幾分鐘~幾小時）                           │
 └──────────────────────────┬───────────────────────────────────┘
@@ -91,7 +91,7 @@ readTime: "9 min"
                            │ Context miss → 向下查詢
                            ▼
 ┌──────────────────────────────────────────────────────────────┐
-│          Layer 2：Semantic Long-term Memory（情節記憶）        │
+│          Layer 2：Episodic Long-term Memory（情節記憶）        │
 │                                                              │
 │  向量化的歷史對話摘要                                          │
 │  ├── 異步壓縮管線：舊對話 → LLM 摘要 → Embedding → 向量 DB   │
@@ -104,7 +104,7 @@ readTime: "9 min"
                            │ 用當前 Query 做 Semantic Search
                            ▼
 ┌──────────────────────────────────────────────────────────────┐
-│             Layer 3：Profile Memory（實體記憶）               │
+│        Layer 3：Semantic / Profile Memory（語意記憶）         │
 │                                                              │
 │  結構化的 Key-Value 用戶資訊                                  │
 │  ├── 由 Extraction Agent 定時從對話中提煉                     │
@@ -123,7 +123,7 @@ readTime: "9 min"
 │                                                              │
 │  [System Prompt]            ~500 tokens  （固定）            │
 │  [Profile Memory]           ~300 tokens  （固定）            │
-│  [Semantic Memory Recall]  ~2,000 tokens （按需）            │
+│  [Episodic Memory Recall]  ~2,000 tokens （按需）            │
 │  [Working Memory]          ~3,000 tokens （滾動）            │
 │  [Current Query]            ~100 tokens  （即時）            │
 │  ───────────────────────────────────────                    │
@@ -203,24 +203,24 @@ readTime: "9 min"
 
 有 Context Cache 的情況：
 
-  （概念示意：實務上顯式 Context Cache 有最小可快取長度，
-    Gemini 1.5 世代為 32,768 tokens，新世代模型門檻較低，請以官方文件為準；
-    800 tokens 的 prefix 達不到門檻。真正值得快取的是數萬 tokens 級的固定前綴，
-    例如產品手冊或知識庫全文。另外 cache 還有按時間計的儲存費。）
+  （實務上顯式 Context Cache 有最小可快取長度：
+    Gemini 1.5 世代為 32,768 tokens，新世代模型門檻較低，請以官方文件為準。
+    所以 System Prompt + Profile 這種 800 tokens 的前綴達不到門檻，
+    真正值得快取的是數萬 tokens 級的固定前綴——下面以 40,000 tokens 的
+    產品手冊 + System Prompt 示意。另外 cache 還有按時間計的儲存費。）
 
-  首次：建立 Cache，System Prompt + Profile (800 tokens)
-        費用：$0.001（建立 cache 的一次性費用）
+  首次：建立 Cache，產品手冊 + System Prompt (40,000 tokens)
 
-  Request 1: [Cached(800)] + [History(2200)] + [Query(100)] = 3,100 tokens
+  Request 1: [Cached(40,000)] + [History(3,000)] + [Query(100)] = 43,100 tokens
              但 Cached 部分 費率是正常的 1/4
-             → 800 × 0.25 + 2,300 × 1.0 = 2,500 effective tokens
+             → 40,000 × 0.25 + 3,100 × 1.0 = 13,100 effective tokens
 
   Request 2,3,...: 每次都享受 Cache 折扣
 
-成本節省估算（System Prompt 500 tokens，每天 20 次請求）：
-  無 Cache：500 × 20 = 10,000 tokens/天 × $1.25/1M = $0.0125/天
-  有 Cache：500 × 20 × 0.25 = 2,500 tokens/天 × $1.25/1M = $0.003/天
-  節省 76%（在這個部分，未計 cache 儲存費）
+成本節省估算（固定前綴 40,000 tokens，每天 20 次請求，1.5 Pro $1.25/1M）：
+  無 Cache：40,000 × 20 = 800,000 tokens/天 × $1.25/1M = $1.00/天
+  有 Cache：40,000 × 20 × 0.25 = 200,000 tokens/天 × $1.25/1M = $0.25/天
+  節省 75%（= 1 − 0.25，只算前綴部分，未計 cache 儲存費）
 ```
 
 ---

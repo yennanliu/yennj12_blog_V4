@@ -223,7 +223,7 @@ FDE 的客戶場景：
 ```
 Full Fine-tuning 的問題：
   修改所有模型參數 → 需要和原模型一樣大的 GPU 記憶體
-  Gemini 2B → 需要數十 GB GPU RAM
+  Gemma 2B → 需要數十 GB GPU RAM
   Gemma 9B → 需要數百 GB GPU RAM → 一般企業負擔不起
 
 LoRA 的做法：
@@ -322,11 +322,14 @@ Self-Consistency    有效       多次呼叫，成本高
 ```
 答：Encoder-only（如 BERT）的 Embedding 是雙向的——
     每個 token 能看到句子中所有其他 token，
-    適合做語意相似度和分類任務（也是大多數 Embedding 模型的基礎架構）。
-    Decoder-only（如 GPT/Gemini）的 Embedding 是單向的——
-    每個 token 只能看到它之前的 token，
-    設計目標是生成，不是 Embedding。
-    所以 RAG 用的 Embedding 模型通常是 Encoder-based 的。
+    歷史上大多數 Embedding 模型（BGE、E5、Sentence-BERT）都建在這類架構上。
+    Decoder-only（如 GPT/Gemini）的 Embedding 原生是單向的——
+    每個 token 只能看到它之前的 token，預訓練目標是生成。
+    但現今前段班的 Embedding 模型（gemini-embedding、e5-mistral、
+    NV-Embed、Qwen3-Embedding）多半是 decoder 模型經對比學習微調
+    再加 pooling 得到的。
+    所以關鍵不是 encoder 或 decoder，而是有沒有用對比學習目標
+    把「語意相近 → 向量相近」訓進去。
 ```
 
 **地雷 2：「LoRA 的 rank 設多少？你怎麼決定？」**

@@ -411,7 +411,7 @@ Container 存放           Artifact Registry     GCP 原生，整合 Cloud Build
 Model Garden 是 Vertex AI 的模型中心，包含三類模型：
 
 類型 1：Google 模型
-  Gemini 系列（撰文時為 Gemini 2.0 Flash、Gemini 1.5 Pro；型號更新快，以 Model Garden 現況為準）
+  Gemini 系列（撰文時為 Gemini 2.5 Pro / 2.5 Flash；1.5 世代已退役，型號更新快，以 Model Garden 現況為準）
   Gemma 系列（開源，可自行部署和微調）
   Imagen（圖像生成）
 

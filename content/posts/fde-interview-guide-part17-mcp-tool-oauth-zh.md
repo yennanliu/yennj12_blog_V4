@@ -190,7 +190,7 @@ Token 生命週期管理架構：
 
   設計原則：
   ├── Refresh Token 用加密方式存在 Secret Manager
-  ├── Access Token 只存在記憶體（不寫磁碟）
+  ├── Access Token 只放記憶體或加密的 Redis（TTL ≤ token 壽命），不落磁碟
   └── 每次 Token Refresh 都寫入 Audit Log
 ```
 
@@ -273,12 +273,12 @@ FDE 推薦：
 ```
 GCP 組件對應：
 
-  OAuth Token 存儲    → Secret Manager（加密，有版本管理）
+  Refresh Token 存儲  → Secret Manager（加密，有版本管理）
   MCP Server 部署     → Cloud Run（無伺服器，自動擴展）
   Input Validation    → 在 Cloud Run 的 Middleware 實作
   Audit Logging       → Cloud Logging + Cloud Audit Logs
   Rate Limiting       → Apigee API Gateway（有內建 quota 管理）
-  Token 快取          → Memorystore Redis（避免頻繁查詢 Secret Manager）
+  Access Token 快取   → Memorystore Redis（TTL ≤ token 壽命、傳輸與靜態加密，避免頻繁查詢 Secret Manager）
 ```
 
 ---

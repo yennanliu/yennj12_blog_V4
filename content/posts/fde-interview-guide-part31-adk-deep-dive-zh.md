@@ -300,7 +300,8 @@ LangGraph 的狀態模型：
 ADK 的狀態模型：
   Session State 是一個 key-value store
   所有 Agent 和 Tool 都可以讀寫
-  框架管理持久化（支援 in-memory / Cloud Firestore / Cloud SQL）
+  框架管理持久化：InMemorySessionService（開發）/ DatabaseSessionService（Cloud SQL 等 SQL DB）
+  / VertexAiSessionService（Agent Engine 託管）
 
 Session State 的 key 前綴（scope）：
 
@@ -337,9 +338,9 @@ ADK Agent → Vertex AI Agent Engine
 特點：
   ├── 全託管（不需要管 Container、Scaling、Load Balancing）
   ├── 原生整合 Vertex AI 的監控和日誌
-  ├── Session State 自動持久化到 Firestore
+  ├── Session State 由託管的 VertexAiSessionService 持久化
   ├── 支援 Streaming（逐字回應）
-  └── 內建 Rate Limiting 和 Auth
+  └── 存取控制走 IAM（Rate limiting 要自己在前面的 gateway 做）
 
 適合：標準企業 Agent 部署，想要最少的 Infra 維護
 
@@ -382,9 +383,10 @@ ADK Agent → Container → Cloud Run
 ```
 答：功能上類似，但 ADK ParallelAgent 做了更多事：
     1. 狀態隔離：每個 sub_agent 有自己的 context，不會互相污染
-    2. 錯誤隔離：一個 sub_agent 失敗不影響其他（LangGraph 需要自己實作）
+    2. 錯誤處理有掛點：sub_agent 的例外會往上拋，要靠 before/after_agent_callback
+       或工具層的 try/except 做隔離——不是免費的，但掛點是框架給的
     3. 可觀測性：ADK 框架自動記錄每個 sub_agent 的執行 trace
-    4. 重試策略：可以設定 per-agent 的 retry policy
+    4. 重試 / 降級策略：在 callback 統一實作，不用每個 sub_agent 各寫一份
     asyncio.gather 只是並行執行，沒有這些 Agent 層面的保護。
     對生產系統，ADK ParallelAgent 比 asyncio.gather 更可靠。
 ```

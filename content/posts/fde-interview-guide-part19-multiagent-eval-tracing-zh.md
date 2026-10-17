@@ -138,7 +138,9 @@ Time →
           ├── Tool: query_erp ──────── 2,900ms ⚠️⚠️ 超慢！
           └── LLM Generation ────────── 750ms
 
-Total E2E: 5,450ms（基本上由 Finance Agent 的 ERP 查詢決定）
+Total E2E: 若順序執行 450 + 1,200 + 3,800 = 5,450ms；
+           Legal / Finance 並行 fan-out 後 450 + max(1,200, 3,800) = 4,250ms，
+           仍由 Finance Agent 的 ERP 查詢決定
 
 結論：瓶頸在 Tool: query_erp（2.9s）
       → 優先優化：加 Cache / 改查詢 SQL / 升級 ERP 連接
@@ -181,9 +183,11 @@ Total E2E: 5,450ms（基本上由 Finance Agent 的 ERP 查詢決定）
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│  3. Trajectory Exact Match（執行路徑評估）                   │
+│  3. Trajectory Match（執行路徑評估）                         │
 │                                                             │
 │  問題：Agent 的執行路徑是否符合預期的最優路徑？               │
+│  Exact Match 是 0/1 判定（路徑完全相同才算），下例為 0；    │
+│  實務上更常用下面的 Path Efficiency 連續分數                │
 │                                                             │
 │  黃金路徑（Golden Trajectory）：                             │
 │    Router → Legal → Finance → Synthesis → Answer           │

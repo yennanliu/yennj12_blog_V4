@@ -250,6 +250,58 @@ step > 20   → 硬性終止，回傳 fallback 訊息
 
 ---
 
+### 故障四：任務偏移（Task Drift）
+
+```
+症狀：第 1 步還在「查訂單狀態」，第 8 步在「推薦新產品」
+    │
+    ▼
+Q1：Trace 裡每一步的 reasoning 有沒有引用 original goal？
+    ├── 沒有 → goal 在 multi-turn 後被對話歷史稀釋
+    │         解法：每步把 original_goal 重新注入 prompt 開頭，
+    │               不要只靠第一輪的 system prompt
+    │
+    └── 有
+            │
+            ▼
+        Q2：每步的 action 和 goal 的「距離」有沒有在縮小？
+            → 用 LLM-as-judge 對每步打一個 goal-alignment 分數
+            → 連續 3 步分數下降 → 觸發「回到目標」提示：
+              "你的原始任務是 X，目前的動作和它有什麼關係？"
+            → 仍然偏離 → 終止，回傳目前進度給用戶確認
+```
+
+> 偵測訊號在 Trace，不在 Log：單看一步的 log 每一步都「合理」，只有把整條路徑攤開看才看得出方向變了。
+
+---
+
+### 故障五：Context 錯亂（Context Confusion）
+
+```
+症狀：用戶 A 的回答裡出現用戶 B 的訂單號
+    │
+    ▼
+Q1：每個 span 有沒有帶 session_id / user_id？
+    ├── 沒有 → 先補 instrumentation，否則無法定位
+    │
+    └── 有
+            │
+            ▼
+        Q2：錯亂的那一步，context 裡的文件屬於哪個 session？
+            ├── 屬於別的 session
+            │     → Retrieval 沒按 user_id 過濾
+            │       （Metadata filter 漏了，或 cache key 沒含 user_id）
+            │
+            └── 屬於本 session，但內容是舊對話
+                  → Memory 寫入沒清理 / Working memory 跨 session 殘留
+
+隔離測試：兩個 session 交錯送同樣問題，
+          比對各自的 retrieved_docs 和 memory 讀取，
+          任何一筆跨 session 出現 → 重現成功
+```
+
+---
+
 ## 五、Debug Session 的工作流
 
 ```

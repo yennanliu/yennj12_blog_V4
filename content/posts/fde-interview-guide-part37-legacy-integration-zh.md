@@ -251,7 +251,7 @@ DB 帳號權限設計：
 問題：Agent 在 GCP 上，客戶的 Oracle 在內部。
       如何讓資料不走公共網路？
 
-Private Service Connect 架構：
+私有連線架構（Direct VPC egress → Cloud VPN / Interconnect）：
 
   ┌──────────────────────────────────────────────────────────────┐
   │  GCP（Cloud Run / ADK Agent）                                 │
@@ -260,11 +260,6 @@ Private Service Connect 架構：
   │  （所有 Outbound traffic 走 VPC，不走 Public Internet）        │
   └──────────────────────────┬───────────────────────────────────┘
                              │ 私有網路（不走 Public Internet）
-                             ▼
-  ┌──────────────────────────────────────────────────────────────┐
-  │  Private Service Connect Endpoint                            │
-  └──────────────────────────┬───────────────────────────────────┘
-                             │
                              ▼
   ┌──────────────────────────────────────────────────────────────┐
   │  Cloud VPN / Cloud Interconnect                              │
@@ -277,6 +272,10 @@ Private Service Connect 架構：
   │  ├── Oracle DB（允許 AI_SERVICE_ACCOUNT 連接）                │
   │  └── SAP Application Server                                  │
   └──────────────────────────────────────────────────────────────┘
+
+  註：Private Service Connect 不在這條路徑上——PSC 是讓 VPC 內的工作負載
+      用私有 IP 存取雲端廠商的 API（例如 Vertex AI，見 Part 30 §六）或他人發布的服務，
+      不是通往 on-prem 的路由。
 
 VPC-SC vs IAM vs CMEK：選哪個，為什麼
 
@@ -295,7 +294,7 @@ VPC-SC vs IAM vs CMEK：選哪個，為什麼
   ──────────────────────────────────────────────────────────────────
 
   三者是互補的，不是互斥的。
-  一般企業：IAM + Private Service Connect（必要）
+  一般企業：IAM + 私有連線（Direct VPC egress + VPN/Interconnect；對 Vertex AI 等雲端 API 則用 PSC）
   高合規要求（金融/醫療）：加上 VPC-SC
   政府/金融的金鑰主權要求：加上 CMEK
 ```

@@ -78,7 +78,7 @@ P95 延遲凌晨 2-4 點 → 4 秒（平常 800ms）
 假設 2：Embedding Model 的 Cold Start
   根據：如果 Embedding 服務是 Cloud Run（auto-scaling to zero），
          凌晨流量低 → 實例縮到 0 → 第一個 request 觸發 cold start
-  症狀：第一個 request 特別慢（10-30 秒），後續恢復
+  症狀：第一個 request 特別慢（8-15 秒：容器啟動 + 載入模型），後續恢復
   確認方法：
     → Cloud Run metrics → instance count at 2am
     → 看 request log 裡有沒有 "cold start" 標記

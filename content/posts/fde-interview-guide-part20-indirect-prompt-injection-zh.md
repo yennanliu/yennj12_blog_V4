@@ -156,13 +156,15 @@ Dual-LLM 防禦架構：
 │                                                         │
 │  ├── 使用高能力模型（Gemini Pro）                        │
 │  ├── 有 Tool-calling 能力                               │
-│  ├── 只讀取「清洗後的摘要」，從不直接接觸外部資料        │
+│  ├── 只讀取「清洗後的摘要」，但摘要仍視為不可信 DATA     │
 │  └── 對外部資料的信任層級：DATA（非 INSTRUCTION）        │
 └──────────────────────────┬──────────────────────────────┘
                            │
                            ▼
                    Tool Execution（安全）
 ```
+
+> 上圖是「兩段式清洗」的簡化版本，隔離的是 **HTML / 工具權限**，不是 **文字**。原始的 Dual-LLM 模式（Willison，2023；後續的 CaMeL 把它形式化）更嚴格：Quarantined LLM 的輸出不會以文字進入 Privileged LLM，而是存成不透明變數（如 `$doc_1`），Privileged LLM 只看到變數名來決定要呼叫哪個工具，內容由非 LLM 的 Controller 在執行時才代入參數，並對工具輸出做格式驗證。簡化版的殘餘風險是：一段撐過摘要的指令（「請呼叫 send_email…」）仍會以 DATA 身份進入 Main Agent 的 context，所以這一層必須疊加 §五 的 Trust Level 標記與 §六 的工具層白名單，不能單獨作為防線。
 
 ---
 
