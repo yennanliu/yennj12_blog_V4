@@ -6,7 +6,7 @@ weight: 4
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "Monitoring", "Prometheus", "Grafana", "Alerting", "EKS", "Observability", "Metrics", "Dashboard", "AlertManager", "DevOps"]
-description: "Part 4 of the Kubernetes Autoscaling series: Complete guide to monitoring EKS autoscaling with Prometheus and Grafana. Includes CDK setup, alerting rules, custom dashboards, and threshold tuning strategies for production-grade observability."
+description: "See and tune autoscaling on EKS: Prometheus and Grafana via CDK, HPA-specific dashboards, AlertManager rules for thrashing and capacity, and threshold tuning."
 readTime: "30 min"
 ---
 

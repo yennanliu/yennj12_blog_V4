@@ -3,7 +3,7 @@ title: "AIO / GEO - Part 1 - 概念篇：當搜尋結果不再是十條藍色連
 date: 2026-07-28T09:00:00+08:00
 draft: false
 weight: 1
-description: "AIO（AI Overview）與 GEO（Generative Engine Optimization）到底在優化什麼？本篇釐清 SEO / AEO / GEO / LLMO 的定義邊界，拆解生成式引擎產生答案的內部流程，並提出一套從 Ranking 思維轉向 Citation Share 思維的可見度指標與成熟度模型。"
+description: "排名第一、流量卻掉四成?釐清 SEO / AEO / GEO / LLMO 的邊界,拆解 AI Overview 與生成式引擎產生答案的流程,把衡量指標從排名換成 Citation Share,並附一套 GEO 成熟度模型。"
 categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "AI Overview", "生成式引擎優化", "SEO", "LLM", "RAG", "Marketing"]
 authors: ["yen"]

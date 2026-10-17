@@ -2,7 +2,7 @@
 title: "Anthropic Financial Services 入門 Part 2 — Agent、Skill、Command、Connector 是怎麼組成一個系統的"
 date: 2026-07-04T10:00:00+08:00
 draft: false
-description: "同一個目錄結構要同時餵給 Cowork 和 Claude Managed Agents API,Anthropic 是怎麼設計的?本篇拆解 financial-services 套件裡 Agent、Skill、Command、Connector、Managed-agent wrapper 五層的分工與依賴關係,以及為什麼所有東西都是純 markdown/JSON、沒有 build step。"
+description: "拆解 Anthropic financial-services 套件如何用同一份 system prompt 與 skill 同時跑 Cowork 與 Managed Agents API:Agent、Skill、Command、Connector、wrapper 五層的分工、依賴與防漂移的 CI 檢查。"
 categories: ["all", "ai", "engineering"]
 tags: ["Anthropic", "Claude", "Financial Services", "MCP", "Agent Architecture", "Claude Skills", "AI Engineering"]
 authors: ["yen"]

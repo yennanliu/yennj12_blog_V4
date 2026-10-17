@@ -2,7 +2,7 @@
 title: "NVIDIA (NVDA) 2026 10-K 深度解析"
 date: 2026-07-19T09:00:00+08:00
 draft: false
-description: "用 10k-digest 方法對 NVIDIA FY2026 年報做機構級深度拆解:五年財務軌跡、Compute & Networking 與 Graphics 事業體、資料中心營收爆炸、毛利率逆風、極端客戶集中、中國/H20 出口管制、$95.2B 採購承諾、循環融資疑雲、DuPont/ROIC、Rule of 40、情境分析、風險矩陣與投資訊號。"
+description: "NVIDIA (NVDA) FY2026 10-K:營收 +65% 至 $2,159 億、淨利率 55%、ROIC 107%,但毛利率從 75% 退到 71.1%、兩個客戶佔 36% 營收、中國營收年減 21%、$952 億採購承諾懸掛。拆解印鈔機的裂縫。"
 categories: ["all", "finance"]
 tags: ["NVDA", "10-K", "SEC", "財報分析", "價值投資", "美股", "半導體", "AI", "GPU", "資料中心", "InvestSkill", "investing"]
 authors: ["yen"]

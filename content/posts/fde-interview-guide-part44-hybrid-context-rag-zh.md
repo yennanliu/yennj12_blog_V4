@@ -3,7 +3,7 @@ title: "FDE 面試準備指南（四十四）：RKK 實戰——長文本 LLM �
 date: 2026-06-08T09:00:00+08:00
 draft: false
 weight: 44
-description: "深度拆解長文本 LLM（200 萬 Token 上下文）與傳統 RAG 的動態混合架構：為什麼超大 Context Window 仍需 RAG、如何設計智能上下文管理器（Dynamic Hybrid Router）、Vertex AI Context Caching Registry 快取策略、成本矩陣（$2.50 vs $0.001）、降級策略、RRF 融合機制，以及 Staff 級 FDE 面試的完整答題框架"
+description: "200 萬 Token Context Window 不是銀彈:設計一個在 runtime 動態決定走長文本還是 RAG 的混合路由器,搭配 Vertex AI Context Caching、RRF 融合與降級策略,把 80% 查詢成本從 $2.50 壓到 $0.001。"
 categories: ["all", "ai", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "LLM", "Vertex AI", "ContextCaching", "Vector Search", "System Design", "fde-interview-guide"]
 authors: ["yen"]

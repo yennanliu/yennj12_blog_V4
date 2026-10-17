@@ -2,7 +2,7 @@
 title: "Berkshire Hathaway (BRK.B) 2025 10-K 深度解析"
 date: 2026-07-19T09:00:00+08:00
 draft: false
-description: "用 10k-digest 方法對 Berkshire Hathaway FY2025 年報做機構級深度拆解:GAAP 淨利為何暴跌 25% 卻不代表本業轉弱、五大事業體與保險浮存金引擎、破紀錄的 3,733 億美元現金+國庫券、零庫藏股回購的訊號、鉅額股票組合與集中度風險、Kraft Heinz/Occidental 減損、巴菲特交棒 Greg Abel,以及情境、風險與投資訊號。"
+description: "Berkshire Hathaway (BRK.B) FY2025 10-K:淨利年減 25% 為何不代表本業轉弱、營業利益六年首次回檔、現金加國庫券 3,733 億美元創紀錄卻整年零回購、Kraft Heinz/Occidental 減損,以及巴菲特交棒 Greg Abel 的訊號。"
 categories: ["all", "finance"]
 tags: ["BRK.B", "Berkshire Hathaway", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "保險", "控股公司", "巴菲特", "investing"]
 authors: ["yen"]

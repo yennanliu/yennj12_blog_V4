@@ -6,7 +6,7 @@ weight: 6
 authors: ["yen"]
 categories: ["all", "engineering", "architecture", "infrastructure"]
 tags: ["Kubernetes", "K8S", "Autoscaling", "StatefulSet", "Multi-Cluster", "Cost Optimization", "Spot Instances", "FinOps", "Advanced Patterns", "Batch Jobs", "DevOps"]
-description: "Part 6 of the Kubernetes Autoscaling series: Advanced autoscaling patterns for stateful applications, multi-cluster deployments, cost optimization strategies, batch job scaling, and emerging technologies. Real-world architectures and production-grade implementations."
+description: "Autoscale the hard cases: StatefulSets with persistent volumes, multi-cluster and multi-region, Spot-based cost cutting and queue-driven batch jobs."
 readTime: "33 min"
 ---
 

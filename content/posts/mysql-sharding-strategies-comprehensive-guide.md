@@ -2,7 +2,7 @@
 title: "MySQL Sharding Strategies: A Comprehensive Guide to Horizontal Scaling, Partitioning Methods, and Implementation Patterns"
 date: 2025-09-29T07:54:22+08:00
 draft: false
-description: "Master MySQL sharding strategies with detailed comparisons of horizontal partitioning, range-based sharding, hash-based sharding, and directory-based approaches. Learn implementation patterns, pros/cons, and real-world use cases for scaling databases."
+description: "Shard MySQL without regret: range, hash and directory-based sharding compared, shard key selection, cross-shard queries and when you need it at all."
 categories: ["all", "engineering", "architecture"]
 tags: ["MySQL", "Database Sharding", "Horizontal Scaling", "Database Architecture", "Distributed Systems", "Performance Optimization", "Data Partitioning", "Scalability", "Database"]
 authors: ["yen"]

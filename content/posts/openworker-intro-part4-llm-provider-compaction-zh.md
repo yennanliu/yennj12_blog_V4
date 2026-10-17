@@ -3,7 +3,7 @@ title: "OpenWorker 深度解析（四）：LLM 層 — Provider 抽象、能力�
 date: 2026-08-07T12:00:00+08:00
 draft: false
 weight: 4
-description: "拆解 OpenWorker 如何同時支援 OpenAI、Anthropic、Gemini、Bedrock、Vertex、Ollama 與多家轉售商：ProviderClient 契約為何刻意同步且無迴圈、能力矩陣如何驅動 vision/PDF 降級、TokenUsage 的快取拆分，以及 561 行 compaction.py 的完整壓縮演算法。"
+description: "OpenWorker 為何不用 LiteLLM 而自寫 provider 層:同步無迴圈的 ProviderClient 契約、能力矩陣驅動的 vision/PDF 降級、TokenUsage 快取拆分,以及 561 行 compaction.py 的 context 壓縮演算法。"
 categories: ["all", "ai", "engineering"]
 tags: ["OpenWorker", "LLM", "Provider Abstraction", "Context Window", "Prompt Caching", "Token", "Python"]
 authors: ["yen"]

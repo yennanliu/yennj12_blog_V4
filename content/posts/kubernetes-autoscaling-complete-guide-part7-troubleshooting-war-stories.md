@@ -6,7 +6,7 @@ weight: 7
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "Troubleshooting", "Debugging", "Production", "Incidents", "War Stories", "Performance", "Autoscaling", "SRE", "DevOps"]
-description: "Part 7 of the Kubernetes Autoscaling series: Real-world production incidents, debugging workflows, common failure scenarios, and hard-learned lessons from operating autoscaling at scale. Battle-tested troubleshooting guides and postmortem analysis."
+description: "Three autoscaling incidents replayed minute by minute: HPA thrashing on Black Friday, a VPA OOMKill loop and a Spot cascade, with a debugging runbook."
 readTime: "26 min"
 ---
 

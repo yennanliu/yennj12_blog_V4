@@ -5,7 +5,7 @@ draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
 tags: ["Microservices", "Distributed Systems", "Scalability", "patterns"]
-description: "Deep dive into proven microservices architecture patterns that help organizations scale their systems effectively while maintaining reliability and developer productivity."
+description: "Patterns that held up when a monolith serving millions of users was split into microservices: API gateway, service discovery, circuit breakers, observability."
 readTime: "12 min"
 ---
 

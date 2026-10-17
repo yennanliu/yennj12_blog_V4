@@ -6,7 +6,7 @@ weight: 3
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "HPA", "Autoscaling", "AWS", "EKS", "CDK", "TypeScript", "Tutorial", "Demo", "Apache", "DevOps"]
-description: "Part 3 of the Kubernetes Autoscaling series: Hands-on tutorial demonstrating Horizontal Pod Autoscaler with a real Apache-PHP application. Includes complete AWS CDK infrastructure code, Kubernetes manifests, load testing, and step-by-step deployment guide."
+description: "Watch HPA scale a real Apache-PHP app on EKS: CDK in TypeScript provisions the cluster, YAML deploys the workload, then you load-test and observe 1 to 10 pods."
 readTime: "25 min"
 ---
 

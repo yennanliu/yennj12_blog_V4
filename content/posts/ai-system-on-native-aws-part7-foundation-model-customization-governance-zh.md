@@ -2,7 +2,7 @@
 title: "AI System on Native AWS - Part 7 - 基礎模型客製化與模型治理"
 date: 2026-07-24T09:00:00+08:00
 draft: false
-description: "當通用模型不夠好、或你有大量專有資料想讓模型內化時,就得客製基礎模型。但企業真正的難題不是『怎麼 fine-tune』,而是『如何治理』——訓練資料哪來的、評估過了沒、誰核准上線、出問題能不能回溯。本篇用純 AWS 原生服務打造一條可治理的模型客製管線:RAG/Prompt/Fine-tune/蒸餾的決策框架、資料準備、Bedrock 客製模型與 SageMaker 微調、Model Registry、自動評估關卡、Model Cards 與審批工作流,全部用 CDK(CloudFormation)描述。"
+description: "多數「模型不夠好」該用 RAG 而非 fine-tune:先給一個 RAG/Prompt/Fine-tune/蒸餾決策框架,再用 Bedrock 客製模型、SageMaker 微調、Model Registry、自動評估關卡與審批流程,讓每個模型版本可稽核、可回滾。"
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "SageMaker", "Fine-tuning", "Model Governance", "MLOps", "Enterprise", "AI Engineering"]
 authors: ["yen"]

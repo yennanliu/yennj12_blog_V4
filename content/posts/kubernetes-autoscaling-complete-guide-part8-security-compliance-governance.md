@@ -6,7 +6,7 @@ weight: 8
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "Security", "RBAC", "Compliance", "Governance", "Policy", "Audit", "Multi-tenancy", "OPA", "Gatekeeper", "DevOps"]
-description: "Part 8 of the Kubernetes Autoscaling series: Complete guide to securing autoscaling infrastructure with RBAC, policy enforcement, compliance frameworks (PCI-DSS, HIPAA, SOC2), multi-tenancy patterns, audit logging, and governance best practices for enterprise Kubernetes."
+description: "Keep autoscaling from becoming a cost or security hole: RBAC scopes, OPA Gatekeeper limits on maxReplicas, multi-tenant quotas, compliance and audit logs."
 readTime: "30 min"
 ---
 

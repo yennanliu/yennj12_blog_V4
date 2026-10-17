@@ -5,7 +5,7 @@ draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
 tags: ["Prometheus", "Grafana", "AWS", "CDK", "Monitoring", "Observability", "Metrics", "ECS", "Kubernetes", "EKS", "fargate", "Alerting"]
-description: "Comprehensive guide to architecting a production-ready centralized Prometheus + Grafana monitoring platform using AWS CDK that aggregates metrics from multiple services, clusters, and infrastructure components with federation, remote storage, and advanced alerting."
+description: "Replace per-cluster Prometheus silos with one CDK-deployed Prometheus + Grafana platform that scrapes EKS, ECS and Lambda and dedupes alerts."
 readTime: "48 min"
 ---
 

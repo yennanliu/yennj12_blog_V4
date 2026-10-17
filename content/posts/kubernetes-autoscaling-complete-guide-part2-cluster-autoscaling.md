@@ -6,7 +6,7 @@ weight: 2
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "Autoscaling", "Cluster Autoscaler", "Karpenter", "EKS", "GKE", "Cloud Native", "Infrastructure", "Cost Optimization", "DevOps", "Cloud"]
-description: "Part 2 of the Kubernetes Autoscaling series: Comprehensive guide to cluster-level autoscaling covering Cluster Autoscaler, Karpenter, cloud provider-specific solutions (EKS, GKE, AKS), and emerging technologies for intelligent node provisioning and cost optimization."
+description: "Scale nodes, not just pods: Cluster Autoscaler vs Karpenter, plus EKS, GKE and AKS native options, compared on provisioning speed, bin packing and Spot support."
 readTime: "32 min"
 ---
 

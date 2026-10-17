@@ -2,7 +2,7 @@
 title: "AI System on Native AWS - Part 5 - 生產化 MLOps 與可觀測性"
 date: 2026-07-22T09:00:00+08:00
 draft: false
-description: "前四篇蓋好了四個 AI 系統,但『能跑』跟『敢上線』之間隔著一整套 MLOps。本篇收束整個系列,講清楚 AWS 原生 AI 系統的生產化:SageMaker 的三種部署策略與藍綠/金絲雀更新、Bedrock 模型呼叫日誌與 CloudWatch/X-Ray 可觀測性、模型漂移偵測、成本治理與 tag 分帳、以及用 CDK Pipelines 做基礎設施 CI/CD。全部用 CDK(CloudFormation)描述,並附一張跨五篇的系統對照總表。"
+description: "把「能跑」的 AI 系統變成「敢上線」:SageMaker 藍綠/金絲雀部署、Bedrock 呼叫日誌與 CloudWatch/X-Ray 可觀測性、模型漂移偵測、Cost Allocation Tag 分帳,以及用 CDK Pipelines 做基礎設施 CI/CD。"
 categories: ["all", "ai", "engineering"]
 tags: ["AWS", "CDK", "CloudFormation", "MLOps", "SageMaker", "CloudWatch", "Observability", "Bedrock", "CI/CD", "AI Engineering"]
 authors: ["yen"]

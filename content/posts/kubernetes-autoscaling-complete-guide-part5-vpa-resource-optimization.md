@@ -6,7 +6,7 @@ weight: 5
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "VPA", "Vertical Pod Autoscaler", "Resource Optimization", "Cost Optimization", "Right-sizing", "Performance", "FinOps", "DevOps", "Optimization"]
-description: "Part 5 of the Kubernetes Autoscaling series: Deep dive into Vertical Pod Autoscaler (VPA), resource right-sizing strategies, combining VPA with HPA, and production-grade resource optimization techniques for cost-effective Kubernetes operations."
+description: "Right-size pod requests with Vertical Pod Autoscaler: update modes, safe VPA + HPA combinations, production configs and the monthly cost of over-provisioning."
 readTime: "35 min"
 ---
 

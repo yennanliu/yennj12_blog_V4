@@ -2,7 +2,7 @@
 title: "Data Consistency Patterns in Java Enterprise Applications"
 date: 2025-01-28T00:00:00+08:00
 draft: false
-description: "Comprehensive guide to implementing data consistency patterns in Java applications, including optimistic locking, pessimistic locking, and distributed transactions with real-world case studies and trade-off analysis."
+description: "Stop double bookings and lost updates in Java: optimistic vs pessimistic locking, JPA versioning, two-phase commit and its alternatives, with the cost of each."
 categories: ["all", "engineering", "architecture"]
 tags: ["Java", "Spring Boot", "Data Consistency", "Concurrency", "Distributed Systems", "JPA", "Two-Phase Commit"]
 authors: ["yen"]
