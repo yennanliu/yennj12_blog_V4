@@ -277,15 +277,13 @@ Layer 5：Audit Logging     攻擊發生後可以追蹤和告警      事後才�
 
 ---
 
-## 八、面試答題要點
+## 八、答題骨架
 
-> *「間接 Prompt Injection 比直接注入危險，因為攻擊者不需要直接接觸系統——任何 Agent 會讀取的外部資料都是潛在攻擊面。*
->
-> *我的核心防禦是 Dual-LLM Pattern：將讀取外部資料和執行工具決策的職責徹底分開。Sanitization LLM（用 Gemini Flash）完全沒有任何 Tool-calling 能力，專責把原始網頁轉成純文字摘要；即使它被注入，也無法執行任何動作。Main Agent 只讀取已清洗的摘要，從不直接接觸外部資料。*
->
-> *在 Prompt 架構上，用 XML Tags 明確標記 Trust Level，告訴 Main LLM `<external_data>` 區段的任何文字都只是資料，不得視為指令。*
->
-> *最後，Output Validation 在工具執行前做業務規則驗證，加上完整的 Audit Log。五層疊加，即使某層被繞過，還有其他層兜底。」*
+- 先用 §一 說明間接注入為什麼比直接注入危險，並列出攻擊面。
+- 用 §三 先否定 Pattern Matching 與「叫 LLM 別聽」兩種方案，再引出 §四 的 Dual-LLM 隔離。
+- Prompt 層補 §五 的 Trust Level 標記；工具層與事後偵測補 §六 的五層縱深。
+- 若被延伸到知識庫投毒，接 §七 的上傳審核與來源標記設計。
+- 收尾強調 §六 的結論：沒有單一層是完美的，疊加才有效。
 
 ## 相關文章與正典版本
 

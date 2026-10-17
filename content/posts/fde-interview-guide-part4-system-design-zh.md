@@ -7,7 +7,7 @@ description: "從面試官的視角，完整拆解兩道 FDE 高頻系統設計�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "System Design", "RAG", "RBAC", "Cache", "NL2SQL", "BigQuery", "Interview", "Cloud", "RKK", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "14 min"
 ---
 
 > System Design 是 FDE 面試最能展現工程深度的地方。  
@@ -412,39 +412,13 @@ Internal Copilot：
 
 ---
 
-## 六、面試回答完整示範
+## 六、答題骨架
 
-```
-面試官期待聽到的回答結構：
-
-第一分鐘（釐清需求）：
-「在開始設計之前，我想先確認幾個關鍵需求。
- 不同部門能看的文件不同嗎？這決定我是否需要 RBAC。
- Latency 要求大概是多少？這影響我的 Cache 策略。
- 資料有合規要求嗎？這影響部署在哪個 Region。」
-
-第二到五分鐘（高層架構）：
-「好，基於這些需求，我的架構分四層：
- API Gateway 負責 Auth 和 Rate Limiting，
- Chatbot Service 負責 RBAC 和 RAG 邏輯，
- Cache Layer 用 role-aware key 避免資料洩漏，
- Logging 記錄每個 request 的 user_id 和文件引用，供審計用。」
-
-第三部分（關鍵設計決策）：
-「我想特別說兩個設計決策：
- 第一，RBAC 要在向量搜尋前就過濾，不是搜完再過濾——
- 原因是 post-filter 會破壞 Top-K 的相關性。
- 第二，Cache key 要帶用戶的 role set——
- 同一個問題，Manager 和 Employee 看到的答案不同。」
-
-最後（Trade-off 和 Failure）：
-「這個設計最可能出問題的地方有兩個：
- 第一，文件更新後 Cache invalidation 的時間窗口——
- 用戶可能看到舊的回答，我的方案是文件更新時主動 purge 相關 cache。
- 第二，RBAC pre-filter 縮小了搜尋空間，
- 如果某個 role 的文件很少，recall 可能下降——
- 監控 per-role 的回答準確率可以及早發現。」
-```
+- 開場先照 §一 的三個考點與 §二 步驟一的清單反問需求，再畫 §二 步驟二的四層架構。
+- 第一題的關鍵決策挑 §二 設計決策二（RBAC pre-filter）與設計決策三（role-aware cache key）講透，其餘點到即可。
+- 第二題切到 §三：先說 NL2SQL 與 RAG 的核心差異，再講設計決策一的安全邊界與設計決策二的失敗模式。
+- 用 §四 的對比表收斂兩題的差異，說明幻覺形式、RBAC 難度與成本來源為什麼不同。
+- 最後主動交代 failure mode（cache invalidation 窗口、pre-filter 的 recall 下降），對應 §五 的地雷題。
 
 ---
 

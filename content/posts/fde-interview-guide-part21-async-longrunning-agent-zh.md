@@ -305,17 +305,13 @@ GKE 的彈性擴縮架構：
 
 ---
 
-## 八、面試答題要點
+## 八、答題骨架
 
-> *「長任務不能用同步 HTTP 模型，因為 30~60 分鐘遠超過任何 Load Balancer 的 timeout，且無法容錯。*
->
-> *我的設計是解耦架構：API Gateway 收到請求後立即寫入 Cloud Pub/Sub 並回傳 task_id（< 100ms）。GKE 上的 Worker Pool 異步消費任務，可以根據 Queue 深度自動水平擴縮。*
->
-> *容錯靠 Checkpoint：每完成一個有意義的步驟（爬完一批網頁、Agent 子任務完成），就把當前狀態寫入 Redis（熱狀態）和 Firestore（持久化）。Worker 崩潰後，排程器重新分配任務，新 Worker 從最後的 Checkpoint 繼續，不重複消耗 Token。*
->
-> *進度回報用 Polling 或 SSE（依用戶體驗需求選擇）。結果存 GCS，用戶透過 Signed URL 下載。*
->
-> *邊界情況：用 Redis Distributed Lock 避免重複執行；TTL 硬上限防止任務永遠不結束；429 限流用 Exponential Backoff + 任務重排。」*
+- 先用 §一 的三個限制說明同步 HTTP 為什麼不可行。
+- 架構講 §二 的解耦設計（Gateway → Pub/Sub → Worker Pool → State Store），並提 ack deadline 的注意事項。
+- 崩潰不從頭來過的答案是 §三 的 Checkpoint 流程與粒度取捨。
+- 進度回報與擴縮分別接 §四 的三種方案與 §五 的 HPA 設計。
+- 收尾主動交代 §六 的四個 edge case，並用 §七 的狀態機收斂。
 
 ## 相關文章與正典版本
 

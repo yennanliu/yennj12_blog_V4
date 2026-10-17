@@ -7,7 +7,7 @@ description: "從面試官的視角，整理 FDE 面試中最關鍵的 LLM 實�
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "LLM", "Prompt Engineering", "Embedding", "Token", "RAG", "CoT", "ReAct", "Interview", "Cloud", "RKK", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "15 min"
+readTime: "14 min"
 ---
 
 > 這篇是 FDE 面試系列的最後一篇基礎知識篇。  
@@ -418,34 +418,12 @@ Embedding 的品質直接決定 retrieval 的品質。
 
 ---
 
-## 面試回答完整示範
+## 答題骨架
 
-```
-面試官問：「這三塊——Token、Prompt Engineering、Embedding——
-         你在系統設計裡怎麼用？」
-
-Token + Context Budget：
-「設計 RAG 系統時，我會明確規劃 context budget：
- System Prompt 約 500 tokens，User Query 約 100 tokens，
- 剩下的空間分給 Retrieved Chunks 和對話 History。
- Chunk Size 設多大、Top-K 取幾個，都是由 context budget 決定的，
- 不是隨意設的。」
-
-Prompt Engineering：
-「對於需要多步推理的問題，我用 CoT——
- 在 Prompt 加上『請一步步思考』讓 LLM 展示推理過程，
- 這能顯著提升複雜問題的準確率。
- 如果需要查外部資料，改用 ReAct——
- 讓 LLM 的推理和 Tool Calling 交替進行。
- 對準確率要求極高的場景，考慮 Self-Consistency——
- 跑 5 次取眾數，但代價是 5 倍成本，要跟客戶確認 budget。」
-
-Embedding 選型：
-「GCP 環境我選 text-embedding-004，因為原生整合、支援 task_type。
- 中文為主的知識庫，我會認真評估 BGE 系列的實際 recall@k，
- 因為它在中文 benchmark 上明顯優於通用多語言模型。
- 最終選型我不靠直覺——用客戶的真實資料跑 retrieval recall@5 比較。」
-```
+- Context budget 用 §一「Context Window 的工程意涵」的拆帳方式回答，說明 Chunk Size 與 Top-K 怎麼被它決定。
+- 複雜推理的技法從 §二 挑 CoT 起手，需要外部資料改 ReAct，精準度至上再談 Self-Consistency 及其代價。
+- Embedding 選型回到 §三 的選型速查與 task_type 設計，並強調用真實資料跑 recall@k 而非直覺。
+- 延伸問題（CoT vs ReAct、Self-Consistency 的代價、長 context 取代 RAG）答案在「面試官地雷題」。
 
 ---
 

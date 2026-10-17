@@ -351,32 +351,13 @@ Parent-Child  小塊搜尋，命中後帶回大塊上下文   答案需要完整
 
 ---
 
-## 八、面試回答完整示範
+## 八、答題骨架
 
-```
-面試官期待的回答結構：
-
-一句話定義（10 秒）：
-「RAG 讓 LLM 在生成前先查外部知識庫，
- 以減少幻覺並支援知識的即時更新。」
-
-流程（30 秒）：
-「整個流程是：用戶問題先做 Embedding，
- 拿到向量後去 Vector DB 查最相關的 3-5 個 Chunk，
- 把這些 Chunk 注入 Prompt，LLM 再根據這個 Context 回答。」
-
-vs Fine-tuning（20 秒）：
-「它跟 Fine-tuning 的核心差異是——
- RAG 適合知識需要頻繁更新、需要引用來源的場景；
- Fine-tuning 適合改變模型的推理模式或輸出格式。」
-
-品質改善（1 分鐘）：
-「如果回答品質不好，我會先診斷是 Retrieval 問題還是 Generation 問題。
- Retrieval 問題的改善方向是 Hybrid Search、Reranker、更好的 Chunking；
- Generation 問題的改善方向是 Faithfulness Prompt 和 Grounding 策略。
- 改善前我會先建立評估 Pipeline，
- 用 RAGAS 的 Context Recall 和 Faithfulness 作為基線指標。」
-```
+- 先用 §一 的一句話定義開場，再走一遍 §一 的五步流程。
+- 第二步帶到 §三 的「動態 vs 靜態知識」判斷框架，說明為什麼此場景選 RAG 而不是 Fine-tuning。
+- 被問到品質不好時，先用 §五 的 A/B 分類定位是 Retrieval 還是 Generation 問題，再分別給 §五 的改善方向。
+- 收尾點出 §五 方向五的評估指標與 §六 的 overflow 處理，表示改善前先建基線。
+- 追問時回到 §七 的地雷題：RRF、兩階段 Reranker、RAG 無法消除的幻覺。
 
 ---
 

@@ -7,7 +7,7 @@ description: "以系統設計視角拆解 Multi-Tool 並行執行架構：為什
 categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Tool Calling", "Concurrency", "DAG", "Parallel", "ADK", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "9 min"
+readTime: "10 min"
 ---
 
 > LLM 說「我需要查 User Profile、Order History、Risk Score」。  
@@ -287,17 +287,13 @@ LLM 可能輸出：
 
 ---
 
-## 八、面試答題要點
+## 八、答題骨架
 
-> *「這道題的核心是：識別哪些工具可以並行，哪些有依賴關係，然後設計執行引擎最大化並行度。*
->
-> *架構設計：LLM 輸出 tool_calls 後，中間層先建立 DAG 依賴圖。無依賴的工具分為同一個 Execution Tier，並行執行（asyncio.gather() 或 Google ADK 的並行框架）；有依賴的工具等上游完成後才啟動，並自動注入上游的輸出結果。*
->
-> *延遲改善量化：原本 T₁+T₂+T₃=850ms，並行後 max(T₁,T₂,T₃)=400ms，降低 53%。在多輪對話中效果更顯著。*
->
-> *Google ADK 的優點：Tool Registry 可以讓工具顯式宣告依賴關係，Orchestrator 自動管理並行和輸出傳遞，省去手動 DAG 解析的工程量。*
->
-> *錯誤策略：依業務需求選 Fail-fast（缺任何工具都不行）或 Partial Success（部分工具失敗可降級處理），並有 Retry with Fallback 機制。」*
+- 先用 §一 的時間軸量化順序執行的代價，並說明在多輪對話裡會累積。
+- 依賴關係按 §二 的三種模式分類，再用 §三 的 DAG 引擎說明 Execution Tier 怎麼排；注意 §三 關於關鍵路徑的提醒。
+- 執行引擎選型用 §四 的比較表回答；若談到 ADK，要說清楚 §五 是設計提案而非現成功能。
+- 錯誤處理講 §六 的三種策略與對應場景。
+- 動態依賴的進階解法接 §七：讓 LLM 自己宣告 depends_on。
 
 ## 相關文章與正典版本
 
