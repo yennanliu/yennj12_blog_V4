@@ -5,9 +5,9 @@ draft: false
 weight: 41
 description: "以系統設計視角拆解分散式 AI 系統的故障排查：三個可觀測性成熟度階段、五步驟結構化診斷框架、症狀分類矩陣、完整決策樹圖、五種 AI 系統常見失效模式與特徵信號、SLO 與 Error Budget 設計，以及 Why X not Y 的關鍵可觀測性技術選型"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Troubleshooting", "Observability", "OpenTelemetry", "SLO", "Debugging", "Reliability", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Troubleshooting", "Observability", "OpenTelemetry", "SLO", "Debugging", "Reliability", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "23 min"
+readTime: "20 min"
 ---
 
 > 「AI 系統出問題了」不是問題描述，是症狀描述。  
@@ -621,17 +621,13 @@ Embed. Model       版本綁定機制，CI 檢查               靠人記得
 ──────────────────────────────────────────────────────────────────
 ```
 
----
+### 答題骨架
 
-## 十一、面試答題要點
-
-> *「聽到『慢了』和『奇怪的答案』，我的第一反應是：這是兩個獨立問題，還是同一個根因？我不會同時追兩個方向。AI 系統有一個特殊的診斷模式：品質問題的根因往往是 Retrieval 失敗（vector_search result_count=0），而不是 LLM 本身的問題——LLM 在沒有 Context 的情況下靠自己猜，症狀是「答非所問」，但 Error Log 完全沒有錯誤，只有 Trace 才能發現。*
->
-> *診斷流程：五步驟——釐清症狀（2 分鐘，把模糊描述轉化為具體數字）→ 查可觀測性資料（3 分鐘，先 Metrics 確認問題存在，再 Trace 瀑布圖定位到哪個 Span）→ 建立假說 → 測試假說 → 確認根因後修復並用指標驗證。*
->
-> *可觀測性設計：我會按三個階段推進。Phase 1（上線前必備）：結構化日誌 + 基本告警。Phase 2（正式上線後）：OTel Distributed Tracing，每個 LLM 呼叫、Tool 呼叫、Vector Search 都有獨立 Span，帶 result_count、input_tokens、finish_reason 等 Attribute。Phase 3（企業級）：SLO + Error Budget，讓部署決策量化，Shadow Eval 主動監控品質退化。*
->
-> *為什麼選 OTel 不選廠商專有 SDK：OTel 是業界標準，換 Trace 後端不需要改代碼。為什麼選 P95 不選 P50 或 P99：P95 在代表大多數用戶和排除極端異常值之間最平衡，是 AI 系統 SLO 的最佳指標。」*
+- 第一句先拆題：「慢」和「奇怪的答案」是兩個問題還是同一根因，用 §一 說明 AI 系統為何特殊。
+- 排查思路照 §三 的五步驟走，用 §四 的症狀矩陣與 §五 的決策樹縮小範圍，對照 §六 的五種失效模式。
+- 示範一次完整流程時直接引 §九 的案例。
+- 「平時怎麼設計可觀測性」照 §二 的三個成熟度階段講，SLO 與 Error Budget 接 §七。
+- 選型追問（OTel vs 廠商 SDK、P95 vs P99）用 §八 回答，收尾引 §十 的系統效應。
 
 ## 相關文章與正典版本
 

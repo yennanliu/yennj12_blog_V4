@@ -5,7 +5,7 @@ draft: false
 weight: 1
 description: "vLLM 原始碼與架構導讀系列第一篇：用一張全景圖說清楚這個 9 萬星的 LLM 推論引擎由哪些子系統組成、一個請求進來之後經過哪些階段、GPU 記憶體到底被誰吃掉，以及 V1 重寫改變了什麼。"
 categories: ["all", "ai", "engineering", "infrastructure"]
-tags: ["vLLM", "LLM", "AI", "Inference", "PagedAttention", "Architecture", "GPU", "繁體中文"]
+tags: ["vLLM", "LLM", "AI", "Inference", "PagedAttention", "Architecture", "GPU"]
 authors: ["yen"]
 readTime: "17 min"
 ---

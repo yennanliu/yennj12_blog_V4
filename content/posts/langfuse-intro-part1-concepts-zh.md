@@ -6,7 +6,7 @@ description: "LLM 應用最可怕的地方,是它「壞掉時看起來跟正常�
 categories: ["all", "ai", "engineering"]
 tags: ["Langfuse", "LLM", "Observability", "LLMOps", "Tracing", "Evaluation", "Monitoring", "AI Engineering"]
 authors: ["yen"]
-readTime: "14 min"
+readTime: "7 min"
 ---
 
 > 傳統後端壞掉:噴 500、log 一條 stack trace、監控告警響——你馬上知道。

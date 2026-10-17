@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "AI 顧問 Agent 團隊上線後怎麼辦？本文從 DevOps/SRE 角度，涵蓋系統效能評估、品質驗證、監控告警、部署策略、以及持續改善的 Roadmap。"
 categories: ["all", "ai", "infrastructure"]
-tags: ["AI Agent", "DevOps", "SRE", "LangSmith", "監控", "部署", "評估", "繁體中文", "Agent"]
+tags: ["AI Agent", "DevOps", "SRE", "LangSmith", "監控", "部署", "評估", "Agent"]
 authors: ["yen"]
 readTime: "15 min"
 ---

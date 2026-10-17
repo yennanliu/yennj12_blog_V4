@@ -31,6 +31,13 @@ read one.
 6. The CLAUDE.md "no Google" rule applies only to interview posts — finance posts name Alphabet,
    Google Cloud, etc. freely.
 
+## Model the post on the site's best
+
+Before drafting, skim the matching exemplar and match its shape: `meta-2025-10k-deep-dive-zh`
+(every figure traced to the filing, computed ratios labelled 計算值, bridge tables, honest
+signal), `industry-map-semiconductor-part6-*` (value chain, chokepoint scores, margin pools,
+bear case, 反轉條件), `aio-geo-part11-*` (a `[可驗證]/[單一源]/[推估]` label on every statistic).
+
 ## Pick the post type
 
 | type | core question | typical sections |

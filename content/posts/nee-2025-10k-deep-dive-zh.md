@@ -2,7 +2,7 @@
 title: "NextEra Energy (NEE) 2025 10-K 深度解析"
 date: 2026-07-19T09:00:00+08:00
 draft: false
-description: "用 10k-digest 方法對 NextEra Energy FY2025 年報做機構級深度拆解:兩大引擎(FPL 受監理公用事業 vs NEER 全球最大再生能源開發商)、費率基礎與核定 ROE、天量資本支出與深度負自由現金流、$956 億債務與利率敏感度、GAAP 淨利下滑但調整後 EPS 續增之謎、十年股息成長軌跡、情境分析、風險矩陣與投資訊號。"
+description: "NextEra Energy (NEE) FY2025 10-K:GAAP EPS 連兩年倒退但調整後 EPS +8.2%、股息再升 10%,背後是 $246 億資本支出、FCF −$121 億、$956 億債務與 2.4 倍利息保障。用公用事業的尺檢視這台舉債成長機器。"
 categories: ["all", "finance"]
 tags: ["NEE", "NextEra Energy", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "公用事業", "再生能源", "電力", "investing"]
 authors: ["yen"]

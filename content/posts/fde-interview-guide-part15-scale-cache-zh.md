@@ -5,9 +5,9 @@ draft: false
 weight: 15
 description: "以系統設計視角拆解 AI Agent 的規模化挑戰：為什麼 LLM 系統的擴展和傳統 Web 不同、三層 Cache 各解決什麼問題、Stateful Agent 怎麼做水平擴展——含完整架構圖與成本估算框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Scale", "Cache", "KV Cache", "Semantic Cache", "System Design", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Agent", "Scale", "Cache", "KV Cache", "Semantic Cache", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "12 min"
 ---
 
 > 把 Agent 從 1 個用戶擴展到 10 萬個用戶，  
@@ -350,17 +350,13 @@ P → Performance  各層 hit rate + 成本節省估算
 E → Edge Cases   cache invalidation、冷啟動、個人化問題
 ```
 
-**完整範例回答：**
+**答題骨架：**
 
-> *「先估算規模。10 萬 DAU，每人 3 次查詢，30 萬請求/天。Gemini Flash 每月基線成本約 $2,800，這驅動了 cache 設計的必要性。*
->
-> *架構上我會做三層：L1 Redis 做 exact match 的 hot query cache（15% hit rate）；L2 Semantic Cache 用向量相似度複用語意相近的答案（35% hit rate）；L3 Vertex AI Context Cache 把固定的 system prompt 和 RAG 知識庫 prefix 快取，prefix token 成本降低 75%。*
->
-> *Agent instance 本身完全無狀態，session state 和 memory 全部外部化到 Redis 和向量資料庫，可以自由水平擴展。*
->
-> *三層 cache 合計月節省約 68%，從 $2,800 降到 $900 左右（示意估算）。*
->
-> *邊界情況：知識庫更新時需要清除相關 Semantic Cache；個人化回答不進共享 cache，以 user_id 為 key 隔離。」*
+- C：先用 §七 的五步框架估規模與無 cache 基線，開場就給數量級。
+- A：架構講 §三 的三層 Cache，再接 §六 的狀態外部化說明為什麼能水平擴展。
+- P：各層 hit rate 與節省比例直接引用 §七 的範例算法，說明省下來的錢從哪一層來。
+- E：邊界情況走 §八 的三種 invalidation 與 §四「什麼不應該被 Cache」。
+- 被追問閾值或 KV Cache 何時划算時，答案在 §四 的閾值 trade-off 與 §五 的划算條件。
 
 ---
 

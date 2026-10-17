@@ -5,7 +5,6 @@ draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "Claude Code", "最佳實踐", "開發效率", "提示工程", "工作流程", "生產力", "Development Tools"]
-summary: "完整的 Claude Code 最佳實踐指南：從基礎使用到進階技巧，涵蓋提示工程、檔案管理、錯誤處理與團隊協作，幫助開發者充分發揮 AI 輔助開發的潛力。"
 description: "完整的 Claude Code 最佳實踐指南：從基礎使用到進階技巧，涵蓋提示工程、檔案管理、錯誤處理與團隊協作，幫助開發者充分發揮 AI 輔助開發的潛力。"
 readTime: "24 min"
 ---

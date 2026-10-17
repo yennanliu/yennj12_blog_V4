@@ -5,8 +5,7 @@ draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture", "infrastructure"]
 tags: ["Serverless", "AWS", "CDK", "DynamoDB", "Lambda", "API Gateway"]
-summary: "Deep dive into designing and building a production-ready URL shortener using AWS serverless services, exploring architectural tradeoffs, and implementing with AWS CDK."
-description: "Deep dive into designing and building a production-ready URL shortener using AWS serverless services, exploring architectural tradeoffs, and implementing with AWS CDK."
+description: "A URL shortener on Lambda, API Gateway and DynamoDB with CDK that redirects in under 100 ms, absorbs viral spikes and costs nothing idle."
 readTime: "18 min"
 ---
 

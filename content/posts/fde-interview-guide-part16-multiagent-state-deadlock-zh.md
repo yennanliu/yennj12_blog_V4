@@ -5,9 +5,9 @@ draft: false
 weight: 16
 description: "以系統設計視角拆解 Multi-Agent 的狀態管理與死鎖問題：為什麼階層式授權架構會產生死循環、State Reducer 的設計原理、分散式 Checkpoint 策略，以及如何在 LangGraph 中設計收斂的 Agent 圖"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Multi-Agent", "LangGraph", "State Management", "Deadlock", "System Design", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Agent", "Multi-Agent", "LangGraph", "State Management", "Deadlock", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "11 min"
 ---
 
 > 面試官不只想聽你說「加 max_loops 限制」。  
@@ -325,15 +325,13 @@ LangGraph Graph 結構設計：
 
 ---
 
-## 七、面試答題要點
+## 七、答題骨架
 
-> *「問題有兩個層面。第一層是架構設計問題：法務 Agent 和財務 Agent 的職責邊界沒有明確定義，導致兩者互相等待，形成循環依賴。根本解法是讓每個 Agent 能獨立輸出確定性結果，由 Router 負責綜合判斷，而不是讓子 Agent 互相協調。*
->
-> *第二層是 State Management 問題：多個 Agent 同時寫入 Global State 會有 Race Condition。解法是用 Append-only Reducer，每個 Agent 只能寫入自己的 substate，確保互相隔離。*
->
-> *護欄設計：在每條 Conditional Edge 上加 iteration_count >= 5 的硬性跳出，超過就轉 Fallback，觸發 Alert，等待人工處理。*
->
-> *狀態持久化：用 Redis 存 Hot Path 的 Checkpoint，用 Firestore 存完整任務歷史，確保 Worker 崩潰後能從斷點續傳。」*
+- 先用 §三 的四步讀日誌：數迭代次數、追呼叫鏈、看 State 有沒有推進，定位到 §一 的哪一種根因。
+- 根本解法先講 §四 策略一的 Agent 邊界，再講策略二的 Append-only Reducer 解決 Race Condition。
+- 護欄與恢復分別接 §四 策略三的 iteration 上限與策略四的 Checkpoint。
+- 狀態存哪裡用 §五 的 Redis vs Firestore 對照表回答，說清楚各自存什麼。
+- 收尾把設計映射到 §六 的 LangGraph 圖結構：每條 cycle 都有計數器護欄。
 
 ## 相關文章與正典版本
 

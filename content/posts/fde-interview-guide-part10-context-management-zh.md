@@ -5,9 +5,9 @@ draft: false
 weight: 10
 description: "以系統設計視角拆解 AI Agent 的 Context Management：核心問題是什麼、有哪些策略、為什麼選這個、trade-off 怎麼算——含完整架構圖與面試答題框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Context Management", "LLM", "Context Window", "Memory", "System Design", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Agent", "Context Management", "LLM", "Context Window", "Memory", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "11 min"
 ---
 
 > Context Management 的核心問題只有一個：  
@@ -345,13 +345,11 @@ P → Pick      選哪個？說出 trade-off
 E → Edge      你的策略在什麼情況下會失效？
 ```
 
-**完整範例回答：**
+**答題骨架：**
 
-> *「這個客服 Agent，每輪 300 tokens，100 輪就是 30K。加上 system prompt 和 RAG context，約 50K。Gemini Flash 雖然有 1M，但 50K 的每次推理成本和延遲是有感的。*
->
-> *我會用 Summary Buffer + Structured State 混合：保留最近 10 輪完整對話（3K tokens），把早期對話壓縮成 case summary（500 tokens）。同時維護結構化 state 記錄關鍵欄位：product_id、error_code、resolution_status。*
->
-> *失效場景：壓縮時可能丟掉關鍵的錯誤碼。所以壓縮 prompt 要明確標記「以下欄位必須保留」，並在 structured state 同步儲存關鍵數值。另外加 token 監控，超過 80% 自動觸發壓縮。」*
+- S/C 先用 §一 的成本曲線和 §二 的 Context 組成估出這個場景多快會滿、滿了要花多少。
+- O 列出 §三 的四種策略，P 直接套 §四 的決策框架與比較表說出選哪個、為什麼。
+- E 用 §五 的 Lost-in-the-Middle 和 §六 的 Token 監控說明策略何時失效、怎麼提前發現。
 
 ## 相關文章與正典版本
 

@@ -6,7 +6,6 @@ weight: 2
 authors: ["yen"]
 categories: ["all", "ai", "business", "creative"]
 tags: ["Midjourney", "Runway", "視覺設計", "4K", "深海", "太空", "AI生成", "動態視覺", "Streaming", "visual-design"]
-summary: "系列第二篇：使用 Midjourney V7 和 Runway Gen-3 創造令人驚嘆的 4K 深海與太空視覺。從提示詞工程到動態影片生成，打造沉浸式直播體驗。"
 description: "系列第二篇：使用 Midjourney V7 和 Runway Gen-3 創造令人驚嘆的 4K 深海與太空視覺。從提示詞工程到動態影片生成，打造沉浸式直播體驗。"
 readTime: "36 min"
 ---

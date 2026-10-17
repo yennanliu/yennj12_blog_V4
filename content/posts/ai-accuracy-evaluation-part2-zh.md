@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "LLM 的輸出沒有唯一標準答案，該怎麼客觀評估？本文介紹 BLEU、ROUGE、Perplexity、BERTScore 及 LLM-as-a-Judge 等方法，幫助你從多個維度評估語言模型的真實能力。"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "NLP", "BLEU", "ROUGE", "BERTScore", "LLM-as-a-Judge", "Evaluation", "繁體中文"]
+tags: ["AI", "LLM", "NLP", "BLEU", "ROUGE", "BERTScore", "LLM-as-a-Judge", "Evaluation"]
 authors: ["yen"]
 readTime: "15 min"
 ---

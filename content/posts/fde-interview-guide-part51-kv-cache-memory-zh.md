@@ -3,9 +3,9 @@ title: "FDE 面試指南 Part 51：百萬級多輪對話的 KV Cache 驅逐機�
 date: 2026-06-08T09:00:00+08:00
 draft: false
 weight: 51
-description: "深度解析 B2B 長對話 SaaS 系統中 KV Cache 驅逐策略設計，涵蓋 L1 Redis、L2 Vertex AI Context Caching、L3 Firestore Snapshot 三層架構，以及 LRU 結合語義重要性評分的快取壓縮閘道，節省 80% 顯存開銷、帳單砍半的 Staff FDE 級解法。"
+description: "B2B 長對話 SaaS 的快取分層設計:L1 Redis 對話槽位、L2 Vertex AI Context Caching、L3 Firestore Snapshot,加上 LRU 結合語意重要性評分的壓縮閘道,每個升層與驅逐決策都給出數字閾值,目標帳單砍半。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "KV Cache", "LLM", "Vertex AI", "Redis", "Memory Optimization", "Eviction Policy"]
+tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "KV Cache", "LLM", "Vertex AI", "Redis", "Memory Optimization", "Eviction Policy", "fde-interview-guide"]
 authors: ["yen"]
 readTime: "26 min"
 ---
@@ -797,11 +797,13 @@ KV Cache 在 GPU 層面共享記憶體，理論上存在跨用戶讀取的風險
 | 單 session 最大 L2 快取大小 | 128K tokens | Cache Gateway 前置截斷 |
 | 全局每分鐘 L2 建立數（配額保護） | 1,000 次 | Token Bucket 限流 |
 
----
+### 10.5 答題骨架
 
-## 十一、面試答題要點
-
-> *「這題的核心是把 KV Cache 管理從『技術問題』升維成『財務工程問題』。我會設計三層架構：L1 是 Redis Cluster，存最近 3 輪對話，LRU 驅逐保證 < 2ms 讀取；L2 是 Vertex AI Context Caching，但觸發條件是雙重門檻——對話必須超過 32K tokens 且過去 60 分鐘頻率超過 3 輪/小時，用 Redis 滑動窗口驗證，這樣精確避開短對話的計費陷阱；L3 是 Firestore 存放 Flash 模型壓縮的 Core Memory Snapshot，不超過 1K tokens。驅逐邏輯同樣有精確數字：閒置超過 15 分鐘，異步觸發 Flash 壓縮任務，壓縮成功後主動呼叫 API 釋放 L2，不等 TTL 自然過期。這套架構在 100 萬用戶規模下，GPU VRAM 使用率從 92% 降至 41%，每 MAU 每天費用從 $1.20 降至 $0.30，月帳單從 $120K 直接砍到 $36K，CFO 的目標兩個月內完全達成。關鍵 Why-X-not-Y：選 Flash 不選 Pro 做壓縮，因為 Context Recall 差距只有 12%（78% vs 90%），但成本差 10 倍，在壓縮任務這個 batch 場景完全值得。」*
+- 開場用 §一 把題目升維：KV Cache 管理是財務工程問題，點出 1.2 的計費陷阱。
+- 主幹照 §二 的三個演進階段講，再依序展開 L1（§三）、L2（§四，特別是 4.1 的升層決策矩陣）、L3（§五）。
+- 統一決策與降級用 §六 的 Cache Gateway 決策樹與 Circuit Breaker 回答。
+- CFO 的 50% 目標怎麼達成：引 §四 4.5 的成本精算與 §九 的前後對比數字。
+- 監控與容量規劃接 §七，選型理由（如 Flash vs Pro 做壓縮）用 §八，安全邊界用 10.1–10.4。
 
 ## 相關文章與正典版本
 

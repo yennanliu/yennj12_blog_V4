@@ -5,8 +5,7 @@ draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture", "infrastructure"]
 tags: ["AWS", "CDK", "ECS", "fargate", "superset", "rds", "postgresql", "ALB", "route53", "Analytics", "bi"]
-summary: "Comprehensive guide to architecting a highly available, production-grade Apache Superset deployment using ECS Fargate, RDS PostgreSQL, and AWS CDK for enterprise business intelligence at scale."
-description: "Comprehensive guide to architecting a highly available, production-grade Apache Superset deployment using ECS Fargate, RDS PostgreSQL, and AWS CDK for enterprise business intelligence at scale."
+description: "Run Apache Superset in production on ECS Fargate with RDS PostgreSQL, Redis and an ALB, all in AWS CDK, with the HA, security, cost and scaling decisions."
 readTime: "26 min"
 ---
 

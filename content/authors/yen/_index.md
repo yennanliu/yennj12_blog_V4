@@ -1,36 +1,24 @@
 ---
 title: "Yen"
-role: "Principal Software Engineer"
+role: "Software Engineer · AI Systems"
 avatar: "https://github.com/yennanliu.png"
-bio: "Yen is a Principal Software Engineer with expertise in distributed systems, database optimization, and building resilient architectures. Passionate about sharing technical knowledge and best practices."
+bio: "後端與 AI 系統工程師。在這裡寫 FDE 面試準備、AI 工程課程、系統架構、以及把 10-K 讀到數字為止的美股筆記。"
 social:
   twitter: "https://twitter.com/yennj12"
   linkedin: "https://linkedin.com/in/yennanliu"
   github: "https://github.com/yennanliu"
 ---
 
-Yen is a Principal Software Engineer with over 8 years of experience building large-scale distributed systems. Currently focused on platform architecture and performance optimization, with a track record of improving system reliability and developer productivity.
+Yen 是一位後端與 AI 系統工程師，長期在分散式系統、資料管線與 LLM 應用之間工作。這個部落格是他的工程筆記：面試情境怎麼拆、AI 工程該照什麼順序學、一個系統在 POC 到規模化之間會在哪裡斷掉，以及一份 10-K 讀到最後到底在說什麼。
 
-## Experience
+## 寫什麼
 
-- **Principal Software Engineer** - Current Company (2021-present)
-- **Senior Software Engineer** - Previous Tech Co (2018-2021)
-- **Software Engineer** - Startup Inc (2016-2018)
+- FDE 面試準備與核心機制（`fde-interview-guide`、`fde-core-concept`）
+- AI 工程從零開始課程（19 個 phase）
+- AWS、Kubernetes、Docker、Redis、Java/Spring 的架構與踩坑
+- 美股 10-K 深度解析與半導體產業地圖（教育性質，不構成投資建議）
+- Claude Code、MCP、vLLM、RAGFlow、Ollama 等工具的原始碼閱讀
 
-## Expertise
+## 開源
 
-- Distributed Systems Architecture
-- Database Performance Optimization
-- System Reliability & Resilience
-- Microservices Design Patterns
-- Performance Engineering
-- Cloud Infrastructure (AWS, GCP)
-- JVM & Python Programming
-
-## Technical Interests
-
-Yen is particularly interested in the intersection of performance engineering and system reliability, focusing on how architectural decisions impact both system behavior and developer experience. He enjoys sharing insights about building systems that scale gracefully under load while maintaining developer velocity.
-
-## Writing & Speaking
-
-Regular contributor to engineering blogs and technical publications, with a focus on practical lessons learned from building production systems. Enjoys mentoring junior engineers and contributing to open-source projects related to system observability and performance monitoring.
+程式碼與資料都在 [GitHub](https://github.com/yennanliu)：這個部落格本身、`InvestSkill`（Claude Code 的美股分析技能）、`finance_data`（SEC 申報文件管線）等。

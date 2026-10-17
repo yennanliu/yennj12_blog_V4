@@ -6,7 +6,7 @@ description: "深拆半導體 EDA 與 IP 這一層:Synopsys、Cadence、Siemens 
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "EDA", "IP", "Synopsys", "Cadence", "Arm", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "10 min"
 ---
 
 > 大部分人談 AI 半導體,眼睛盯著 NVIDIA 的 GPU、台積電的製程。

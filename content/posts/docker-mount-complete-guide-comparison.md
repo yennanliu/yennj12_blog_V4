@@ -2,7 +2,7 @@
 title: "Docker Mount Complete Guide: Volumes, Bind Mounts, and tmpfs Comparison"
 date: 2025-10-11T10:00:00+08:00
 draft: false
-description: "Comprehensive guide to Docker mount types including volumes, bind mounts, and tmpfs. Learn the differences, use cases, pros/cons, and best practices for persisting data in Docker containers with practical examples."
+description: "Choose the right Docker mount every time: volumes for production data, bind mounts for development, tmpfs for secrets, compared on performance and backup."
 categories: ["all", "engineering", "infrastructure"]
 tags: ["Docker", "Containers", "Docker Volumes", "Bind Mount", "tmpfs", "Data Persistence", "DevOps", "Container Storage", "Docker Best Practices"]
 authors: ["yen"]

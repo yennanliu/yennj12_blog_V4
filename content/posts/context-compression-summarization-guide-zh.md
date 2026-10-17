@@ -5,7 +5,6 @@ draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
 tags: ["AI", "Claude Code", "Context Compression", "summarization", "token-optimization", "long-conversation", "memory-management", "agent-orchestration", "Development Tools"]
-summary: "多 Agent Token 優化系列 pt.3：深入探索 Context 壓縮與摘要技術，從滑動視窗、階層式摘要到語意壓縮，提供完整實作範例，幫助你打造可無限對話且成本可控的 AI 應用。"
 description: "多 Agent Token 優化系列 pt.3：深入探索 Context 壓縮與摘要技術，從滑動視窗、階層式摘要到語意壓縮，提供完整實作範例，幫助你打造可無限對話且成本可控的 AI 應用。"
 readTime: "35 min"
 ---

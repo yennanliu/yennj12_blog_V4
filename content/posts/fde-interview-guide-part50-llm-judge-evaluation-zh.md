@@ -5,9 +5,9 @@ draft: false
 weight: 50
 description: "深度解析如何在生產環境中建立多階抽樣的 LLM 自動化評估管線，涵蓋分層抽樣、RAG 三元組評估、位置偏見消除、Drift Alert 設計，以及 95% 成本控制策略。Staff FDE 級別實戰解答。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "GenAI", "LLM", "Evaluation", "MLOps", "Vertex AI", "Observability"]
+tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "GenAI", "LLM", "Evaluation", "MLOps", "Vertex AI", "Observability", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "23 min"
 ---
 
 > 多數工程師的做法：每次模型更新後，手動抽幾十筆對話，憑感覺評估品質有沒有退步。
@@ -715,11 +715,13 @@ def rag_evaluation_pipeline(
 | **第一層指標計算延遲** | — | 15–30 分鐘（批次） | < 60 秒（Dataflow 串流） | 近即時品質監控 |
 | **RAG 忠實度提升（副作用）** | 基線 3.2/5 | 3.8/5（評估本身迫使 Prompt 改善） | 4.2/5（持續迭代優化） | 評估驅動改進 |
 
----
+### 答題骨架
 
-## 十一、面試答題要點
-
-> *「面對 GenAI 品質監控，我會建立三層自動化評估管線：第一層對 100% 的生產日誌跑免費的輕量指標（BLEU、Tool-calling 失敗率），捕捉顯而易見的退化；第二層用統計學分層抽樣精準抽取 5% 的代表性對話，按租戶和意圖分類確保每個分層都有足夠樣本（最少 30 筆），送入 Vertex AI Pipelines 跑 LLM 裁判；裁判設計上，用 Chain-of-Thought 強制先輸出理由再給分，並動態隨機交換 Context 和 Answer 的輸入順序來消除 Position Bias——這兩個設計讓評分方差從 σ=0.8 降到 σ=0.3。監控層用週移動平均 Sigma 2 控制圖取代固定閾值，當 RAG 三元組任一維度下滑超過兩個標準差時，Cloud Monitoring 自動觸發 PagerDuty P1 警報。新模型上線前，先在 1% 影子流量上做 A/B 對比，用 Mann-Whitney U 檢定驗證改善是否統計顯著，這套流程讓模型升級失敗上線率從 15% 降到 1% 以下，同時把每日裁判費用控制在 $25–50，比全量評估節省 95%。」*
+- 先用 §一 的三個挑戰定調：評估本身需要智慧、裁判有偏見、漂移是漸進的。
+- 主幹照 §二 的三層／三階段架構講：全量輕量指標、分層抽樣（§三）、LLM 裁判（§四）。
+- 裁判可信度怎麼保證：§四 的 CoT 先理由後評分、位置交換消除偏見與其統計驗證。
+- 48 小時內確認沒有惡化用 §六 的 Shadow Evaluation 與統計判定；長期監控用 §五 的 Sigma 2 控制圖。
+- 管線落地接 §七，選型理由用 §八，收尾用 §九 的成本拆解與 §十 的前後對比。
 
 ## 相關文章與正典版本
 

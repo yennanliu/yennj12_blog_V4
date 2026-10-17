@@ -5,7 +5,7 @@ draft: false
 weight: 13
 description: "GEO 最有效的銷售動作是「當場跑診斷」。本篇給出 90 分鐘診斷工作坊的完整腳本、診斷報告模板、提案與定價錨定方式，以及最重要的一節：合約 KPI 該怎麼寫才不會自殺。附常見異議的回應與該拒絕的案子。"
 categories: ["all", "ai", "business"]
-tags: ["GEO", "AIO", "顧問", "銷售", "提案", "合約", "KPI", "客戶溝通", "繁體中文", "Consulting"]
+tags: ["GEO", "AIO", "顧問", "銷售", "提案", "合約", "KPI", "客戶溝通", "Consulting"]
 authors: ["yen"]
 readTime: "13 min"
 ---

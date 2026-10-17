@@ -2,7 +2,7 @@
 title: "Auto Agent System - Part 4 - 生產化之路:Langfuse 可觀測性、Docker 瘦身與 AWS 部署"
 date: 2026-07-04T12:00:00+08:00
 draft: false
-description: "AI 系統能跑,離能上線還很遠。本篇拆解 agent_auto_system 把自己推向生產的四個關鍵決策:在 executor 這個漏斗掛上 Langfuse trace(PR #19)、用 WeasyPrint 換掉 Chromium 讓 Docker image 瘦身(PR #9)、規劃 AWS ECS Fargate 部署(PR #10),以及完整的登入與 RBAC 權限系統(PR #11)。"
+description: "agent_auto_system 從能跑到能上線的四個決策:在 executor 這個唯一漏斗掛 Langfuse trace、用 WeasyPrint 換掉 Chromium 讓 Docker image 瘦身、規劃 AWS ECS Fargate 部署,以及登入與 RBAC 權限設計。"
 categories: ["all", "ai", "engineering"]
 tags: ["Langfuse", "Observability", "Docker", "AWS", "ECS", "Deployment", "RBAC", "AI Engineering", "LLMOps"]
 authors: ["yen"]

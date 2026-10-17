@@ -5,9 +5,9 @@ draft: false
 weight: 42
 description: "以顧問視角拆解 FDE 的核心軟技能：三個顧問參與階段（Discovery → Technical Assessment → POC Proposal）、利害關係人影響力地圖、需求挖掘五個核心問題、POC 場景評分矩陣、Value Story 框架、常見客戶異議處理，以及 Why X not Y 的顧問方法論選型決策"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Consulting", "Discovery", "Stakeholder", "POC", "ValueStory", "Requirements", "RKK", "Interview"]
+tags: ["AI", "FDE", "Consulting", "Discovery", "Stakeholder", "POC", "ValueStory", "Requirements", "RKK", "Interview", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "21 min"
+readTime: "19 min"
 ---
 
 > 客戶說：「我們想要 AI。」  
@@ -585,21 +585,13 @@ FDE 差異化         客戶感覺「你真正了解我們」       客戶感覺
   Discovery 框架解決的就是這個問題。
 ```
 
----
+### 答題骨架
 
-## 十一、面試答題要點
-
-> *「30 分鐘電話的目標，不是解釋 AI 能做什麼，而是找到一個具體的業務痛點，以及評估這個痛點能否在 3-4 週的 POC 內展示解決。*
->
-> *我會先判斷客戶的動機：這位 CTO 說的是競爭壓力（動機 A），所以 POC 策略是『Demo 效果最好的場景，速度優先』，而不是『業務影響最大的場景』。*
->
-> *電話的骨架：五個問題——業務痛點（具體場景故事）、量化影響（幾個人，多少時間）、資料可行性（在哪裡，什麼格式）、成功定義（什麼指標改善算成功）、資源承諾（客戶能投入什麼）。*
->
-> *同時做 Stakeholder Mapping：Champion 是這位 CTO，但誰是 Economic Buyer？IT 架構師的立場？最終用戶有沒有被納入？如果 Economic Buyer 還不知道這個專案，需要安排下一步對話。*
->
-> *電話結束前提議 POC 範圍：用評分矩陣選出技術可行性和 Demo 效果最高的場景，縮小到最具體的版本（3 台機器，3 週，2 位工程師驗收）。*
->
-> *Phase 2 的 Technical Assessment：和 IT 架構師確認技術限制，評估資料品質，把 POC 範圍精確到每一個交付物。Phase 3 的 POC Proposal：用 Value Story（量化 ROI）和 Economic Buyer 談，讓預算批准有數字依據，而不是靠熱情說服。」*
+- 先用 §一 重新定義目標：30 分鐘不是解釋 AI 能做什麼，而是找到一個可在 POC 內驗證的具體痛點，並判斷客戶動機。
+- 電話的骨架照 §五 的五個核心問題走，對話層次對應 §三。
+- 同步做 §四 的利害關係人地圖：Champion、Economic Buyer、IT 架構師、最終用戶各在哪裡。
+- 電話結束前用 §六 的評分矩陣提議 POC 範圍；後續步驟照 §二 的三個參與階段。
+- 若被追問 ROI 與異議處理，分別接 §七 的 Value Story 與 §八；方法論選型用 §九，收尾引 §十。
 
 ## 相關文章與正典版本
 

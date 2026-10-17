@@ -7,7 +7,7 @@ authors: ["yen"]
 categories: ["all", "engineering", "finance"]
 tags: ["Cryptocurrency", "Bitcoin", "Ethereum", "Quantitative Trading", "Python", "Data Analysis", "Trading Algorithms", "Technical Analysis", "Financial Engineering"]
 summary: "Master the fundamentals of cryptocurrency quantitative trading. Learn essential concepts, data collection methods, technical indicators, and build your first crypto trading analysis pipeline with Python. Complete with practical examples for Bitcoin and Ethereum."
-description: "Comprehensive guide to crypto quantitative trading fundamentals. Explore market microstructure, data sources, technical indicators, and statistical analysis. Build production-ready data pipelines for Bitcoin and Ethereum with Python, pandas, and ccxt."
+description: "Start crypto quant trading on solid ground: market microstructure, exchange data sources, technical indicators and statistical tests in a Python pipeline."
 readTime: "25 min"
 ---
 

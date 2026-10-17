@@ -5,8 +5,7 @@ draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
 tags: ["AI", "AWS", "CDK", "SageMaker", "Bedrock", "Machine Learning", "Music Generation", "Generative AI", "Lambda", "s3", "API Gateway"]
-summary: "Complete guide to architecting a production-ready AI music generation platform on AWS using CDK, comparing SageMaker and Bedrock approaches with detailed pros, cons, and implementation strategies for generating music from text prompts."
-description: "Complete guide to architecting a production-ready AI music generation platform on AWS using CDK, comparing SageMaker and Bedrock approaches with detailed pros, cons, and implementation strategies for generating music from text prompts."
+description: "SageMaker or Bedrock for serving MusicGen? A CDK architecture on AWS that keeps GPU spend in check, returns tracks in 30-90 s and swaps models with no downtime."
 readTime: "21 min"
 ---
 

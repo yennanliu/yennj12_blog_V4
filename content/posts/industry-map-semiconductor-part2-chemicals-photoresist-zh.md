@@ -6,7 +6,7 @@ description: "深拆半導體上游的特用化學與光阻這一層:光阻五�
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "光阻", "特用化學", "JSR", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "10 min"
 ---
 
 > 大部分人談半導體上游,想到的是矽晶圓、EUV 曝光機、EDA 這些「看得見」的關卡。

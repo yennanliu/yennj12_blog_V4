@@ -5,7 +5,7 @@ draft: false
 weight: 5
 description: "拆解 QM 的持久化能力：三種沙箱後端與能力損失偵測、Skills 的簽章與 git pack 匯入、Cron 的 leader lease 與收件人同意、三種記憶策略的抽取 prompt，以及部署目錄與私有 fork 兩種客製路線。"
 categories: ["all", "ai", "engineering"]
-tags: ["QM", "AI Agent", "Sandbox", "microVM", "Agent Skills", "Cron", "Memory", "繁體中文"]
+tags: ["QM", "AI Agent", "Sandbox", "microVM", "Agent Skills", "Cron", "Memory"]
 authors: ["yen"]
 readTime: "22 min"
 series: ["qm-deep-dive"]

@@ -6,7 +6,7 @@ description: "深拆半導體 GPU / 加速器設計這一層:NVIDIA、AMD 與 CS
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "GPU", "NVDA", "AMD", "CUDA", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "10 min"
 ---
 
 > 大部分人看 AI 晶片,只會問一句:「NVIDIA 的 GPU 效能是不是最強?」
