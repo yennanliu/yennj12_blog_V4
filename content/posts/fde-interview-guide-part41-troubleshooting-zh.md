@@ -99,9 +99,10 @@ readTime: "20 min"
   │   每個 LLM 呼叫、Tool 呼叫、Vector Search 都有獨立 Span
   ├── 完整 Metrics 儀表板
   │   P50/P95/P99 延遲、Token 消耗趨勢、快取命中率、Error Rate by type
-  ├── 告警精細化
-  │   P95 > 5s 持續 5 分鐘 → PagerDuty
-  │   Error Rate > 1% 持續 2 分鐘 → Slack
+  ├── 告警精細化（閾值與 §七 的 Alert 表一致）
+  │   Error Rate > 10% 持續 2 分鐘 → PagerDuty 電話（P1）
+  │   P95 > 8s 持續 5 分鐘 → PagerDuty 訊息（P2）
+  │   Error Rate 1–10% 持續 2 分鐘 → Slack（不叫醒人）
   └── 日誌結構化增強（加入 trace_id，可與 Trace 關聯）
 
   能解決的問題：
@@ -383,7 +384,10 @@ AI 系統故障的診斷決策樹：
   查詢時：       Query → Embedding Model v2 → 向量 B
                                               ↑ 不同向量空間！
   
-  餘弦相似度計算（A ⋅ B）= 接近 0（沒有語義關係）
+  兩個模型的向量空間互不相容：
+  ├── 維度不同（如 768 vs 1536）→ 查詢直接報錯或被 DB 拒絕
+  └── 維度剛好相同 → 餘弦相似度只是隨機數，沒有語義意義，
+      多數結果落在相似度門檻之下
   → vector_search 找不到相似向量 → result_count = 0 或很少
   → LLM 沒有 Context → 靠自己猜
 
@@ -571,7 +575,8 @@ Alert 設計（避免 Alert Fatigue）：
     ├── vector_search Span：9,800ms（正常：200ms）✗
     ├── vector_search result_count：0（！）
     └── llm.generate Span：280ms（正常）✓
-  關鍵發現：Vector DB 搜尋返回 0 結果 → LLM 在沒有 Context 下猜測
+  關鍵發現：兩個異常都在 vector_search 這一個 Span 上——
+    慢（9,800ms）和空（0 結果）不一定是同一個原因，要分開驗證
 
 步驟 3：建立假說（1 分鐘）
   假說 A：昨晚索引重建失敗，索引損壞
@@ -585,11 +590,16 @@ Alert 設計（避免 Alert Fatigue）：
   
   進一步確認：Vector Index 的重建失敗了（磁碟空間不足），
               Index 還是舊的（v1），但 Query 已經在用 v2
-              → Embedding Model 版本不一致 ✓
+              → Embedding Model 版本不一致 ✓（解釋 result_count = 0）
+  第二個原因：磁碟寫滿後 Vector DB 的 HNSW 索引無法載入，
+              查詢退化成全量暴力掃描（brute-force）
+              → 解釋 9,800ms 的延遲，和版本問題無關
 
 步驟 5：修復（立即 + 長期）
   立刻（30 秒）：把 Query Embedding 改回 v1（改環境變數，重啟 Agent）
-  確認：P95 延遲在 5 分鐘內回到 3s；品質指標恢復
+  確認：result_count 恢復 > 0，品質指標恢復（延遲仍高）
+  接著（10 分鐘）：清出 Vector DB 磁碟空間並重啟節點，讓 HNSW 索引重新載入
+  確認：P95 延遲在 5 分鐘內回到 3s
   
   長期：
   ├── 擴大 Vector DB 磁碟空間（根本原因）

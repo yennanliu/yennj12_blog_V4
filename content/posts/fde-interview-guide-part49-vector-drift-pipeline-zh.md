@@ -192,11 +192,11 @@ readTime: "25 min"
 | 元件 | 用途 | 月成本增量 |
 |------|------|-----------|
 | Cloud Pub/Sub | 解耦事件觸發與處理 | ~$5 |
-| Firestore Blacklist | O(1) 刪除 ID 過濾 | ~$8 |
+| Firestore Blacklist | 刪除 ID 的來源（onSnapshot 推送到查詢中台記憶體，查詢路徑不讀 Firestore） | ~$8 |
 | 查詢中台 API（Cloud Run） | 合併 Vector 結果 + Blacklist 過濾 | ~$20 |
 | Cloud Scheduler + Cloud Run Re-indexing | 每日自動重建 | ~$15 |
 
-**Phase 2 成本**：~$183/月
+**Phase 2 成本**：~$133/月（$85 + $5 + $8 + $20 + $15）
 
 **解決的問題**：
 
@@ -253,7 +253,7 @@ readTime: "25 min"
 │               │  │         ↓                            │    │  │
 │               │  │  合併 Top-K 候選集（去重）             │    │  │
 │               │  │         ↓                            │    │  │
-│               │  │  Blacklist 過濾（O(1)，Firestore）    │    │  │
+│               │  │  Blacklist 過濾（記憶體 Set）         │    │  │
 │               │  │         ↓                            │    │  │
 │               │  │  重新排序 + 回傳 Top-K                │    │  │
 │               │  └──────────────────────────────────────┘    │  │
@@ -350,7 +350,6 @@ async def parallel_vector_search(query_embedding, k=20):
     combined = merge_and_deduplicate(base_results, delta_results)
     # Delta 的結果優先（更新的文件應覆蓋舊版本）
 
-    # Blacklist 過濾（Firestore O(1) 讀取）
     deleted_ids = firestore.get_blacklist()
     filtered = [r for r in combined if r.doc_id not in deleted_ids]
 
@@ -361,7 +360,7 @@ async def parallel_vector_search(query_embedding, k=20):
 **關鍵細節**：
 
 - Parallel Query 的額外延遲開銷：**+5–10ms**（相比單索引查詢）
-- Firestore Blacklist 讀取延遲：< 3ms（得益於 Firestore 的記憶體快取）
+- Blacklist 過濾在查詢中台的記憶體內完成（< 0.1ms）：Firestore 是來源，透過 onSnapshot 監聽把變更推到每個中台實例的本地 Set；查詢路徑不打 Firestore——以 > 1,000 QPS × 20 個候選計算，若每個候選都讀一次 Firestore，一個月是 5 × 10¹⁰ 次讀取、數萬美元，而不是 $8
 - 合併 + 去重的時間複雜度：O(2k log 2k)，k=20 時幾乎可忽略
 
 ### 3.3 陷阱：Delta Index 向量版本衝突
@@ -452,9 +451,9 @@ notification_channels:
   - pubsub_topic: rebalance-trigger-topic  # 同時觸發自動修復
 ```
 
-### 4.3 陷阱：ef_search 參數未跟隨 Delta 大小調整
+### 4.3 陷阱：搜尋廣度參數未跟隨 Delta 大小調整
 
-Vertex AI Vector Search 的 `approximateNeighborsCount`（即 ef_search）參數決定 HNSW 圖在搜尋時探索的節點數。Delta Index 剛啟動時只有幾百個向量，ef_search=100 完全夠用；但當 Delta 增長至 90K 向量時，ef_search=100 會造成嚴重的鄰域搜尋不足，RECALL 大幅下滑。
+在 HNSW 類向量庫（pgvector、Qdrant 等）這個參數叫 `ef_search`，決定搜尋時探索的節點數；Vertex AI（ScaNN）對應的是 `leafNodesToSearchPercent` / `approximateNeighborsCount`，機制不同（分區掃描比例與候選數），但同樣要跟著 Delta 大小調。以下以 HNSW 的 `ef_search` 說明。Delta Index 剛啟動時只有幾百個向量，ef_search=100 完全夠用；但當 Delta 增長至 90K 向量時，ef_search=100 會造成嚴重的鄰域搜尋不足，RECALL 大幅下滑。
 
 **正確防護**：動態調整 ef_search，根據 Delta Index 當前向量數量設定：
 
@@ -587,7 +586,7 @@ Vertex AI Vector Search 的 `approximateNeighborsCount`（即 ef_search）參數
 │  05:31  ┌───────────────────▼─────────────────────────┐   │
 │  切換   │ 流量切換：Blue → Green                        │   │
 │         │ → 更新查詢中台的 Base Index Endpoint 指標     │   │
-│         │ → 使用 Cloud Run 環境變數熱更新（< 5 秒）     │   │
+│         │ → 中台監聽 Firestore 版本指標文件（< 5 秒）  │   │
 │         │ → 清空 Delta Index（重置為空）                │   │
 │         │ → 清空 Firestore Blacklist                    │   │
 │         └───────────────────┬─────────────────────────┘   │
@@ -632,7 +631,7 @@ check_delta_size
 
 ### 7.1 為什麼 Firestore 而非其他方案
 
-刪除黑名單是整個架構中最高頻讀取的元件。每一次用戶查詢都必須在 Blacklist 中過濾結果。
+刪除黑名單是整個架構中最高頻讀取的元件。每一次用戶查詢都必須在 Blacklist 中過濾結果——所以 Firestore 只能當**來源**，不能當**查詢路徑**：每個查詢中台實例啟動時載入整份 Blacklist 到記憶體 Set，之後靠 Firestore 的 onSnapshot 監聽接收增量（只對變更的文件計費），查詢時在本地 O(1) 過濾。
 
 **效能要求**：
 
@@ -652,7 +651,7 @@ Document: {doc_id}        ← 以 doc_id 作為 Document ID（天然 O(1)）
     reason: String        ← "user_delete" | "system_purge"
 ```
 
-**查詢方式**：
+**查詢方式**（單筆核對／除錯用；線上查詢路徑走上述的記憶體 Set）：
 
 ```python
 # O(1) 單次讀取，不掃描全集合
@@ -671,7 +670,7 @@ Blacklist 在每日夜間重建完成後會被清空。但在清空前，必須�
 
 **清空時機的競態條件（Race Condition）防護**：
 
-使用 Firestore Transaction 確保「清空 Blacklist」和「更新 Index Endpoint」是原子操作。若 Transaction 失敗，回滾至安全狀態，不清空 Blacklist。
+把「目前的 Base Index Endpoint」和「Blacklist 世代（epoch）」放在同一份 Firestore 版本指標文件裡，在一個 Transaction 內同時更新；查詢中台監聽這份文件，讀到新 epoch 才切換 Endpoint 並改用新的（空的）Blacklist 世代。Firestore Transaction 只能涵蓋 Firestore 自己的文件，不能把 Cloud Run 環境變數或部署動作包進去，所以切換的單一真相必須是這份文件，而不是環境變數。
 
 ### 7.3 陷阱：Blacklist 清空時機過早
 
@@ -681,7 +680,7 @@ Blacklist 在每日夜間重建完成後會被清空。但在清空前，必須�
 - 但 Blacklist 已清空
 - 導致已刪除文件的向量重新出現在搜尋結果中
 
-**正確防護**：使用 Firestore Transaction 將「清空 Blacklist」和「更新 Endpoint 環境變數」打包成原子操作。若任一步驟失敗，整個 Transaction 回滾。
+**正確防護**：不要分兩步「清空 Blacklist → 更新 Endpoint」，而是在一個 Firestore Transaction 內同時寫入新的 Endpoint 指標與新的 Blacklist epoch；舊 epoch 的黑名單文件留著，等所有中台實例都回報已切到新 epoch 後再由夜間任務刪除。這樣任一時刻查詢中台看到的 Endpoint 與 Blacklist 永遠是同一個世代。
 
 ---
 
@@ -690,7 +689,7 @@ Blacklist 在每日夜間重建完成後會被清空。但在清空前，必須�
 | 設計決策 | 選 X | 不選 Y | Flip Condition |
 |---------|------|--------|---------------|
 | **雙索引 vs 單索引即時更新** | Lambda Vector Architecture（Base + Delta 分離） | 單一索引持續 Upsert | 若向量總數 < 50K 且每日更新 < 500 筆，單索引維護成本更低，直接用 Phase 1 |
-| **Firestore Blacklist vs 向量直接刪除** | Firestore O(1) 過濾，刪除延遲 < 10 秒 | 直接從向量索引刪除（Tombstone 機制） | 若 Blacklist 超過 50K 條且不做夜間清空，改用 Redis Set 降低 Firestore 讀取成本 |
+| **Firestore Blacklist vs 向量直接刪除** | Firestore 為來源 + 中台記憶體 Set 過濾，刪除延遲 < 10 秒 | 直接從向量索引刪除（Tombstone 機制） | 若 Blacklist 超過 50K 條且不做夜間清空，記憶體 Set 改為 Redis Set（多實例共享一份，避免每個實例各載一份） |
 | **Cloud Dataflow vs Cloud Run 串流** | Dataflow：背壓控制、自動擴縮、At-Least-Once 語意 | Cloud Run：無內建背壓，突發流量易丟失事件 | 若每日更新量 < 1,000 份文件，Cloud Run 的冷啟動成本可接受，Dataflow 過於昂貴 |
 | **HDD Base Index vs SSD Base Index** | HDD Base：查詢 P99 < 80ms，成本低 60% | SSD Base：P99 < 20ms 但成本高 3x | 若 SLA 要求查詢 P99 < 30ms（如即時對話場景），必須升級為 SSD Base |
 | **Blue-Green 切換 vs 滾動更新** | Blue-Green：舊索引完整保留，驗證失敗可立即回滾 | 滾動更新：新舊向量混合，驗證困難，回滾複雜 | 向量索引不支援部分回滾，Blue-Green 幾乎是唯一合理選擇，無 Flip |

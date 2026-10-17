@@ -115,7 +115,7 @@ LLM Context Cache 的有效期可能是分鐘到小時不等，密鑰輪轉週�
 - 缺乏 VPC Service Controls：KMS 操作可能被誤用
 
 **成本估算**
-- Cloud KMS：$0.06/10,000 次密鑰操作 × 100,000 次/月 = $0.60/月
+- Cloud KMS：示意單價 $0.06/10,000 次密鑰操作（實際依金鑰保護等級不同，以價目表為準）× 100,000 次/月 ≈ $0.60/月
 - 工程師手動作業成本：$2,000/月（DEK 輪轉維護）
 - **月費合計：≈ $2,100（POC 規模）**
 
@@ -147,7 +147,7 @@ LLM Context Cache 的有效期可能是分鐘到小時不等，密鑰輪轉週�
 │  └────────────────────┬─────────────────┘                           │
 │                       │                                             │
 │              Dedicated Interconnect                                 │
-│              （10 Gbps，延遲 < 5ms，99.99% SLA）                    │
+│              （單條 10 Gbps，延遲 < 5ms；單線路不帶 SLA）           │
 │                       │                                             │
 │  ┌────────────────────▼─────────────────────────────────────────┐  │
 │  │                   GCP Project（Production）                    │  │
@@ -180,7 +180,7 @@ LLM Context Cache 的有效期可能是分鐘到小時不等，密鑰輪轉週�
 
 **Phase 2 新增元件（vs Phase 1）**
 - Cloud EKM（External Key Manager）：自動化 EKM Proxy 與地端 HSM 的通訊
-- Dedicated Interconnect：取代公網，延遲 < 5ms，99.99% SLA
+- Dedicated Interconnect：取代公網，延遲 < 5ms（Phase 2 只有單線路，不帶 SLA；SLA 要靠 Phase 3 的冗餘拓撲）
 - HSM Cluster（主備）：消除地端 HSM 單點故障
 - VPC Service Controls：KMS 操作只允許白名單服務帳號呼叫
 - Cloud Audit Logs → WORM Storage：不可竄改的審計日誌
@@ -222,14 +222,14 @@ LLM Context Cache 的有效期可能是分鐘到小時不等，密鑰輪轉週�
 │  │  ┌───────────────────────▼─────────────────────────────────┐   │  │
 │  │  │  EKM Proxy Cluster（HA）                                 │   │  │
 │  │  │  - KeyAccessJustification 強制審核                       │   │  │
-│  │  │  - Reason Code 白名單（CUSTOMER_INITIATED_SUPPORT 等）   │   │  │
+│  │  │  - Reason Code 白名單（CUSTOMER_INITIATED_ACCESS 等）    │   │  │
 │  │  │  - 異常存取 → 自動告警 + 自動撤銷                         │   │  │
 │  │  └───────────────────────┬─────────────────────────────────┘   │  │
 │  └──────────────────────────┼──────────────────────────────────────┘  │
 │                             │                                         │
 │                  Dedicated Interconnect（雙路備援）                    │
 │                  主路：10G VLAN A / 備路：10G VLAN B                  │
-│                  延遲 < 5ms，99.99% SLA，BGP 自動切換                 │
+│                  延遲 < 5ms，BGP 自動切換（SLA 等級依冗餘拓撲而定）   │
 │                             │                                         │
 │  ┌──────────────────────────▼───────────────────────────────────────┐ │
 │  │                    GCP Project（Enterprise）                      │ │
@@ -275,7 +275,7 @@ LLM Context Cache 的有效期可能是分鐘到小時不等，密鑰輪轉週�
 **Phase 3 新增元件（vs Phase 2）**
 - Confidential Computing VM（Intel TDX / AMD SEV）：Memory Enclave 保護 DEK
 - EKM Proxy Cluster（HA）：KeyAccessJustification 強制審核，異常自動撤銷
-- 雙路 Dedicated Interconnect：消除專線單點故障（各 10G，BGP 自動切換）
+- 雙路 Dedicated Interconnect：消除專線單點故障（各 10G，BGP 自動切換）；Interconnect 的 SLA 等級由線路數與都會區數決定（單線路不帶 SLA，更高等級需要跨都會區的多線路拓撲），實際數字以官方拓撲文件為準
 - 審計日誌管線：Pub/Sub → Dataflow → BigQuery WORM，7 年保存
 - 多 KEK 策略：按業務線隔離密鑰空間
 
@@ -443,9 +443,12 @@ Vertex AI Context Cache 允許將長 System Prompt（如銀行合規手冊 50,00
 時間軸：
 09:00  Context Cache 建立，用 DEK v10 加密
 09:45  Cache TTL = 2 小時，應在 11:00 到期
-10:00  密鑰輪轉，新 DEK v11 上線，DEK v10 從 Enclave 清除
-10:30  使用者請求命中 Cache，Enclave 嘗試用 DEK v11 解密...
-       ✗ 失敗！Cache 是用 DEK v10 加密的！
+10:00  密鑰輪轉，新 DEK v11 成為主要版本
+       （Cloud KMS 的預設行為：舊版本 v10 仍為 Enabled，照樣能解密——
+        輪轉本身不會讓 Cache 失效）
+10:01  銀行的合規腳本「輪轉後立刻停用舊版本」，把 v10 設為 DISABLED
+10:30  使用者請求命中 Cache，用 v10 解密被 KMS 拒絕...
+       ✗ 失敗！Cache 是用 DEK v10 加密的，而 v10 已經不能用了！
        → Cache Miss，重新生成 Cache（費用 $0.07/1K tokens）
        → 用戶感知：延遲從 180ms → 8,000ms（重新計算長 Context）
 ```
@@ -471,10 +474,10 @@ Cache 元數據結構：
 |------|------|------|------|
 | 策略 A：延遲輪轉 | DEK 輪轉等 Cache 過期後再進行 | Cache 命中率不受影響 | 密鑰輪轉可能延遲數小時，合規風險 |
 | 策略 B：Cache 重加密 | 輪轉時用新 DEK 重新加密現有 Cache | 輪轉嚴格準時 | 輪轉時 CPU/IO 開銷大，可能影響性能 |
-| 策略 C：雙版本 DEK | 舊 DEK 保留在 Enclave 直到 Cache 過期 | Cache 命中率維持，輪轉準時 | Enclave 需要同時維護兩個 DEK（記憶體稍增）|
-| **策略 D（推薦）** | **DEK 設計 1 小時輪轉，Cache TTL 設計 55 分鐘** | **兩者週期對齊，無衝突** | **Cache 利用率略低，每小時需重建** |
+| **策略 C（推薦）** | **舊 DEK 版本保留可解密，直到「最長 Cache TTL + 寬限期」後才 Disable（這正是 Cloud KMS 的預設行為，只要別急著停用舊版本）** | **Cache 命中率維持，輪轉準時；與 KMS 原生行為一致** | **需追蹤每個版本最後一個引用它的 Cache 何時過期；舊版本多活幾小時** |
+| 策略 D | DEK 設計 1 小時輪轉，Cache TTL 設計 55 分鐘 | 重建時間可預期 | 只要 Cache 不是在整點建立（例如 :50 建立），就一定跨過 :00 的輪轉邊界，單靠對齊週期擋不住不匹配；且每小時重建 |
 
-**銀行場景推薦策略 D**：將 Context Cache TTL 設為 55 分鐘（略小於密鑰輪轉週期 60 分鐘），確保每次 Cache 過期時，使用中的 DEK 版本尚未輪轉，避免版本不匹配。每小時重建一次 Cache 的成本（50,000 tokens × $0.0000125 = $0.625/小時/用戶）在銀行場景下完全可接受。
+**銀行場景推薦策略 C**：輪轉後不要立刻停用舊版本，而是依 Cache 元數據中的 `dek_version` 追蹤「還有哪些 Cache 引用 v10」，等最長 TTL（2 小時）加 30 分鐘寬限後再把 v10 設為 DISABLED（之後再排程 DESTROY）。策略 D 看起來週期對齊，但一個在 09:50 建立、TTL 55 分鐘的 Cache 仍會在 10:00 跨過輪轉邊界，所以它只能縮短舊版本需要保留的時間，不能單獨使用。
 
 ---
 
@@ -604,10 +607,10 @@ Cloud EKM 的 KeyAccessJustification 功能要求每次密鑰存取都必須附�
 |------|------------|--------------|----------------|
 | **Cloud EKM + HSM** vs 純 Cloud KMS | 銀行 CISO 要求密鑰主權，KEK 不可離開地端；符合 FSC 監理要求；Cloud EKM 提供 KeyAccessJustification 防止雲端供應商私自存取 | 純 Cloud KMS 密鑰完全由雲端託管，法務部門直接否決；CISO 無法向監管機構證明密鑰主權 | 若監管框架放寬允許雲端託管 KEK（如使用 FIPS 140-3 認證的 Cloud HSM），可改用純 Cloud KMS 降低 $3,000/月 的地端成本 |
 | **Confidential VM / Memory Enclave** vs 每次跨海解密 | 跨海解密延遲 12,000ms vs Enclave 本地解密 < 1ms；Enclave 有硬體保護，安全性不低於跨海方案 | 每次 ANN 查詢跨海解密在 5,000 QPS 下會讓地端 HSM 成為極端瓶頸；延遲 SLA 完全無法達成 | 若 QPS < 100 且 SLA 只要求 < 2 秒，可以接受跨海解密，省去 Confidential VM 成本 $2,800/月 |
-| **Dedicated Interconnect** vs VPN | 延遲穩定 < 5ms（VPN 最差 20ms）；私有路由符合 FSC 密鑰傳輸不走公網的要求；99.99% SLA | VPN 走公網，FSC 不認可為密鑰材料傳輸管道；加密隧道端點有暴露風險；頻寬上限 3Gbps | 若預算嚴格限制，且可以向監管機構論證 VPN 加密層級等同 Interconnect，Partner Interconnect（$500/月）是中間選項 |
+| **Dedicated Interconnect** vs VPN | 延遲穩定 < 5ms（VPN 最差 20ms）；私有路由符合 FSC 密鑰傳輸不走公網的要求；有冗餘拓撲時帶 SLA（單線路沒有） | VPN 走公網，FSC 不認可為密鑰材料傳輸管道；加密隧道端點有暴露風險；頻寬上限 3Gbps | 若預算嚴格限制，且可以向監管機構論證 VPN 加密層級等同 Interconnect，Partner Interconnect（$500/月）是中間選項 |
 | **DEK/KEK 分層** vs 單一密鑰 | 單一密鑰需要每次操作都跨海取得明文密鑰，QPS 完全不可行；分層後 KEK 只在輪轉時使用，大幅降低跨海頻率 | 單一密鑰方案密鑰輪轉等同資料重加密，每次輪轉需要讀取所有向量資料（TB 級）；成本與時間不可接受 | 數據規模 < 1 GB 且 QPS < 10 的極小場景可考慮單一密鑰，但失去了信封加密的靈活性 |
 | **每小時密鑰輪轉** vs 每日 | 金融業監管期望最小化密鑰暴露視窗；每小時輪轉意味著密鑰洩漏的爆炸半徑最多 1 小時的資料 | 每日輪轉若密鑰在 08:00 洩漏，攻擊者有 16 小時視窗；對金融業合規壓力不夠 | 若 Interconnect 頻寬嚴重受限，或 HSM 處理能力不足，可降級為每 4 小時輪轉，在性能和安全之間折衷 |
-| **VPC Service Controls** vs 僅 IAM | VPC SC 在 IAM 之上增加一層網路邊界，即使 IAM 憑證洩漏，KMS 操作也不能從非白名單 IP 發起；提供 DLP 層面的保護 | 純 IAM 控制對憑證洩漏的防禦力不足；一旦 Service Account JSON 洩漏，攻擊者可從任何位置呼叫 KMS API | 若整個 GCP 用量非常小（< $500/月），VPC Service Controls 的最低費用（$500/月）可能不划算，此時強化 IAM Condition + Audit Alert 作為替代 |
+| **VPC Service Controls** vs 僅 IAM | VPC SC 在 IAM 之上增加一層網路邊界，即使 IAM 憑證洩漏，KMS 操作也不能從非白名單 IP 發起；提供 DLP 層面的保護 | 純 IAM 控制對憑證洩漏的防禦力不足；一旦 Service Account JSON 洩漏，攻擊者可從任何位置呼叫 KMS API | VPC Service Controls 本身不另外收費，成本是設定與維運邊界的工程時間；若專案極小、只有單一服務且無跨專案資料流，強化 IAM Condition + Audit Alert 可作為過渡方案 |
 
 ---
 
@@ -619,8 +622,8 @@ Cloud EKM 的 KeyAccessJustification 功能要求每次密鑰存取都必須附�
 
 ```
 允許通過的 Justification Reason：
-✓ CUSTOMER_INITIATED_SUPPORT    → 合法的 AI 查詢
-✓ CUSTOMER_INITIATED_ACCESS     → 合法的資料存取
+✓ CUSTOMER_INITIATED_ACCESS     → 合法的 AI 查詢與資料存取（一般讀寫走這個）
+✓ CUSTOMER_INITIATED_SUPPORT    → 銀行自己開立的支援案件所觸發的存取
 ✓ GOOGLE_RESPONSE_TO_PRODUCTION_ALERT → 允許，但需人工審核確認
 
 自動拒絕的 Reason：
@@ -664,7 +667,7 @@ Cloud EKM 的 KeyAccessJustification 功能要求每次密鑰存取都必須附�
 | Dedicated Interconnect/月 | $0 | $3,400 | +$3,400（合規必要成本）|
 | Confidential VM/月 | $0 | $2,800 | +$2,800（性能最佳化）|
 | 合規風險罰款（年化，期望值）| $50,000 | $0 | -$50,000 |
-| **年度總成本** | **$600 + $50,000（罰款）** | **$115,200** | **BYOK 方案實際更便宜** |
+| **年度總成本** | **$360（12 × $30）+ $50,000（罰款期望值）= $50,360** | **$105,600（12 × $8,800）** | **BYOK 每年多 ~$55,000：買的是合規與主權，不是省錢；罰款期望值 $50K 只是下限，監管未達標可能直接禁止上線** |
 
 ### 10.3 安全態勢對比
 
@@ -690,6 +693,8 @@ Cloud EKM 的 KeyAccessJustification 功能要求每次密鑰存取都必須附�
 
 ### 啟用 Vertex AI CMEK 的必要步驟
 
+注意：Cloud KMS 自動輪轉週期最短為 1 天（`86400s`），所以下面的 CMEK 金鑰設 86400s；§二 的「每小時 DEK 輪轉」是地端 HSM 產生的資料金鑰，由銀行自己的信封加密流程控制，不受 KMS 輪轉週期限制。
+
 ```bash
 # 1. 建立 Cloud KMS KeyRing 和 CryptoKey
 gcloud kms keyrings create bank-ai-keyring \
@@ -699,7 +704,7 @@ gcloud kms keys create vertex-ai-dek \
   --keyring bank-ai-keyring \
   --location asia-east1 \
   --purpose encryption \
-  --rotation-period 3600s \
+  --rotation-period 86400s \
   --next-rotation-time "2026-06-08T10:00:00Z"
 
 # 2. 授權 Vertex AI Service Account 使用此 Key

@@ -188,7 +188,7 @@ readTime: "21 min"
 - Prometheus + Grafana 面板：即時追蹤 retry_count、validation_error_rate
 - MTTD：< 1 分鐘（自動偵測）；MTTR < 5 分鐘（自動修復率 ~72%，示意估算）
 
-**代價**：月費 ~$380（Critic Agent LLM 呼叫 + 監控基礎設施）
+**代價**：月費 ~$380（Critic Agent LLM 呼叫 + Redis + Pub/Sub + 監控基礎設施；比 Phase 1 的 $20 多 $360）
 
 ---
 
@@ -196,7 +196,7 @@ readTime: "21 min"
 
 ### 3.1 Schema 定義策略
 
-每一個工具的輸出都必須有對應的 Pydantic Model，且要設計得「嚴格但有彈性」：
+每一個工具的輸出都必須有對應的 Pydantic Model，且要設計得「嚴格但有彈性」（以下為 Pydantic v1 語法；v2 請改用 `Field(pattern=...)` 與 `@field_validator(mode='before')`，v2 已不接受 `regex=`）：
 
 ```python
 from pydantic import BaseModel, validator, Field
@@ -633,9 +633,9 @@ Trace: task_id=ORD-2026-00431
 | 選擇 | 選 X 的理由 | 不選 Y 的理由 | Flip Condition |
 |------|------------|--------------|----------------|
 | **Pydantic 硬校驗** vs 僅 try-catch | 攔截格式正確但語意錯誤的「偽正確」數據；ValidationError 訊息人類可讀，Critic Agent 能直接解讀 | try-catch 只攔截異常，HTTP 200 + 垃圾數據完全透傳，下游靜默污染 | 若外部 API 有 OpenAPI/JSON Schema 規範且嚴格遵守，try-catch 可能已足夠（但罕見） |
-| **Critic Agent（LLM 反思）** vs 規則引擎 | 應對未知格式漂移；LLM 能推理「DD/MM/YYYY → 加 date_format 參數」這種語意關聯 | 規則引擎需要預先枚舉所有可能錯誤，第三方 API 的格式變化無法預測 | 若錯誤類型有限且已知（< 10 種），純規則引擎成本更低（無 LLM 呼叫費 $0.008/次） |
+| **Critic Agent（LLM 反思）** vs 規則引擎 | 應對未知格式漂移；LLM 能推理「DD/MM/YYYY → 加 date_format 參數」這種語意關聯 | 規則引擎需要預先枚舉所有可能錯誤，第三方 API 的格式變化無法預測 | 若錯誤類型有限且已知（< 10 種），純規則引擎成本更低（無 LLM 呼叫費 $0.002/次） |
 | **Circuit Breaker（Redis 共享）** vs 本地狀態 | 多個 Worker 共享 CB 狀態，一個 Worker 發現 API 失敗立即保護所有 Worker | 本地 CB 狀態無法跨 Pod 共享，每個 Pod 都要踩一遍失敗才能觸發保護 | 單一 Worker / 單機部署時，本地 CB 足夠，省去 Redis 依賴 |
-| **max_retries=3 護欄** vs 無限重試 | 防止 Agent 陷入修復循環消耗 LLM Token 與 API 配額；最差情況下成本可預測 | 無限重試可能在 API 端修復前持續消耗，每次 Critic Agent 呼叫約 $0.008，無限重試 = 無限燒錢 | 若任務極其重要（如金融交割），可考慮 max_retries=10 但加上費用上限熔斷 |
+| **max_retries=3 護欄** vs 無限重試 | 防止 Agent 陷入修復循環消耗 LLM Token 與 API 配額；最差情況下成本可預測 | 無限重試可能在 API 端修復前持續消耗，每次 Critic Agent 呼叫約 $0.002（Flash），無限重試 = 無限燒錢 | 若任務極其重要（如金融交割），可考慮 max_retries=10 但加上費用上限熔斷 |
 | **Cloud Pub/Sub 通知** vs 直接 Slack API 呼叫 | 解耦通知與業務邏輯；Pub/Sub 有持久化保證，即使 Slack 暫時無法連線也不丟失事件 | 直接呼叫 Slack API 若失敗則通知丟失；且 Pub/Sub 可扇出至多個下游（PagerDuty、Email、JIRA 同時觸發） | 若系統規模小（< 100 事件/天），直接 Slack 呼叫複雜度更低 |
 | **gemini-1.5-flash for Critic** vs GPT-4 | Critic Agent 任務結構化明確，Flash 延遲 < 800ms，成本 $0.002/次；GPT-4 需要 3–5 秒，$0.03/次 | GPT-4 在非結構化推理上更強，但修復任務有固定 Prompt 範本，Flash 品質足夠（示意估算：修復成功率 Flash 72% vs GPT-4 78%，差距 6 個百分點，但成本差 15 倍；模型與價格以 2025 年撰文時為準，請以官方最新文件為準） | 若 Critic 需要處理極其複雜的參數重寫（如 GraphQL 查詢重構），換 claude-3-5-sonnet 或 GPT-4 |
 
@@ -648,10 +648,10 @@ Trace: task_id=ORD-2026-00431
 | **軟故障偵測率** | 0%（靜默失敗） | 94%（Pydantic 攔截 + Validator） | +94 pp |
 | **自動修復率**（無需人工） | 0% | 72%（Critic Agent 修復成功，採用 Flash） | +72 pp |
 | **MTTD**（平均偵測時間） | 2–4 小時（查報表才發現） | < 1 分鐘（即時 Validator） | -99% |
-| **MTTR**（平均修復時間） | 45 分鐘（人工排查 + 重跑） | 2.3 分鐘（自動修復），27 分鐘（人工介入） | -95% / -40% |
+| **MTTR**（平均修復時間） | 45 分鐘（人工排查 + 重跑） | 2.3 分鐘（自動修復：單次 Critic 修復本身約 2 秒，見 §七的 Trace；其餘是偵測窗口與最多 3 次重試的等待），27 分鐘（人工介入） | -95% / -40% |
 | **資料庫污染筆數**（事件期間） | ~28,000 筆（一夜未發現） | 0 筆（Validator 在寫入前攔截） | -100% |
 | **Critic Agent 平均延遲** | N/A | 1.8 秒（P50），3.2 秒（P99） | 新增 |
-| **月額外成本** | $0 | +$180（LLM 呼叫 + Redis + Pub/Sub） | +$180/月 |
+| **月額外成本** | $0 | +$360（Phase 3 月費 $380 − 基線 $20，見 §二） | +$360/月 |
 | **Dead Letter 事件率** | ~100%（所有錯誤都上報） | 28%（其餘被自動修復） | -72% |
 | **On-call 警報量**（月） | 340 次 | 75 次（其中 22% 為真正需人工介入） | -78% |
 | **API 切換延遲**（CB 觸發） | 無（只有人工操作） | < 50ms（CB 狀態讀取 Redis） | 新增能力 |

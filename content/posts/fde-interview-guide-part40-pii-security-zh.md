@@ -219,6 +219,13 @@ PII 偵測技術選擇（依精確度需求）：
 
   儲存位置：Secret Manager 或加密的 Redis（不是一般 DB）
   Vault 範圍：Session 範圍（每個 Session 生成新 Token，Session 結束清除）
+
+  兩種識別碼，各司其職（不要混用）：
+  ├── Session Token（PATIENT-A7B3）：隨機、每個 Session 重新生成，只給 LLM 看，
+  │   Session 結束即作廢——所以它不能當跨 Session 的查詢鍵
+  └── 穩定假名 ID（PID-7F2C…）：HMAC-SHA256(病歷號, KMS 金鑰)，跨 Session 不變、
+      不可逆；用於 Vector DB 過濾（§五）與稽核日誌（§七），稽核時以同一把金鑰
+      重算病歷號的 HMAC 即可對應，不需要在任何地方存對照表
   
   Session 結束時：
   ├── Vault 中的對應關係被清除（不持久化）
@@ -276,7 +283,7 @@ PII 偵測技術選擇（依精確度需求）：
   │  JWT payload: {                                              │
   │    "user_id": "nurse_123",                                   │
   │    "role": "nursing_staff",                                  │
-  │    "allowed_patient_ids": ["A7B3", "C8D4", "E2F1"],          │
+  │    "allowed_pids": ["PID-7F2C", "PID-C8D4", "PID-E2F1"],     │
   │    "allowed_doc_types": ["nursing_records", "vital_signs"],  │
   │    "shift_end": "2026-06-08T20:00:00Z"  // 當班結束後失效     │
   │  }                                                           │
@@ -289,7 +296,7 @@ PII 偵測技術選擇（依精確度需求）：
   │  2. 確認 Token 未過期且在班別時間內                            │
   │  3. 提取訪問控制參數，注入 Agent System Prompt：              │
   │     「你是護理師。只能回應關於以下病患的問題：                │
-  │      [A7B3, C8D4, E2F1]。只能存取護理記錄和生命徵象。        │
+  │      [PID-7F2C, PID-C8D4, …]。只能存取護理記錄和生命徵象。   │
   │      若用戶詢問其他病患，回應『您沒有存取此病患的權限』」     │
   └──────────────────────┬───────────────────────────────────────┘
                          │
@@ -298,7 +305,7 @@ PII 偵測技術選擇（依精確度需求）：
   │  Vector DB Retrieval（服務端強制過濾，LLM 無法繞過）           │
   │                                                              │
   │  filter = {                                                  │
-  │    "patient_id": {"$in": ["A7B3", "C8D4", "E2F1"]},         │
+  │    "patient_pid": {"$in": jwt.allowed_pids},  // PID-7F2C…  │
   │    "doc_type": {"$in": ["nursing_records", "vital_signs"]}   │
   │  }                                                           │
   │                                                              │
@@ -398,7 +405,7 @@ PII 偵測技術選擇（依精確度需求）：
     "user_role": "nursing_staff",
     "shift_id": "SHIFT-20260608-AM",          // 當班班次（便於稽核）
     "action": "patient_record_query",
-    "patient_token": "PATIENT-A7B3",          // Token，不是真實姓名
+    "patient_pid": "PID-7F2C",                // 穩定假名 ID，不是真實姓名
     "query_category": "vital_signs",          // 分類（不是原文）
     "data_types_accessed": ["nursing_records"],
     "result_returned": true,
@@ -427,7 +434,7 @@ PII 偵測技術選擇（依精確度需求）：
   ✅ 應記錄：
   "query_category": "lab_results",  // 分類
   "query_length": 14,               // 長度
-  "patient_token": "PATIENT-A7B3"   // Token（可追溯，不含 PII）
+  "patient_pid": "PID-7F2C"         // 穩定假名 ID（可追溯，不含 PII）
 
   要求 3：資料保留與分層存儲
 
@@ -439,10 +446,11 @@ PII 偵測技術選擇（依精確度需求）：
   ──────────────────────────────────────────────────────────────
 
 合規查詢範例：
-  「2026-05-10，哪些人存取了 PATIENT-A7B3 的資料？」
+  「2026-05-10，哪些人存取了病歷號 MRN-00123 的資料？」
+  先算 pid = HMAC-SHA256('MRN-00123', KMS 金鑰) = 'PID-7F2C'，再查：
   SQL: SELECT user_id, user_role, action, data_types_accessed, timestamp
        FROM audit_log
-       WHERE patient_token = 'PATIENT-A7B3'
+       WHERE patient_pid = 'PID-7F2C'
          AND timestamp BETWEEN '2026-05-10' AND '2026-05-11'
        ORDER BY timestamp;
 
@@ -566,8 +574,8 @@ Log 洩漏風險       PII 在 Log 中           只有 Token 和分類標籤   
 ──────────────────────────────────────────────────────────────────────────────────
 查詢延遲影響       無                     +20-50ms（Scrubber）      +20-80ms（全鏈路）
 ──────────────────────────────────────────────────────────────────────────────────
-月工程成本         -                      +$5,000-20,000           +$50,000-200,000
-                                         （實作 + 維護）          （私有 GPU + 工程）
+工程成本           -                      $20,000 一次性           +$50,000-200,000/月
+                                         + $5,000/月維護          （私有 GPU + 工程）
 ──────────────────────────────────────────────────────────────────────────────────
 PII 外洩的損失     依事故規模              技術上大幅降低           技術上趨近於零
 估算               $100,000-10,000,000+   洩漏機率                洩漏機率
