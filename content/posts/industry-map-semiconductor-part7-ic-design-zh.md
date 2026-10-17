@@ -6,7 +6,7 @@ description: "深拆半導體「其他 fabless」這一層:博通、高通、聯
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "IC設計", "AVGO", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "10 min"
 ---
 
 > 大部分人談 fabless,只會想到 NVIDIA 的 GPU。

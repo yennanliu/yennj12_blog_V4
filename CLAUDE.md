@@ -371,7 +371,10 @@ Always include the "flip condition": when does Y become the right choice instead
 - **Symptom-to-diagnosis chains**: show what signal you'd see in Traces/Metrics/Logs, not just theory
 - **Minimum 600 lines per post; target 700–900**
 - Section numbering: use 一, 二, 三 … 十 (Chinese numerals); do not exceed 10 sections
-- Do **not** include a 面試答題要點 (model interview answer) section — this was dropped from the standard format.
+- Do **not** include a model-answer section under any heading (面試答題要點, 面試回答完整示範,
+  範例回答, 最想聽到) — dropped from the standard format. A one-line 面試一句話 (Killer Phrase) or
+  a 快速複習卡 is fine; a full worked answer is not. If a post needs an answer guide, use a
+  ≤ 6-bullet 答題骨架 that references section numbers instead of restating them.
 
 ### 5. Standard section order
 
@@ -385,7 +388,11 @@ Always include the "flip condition": when does Y become the right choice instead
 ### 6. Style rules
 
 - **No mention of "Google"** anywhere in the generated content or tags. **This rule applies ONLY to interview-prep posts** — `fde-interview-guide-*`, `fde-core-concept-*`, and any other post tagged `"Interview"`. `scripts/review_posts.py` warns on exactly that set (file prefix or `Interview` tag). Non-interview posts (general tech tutorials, the ai-eng-from-scratch curriculum, stock analysis, etc.) may freely mention Google and its products.
-- Tags: use `"Cloud"` instead of `"Google"`; always include `"RKK"` and `"Interview"`
+- The rule is about the **brand name** ("Google", "Google Cloud", "Google FDE / Google 職位"),
+  not vendor neutrality: product nouns such as Vertex AI, Gemini, ADK or BigQuery are allowed.
+  The checker reports every matching line, not just the first.
+- Tags: use `"Cloud"` instead of `"Google"`; always include `"RKK"`, `"Interview"` and the series
+  tag `"fde-interview-guide"` (the Series menu points at that tag)
 - readTime: set based on line count — 500 lines ≈ 18 min, 700 lines ≈ 23 min, 900 lines ≈ 28 min
 - Opening quote: 4-line contrast (what most people do vs what the right answer is)
 - 面試情境: a single interviewer question that is specific, scenario-based, and requires architecture judgment

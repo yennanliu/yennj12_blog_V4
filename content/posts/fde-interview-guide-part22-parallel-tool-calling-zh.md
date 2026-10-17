@@ -5,9 +5,9 @@ draft: false
 weight: 22
 description: "以系統設計視角拆解 Multi-Tool 並行執行架構：為什麼順序執行是延遲瓶頸、DAG 依賴解析引擎的設計原理、動態並行 vs 靜態並行的 trade-off，以及 Google ADK Tool Registry 的落地方案"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Tool Calling", "Concurrency", "DAG", "Parallel", "ADK", "System Design", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Agent", "Tool Calling", "Concurrency", "DAG", "Parallel", "ADK", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "9 min"
 ---
 
 > LLM 說「我需要查 User Profile、Order History、Risk Score」。  

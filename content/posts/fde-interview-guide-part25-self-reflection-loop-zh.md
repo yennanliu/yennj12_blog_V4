@@ -5,9 +5,9 @@ draft: false
 weight: 25
 description: "以系統設計視角拆解 Generator-Evaluator 雙節點架構：為什麼 LLM 需要自我檢查機制、Reflexion Pattern 的設計原理、如何防止反思迴圈變成無限循環，以及收斂保證的工程實踐"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Self-Reflection", "Hallucination", "LangGraph", "Reflexion", "Generator-Evaluator", "System Design", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Agent", "Self-Reflection", "Hallucination", "LangGraph", "Reflexion", "Generator-Evaluator", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "17 min"
+readTime: "10 min"
 ---
 
 > LLM 的幻覺問題不會被「更好的 Prompt」完全消除。  

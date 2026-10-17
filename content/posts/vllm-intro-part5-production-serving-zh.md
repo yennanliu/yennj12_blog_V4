@@ -5,7 +5,7 @@ draft: false
 weight: 5
 description: "vLLM 原始碼導讀系列最終篇：拆解 OpenAI 相容 API 的完整面、Multi-LoRA 多租戶服務、結構化輸出的取樣層約束、Prometheus 指標全表與症狀診斷鏈、P/D 分離與 KV Connector 的實際配置，以及一套不會騙自己的 benchmark 方法。"
 categories: ["all", "ai", "engineering", "infrastructure"]
-tags: ["vLLM", "Production", "LoRA", "Structured Output", "Observability", "Prometheus", "Kubernetes", "繁體中文"]
+tags: ["vLLM", "Production", "LoRA", "Structured Output", "Observability", "Prometheus", "Kubernetes"]
 authors: ["yen"]
 readTime: "21 min"
 ---

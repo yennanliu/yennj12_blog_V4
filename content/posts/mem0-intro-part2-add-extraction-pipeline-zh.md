@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "Mem0 原始碼導讀系列第二篇：逐行拆解 _add_to_vector_store() 的八個階段、為什麼 v3 放棄了論文裡的 ADD/UPDATE/DELETE/NOOP 四動作模型、UUID 映射成整數的防幻覺技巧、md5 去重的邊界，以及一次 add() 到底花多少錢。"
 categories: ["all", "ai", "engineering"]
-tags: ["Mem0", "AI Agent", "Memory", "LLM", "Prompt Engineering", "spaCy", "繁體中文"]
+tags: ["Mem0", "AI Agent", "Memory", "LLM", "Prompt Engineering", "spaCy"]
 authors: ["yen"]
 readTime: "17 min"
 ---

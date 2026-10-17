@@ -5,7 +5,7 @@ draft: false
 weight: 1
 description: "RAGFlow 原始碼導讀系列第一篇：用一張全景圖與兩條資料路徑，說清楚這個 9 萬星的開源 RAG 引擎由哪些子系統組成、一份 PDF 進來之後經過哪些階段、以及它在架構上做了哪些與眾不同的取捨。"
 categories: ["all", "ai", "engineering"]
-tags: ["RAGFlow", "RAG", "AI", "Architecture", "Open Source", "Elasticsearch", "Vector Database", "繁體中文"]
+tags: ["RAGFlow", "RAG", "AI", "Architecture", "Open Source", "Elasticsearch", "Vector Database"]
 authors: ["yen"]
 readTime: "17 min"
 ---

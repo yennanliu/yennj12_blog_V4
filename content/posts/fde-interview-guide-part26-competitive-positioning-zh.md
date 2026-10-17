@@ -5,9 +5,9 @@ draft: false
 weight: 26
 description: "以 Google FDE 顧問視角拆解競品定位對話：如何回應客戶的 OpenAI / AWS 比較、用場景驅動而非規格比較的說服框架、Vertex AI 的差異化優勢在哪裡，以及如何避免常見的定位陷阱"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Consultant", "Vertex AI", "GCP", "Competitive", "Interview", "Cloud", "RKK"]
+tags: ["AI", "FDE", "Consultant", "Vertex AI", "GCP", "Competitive", "Interview", "Cloud", "RKK", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "15 min"
+readTime: "9 min"
 ---
 
 > 這是 FDE RKK 最常被忽略的題型。  

@@ -5,7 +5,7 @@ draft: false
 weight: 40
 description: "以系統設計視角拆解 AI 系統的 PII 保護：三個安全強化階段（POC → MVP → Enterprise）、PII 敏感度分類矩陣、假名化架構、RBAC 最小存取、Why X not Y 技術選型決策（假名化 vs 匿名化、CMEK vs 預設加密、NER+Regex vs 純規則），以及 AI 系統 PII 保護的代價與回報量化"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Security", "Privacy", "PII", "RBAC", "Compliance", "Anonymization", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Security", "Privacy", "PII", "RBAC", "Compliance", "Anonymization", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
 readTime: "23 min"
 ---

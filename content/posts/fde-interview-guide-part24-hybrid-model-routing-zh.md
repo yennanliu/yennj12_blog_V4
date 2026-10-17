@@ -5,9 +5,9 @@ draft: false
 weight: 24
 description: "以系統設計視角拆解 Hybrid Model Routing 架構：Semantic Router 的設計原理、小模型 vs 大模型的路由決策框架、如何用 Eval Pipeline 確保路由器不會犧牲整體品質，以及 Gemma 與 Gemini 的混合部署策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Model Routing", "Semantic Router", "Gemma", "Gemini", "Cost Optimization", "System Design", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Agent", "Model Routing", "Semantic Router", "Gemma", "Gemini", "Cost Optimization", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "17 min"
+readTime: "9 min"
 ---
 
 > 為什麼用 Gemini Pro 回答「你好！」？  

@@ -55,6 +55,7 @@ FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 HEADING = re.compile(r"^(#{1,6})\s+(.*)$")
 MD_IMAGE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)")
 BOX_CHARS = re.compile(r"[┌┐└┘├┤│─═╔╗╚╝▶▼]")
+MODEL_ANSWER = re.compile(r"面試答題要點|面試回答完整示範|完整範例回答|範例回答|最想聽到")
 MERMAID_FENCE = re.compile(r"^\s*(`{3,}|~{3,})\s*mermaid\b")
 # Case-sensitive on purpose: "Todo List" and `todo_write` are real prose.
 PLACEHOLDER = re.compile(r"\b(TODO|TBD|FIXME)\b|(?i:lorem ipsum)|待補|待填")
@@ -322,16 +323,17 @@ def check_series(r: Report, fm: dict, lines: list[str], prose, blocks) -> None:
         if interview_format and decisions < 4:
             r.warn(1, f"{decisions} 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions")
         for n, l in prose:
-            if "面試答題要點" in l and l.startswith("#"):
-                r.warn(n, "「面試答題要點」 section was dropped from the standard format")
+            if l.startswith("#") and MODEL_ANSWER.search(l):
+                r.warn(n, "model-answer section (面試答題要點 / 面試回答完整示範 / 範例回答) was dropped "
+                          "from the standard format; replace with a short 答題骨架")
 
     # The "no Google" rule covers every interview-prep post: the fde-interview-guide and
     # fde-core-concept series by file name, and any other post that tags itself "Interview".
     if name.startswith(("fde-interview-guide", "fde-core-concept")) or "Interview" in tags:
-        for n, l in enumerate(lines, start=1):
-            if re.search(r"google", l, re.I):
-                r.warn(n, "interview posts must not mention Google (CLAUDE.md style rule)")
-                break
+        hits = [n for n, l in enumerate(lines, start=1) if re.search(r"google", l, re.I)]
+        if hits:
+            r.warn(hits[0], f"interview posts must not mention Google (CLAUDE.md style rule); "
+                            f"{len(hits)} line(s), first at {hits[0]}")
 
     if name.startswith("fde-interview-guide"):
         house_rules(600, 900, interview_format=True)

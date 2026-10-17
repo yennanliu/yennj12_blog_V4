@@ -5,9 +5,8 @@ draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
 tags: ["Prometheus", "Grafana", "AWS", "CDK", "Monitoring", "Observability", "Metrics", "ECS", "Kubernetes", "EKS", "fargate", "Alerting"]
-summary: "Comprehensive guide to architecting a production-ready centralized Prometheus + Grafana monitoring platform using AWS CDK that aggregates metrics from multiple services, clusters, and infrastructure components with federation, remote storage, and advanced alerting."
 description: "Comprehensive guide to architecting a production-ready centralized Prometheus + Grafana monitoring platform using AWS CDK that aggregates metrics from multiple services, clusters, and infrastructure components with federation, remote storage, and advanced alerting."
-readTime: "23 min"
+readTime: "48 min"
 ---
 
 In modern distributed systems running on AWS, monitoring individual services in isolation creates operational blind spots. A centralized Prometheus + Grafana platform provides unified visibility across all infrastructure, enabling correlation analysis, efficient troubleshooting, and proactive alerting. This post explores building a production-grade monitoring hub using AWS CDK that aggregates metrics from EKS clusters, ECS services, Lambda functions, and custom applications.

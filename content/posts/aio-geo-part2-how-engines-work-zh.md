@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "拆解生成式引擎的檢索管線：AI crawler 名單與行為差異、內容如何被切成 chunk、rerank 階段淘汰了什麼、grounding 如何決定引用誰。附 8 個讓頁面永遠不被引用的技術死因與逐項診斷方法。"
 categories: ["all", "ai", "engineering", "business"]
-tags: ["GEO", "AIO", "RAG", "Chunking", "Reranking", "Crawler", "Embedding", "繁體中文", "SEO"]
+tags: ["GEO", "AIO", "RAG", "Chunking", "Reranking", "Crawler", "Embedding", "SEO"]
 authors: ["yen"]
 readTime: "16 min"
 ---

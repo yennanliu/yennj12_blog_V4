@@ -6,7 +6,7 @@ description: "深拆半導體產業鏈下游的雲端超大規模業者（CSP）
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "雲端 CSP", "AWS", "AMZN", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "10 min"
 ---
 
 > 大部分人看 CSP，只看一個數字：AWS 又成長了幾 %、Azure 追上來沒。

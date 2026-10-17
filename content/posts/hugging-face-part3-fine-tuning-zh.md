@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "什麼時候才該微調？從資料準備、LoRA/QLoRA 原理、TRL SFTTrainer 完整訓練程式碼，到評估、合併、量化與部署的全流程。含超參數決策表與六種失敗模式診斷。"
 categories: ["all", "ai", "engineering"]
-tags: ["Hugging Face", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "TRL", "LLM", "Python", "繁體中文"]
+tags: ["Hugging Face", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "TRL", "LLM", "Python"]
 authors: ["yen"]
 readTime: "19 min"
 series: ["hugging-face"]

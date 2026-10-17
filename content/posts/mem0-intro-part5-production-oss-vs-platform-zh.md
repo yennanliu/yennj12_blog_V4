@@ -5,7 +5,7 @@ draft: false
 weight: 5
 description: "Mem0 原始碼導讀系列最終篇：拆解 OSS 與 Platform 的完整差異、Graph Memory／Temporal Reasoning／Memory Decay／Dream 四個專屬能力各自解決什麼問題與 OSS 的補法、v2→v3 破壞性變更遷移清單、怎麼用官方開源評測框架測自己的資料，以及一份生產檢查清單。"
 categories: ["all", "ai", "engineering", "infrastructure"]
-tags: ["Mem0", "Production", "AI Agent", "Memory", "Evaluation", "MCP", "LangGraph", "繁體中文"]
+tags: ["Mem0", "Production", "AI Agent", "Memory", "Evaluation", "MCP", "LangGraph"]
 authors: ["yen"]
 readTime: "17 min"
 ---

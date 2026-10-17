@@ -6,7 +6,7 @@ description: "同一個目錄結構要同時餵給 Cowork 和 Claude Managed Age
 categories: ["all", "ai", "engineering"]
 tags: ["Anthropic", "Claude", "Financial Services", "MCP", "Agent Architecture", "Claude Skills", "AI Engineering"]
 authors: ["yen"]
-readTime: "13 min"
+readTime: "6 min"
 ---
 
 > 大部分「AI Agent 框架」的第一個問題是:互動模式(chat)和自動化模式(headless)得寫兩套邏輯。

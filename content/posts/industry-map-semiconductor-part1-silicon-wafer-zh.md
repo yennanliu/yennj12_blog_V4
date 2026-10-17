@@ -6,7 +6,7 @@ description: "深拆半導體最上游的矽晶圓 / 基板這一層:誰在做�
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "矽晶圓", "GlobalWafers", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "10 min"
 ---
 
 > 大部分人談半導體上游,眼睛只盯著 ASML 的 EUV 曝光機。

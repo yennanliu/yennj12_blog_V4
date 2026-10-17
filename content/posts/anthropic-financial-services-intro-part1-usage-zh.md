@@ -6,7 +6,7 @@ description: "Anthropic 官方開源的 financial-services 套件,把投資銀�
 categories: ["all", "ai", "engineering"]
 tags: ["Anthropic", "Claude", "Financial Services", "Claude Code", "Cowork", "Agent", "MCP", "AI Engineering"]
 authors: ["yen"]
-readTime: "12 min"
+readTime: "4 min"
 ---
 
 > 大部分團隊想用 LLM 做財務分析,第一步是自己從零寫 prompt、兜資料源、堆流程。

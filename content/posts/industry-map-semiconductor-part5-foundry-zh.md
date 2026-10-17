@@ -6,7 +6,7 @@ description: "深拆半導體晶圓代工這一層:台積電近獨占先進製�
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "晶圓代工", "TSMC", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "10 min"
 ---
 
 > 大部分人看晶圓代工,只記得一句「台積電很強」。

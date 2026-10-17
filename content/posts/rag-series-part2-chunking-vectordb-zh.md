@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "深入探討 RAG 系統的兩個核心基礎：如何切塊才能保留語意完整性，以及如何選擇適合的向量資料庫。包含五種 Chunking 策略比較與主流向量 DB 的特性、定價與選型比較。"
 categories: ["all", "ai", "engineering"]
-tags: ["RAG", "Chunking", "Vector Database", "ChromaDB", "Pinecone", "Python", "繁體中文"]
+tags: ["RAG", "Chunking", "Vector Database", "ChromaDB", "Pinecone", "Python"]
 authors: ["yen"]
 readTime: "14 min"
 ---

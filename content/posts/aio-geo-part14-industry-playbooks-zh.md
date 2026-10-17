@@ -5,7 +5,7 @@ draft: false
 weight: 14
 description: "同一套方法在不同產業的效果差三倍以上。本篇給出十個產業的獨立劇本：主要查詢類型、可達天花板、優先動作、獨有風險與該用哪組 KPI。附一張跨產業對照表與「換產業時要重問的六個問題」。"
 categories: ["all", "ai", "business"]
-tags: ["GEO", "AIO", "產業分析", "B2B", "電商", "醫療", "金融", "顧問", "繁體中文", "Marketing"]
+tags: ["GEO", "AIO", "產業分析", "B2B", "電商", "醫療", "金融", "顧問", "Marketing"]
 authors: ["yen"]
 readTime: "13 min"
 ---

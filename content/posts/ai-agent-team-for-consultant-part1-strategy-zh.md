@@ -5,7 +5,7 @@ draft: false
 weight: 1
 description: "想用純 AI Bot 建立一支 AI 顧問團隊？本文從商業角度出發，分析三條技術路線（Claude Code + agent.md、Gemini CLI、LangGraph + LLM），比較優缺點與適用場景，幫助你在動手之前先想清楚架構。"
 categories: ["all", "ai", "business"]
-tags: ["AI Agent", "Claude Code", "Gemini CLI", "LangGraph", "AI Consultant", "Multi-Agent", "繁體中文", "Agent"]
+tags: ["AI Agent", "Claude Code", "Gemini CLI", "LangGraph", "AI Consultant", "Multi-Agent", "Agent"]
 authors: ["yen"]
 readTime: "10 min"
 ---

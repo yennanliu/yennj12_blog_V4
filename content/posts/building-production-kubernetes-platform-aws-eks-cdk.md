@@ -5,7 +5,6 @@ draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture", "infrastructure"]
 tags: ["Kubernetes", "EKS", "AWS", "CDK", "Microservices", "kafka", "Monitoring", "Observability"]
-summary: "Deep dive into architecting a comprehensive Kubernetes platform on AWS EKS with integrated data processing, monitoring, and observability using infrastructure as code."
 description: "Deep dive into architecting a comprehensive Kubernetes platform on AWS EKS with integrated data processing, monitoring, and observability using infrastructure as code."
 readTime: "22 min"
 ---

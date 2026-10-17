@@ -6,7 +6,7 @@ description: "深拆半導體晶圓設備（WFE）這一層:ASML 的 EUV 獨占�
 categories: ["all", "finance"]
 tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "晶圓設備", "ASML", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "10 min"
 ---
 
 > 大部分人看半導體設備,只記得一句「ASML 賣曝光機」。
