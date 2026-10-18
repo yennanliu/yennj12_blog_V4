@@ -451,6 +451,8 @@ qwen3:8b        abc123          6.5 GB    100% GPU     4 minutes from now
 
 ### 6.3 兩個省記憶體 / 加速的環境變數
 
+注意順序:`OLLAMA_KV_CACHE_TYPE` **只在 Flash Attention 開啟時才生效**(官方 FAQ 的原話是 "when Flash Attention is enabled"),所以兩個要一起設,單設 KV cache 量化不會有任何效果。
+
 ```bash
 # Flash Attention：降低長 context 的記憶體用量，長文可能加速
 launchctl setenv OLLAMA_FLASH_ATTENTION "1"
@@ -539,7 +541,7 @@ tokens_per_sec = eval_count / (eval_duration / 1e9)
 
 ## 七、多模型 / 並行服務
 
-預設情況下 Ollama 一次只跑一個模型、序列處理請求。要服務多人或多模型，需要調三個環境變數：
+預設情況下 Ollama **可以同時載入多個模型**（`OLLAMA_MAX_LOADED_MODELS` 預設為 3 × GPU 數，Mac 上就是 3），但**每個模型一次只處理一個請求**（`OLLAMA_NUM_PARALLEL` 預設 1），其餘請求排隊。要服務多人或更多模型，需要調三個環境變數：
 
 ```bash
 launchctl setenv OLLAMA_NUM_PARALLEL "4"        # 每個模型同時處理的請求數

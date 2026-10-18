@@ -50,13 +50,13 @@ readTime: "5 min"
 
 最基礎的準確率定義就是：
 
-$$\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}$$
+`Accuracy = (TP + TN) / (TP + TN + FP + FN)`
 
 但當數據嚴重不平衡時（例如只有 1% 的郵件是垃圾郵件），全部預測為「非垃圾」就能拿到 99% 的準確率，模型根本沒在做事。
 
 ### 精確率（Precision）：我說的「是」有多可信？
 
-$$\text{Precision} = \frac{TP}{TP + FP}$$
+`Precision = TP / (TP + FP)`
 
 精確率衡量的是：**模型預測為正類的結果中，有多少是真的正類**。
 
@@ -65,7 +65,7 @@ $$\text{Precision} = \frac{TP}{TP + FP}$$
 
 ### 召回率（Recall）：真正的正類有多少被我找到？
 
-$$\text{Recall} = \frac{TP}{TP + FN}$$
+`Recall = TP / (TP + FN)`
 
 召回率衡量的是：**實際為正類的樣本中，有多少被模型成功找出來**。
 
@@ -76,7 +76,7 @@ $$\text{Recall} = \frac{TP}{TP + FN}$$
 
 Precision 和 Recall 往往互相拉扯——提高 Precision 通常會降低 Recall，反之亦然。F1 分數提供了一個綜合評估：
 
-$$F1 = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}$$
+`F1 = 2 × Precision × Recall / (Precision + Recall)`
 
 F1 使用的是**調和平均數**，而不是算術平均數。這意味著如果 Precision 和 Recall 其中一個很低，F1 也會被拖累——它強迫你在兩者之間取得平衡，而不是讓一個極高的值掩蓋另一個極低的值。
 
@@ -107,7 +107,7 @@ F1 使用的是**調和平均數**，而不是算術平均數。這意味著如�
 
 ### 平均絕對誤差（MAE, Mean Absolute Error）
 
-$$MAE = \frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i|$$
+`MAE = (1/n) × Σ |y_i − ŷ_i|`
 
 MAE 計算所有預測誤差絕對值的平均數。它的意義非常直觀：「平均每次預測，大概差了多少單位？」
 
@@ -115,7 +115,7 @@ MAE 計算所有預測誤差絕對值的平均數。它的意義非常直觀：�
 
 ### 均方根誤差（RMSE, Root Mean Square Error）
 
-$$RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}$$
+`RMSE = √( (1/n) × Σ (y_i − ŷ_i)² )`
 
 RMSE 先把誤差平方，再取平均，最後開根號。因為平方的關係，**較大的誤差會被放大懲罰**。
 
@@ -124,7 +124,7 @@ RMSE 先把誤差平方，再取平均，最後開根號。因為平方的關係
 
 ### R 平方（R²，決定係數）
 
-$$R^2 = 1 - \frac{\sum(y_i - \hat{y}_i)^2}{\sum(y_i - \bar{y})^2}$$
+`R² = 1 − Σ(y_i − ŷ_i)² / Σ(y_i − ȳ)²`
 
 R² 衡量的是模型對數據變異的解釋能力：
 

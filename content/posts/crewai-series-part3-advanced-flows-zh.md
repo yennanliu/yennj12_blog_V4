@@ -217,7 +217,6 @@ class ContentPipelineFlow(Flow[ContentPipelineState]):
         )
         self.state.draft = response.choices[0].message.content
 
-        # 修訂後重新評估（回到 evaluate_quality）
         self.evaluate_quality()
 
     @listen("publish")
@@ -241,6 +240,8 @@ print(f"\n總修訂次數：{flow.state.revision_count}")
 print(f"最終品質分數：{flow.state.quality_score}")
 print(f"文章已就緒：{flow.state.publish_ready}")
 ```
+
+> **注意這段程式碼的修訂迴圈有一個坑**：`run_revision` 最後直接呼叫 `self.evaluate_quality()`，但 Flow 的 `@router` / `@listen` 只會由事件系統觸發——直接呼叫方法不會重新發出路由事件，所以草稿分數低於 8 時只會被修訂一次，然後 Flow 就結束，`finalize_and_publish` 永遠不會跑。正確做法是讓 `run_revision` 只回傳，並把 `evaluate_quality` 改成 `@router(or_(run_writing_crew, run_revision))`（或為 `revise` 再加一個 router），讓迴圈真的回到評估步驟；`max_revisions` 的上限則留在 state 裡。
 
 ### 平行執行多個 Crew
 

@@ -90,7 +90,7 @@ series: ["hugging-face"]
 
 ### 2.1 資料品質的量級效應
 
-實測（同一個 7B 底模、同一組超參數、同一評估集）：
+示意估算（假設同一個 7B 底模、同一組超參數、同一評估集；數字為量級示意，非實測）：
 
 ```
   訓練資料                          任務準確率      格式合規率
@@ -372,14 +372,14 @@ def find_linear_names(model):
     return sorted(names)
 ```
 
-實測差異（7B、5,000 筆、其餘超參相同）：
+示意估算（Qwen2.5-7B、r=16；參數量為實際計算值，VRAM 與準確率為量級示意，非實測）：
 
 ```
   target_modules            可訓練參數    VRAM     任務準確率
   ──────────────────────────────────────────────────────────
-  q_proj, v_proj              4.2 M      9.8 GB     84.1%
-  全部 attention              8.4 M     10.4 GB     86.7%
-  全部 attention + MLP       20.0 M     11.6 GB     91.2%   ← 建議
+  q_proj, v_proj              5.0 M      9.8 GB     84.1%
+  全部 attention             10.1 M     10.4 GB     86.7%
+  全部 attention + MLP       40.4 M     11.6 GB     91.2%   ← 建議
 ```
 
 **多花 1.8GB 換 7 個百分點，幾乎永遠划算。**
@@ -495,7 +495,6 @@ trainer = SFTTrainer(
 )
 
 trainer.model.print_trainable_parameters()
-# trainable params: 20,185,088 || all params: 7,635,801,088 || trainable%: 0.2643
 
 trainer.train()
 trainer.save_model(f"{OUTPUT_DIR}/final")

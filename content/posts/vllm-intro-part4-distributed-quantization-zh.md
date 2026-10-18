@@ -543,16 +543,16 @@ CUDA Graph 要求**所有 kernel 的形狀與位址在 replay 時完全固定**�
 
 | 模式 | 行為 | 適用 |
 |---|---|---|
-| `PIECEWISE`（預設） | 只捕捉 attention 之間的片段 | 通用、安全 |
+| `PIECEWISE`（舊版預設） | 只捕捉 attention 之間的片段 | 通用、安全；pooling 模型仍是此預設 |
 | `FULL` | 連 attention 一起捕捉（需 backend 支援） | 小模型、MoE，decode 可再快一些 |
-| `FULL_AND_PIECEWISE` | decode 用 FULL、prefill 用 PIECEWISE | 兩邊都要 |
+| `FULL_AND_PIECEWISE`（V1 目前預設） | decode 用 FULL、prefill 用 PIECEWISE | 兩邊都要；啟用 piecewise 編譯時自動選用 |
 | `NONE` | 關閉 | 除錯用 |
 
 ```bash
 # 除錯：關閉編譯與圖捕捉，看是不是它們的問題
 vllm serve <model> --enforce-eager
 
-# 追求 decode 極速（小模型）
+# 明示 cudagraph 模式（V1 預設已是 FULL_AND_PIECEWISE；想退回舊行為改成 PIECEWISE）
 vllm serve <model> --compilation-config '{"cudagraph_mode":"FULL_AND_PIECEWISE"}'
 
 # 限制捕捉的形狀，減少啟動時間與記憶體
@@ -652,8 +652,10 @@ vllm serve <70B-FP8> --tensor-parallel-size 2 \
 ④ 跨節點必須有 InfiniBand + GPUDirect RDMA
 ```
 
+> 註：下面的指令把 TP/PP 多節點用的 `--nnodes/--node-rank/--master-addr` 旗標套到了 DP+EP 上，照抄很可能起不來。DP 跨節點的正式做法請看官方 data-parallel / expert-parallel 部署文件：每個節點用 `--data-parallel-size 16 --data-parallel-size-local 8`，第二個節點以 headless 模式啟動並用 `--data-parallel-address`/`--data-parallel-rpc-port` 指向頭節點。
+
 ```bash
-# 每節點
+# 每節點（示意，旗標請依上面的註解改為 DP 專用旗標）
 vllm serve <moe-fp8> \
   --data-parallel-size 16 \
   --enable-expert-parallel \
@@ -706,12 +708,11 @@ vs --enforce-eager  小模型收益最大（CPU bound）        ─────�
                     翻轉條件：除錯時、或你在快速迭代模型程式碼時，用
                     `--enforce-eager` 省下每次 5 分鐘的編譯。生產環境一定要開。
 
-PIECEWISE graph     通用、安全、attention 保持彈性    FULL：decode 可再快一些
-vs FULL graph                                         但需 backend 支援且記憶體
-                                                      佔用更高
+FULL_AND_PIECEWISE  V1 預設；decode 走 FULL、prefill    PIECEWISE：舊版預設，attention
+vs PIECEWISE        走 PIECEWISE，兩邊都拿到            全程 eager，記憶體較省
                     ─────────────────────────────────────────────────────────
-                    翻轉條件：小模型（< 14B）+ 低併發 + 延遲敏感 →
-                    試 FULL_AND_PIECEWISE，量測後再決定。
+                    翻轉條件：backend 不支援 FULL、或記憶體吃緊 →
+                    用 --compilation-config 退回 PIECEWISE，量測後再決定。
 ```
 
 ---

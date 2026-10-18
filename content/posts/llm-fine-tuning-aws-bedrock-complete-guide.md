@@ -31,7 +31,7 @@ readTime: "28 min"
 ✅ **Data Privacy** - Your training data never leaves your AWS account or trains other models
 ✅ **Multiple Model Support** - Amazon Nova, Meta Llama, and more (check the Bedrock console for which models support customization in your region)
 
-> **Note on the examples:** the runnable code below targets `amazon.titan-text-express-v1` and the Titan `inputText` request body. Titan Text has since been superseded by **Amazon Nova**; for new projects, pick a fine-tunable Nova model and use its messages-style request format instead of `inputText`.
+> **Note on the examples:** the runnable code below targets `amazon.titan-text-express-v1` and the Titan `inputText` request body. **Titan Text Express is no longer fine-tunable on Bedrock** — the current custom-model fine-tuning table lists Amazon Nova (Nova 2 Lite, Nova Lite/Micro/Pro, Nova Canvas), Titan Image Generator / Multimodal Embeddings, Claude 3 Haiku and Llama 3.1/3.2/3.3, but no Titan Text model, so a job created with that base model ID will be rejected. Treat the scripts as a template: swap in a fine-tunable Nova model (e.g. `amazon.nova-micro-v1:0:128k`), convert the training JSONL to the Nova messages format, and call `bedrock-runtime.converse` instead of `invoke_model` with `inputText`.
 ✅ **Cost-Effective** - Pay only for training time and inference
 ✅ **Enterprise Security** - Customer managed keys, VPC endpoints, IAM integration
 
@@ -1296,7 +1296,7 @@ You've now learned how to fine-tune LLMs with AWS Bedrock, covering:
 
 1. **Start Simple** - Begin with a small dataset and basic fine-tuning
 2. **Validate Thoroughly** - Use held-out validation data to prevent overfitting
-3. **Monitor Costs** - Fine-tuning is charged by the hour, monitor your jobs
+3. **Monitor Costs** - Fine-tuning is billed on tokens processed (training tokens × epochs), plus a monthly storage fee per custom model and the inference cost of the provisioned/on-demand endpoint you deploy it to — not by the hour, so dataset size and epoch count drive the bill
 4. **Iterate** - Fine-tuning is iterative; expect to refine data and hyperparameters
 5. **Secure Your Data** - Use encryption, VPCs, and IAM best practices
 

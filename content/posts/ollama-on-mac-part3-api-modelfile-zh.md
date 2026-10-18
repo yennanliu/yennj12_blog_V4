@@ -148,7 +148,7 @@ curl http://localhost:11434/api/generate -d '{
 ≈ 88.4 tokens/sec
 ```
 
-**在 M 系列 Mac 上,一個 8B 模型大約落在 30–90 tokens/sec,取決於晶片與量化等級。** 這個數字你可以直接拿來比較不同模型、不同 `options` 設定的效能,不用另外裝工具。同理,`load_duration` 大(例如 1.1 秒)代表這次請求觸發了模型載入——這正是下一節 `keep_alive` 要處理的問題。
+**在 M 系列 Mac 上,一個 8B Q4 模型大約落在 20–60 tokens/sec,取決於晶片與量化等級(各尺寸的概略區間以第五篇 §6.6 為準)。** 這個數字你可以直接拿來比較不同模型、不同 `options` 設定的效能,不用另外裝工具。同理,`load_duration` 大(例如 1.1 秒)代表這次請求觸發了模型載入——這正是下一節 `keep_alive` 要處理的問題。
 
 ### 3.4 stream 預設為 true
 

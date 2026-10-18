@@ -35,7 +35,7 @@ readTime: "17 min"
 
 本篇的目標很單純：**讀完之後，你能在腦中畫出 vLLM 的方塊圖，說得出一個 token 是怎麼從 HTTP request 走到 SSE chunk，並且知道你那張 80 GB 的卡上，每一 GB 分別被誰吃掉。**
 
-本文以 vLLM `main` 分支（2026 年 9 月，版本參考 0.19.x）為準。vLLM 迭代極快，細節請以你 pip 裝的版本為準。
+本文以撰文時讀到的 vLLM `main` 分支與官方文件為準（文中的版本號、參數名稱與預設值可能已隨後續版本改變）。vLLM 迭代極快，細節請以你 pip 裝的版本為準。
 
 ---
 
@@ -279,7 +279,7 @@ vllm serve Qwen/Qwen3-8B \
 就這樣。**這個階段不要調任何參數。** V1 的預設值（前綴快取開、chunked prefill 開、torch.compile 開、CUDA graph piecewise 模式）已經是多數場景的合理解。
 
 - **可接受的捷徑**：沒有備援、沒有 autoscaling、模型直接從 HuggingFace 拉、tokenizer 和引擎同進程。
-- **能撐多久**：8B FP16 模型佔 16 GB，80 GB 卡上還有約 55 GB 給 KV cache。以 8192 context 算，大約可以放 400–600 條併發序列——**遠超過你 POC 階段的流量**。
+- **能撐多久**：8B FP16 模型佔 16 GB，80 GB 卡上（扣掉 activation 與保留量）約有 48 GB 給 KV cache。用第五節的算式：48 GB ÷ 128 KB/token ≈ 393K token；每條序列都吃滿 8192 context 時約 **48 條**併發，實際平均 2,000 token 時約 **196 條**——**仍遠超過你 POC 階段的流量**。
 - **成本**：單張 A100 雲上約 $1.5–2.5/hr，月約 $1.1k–1.8k。
 - **解決了什麼**：能用、延遲可接受、API 和 OpenAI 相容所以前端不用改。
 - **還沒解決什麼**：機器掛了就全掛；模型換版本要停機；沒有任何指標；長 prompt 進來會把短請求的 ITL 拖爛（因為你還沒調 `max_num_batched_tokens`）。
@@ -327,6 +327,8 @@ vllm serve Qwen/Qwen3-8B \
 | `--max-num-batched-tokens` 明確設定 | 預設值對你的 prompt 長度分布不一定合適 |
 
 **指令**：
+
+> 註：Meta 官方並未發佈 FP8 版的 Llama-3.3-70B；下面的 model id 請換成社群量化版（例如 `RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic`），或直接用 BF16 原版加 `--quantization fp8` 線上量化（第四篇會談）。另外 V1 預設已開啟前綴快取，`--enable-prefix-caching` 只是明示。
 
 ```bash
 vllm serve meta-llama/Llama-3.3-70B-Instruct-FP8 \
@@ -616,4 +618,4 @@ vs 託管 API         模型與參數完全自主                    無需維�
 
 ---
 
-*本文基於 vLLM `main` 分支（2026 年 9 月，版本參考 0.19.x）與官方文件撰寫。所有參數名稱、預設值與架構描述皆對照官方文件與原始碼；記憶體、成本與延遲數字為量級估算，實際值依硬體、模型與工作負載而異。vLLM 迭代極快，細節請以你安裝的版本為準。*
+*本文基於撰文時讀到的 vLLM `main` 分支與官方文件撰寫。所有參數名稱、預設值與架構描述皆對照官方文件與原始碼；記憶體、成本與延遲數字為量級估算，實際值依硬體、模型與工作負載而異。vLLM 迭代極快，細節請以你安裝的版本為準。*
