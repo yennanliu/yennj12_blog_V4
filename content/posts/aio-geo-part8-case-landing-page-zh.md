@@ -226,7 +226,7 @@ PerplexityBot/1.0      403    0        ← 唯一的問題
 Googlebot/2.1          200    18422
 ```
 
-原因：Cloudflare 的 Bot Fight Mode（免費方案預設開啟）。關掉即可。
+原因：Cloudflare 的 Bot Fight Mode（免費方案就包含，很多站有打開；Cloudflare 對 AI 爬蟲的預設值 2025–2026 年又改過幾次，見 [Part 15 §一](/posts/aio-geo-part15-tools-stack-zh/)）。關掉即可。
 
 **靜態站 + Cloudflare Pages 的組合，技術層幾乎不需要做事**——這是小團隊唯一的結構性優勢，30 分鐘就能拿到大公司花 6 週才能拿到的東西（見 Part 6）。
 
@@ -292,6 +292,8 @@ Landing Page 拆 8 頁     4     行銷 + 工程各半
 ---
 
 ## 五、三個 insight
+
+> 數字為示意量級，請以自己的基線為準。
 
 ### 1. 小網站的優勢是「可以整站重寫」
 

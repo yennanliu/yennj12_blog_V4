@@ -141,7 +141,7 @@ Allow: /
            • <meta name="robots" content="noai, noimageai">
 ```
 
-**Cloudflare 尤其要注意**：2024 年後預設對新網域啟用了 AI 爬蟲封鎖選項，很多人是在完全不知情的狀況下被擋掉的。檢查路徑：Security → Bots → AI Scrapers and Crawlers。
+**Cloudflare 尤其要注意**：2025 年 7 月起，新網域預設封鎖 AI 爬蟲（2026 年 9 月又改成依 Search / Agent / Training 分類的預設值，見 [Part 15 §一](/posts/aio-geo-part15-tools-stack-zh/)），很多人是在完全不知情的狀況下被擋掉的。檢查路徑：Security → Bots → AI Scrapers and Crawlers。
 
 診斷腳本：
 

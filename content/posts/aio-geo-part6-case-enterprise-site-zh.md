@@ -368,6 +368,8 @@ JSON-LD 模板               3      AEM 廠商
 
 ## 五、這個案例的三個 insight
 
+> 數字為示意量級，請以自己的基線為準。
+
 ### 1. 大企業的 GEO 分數低，通常是「防禦設定的副作用」
 
 WAF、Geo Restriction、Bot Control、rate limiting——這些設定各自都有正當理由，而且都是不同時間、不同部門加上去的。**沒有任何一個人知道全部**。
