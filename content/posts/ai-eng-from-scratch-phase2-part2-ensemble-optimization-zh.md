@@ -102,7 +102,7 @@ Bagging 的核心想法：如果一個模型在不同的訓練資料子集上有
 ```
 
 **數學保證：** 若 T 個模型的錯誤率均為 e < 0.5，且模型間獨立，集成錯誤率遠低於 e。  
-當 T=100，e=0.3 時，集成錯誤率 ≈ 0.001（二項分布尾端概率）。
+當 T=100，e=0.3 時，多數投票出錯需要至少 50 個模型同時錯，集成錯誤率 = P(X ≥ 50)，X ~ Binomial(100, 0.3)，≈ 2.2 × 10⁻⁵（二項分布尾端概率，比單一模型的 0.3 低四個數量級）。
 
 ### 3.2 Random Forest 的關鍵改進：特徵隨機性
 
@@ -475,6 +475,8 @@ model.fit(
 )
 best_n = model.best_ntree_limit  # 記錄最佳輪次
 ```
+
+> 注意：上面是 XGBoost 1.x 的寫法。XGBoost 2.0 起 `fit()` 不再接受 `early_stopping_rounds`，`best_ntree_limit` 也已移除——改在建構子傳入 `XGBClassifier(early_stopping_rounds=50)`（如 §4.4 的範例），並以 `model.best_iteration` 讀取最佳輪次。另外，§6.2 的 `RandomizedSearchCV` 若把 early stopping 放進估計器，必須透過 `fit_params` 傳入 `eval_set`，否則 `fit` 會直接報錯。§7.2 的 `convert_sklearn` 對 `XGBClassifier` 需先呼叫 sklearn-onnx 的 `update_registered_converter(XGBClassifier, ..., convert_xgboost)` 註冊轉換器，或改用 `onnxmltools.convert_xgboost`。
 
 ---
 

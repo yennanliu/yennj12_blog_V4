@@ -176,16 +176,18 @@ y = x @ W.T                 # 正確：(32, 128) @ (128, 256) → (32, 256)
 
 ### 4.2 批次矩陣乘法（Batched Matrix Multiplication）
 
-深度學習幾乎永遠是批次操作。單個樣本的計算效率極低，batch processing 讓 GPU 利用率從 < 5% 提升到 > 80%。
+深度學習幾乎永遠是批次操作。單個樣本的計算效率極低，batch processing 讓 GPU 的算力利用率從個位數百分比提升到接近飽和。
 
-| Batch Size | GPU 使用率 | 訓練速度 (samples/sec) | 備註 |
-|---|---|---|---|
-| 1 | ~3% | 120 | 幾乎浪費 GPU |
-| 8 | ~15% | 800 | 開發除錯用 |
-| 32 | ~45% | 2,800 | 常見起始值 |
-| 128 | ~78% | 9,600 | 多數任務最優 |
-| 512 | ~85% | 31,000 | 需要大 LR warm-up |
-| 2048 | ~88% | 98,000 | 需要 gradient accumulation |
+| Batch Size | 訓練速度 (samples/sec，示意) | 備註 |
+|---|---|---|
+| 1 | 120 | 幾乎浪費 GPU |
+| 8 | 800 | 開發除錯用 |
+| 32 | 2,800 | 常見起始值 |
+| 128 | 9,600 | 多數任務最優 |
+| 512 | 31,000 | 需要大 LR warm-up |
+| 2048 | 98,000 | 需要 gradient accumulation |
+
+*示意估算，非實測數據：吞吐量隨 batch size 近似線性成長，直到算力或記憶體頻寬飽和為止。*
 
 ### 4.3 奇異值分解（SVD）在 AI 的應用
 
@@ -428,7 +430,7 @@ torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 | 選擇 | 理由 | 不選的理由 |
 |---|---|---|
 | **Adam** | 自適應學習率：每個參數有獨立 LR；不需精細調 LR；收斂快，15–30% 更快達到同等 loss | SGD：需要精細調 LR 和 momentum；對 LR 敏感；收斂慢但有時泛化更好 |
-| **SGD+Momentum** | 某些 CV 任務泛化性能 1–3% 更好；記憶體比 Adam 少 1/3（無需存 m, v）| Adam：訓練快但有時 generalization gap 較大 |
+| **SGD+Momentum** | 某些 CV 任務泛化性能 1–3% 更好；優化器相關記憶體比 Adam 少 25%（參數 + 梯度 + 動量 = 3 份，Adam 需存 m, v 共 4 份）| Adam：訓練快但有時 generalization gap 較大 |
 
 **翻轉條件：** 當模型 > 1B 參數且記憶體緊張時，實務上改用 8-bit Adam、Adafactor 或 ZeRO 分片優化器狀態，而不是退回 SGD；當訓練預算有限時，Adam 幾乎必選。
 
@@ -449,7 +451,7 @@ torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 | **MSE** | 梯度 = 2(ŷ - y)，配合 Sigmoid 時梯度 → 0 | 回歸問題 | 分類問題：配合 Sigmoid 時 Vanishing gradient 嚴重 |
 | **Focal Loss** | 對難樣本加重 | 類別不平衡（正負樣本比 > 100:1） | 類別平衡時沒必要 |
 
-**翻轉條件：** 目標偵測（YOLO 系列）使用 MSE 預測框座標，同時用 Cross-Entropy 預測類別。
+**翻轉條件：** 目標偵測（早期 YOLO v1–v3）使用 MSE 預測框座標，同時用 Cross-Entropy 預測類別；YOLO v4 之後改用 GIoU/CIoU 這類 IoU-based 損失預測框座標。
 
 ### 8.4 FP32 vs FP16/BF16
 

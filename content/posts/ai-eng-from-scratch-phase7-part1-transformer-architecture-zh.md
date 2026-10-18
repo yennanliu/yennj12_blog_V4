@@ -227,8 +227,8 @@ Attention 計算：Q'ₘ · K'ₙᵀ = Qₘ · Rₘ₋ₙᵀ · Kₙ
 → 點積只依賴相對距離 (m-n)，天然支援相對位置
 ```
 
-優點：相對位置感知、外推能力強（配合 YaRN 可延伸 4-8×）  
-缺點：計算額外旋轉矩陣，約增加 5-8% 計算開銷
+優點：相對位置感知、外推能力強（配合 YaRN 等頻率縮放可把 Llama 2 從 4K 延伸到 128K，即 32×）  
+缺點：每層要對 Q、K 做一次旋轉，有少量額外計算（相對 attention 本身可忽略）
 
 **方案三：ALiBi（Attention with Linear Biases）**
 
@@ -248,9 +248,9 @@ m 為 head-specific 斜率（不可學習，預定義）
 | 場景 | 建議方案 |
 |------|---------|
 | 訓練新模型，預算充足 | RoPE |
-| 需要極長上下文（>128K） | ALiBi 或 RoPE + YaRN |
-| 微調現有 BERT/GPT-2 | 維持原 Sinusoidal |
-| 推理速度優先 | ALiBi（無額外旋轉計算） |
+| 需要極長上下文（>128K） | RoPE + 頻率縮放（YaRN / NTK-aware）；Llama 3.1、Qwen、DeepSeek 等現行長上下文模型都走這條路 |
+| 微調現有 BERT/GPT-2 | 維持原 Sinusoidal / learned |
+| 從頭訓練且想要零成本外推 | ALiBi（無額外旋轉計算；2023 年後新模型已少採用） |
 
 ---
 
@@ -437,7 +437,7 @@ Flip condition：序列長度 < 512 且 GPU 記憶體充足時，標準 Attentio
 ──────────────────────────────────────────────────────────────────────────────
 MHA     最高模型品質，每個 head 獨立             KV Cache 最大，記憶體開銷高  離線批次推理
 GQA     品質損失 <2%，KV Cache 省 75%           工程複雜度稍高              生產 API 服務
-MQA     KV Cache 省 97%，速度最快               品質損失 5-8%，訓練不穩定    邊緣部署、延遲極敏感
+MQA     KV Cache 省 97%，速度最快               品質略有損失（視任務而定），訓練較不穩定    邊緣部署、延遲極敏感
 
 Flip condition：模型品質是首要指標（如醫療、法律）→ 選 MHA；成本優先 → GQA；極端延遲要求 → MQA
 ```
@@ -461,32 +461,32 @@ Flip condition：下游任務對細微差異敏感（如數值計算） → BF16
 
 ## 九、系統效應（有無優化的延遲/吞吐數字）
 
-以 LLaMA-2 7B，A100 40GB，prompt=512 tokens，生成=256 tokens 為基準：
+以 LLaMA-2 7B（N ≈ 6.7B），A100 40GB（BF16 312 TFLOPS、FP32 19.5 TFLOPS、HBM 1.55 TB/s），prompt=512 tokens，生成=256 tokens 為基準。兩個量要分開看：**首 token 延遲由 prefill 決定**（計算瓶頸：≈ 2·N·512 ≈ 6.9 TFLOP），**每個 decode 步的延遲由讀一次權重決定**（記憶體頻寬瓶頸：權重大小 ÷ HBM 頻寬），KV Cache 只影響後者。
 
-| 配置 | 首 token 延遲 (P50) | 首 token 延遲 (P99) | 吞吐量 (req/s) | KV Cache/req | GPU 記憶體使用率 |
-|------|--------------------|--------------------|---------------|-------------|----------------|
-| FP32 + 標準 Attn，無 Cache | 8,200 ms | 12,000 ms | 0.8 | 0 | 28 GB (模型) |
-| BF16 + 標準 Attn，無 Cache | 4,100 ms | 6,500 ms | 1.6 | 0 | 14 GB |
-| BF16 + 標準 Attn + KV Cache | 380 ms | 650 ms | 12 | 2.1 GB | 14 + 33.6 GB |
-| BF16 + Flash Attn + KV Cache | 160 ms | 280 ms | 35 | 2.1 GB | 14 + 33.6 GB |
-| BF16 + Flash Attn + GQA + Cache | 155 ms | 270 ms | 140 | 0.53 GB | 14 + 8.5 GB |
-| INT8 + Flash Attn + GQA + vLLM | 120 ms | 210 ms | 250 | 0.53 GB | 7 + 8.5 GB |
+| 配置 | 首 token 延遲（prefill） | 每 token decode 延遲（batch=1） | 吞吐量 (req/s，單卡批次化後) | KV Cache/req | GPU 記憶體 |
+|------|------------------------|-------------------------------|---------------------------|-------------|-----------|
+| FP32 + 標準 Attn + KV Cache | ~700 ms | ~17 ms | ~1 | 4.3 GB | 27 GB + KV |
+| BF16 + 標準 Attn，無 KV Cache | ~45 ms | ~55 ms（每步重算整段前文） | ~1 | 0 | 14 GB |
+| BF16 + 標準 Attn + KV Cache | ~45 ms | ~9 ms | ~5（batch 12） | 2.1 GB | 14 + 25 GB |
+| BF16 + Flash Attn + KV Cache | ~40 ms | ~9 ms | ~5（batch 12） | 2.1 GB | 14 + 25 GB |
+| BF16 + Flash Attn + GQA + Cache | ~40 ms | ~9 ms | ~17（batch 48） | 0.53 GB | 14 + 25 GB |
+| INT8 + Flash Attn + GQA + vLLM | ~40 ms | ~5 ms | ~35（batch 64） | 0.53 GB | 7 + 33 GB |
 
-*示意估算，非實測數據*
+*示意估算，非實測數據。算法：首 token = 6.9 TFLOP ÷（峰值算力 × 50% MFU）→ FP32 0.70 s、BF16 44 ms；decode 每 token = 權重大小 ÷ 1.55 TB/s → FP32 27 GB 17 ms、BF16 13.4 GB 8.6 ms、INT8 6.7 GB 4.3 ms；無 KV Cache 時每步重算 512+i 個 token，256 步合計 ≈ 14 s，平均 55 ms/token；吞吐 ≈ batch ÷（首 token + 256 × 每步延遲），batch 由剩餘記憶體 ÷ 每請求 KV Cache 決定。*
 
 ### 關鍵觀察
 
-1. **KV Cache 是最大單一增益**：延遲從 4100ms 降至 380ms（↓91%），代價是記憶體
-2. **Flash Attention 是吞吐乘數**：在記憶體不變的情況下，吞吐 12 → 35 req/s（↑2.9×）
-3. **GQA 釋放記憶體**：KV Cache 從 33.6 GB → 8.5 GB，讓更大批次成為可能，吞吐 35 → 140 req/s（↑4×）
-4. **INT8 量化**：模型記憶體減半，延遲再降 20%，品質損失 < 1%
+1. **KV Cache 改的是 decode，不是首 token**：每個 decode 步從「重算整段前文」（~55 ms）變成「讀一次權重」（~9 ms），256 個 token 從 ~14 s 降到 ~2.2 s；首 token 延遲完全不變
+2. **BF16 與 INT8 才是首 token 與每步延遲的槓桿**：prefill 算力 16×（19.5 → 312 TFLOPS）、權重讀取量減半，兩者分別壓低首 token 與每步延遲
+3. **Flash Attention 在 512-token prompt 幾乎看不出來**：attention 的 FLOPs 只佔 prefill 的 ~2%，它的價值在長 prompt（> 2K）的 n² 記憶體與 HBM 往返
+4. **GQA 與 PagedAttention 釋放的是批次**：每請求 KV Cache 2.1 GB → 0.53 GB，同樣記憶體能塞下 4× 的並發，吞吐隨之 ~3–7×
 
-### 達到開頭設定的部署目標（P99 < 500ms，> 200 req/s，< 40GB）
+### 對照開頭設定的部署目標（P99 < 500ms，> 200 req/s，< 40GB）
 
 最終配置：INT8 + Flash Attention 2 + GQA + vLLM PagedAttention
-- P99 首 token：210 ms ✓（< 500ms）
-- 吞吐量：250 req/s ✓（> 200 req/s）
-- GPU 記憶體：7 + 8.5 = 15.5 GB ✓（< 40 GB，還有空間給更大批次）
+- 首 token：~40 ms，加上排隊後 P99 仍遠低於 500 ms ✓
+- GPU 記憶體：7 GB 權重 + 33 GB KV Cache 預算 ✓（< 40 GB）
+- 吞吐量：單卡 ~35 req/s（每請求生成 256 tokens，約 9K tokens/s）；> 200 req/s 需要約 6 張卡，或把生成長度壓到 64 tokens 以內——**吞吐目標是靠橫向擴展達成的，不是靠單卡優化**
 
 ---
 

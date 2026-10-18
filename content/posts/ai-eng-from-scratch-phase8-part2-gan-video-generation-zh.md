@@ -194,7 +194,7 @@ self.conv1 = spectral_norm(nn.Conv2d(3, 64, 4, 2, 1))
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
-│  StyleGAN2 架構                                                 │
+│  StyleGAN 架構（v1 用 AdaIN；v2 改用 weight demodulation）     │
 │                                                                │
 │  隨機雜訊 z ──▶ [Mapping Network f: 8層MLP] ──▶ w ∈ W空間     │
 │                                                      │         │
@@ -252,8 +252,8 @@ for i, block in enumerate(synthesis_blocks):
 
 **量化成就（StyleGAN2，FFHQ 1024×1024）：**
 - FID = **2.84**（2020 年 SOTA）
-- PPL（Perceptual Path Length）= 3.96（潛在空間平滑性指標）
-- 訓練：8× V100，25 天（完整 FFHQ 70K 圖片）
+- PPL（Perceptual Path Length）= 145（StyleGAN2 論文 Table 1 config F；StyleGAN1 為 212，越低代表潛在空間越平滑）
+- 訓練：8× V100，約 9 天 18 小時（官方 repo 的 config F，FFHQ 1024×1024，25,000 kimg）
 
 ---
 
@@ -355,12 +355,14 @@ def temporal_consistency_loss(frames, optical_flow_net):
 
 ### 影片生成的工程成本
 
-| 任務 | 模型 | 解析度 | 生成時間 | GPU 記憶體 |
+| 任務 | 模型 | 解析度 | 生成時間（示意） | GPU 記憶體（示意） |
 |------|------|--------|----------|------------|
 | 1 秒影片（30 幀）| VideoGAN | 256×256 | ~8s | 24GB |
 | 1 秒影片（30 幀）| Stable Video Diffusion | 512×512 | ~25s | 40GB |
-| 4 秒影片（120 幀）| Wan 2.1 | 480p | ~180s | 80GB |
+| 5 秒影片（81 幀）| Wan 2.1（1.3B / 14B） | 480p | 數分鐘 | ~8GB / ~80GB |
 | 即時影片（> 30fps）| 目前無解，需要串流 GAN | 256×256 | < 33ms/frame | 16GB |
+
+*示意估算，非實測數據；Wan 2.1 的幀數與 1.3B 版本的 VRAM 需求取自官方 README。*
 
 **工程結論**：現代影片生成以 Diffusion 為主流，且主力已轉向 **Video DiT**（3D VAE 把影片壓成時空 latent，再以時空注意力的 Transformer 去噪，多搭配 flow matching；Sora、Wan 系列皆屬此類）；GAN 在即時影片編輯（濾鏡、換臉）等低延遲場景仍有一席之地。
 
@@ -386,7 +388,7 @@ def temporal_consistency_loss(frames, optical_flow_net):
 | **FID（臉部）** | 2.84 | ~4.5 | GAN 在特定域仍有優勢 |
 | **FID（通用）** | ~30–50 | ~8–15 | Diffusion 通用性更好 |
 | **推論延遲** | 15–50ms | 1,000–5,000ms | GAN 快 **20–100×** |
-| **推論成本/張** | $0.0002 | $0.008 | GAN 便宜 **40×** |
+| **推論成本/張** | ~$0.00001（StyleGAN2 1024²，~40ms/張，A10G） | ~$0.0002（SD v1.5 512²，20 步 fp16，1.0s/張，A10G；與 [Phase 8 Part 1 §九](/posts/ai-eng-from-scratch-phase8-part1-diffusion-models-zh/) 同基準） | GAN 便宜 **~20×**（0.75/3600 × 秒數） |
 | **模式多樣性** | 中（模式崩潰風險）| 高（無此問題）| Diffusion 佔優 |
 | **文字條件控制** | 弱（需要 CLIP 額外模組）| 強（訓練時即對齊）| Diffusion 佔優 |
 | **訓練穩定性** | 低（需要大量調參）| 高（可預測收斂）| Diffusion 佔優 |
@@ -400,7 +402,7 @@ def temporal_consistency_loss(frames, optical_flow_net):
 
 | 場景 | 建議選型 | 理由 |
 |------|----------|------|
-| 電商商品圖風格轉換，< 200ms SLA | **GAN（CycleGAN/pix2pix）** | 延遲達標，批次處理成本低 40× |
+| 電商商品圖風格轉換，< 200ms SLA | **GAN（CycleGAN/pix2pix）** | 延遲達標，批次處理成本低約 20× |
 | 社群媒體濾鏡（即時預覽）| **GAN（輕量 Generator）** | 手機端 < 30ms 可行 |
 | 廣告創意生成（高品質優先）| **Diffusion（SDXL/FLUX）** | FID < 10，文字控制靈活 |
 | 醫療影像增強（需要可解釋性）| **GAN（條件 GAN）** | 可控性高，不需要龐大算力 |

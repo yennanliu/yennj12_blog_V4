@@ -89,8 +89,8 @@ CLIP（Contrastive Language-Image Pre-Training）是現代 VLM 的基石。其�
 **訓練細節：**
 - 資料集：400M 圖文對（網路爬取）
 - Batch size：32,768（對比學習需要大 batch 才有足夠負樣本）
-- 訓練時間：在 592 V100 × 18 天
-- ViT-L/14 版本：Image Encoder 輸出 768 維向量，Text Encoder 輸出 512 維
+- 訓練時間：最大的 ResNet 版本（RN50x64）在 592 張 V100 上訓練 18 天；最大的 ViT 版本在 256 張 V100 上訓練 12 天（CLIP 論文）
+- ViT-L/14 版本：Image Encoder 與 Text Encoder 都投影到 768 維的共同空間（512 維是 ViT-B/32 的設定）
 
 **Zero-shot 推論原理：**
 ```
@@ -151,7 +151,7 @@ LLaVA-1.5 的突破在於將 Linear Projection 換成 MLP（2 層），並用 VQ
 |------|------------|---------|------------|---------|---------|
 | BLIP-2 | Q-Former (188M) | 只訓 Q-Former | 65.2% | 慢（多階段） | 需要彈性換底模型 |
 | LLaVA-1.5 | MLP Projection | LLM + MLP | 80.0% | 快 | 中等規模部署 |
-| GPT-4V | 未公開（推測 cross-attn） | 未公開 | ~87% | 2–5s (API) | 最高精度需求 |
+| GPT-4V | 未公開（推測 cross-attn） | 未公開 | 未公開 | 2–5s (API) | 最高精度需求 |
 | LLaVA-NeXT | Dynamic Resolution | LLM + 更高解析度 | 82.4% | 中 | 需要細節識別 |
 
 **工程選型建議：**
@@ -389,7 +389,7 @@ Sora 基於 Diffusion Transformer（DiT），將影片視為時空 patch 序列�
 
 | 選擇 | 選 vLLM | 不選 TGI |
 |------|--------|---------|
-| 吞吐量 | PagedAttention 讓吞吐量高 24x | KV Cache 管理效率低 |
+| 吞吐量 | PagedAttention：vLLM 官方 2023 基準比 HF Transformers 高 24×、比 TGI 高約 3.5× | KV Cache 管理效率較低（之後版本已補上 PagedAttention） |
 | 多模態支援 | 原生支援 LLaVA/Qwen-VL | 多模態支援較晚、較不完整 |
 | 社群 | Pytorch 生態，貢獻活躍 | HuggingFace 官方但更新慢 |
 | 靈活度 | 自訂採樣策略容易 | 更封閉的 API |
