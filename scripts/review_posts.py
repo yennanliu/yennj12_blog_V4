@@ -57,7 +57,8 @@ MD_IMAGE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)")
 BOX_CHARS = re.compile(r"[┌┐└┘├┤│─═╔╗╚╝▶▼]")
 # A number presented as measured must say where it came from, or admit it is illustrative.
 MEASURED = re.compile(r"實測|實際測試|實際量測|我們跑了|生產環境.{0,6}平均")
-MEASURED_OK = re.compile(r"示意|估算|來源|資料來源|http|\[\d+\]|arXiv|論文|報告|benchmark|非實測")
+MEASURED_OK = re.compile(r"示意|估算|來源|資料來源|http|\[\d+\]|arXiv|論文|報告|benchmark|非實測|未實測"
+                         r"|你的|自己的|建議實測|必須.{0,12}實測|實測你|需實測|該實測|親自實測|實際測試的能力")
 MODEL_ANSWER = re.compile(r"面試答題要點|面試回答完整示範|完整範例回答|範例回答|最想聽到")
 MERMAID_FENCE = re.compile(r"^\s*(`{3,}|~{3,})\s*mermaid\b")
 # Case-sensitive on purpose: "Todo List" and `todo_write` are real prose.

@@ -431,7 +431,7 @@ def _parallel_safe(self, tool_call: ToolCall) -> bool:
 注意 **「anything unannotated stay strictly ordered」** —— 沒有宣告 metadata 的工具
 預設是序列的。這是正確的 fail-safe 方向：**未知 = 保守**。
 
-實測影響：一個典型的「探索程式碼」turn 會產生 3–6 個 grep/read，
+示意影響（依程式碼閱讀推估）：一個典型的「探索程式碼」turn 會產生 3–6 個 grep/read，
 併發後從 ~4.5 秒降到 ~1.2 秒。
 
 ### 5.3 三個「繞過權限系統」的特殊工具
