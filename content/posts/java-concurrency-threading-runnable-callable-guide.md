@@ -54,19 +54,17 @@ Understanding the thread lifecycle is essential for effective concurrency manage
 ```mermaid
 graph TD
     A[NEW] --> B[RUNNABLE]
-    B --> C[RUNNING]
-    C --> B
-    C --> D[BLOCKED]
-    C --> E[WAITING]
-    C --> F[TIMED_WAITING]
-    C --> G[TERMINATED]
+    B --> D[BLOCKED]
+    B --> E[WAITING]
+    B --> F[TIMED_WAITING]
+    B --> G[TERMINATED]
 
     D --> B
     E --> B
     F --> B
 
-    H[Thread.start()] --> A
-    I[Scheduler] --> C
+    H[new Thread()] --> A
+    I[Thread.start()] --> B
     J[synchronized block] --> D
     K[Object.wait()] --> E
     L[Thread.sleep()] --> F
@@ -74,9 +72,10 @@ graph TD
 
     style A fill:#96ceb4
     style B fill:#feca57
-    style C fill:#4ecdc4
     style G fill:#ff6b35
 ```
+
+These are the six values of `Thread.State`. There is no separate `RUNNING` state: a thread that the OS scheduler is actually executing is still reported as `RUNNABLE`. The constructor puts a thread in `NEW`; `start()` moves it to `RUNNABLE`.
 
 ## 🏃‍♂️ Core Threading Implementations
 
@@ -636,6 +635,8 @@ public class ExecutorServiceExamples {
 
 ### 📊 Production ExecutorService Configuration
 
+> Caveat: the bean below is registered as a `TaskExecutor`, but the aggregation service further down injects it as `@Qualifier("taskExecutor") ExecutorService`. `ThreadPoolTaskExecutor` does not implement `ExecutorService`, so the context fails to start as written — inject `TaskExecutor`/`AsyncTaskExecutor`, or expose `executor.getThreadPoolExecutor()` as a separate bean.
+
 ```java
 @Configuration
 @EnableConfigurationProperties(ThreadPoolProperties.class)
@@ -822,6 +823,8 @@ public class CompletableFutureExamples {
 ```
 
 ### 🏭 Production CompletableFuture Example: API Aggregation Service
+
+> Caveat: in the `fetch*` methods below, `.orTimeout(...)` is chained *after* `.exceptionally(...)`, so a timeout bypasses the fallback and fails the whole aggregation. Put `.orTimeout()` first and `.exceptionally()` last if the default value should also cover the timeout case.
 
 ```java
 @Service
@@ -1135,6 +1138,8 @@ graph TD
 
 ### 🔄 Producer-Consumer Pattern
 
+> Caveat: `start()` below launches the producer and consumers *before* `running.set(true)`, so any loop that checks `running` first can exit immediately. Set the flag before starting the threads.
+
 ```java
 @Component
 public class ProducerConsumerExample {
@@ -1402,7 +1407,7 @@ public class ThreadPoolOptimizer {
 
     private long calculateKeepAliveTime(WorkloadCharacteristics workload) {
         if (workload.getType() == WorkloadType.BURSTY) {
-            return 30; // Keep threads alive longer for bursty workloads
+            return 30; // Shorter keep-alive so spike threads are reclaimed quickly
         } else {
             return 60; // Standard keep-alive time
         }
@@ -1496,6 +1501,8 @@ public class ThreadPoolOptimizer {
 ```
 
 ### 📈 Monitoring and Observability
+
+> Caveat: Micrometer's `Counter.increment()` takes a `double`, not `Tags` — the `increment(Tags.of(...))` calls below do not compile. Resolve a tagged counter at the call site instead: `meterRegistry.counter("task.completions", "task", taskName, "result", "success").increment()`.
 
 ```java
 @Component

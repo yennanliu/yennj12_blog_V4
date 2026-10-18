@@ -9,6 +9,8 @@ authors: ["yen"]
 readTime: "30 min"
 ---
 
+> Versions, APIs and prices in this guide are as of 2025-09 (the post date); AWS services and SDKs change frequently — verify against the current docs.
+
 ## 🎯 Introduction
 
 In modern distributed systems with dozens or hundreds of microservices, managing API traffic becomes increasingly complex. AWS API Gateway emerges as a critical component that acts as a single entry point for all client requests, solving major challenges in microservices architecture. This comprehensive guide explores API Gateway fundamentals, compares it with load balancers, and provides production-ready Java implementations.
@@ -88,8 +90,8 @@ graph TD
         F4[Request/Response Transformation]
         F5[Caching]
         F6[Monitoring & Analytics]
-        F7[Load Balancing]
-        F8[Circuit Breaker]
+        F7[Usage Plans & API Keys]
+        F8[Stages & Canary Releases]
     end
 
     AG -.-> F1
@@ -285,6 +287,8 @@ Most enterprise architectures use **both** - API Gateway for API management and 
 ```
 
 ### 2. API Gateway Configuration Service
+
+> **Caveat:** the integration below hard-codes `integrationHttpMethod("POST")` for every method, so a `GET /users` reaches the backend as a `POST`. Pass the client method through (or use `ANY`), and note that an `HTTP_PROXY` integration can only reach a private backend through a VPC Link to an NLB.
 
 ```java
 @Service
@@ -496,6 +500,8 @@ public class ApiGatewayService {
 ```
 
 ### 3. Complete Microservices Setup with API Gateway
+
+> **Caveat:** the `http://*-service.internal:8080` URIs are private DNS names that a REST API Gateway cannot resolve or route to without a VPC Link (or an HTTP API with an ALB/Cloud Map private integration), and the `{id}` path parameter is never mapped (`integration.request.path.id`). Treat the URIs as placeholders.
 
 ```java
 @RestController
@@ -764,6 +770,8 @@ public class ApiGatewayCustomAuthorizer implements RequestHandler<APIGatewayProx
 ```
 
 ### 5. Response Aggregation Service
+
+> **Caveat:** the `@CircuitBreaker` / `@TimeLimiter` / `@Retry` annotations below sit on `private` methods called from inside the same bean — Spring AOP proxies only intercept external calls on public methods, so none of these annotations ever applies as written. Move the guarded calls into a separate `@Service` (or use the Resilience4j decorators programmatically).
 
 ```java
 @Service
@@ -1231,6 +1239,8 @@ public class ResponseAggregationService {
 
 ### 1. API Gateway Metrics Service
 
+> **Caveat:** every `AWS/ApiGateway` query below omits the required `ApiName` dimension (and `Stage` for per-stage metrics), so CloudWatch returns no datapoints. The `avgLatency < 1000` health threshold is illustrative, not a recommendation.
+
 ```java
 @Service
 @Slf4j
@@ -1384,7 +1394,7 @@ public class ApiGatewayMetricsService {
             long throttleCount = getThrottleCount();
 
             return new ApiGatewayHealthSummary(
-                avgLatency < 1000, // Healthy if under 1 second
+                avgLatency < 1000, // illustrative threshold
                 avgLatency,
                 errorRate4xx,
                 errorRate5xx,

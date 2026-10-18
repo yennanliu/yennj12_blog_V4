@@ -70,7 +70,7 @@ Synthwave 特徵:
   • Yamaha DX7（1983）
     - 音色: 明亮、清脆、數位
     - 特徵: FM 合成、Bell 音色
-    - 代表作品: "Take On Me" - a-ha
+    - 常被提及的作品: "Take On Me" - a-ha（該主題 riff 常被歸於 Juno-60 等類比合成器，各方說法不一）
 
   • Prophet-5（1978）
     - 音色: 經典、平滑、飽滿

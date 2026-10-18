@@ -9,6 +9,8 @@ description: "完整解析 Claude Code 的核心架構元件：從底層的 MCP 
 readTime: "29 min"
 ---
 
+本文對 Claude Code 功能的描述以 2026-01 的文件為準，產品每月更新。
+
 Claude Code 作為 Anthropic 官方推出的 AI 驅動開發工具，其強大功能背後是由多個精心設計的架構元件組成。本文將深入解析 **MCP (Model Context Protocol)**、**Plugin**、**Skill** 和 **Sub-agent** 這四個核心概念，幫助開發者全面理解 Claude Code 的架構設計並有效運用。
 
 ## 🎯 核心概念概覽
@@ -30,10 +32,10 @@ Claude Code 作為 Anthropic 官方推出的 AI 驅動開發工具，其強大�
               │
               ├─────► Sub-agent (子代理)
               │       專門處理特定任務的 AI 代理
-              │       ├─► Bash Agent (命令執行專家)
               │       ├─► Explore Agent (程式碼探索專家)
               │       ├─► Plan Agent (架構規劃專家)
-              │       └─► General Purpose Agent (通用代理)
+              │       ├─► General Purpose Agent (通用代理)
+              │       └─► 自訂 Agent (.claude/agents/ 中定義)
               │
               └─────► MCP + Plugin (底層能力擴展)
                       │
@@ -53,8 +55,8 @@ Claude Code 作為 Anthropic 官方推出的 AI 驅動開發工具，其強大�
 
 | 層級 | 元件 | 抽象程度 | 主要用途 |
 |------|------|---------|---------|
-| **L4** | **Skill** | 最高 | 使用者友善的命令介面 |
-| **L3** | **Sub-agent** | 高 | 專門任務的獨立 AI 代理 |
+| **L4** | **Sub-agent** | 最高 | 專門任務的獨立 AI 代理 |
+| **L3** | **Skill** | 高 | 使用者友善的命令介面 |
 | **L2** | **Plugin** | 中 | 預建的功能擴展包 |
 | **L1** | **MCP** | 最低 | 底層通訊協議 |
 
@@ -453,6 +455,8 @@ server.setRequestHandler("tools/call", async (request) => {
 
 #### 1. **資料庫 Plugins**
 
+（下列套件名稱為示意：`server-postgres` 等官方參考伺服器多已封存，`server-mongodb` 並不在官方 reference servers 清單中，請以實際存在的套件為準。）
+
 ```json
 {
   "mcpServers": {
@@ -810,7 +814,7 @@ Claude: [依 description 匹配並載入 deploy-full-stack Skill，照步驟執�
 | **智能程度** | 低（按腳本執行） | 高（自主決策） |
 | **使用方式** | /skill-name | 自動或手動呼叫 |
 | **適用場景** | 固定流程 | 複雜分析任務 |
-| **成本** | 低（不消耗額外 tokens） | 高（獨立 API 呼叫） |
+| **成本** | 中（呼叫時 SKILL.md 內容會載入 context） | 高（獨立 API 呼叫） |
 
 ## 🤖 L4: Sub-agent (子代理) - 專門任務代理
 
@@ -860,10 +864,12 @@ Claude: [依 description 匹配並載入 deploy-full-stack Skill，照步驟執�
 
 ### 🎨 內建 Sub-agent 類型
 
-#### 1. **Bash Agent** - 命令執行專家
+Claude Code 文件列出的內建 Sub-agent 是 **Explore**、**Plan** 與 **general-purpose**（以及少數工具型代理如 `statusline-setup`、`claude-code-guide`）；並**沒有**內建的「Bash Agent」。所有 Sub-agent 都由主要實例透過 Agent 工具啟動，而你可以在 `.claude/agents/` 以 Markdown 定義自己的代理。下面第一個例子就是這樣一個自訂的命令執行代理。
+
+#### 1. **自訂 Agent：命令執行專家**（`.claude/agents/` 定義）
 
 ```
-角色: 專門執行複雜的 Bash 命令和系統操作
+角色: 專門執行複雜的 Bash 命令和系統操作（自訂，非內建）
 工具: Bash (唯一工具)
 使用時機: 需要執行多步驟命令序列
 
@@ -878,9 +884,9 @@ Claude: [依 description 匹配並載入 deploy-full-stack Skill，照步驟執�
 ```
 使用者: "將所有 .js 檔案轉換為 .ts，保留原始檔案"
 
-主要 Claude: [分析任務] → [啟動 Bash Agent]
+主要 Claude: [分析任務] → [以 Agent 工具啟動自訂的命令執行 Agent]
 
-Bash Agent 執行:
+命令執行 Agent 執行:
 #!/bin/bash
 for file in $(find . -name "*.js"); do
   ts_file="${file%.js}.ts"
@@ -972,7 +978,7 @@ Plan Agent 流程:
   [Grep] 搜尋現有的檔案上傳實作
 
 第二階段：設計方案並寫入計畫檔案
-  [Write] 建立 /tmp/claude-plan-xxx.md
+  [Write] 寫入計畫檔案（路徑由 Claude Code 決定，此處為示意）
 
 計畫內容:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1043,7 +1049,7 @@ Plan Agent 流程:
 ┌──────────────────────────────────────────────────┐
 │ 2. Agent 選擇                                     │
 │    根據任務類型選擇適當的 Sub-agent               │
-│    • 命令執行 → Bash Agent                       │
+│    • 命令執行 → 主要實例的 Bash 工具或自訂 Agent  │
 │    • 程式碼探索 → Explore Agent                  │
 │    • 功能規劃 → Plan Agent                       │
 └──────────────┬───────────────────────────────────┘
@@ -1077,7 +1083,7 @@ Plan Agent 流程:
 
 Sub-agent 會在以下情況**自動啟動**：
 
-✅ **Bash Agent 自動啟動時機：**
+✅ **自訂命令執行 Agent 的適用時機：**
 - 需要執行複雜的 Git 操作
 - 多步驟建構或部署流程
 - 批次檔案處理任務
@@ -1143,7 +1149,7 @@ Plan Agent:
 Skill 流程:
   1. [Write] 建立 User, Post, Comment models
   2. [Write] 建立 migration 檔案
-  3. [Bash Agent] 執行 migration
+  3. [Bash] 執行 migration
      bash: npx prisma migrate dev --name init
 
   4. [Write] 建立 AuthController
@@ -1186,10 +1192,10 @@ Agent 執行:
 主要 Claude: [執行 /integration-test Skill]
 
 Skill 流程:
-  1. [Bash Agent] 啟動後端
+  1. [Bash] 啟動後端
      bash: cd backend && npm start &
 
-  2. [Bash Agent] 啟動前端
+  2. [Bash] 啟動前端
      bash: cd frontend && npm run dev &
 
   3. [MCP: Browser Plugin] 執行 E2E 測試
@@ -1254,7 +1260,7 @@ Skill 流程:
        ▼   ▼                      ▼         ▼
 ┌─────────────┐          ┌──────────────┐  ┌────────────┐
 │預定義工作流程│          │專門 AI 代理   │  │外部工具集合│
-│• /commit    │          │• Bash Agent  │  │• Database  │
+│• /commit    │          │• 自訂 Agent  │  │• Database  │
 │• /test      │          │• Explore Agt │  │• GitHub    │
 │• /deploy    │          │• Plan Agent  │  │• AWS       │
 └─────────────┘          └──────────────┘  └────────────┘
@@ -1299,7 +1305,7 @@ Skill 流程:
             │
             ├─ 是 → 使用 Sub-agent
             │       • 程式碼探索 → Explore Agent
-            │       • 命令執行 → Bash Agent
+            │       • 命令執行 → 自訂 Agent
             │       • 功能規劃 → Plan Agent
             │
             └─ 否 → 主要實例直接處理
@@ -1322,6 +1328,8 @@ Skill 流程:
 ## 📊 效能與成本考量
 
 ### Token 消耗比較
+
+以下數字為示意估算，非實測：
 
 ```
 任務: "找出專案中所有 TODO 註解"
@@ -1348,7 +1356,7 @@ Skill 流程:
 │ 時間: 5 秒                          │
 └────────────────────────────────────┘
 
-💡 節省: 93% tokens, 83% 時間
+💡 節省: 93% tokens, 83% 時間（示意估算，非實測）
 ```
 
 ### 何時值得使用 Sub-agent？
@@ -1387,10 +1395,10 @@ MCP - 底層通訊協議
 
 ### 2. 組合使用
 
-最強大的應用是組合多個元件：
+最強大的應用是組合多個元件。注意：以下是**示意偽代碼**——Claude Code 並沒有 `@skill()`、`plugins.*`、`agents.*` 這類 Python API。實際上 Skill 是 `.claude/skills/<name>/SKILL.md` 檔案，用自然語言描述流程，可以指名委派給某個 Sub-agent，而外部服務則透過 MCP 工具存取。
 
 ```python
-# 範例：自動化 Code Review 流程
+# 範例（偽代碼）：自動化 Code Review 流程
 
 # Skill 定義
 @skill("review-and-deploy")
@@ -1409,7 +1417,7 @@ async def review_and_deploy(pr_number: int):
         context=analysis
     )
 
-    # 4. 如果審查通過，使用 Bash Agent 合併
+    # 4. 如果審查通過，執行合併
     if review.approved:
         await agents.bash(
             f"git checkout main && git merge pr-{pr_number}"

@@ -10,6 +10,8 @@ description: "Take an MCP server from toy to production for Claude Code: Postgre
 readTime: "33 min"
 ---
 
+This post describes Claude Code and the MCP Python SDK as documented in 2025-09; both change monthly.
+
 ## 🎯 Advanced MCP Server Development
 
 ### 📋 Building on Part 1 Foundation
@@ -393,13 +395,16 @@ class DatabaseManager:
         }
 ```
 
-> ⚠️ **Security note:** `_is_safe_query` is a convenience filter, not a safeguard. Before pointing this server at a real (let alone production) database, connect it with a dedicated **read-only role** (e.g. in PostgreSQL, a role granted only `SELECT` on the tables it needs, with `default_transaction_read_only = on`), so the database itself refuses writes no matter what SQL the model generates.
+> ⚠️ **Security note:** `_is_safe_query` is a convenience filter, not a safeguard. Before pointing this server at a real (let alone production) database, connect it with a dedicated **read-only role** (e.g. in PostgreSQL, a role granted only `SELECT` on the tables it needs, with `default_transaction_read_only = on`), so the database itself refuses writes no matter what SQL the model generates. Also note that, as written, the `startswith('select')` check rejects the `EXPLAIN` and `PRAGMA` statements that `explain_query_plan` and the SQLite schema tool below issue, so those tools always return "unsafe" until you whitelist those prefixes — and drop `ANALYZE` from `EXPLAIN (ANALYZE …)`, which actually executes the statement.
 
 ### 🛠️ Advanced Database Tools for MCP Server
 
 Now let's integrate the database manager into our MCP server:
 
 **advanced_server.py:**
+
+> ⚠️ **SDK note:** as written this listing will not start: `server.run()` takes an `InitializationOptions` (from `mcp.server.models`), not the `InitializeResult` wire type imported below — in the current SDK use the `FastMCP` API instead — and the file calls `datetime.now()` without importing `datetime`. Treat it as a reference listing, not a copy-paste server.
+
 ```python
 #!/usr/bin/env python3
 """
@@ -2027,9 +2032,9 @@ Your Claude Code can now:
 "Check the health status of all connected systems"
 ```
 
-### 🔮 Part 3 Preview
+### 🔮 Part 3 (never written)
 
-In the upcoming **Part 3**, we'll cover:
+A **Part 3** was planned but never written; for reference, it was meant to cover:
 
 **Advanced Topics**:
 - **Real-time WebSocket connections** for live data streams
@@ -2049,7 +2054,7 @@ In the upcoming **Part 3**, we'll cover:
 - **Data encryption** at rest and in transit
 - **Compliance frameworks** (SOC2, GDPR, HIPAA)
 
-Stay tuned for the final part of this comprehensive MCP server development series!
+If you need these topics today, the MCP specification and the official servers repository linked below are the places to start.
 
 ---
 

@@ -9,6 +9,8 @@ description: "完整的 Claude Code 最佳實踐指南：從基礎使用到進�
 readTime: "24 min"
 ---
 
+本文對 Claude Code 功能的描述以 2026-01 的文件為準，產品每月更新。
+
 Claude Code 作為 Anthropic 官方推出的 AI 驅動開發工具，正在改變軟體開發的工作方式。然而，要充分發揮其潛力，需要掌握正確的使用方法和最佳實踐。本文彙整了 20 個實用技巧，幫助開發者更有效地使用 Claude Code。
 
 ## 🎯 為什麼需要最佳實踐？
@@ -669,7 +671,7 @@ description: 建立標準的 React 元件（含測試和 Storybook 故事）。�
 ```json
 {
   "recommendations": [
-    "anthropics.claude-code",        // Claude Code 官方擴充
+    "anthropic.claude-code",         // Claude Code 官方擴充
     "dbaeumer.vscode-eslint",        // ESLint
     "esbenp.prettier-vscode",        // Prettier
     "ms-vscode.vscode-typescript-next", // TypeScript

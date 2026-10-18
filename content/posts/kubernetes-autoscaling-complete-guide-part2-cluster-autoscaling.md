@@ -10,6 +10,8 @@ description: "Scale nodes, not just pods: Cluster Autoscaler vs Karpenter, plus 
 readTime: "32 min"
 ---
 
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
+
 ## Series Overview
 
 This is **Part 2** of the Kubernetes Autoscaling Complete Guide series:
@@ -59,7 +61,7 @@ Effective Kubernetes autoscaling operates across three interconnected layers:
 
 ### Why Cluster Autoscaling Matters
 
-**Business Impact:**
+**Business Impact** (illustrative ranges, commonly cited but unsourced — measure your own baseline):
 
 | Metric | Without Cluster Autoscaling | With Cluster Autoscaling |
 |--------|----------------------------|--------------------------|
@@ -347,6 +349,11 @@ command:
 - --nodes=0:5:my-cluster-gpu-asg           # GPU nodes
 - --nodes=2:8:my-cluster-memory-asg        # Memory-optimized
 
+```
+
+> **Priority semantics:** the `priority` expander picks the node group whose pattern sits under the **highest** number, so as written (spot 10, general 50, GPU 100) this ConfigMap scales GPU nodes **first** and spot last. To prefer spot, give spot the highest number (e.g. spot 100, general 50, GPU 10).
+
+```yaml
 # Priority-based expander configuration
 ---
 apiVersion: v1
@@ -357,11 +364,11 @@ metadata:
 data:
   priorities: |
     10:
-      - .*-spot-.*        # Prefer spot instances
+      - .*-spot-.*
     50:
-      - .*-general-.*     # Then general purpose
+      - .*-general-.*
     100:
-      - .*-gpu-.*         # GPU nodes last resort
+      - .*-gpu-.*
 ```
 
 ### Preventing Unwanted Scale-Down
@@ -403,7 +410,7 @@ spec:
 | **Mature & Stable** | 5+ years production use | Battle-tested reliability |
 | **Cloud-Agnostic** | Works on all major clouds | Portability across providers |
 | **Active Community** | Official CNCF project | Regular updates, wide support |
-| **Cost Optimization** | Automatic scale-down | 40-60% infrastructure savings |
+| **Cost Optimization** | Automatic scale-down | Commonly cited 40-60% savings (unsourced; varies by baseline) |
 | **PDB Awareness** | Respects disruption budgets | Safe scaling operations |
 
 **Limitations:**
@@ -1022,7 +1029,7 @@ requirements:
 
 | Benefit | Description | Impact |
 |---------|-------------|--------|
-| **Fast Provisioning** | 30-60s vs 3-5min | 5x faster scale-out |
+| **Fast Provisioning** | ~30-60s vs several min (illustrative, depends on AMI and instance type) | Faster scale-out |
 | **Cost Optimization** | Right-sized nodes | 20-40% additional savings |
 | **No Node Groups** | Direct EC2 API | Simplified management |
 | **Intelligent Consolidation** | Automatic bin-packing | Continuous optimization |
@@ -1033,7 +1040,7 @@ requirements:
 
 | Challenge | Impact | Consideration |
 |-----------|--------|---------------|
-| **AWS-Specific** | EKS only (currently) | Not portable to other clouds |
+| **Provider-Specific** | Originated on AWS; an Azure provider (AKS node auto-provisioning) also exists | Not a drop-in across every cloud |
 | **Newer Technology** | Less battle-tested | Thorough testing required |
 | **Complexity** | More configuration options | Learning curve |
 | **Breaking Changes** | Rapid API evolution | Stay updated on versions |
@@ -1057,7 +1064,8 @@ requirements:
 # Phase 4: Scale down old ASGs
 # Phase 5: Remove Cluster Autoscaler
 
-# Coexistence example
+# Coexistence example (illustrative label — not a documented Karpenter setting;
+# verify the current coexistence guidance in the Karpenter docs)
 kubectl label nodes -l eks.amazonaws.com/nodegroup=old-ng \
   karpenter.sh/managed=false
 ```
@@ -1175,8 +1183,10 @@ spec:
 
 **Serverless Kubernetes:**
 
+> **Caveat:** a Fargate profile is an EKS API object, not a Kubernetes resource — applying the ConfigMap below creates an inert ConfigMap. Create the profile with `aws eks create-fargate-profile` or CDK `cluster.addFargateProfile()`; the JSON only illustrates the selector shape.
+
 ```yaml
-# Fargate profile
+# Fargate profile (shape only — see caveat above)
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -1215,7 +1225,7 @@ spec:
 # No node management needed!
 ```
 
-**Fargate Pricing Model:**
+**Fargate Pricing Model** (us-east-1 Linux/x86 list price as of 2025-11):
 
 ```
 Cost = (vCPU × $0.04048/hour) + (GB RAM × $0.004445/hour)
@@ -1274,7 +1284,7 @@ resourceLimits:
 - resourceType: memory
   minimum: 1
   maximum: 1000
-- resourceType: nvidia-tesla-k80
+- resourceType: nvidia-tesla-k80   # retired GPU type; substitute a current accelerator
   minimum: 0
   maximum: 4
 
@@ -1320,7 +1330,7 @@ kubectl apply -f deployment.yaml
 # - Handles node upgrades
 ```
 
-**Autopilot Pricing:**
+**Autopilot Pricing** (illustrative — the unit prices below are not verified against the current list price, and the GKE cluster management fee is billed separately):
 
 ```
 Cost = Sum of pod resource requests
@@ -1334,9 +1344,8 @@ Example Deployment:
 = $185/month
 
 Includes:
-- Compute resources
-- GKE management fee
-- Networking egress (within limits)
+- Compute resources (pod requests)
+- Not included: the per-cluster GKE management fee, egress
 ```
 
 ### Pros and Cons
@@ -1427,7 +1436,7 @@ spec:
 | **Spot Instance Support** | ✅ Excellent | ✅ Preemptible | ✅ Spot VMs |
 | **Provisioning Speed** | 2-5 min (30s Karpenter) | 1-3 min | 2-4 min |
 | **Cost Optimization** | Karpenter best-in-class | NAP intelligent | Standard |
-| **Multi-Architecture** | ✅ ARM64 support | ✅ ARM64 support | Limited |
+| **Multi-Architecture** | ✅ ARM64 support | ✅ ARM64 support | ✅ ARM64 support |
 
 ## Emerging Autoscaling Technologies
 
@@ -1526,7 +1535,7 @@ priorities:
   4. Reserved instances for baseline
   5. Savings Plans for predictable workloads
 
-# Example cost breakdown
+# Example cost breakdown (illustrative figures; the $15,000 static baseline is assumed, not measured)
 baseline: 10 on-demand nodes (reserved) = $1,500/month
 dynamic: 0-50 spot nodes (Karpenter) = $500-3000/month
 burst: Fargate for spikes = $200/month
@@ -1567,6 +1576,8 @@ spec:
         summary: "Cluster autoscaler is down"
 
     - alert: NodeProvisioningDelayed
+      # Illustrative metric names — check the Karpenter v1 metrics reference
+      # (e.g. karpenter_nodeclaims_created_total) before using
       expr: |
         sum(karpenter_pending_pods_total) > 10
         AND

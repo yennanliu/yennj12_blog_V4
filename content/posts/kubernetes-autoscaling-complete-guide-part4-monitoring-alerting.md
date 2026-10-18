@@ -10,6 +10,8 @@ description: "See and tune autoscaling on EKS: Prometheus and Grafana via CDK, H
 readTime: "30 min"
 ---
 
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
+
 ## Series Overview
 
 This is **Part 4** of the Kubernetes Autoscaling Complete Guide series:
@@ -98,6 +100,8 @@ The `kube-prometheus-stack` includes Prometheus, Grafana, AlertManager, and expo
 #### Step 1: Update CDK Stack
 
 Add Prometheus stack to `lib/eks-hpa-demo-stack.ts`:
+
+> **Storage caveat:** the PVCs below ask for `storageClassName: 'gp3'`, but the Part 3 cluster installs neither the `aws-ebs-csi-driver` add-on nor a `gp3` StorageClass, so Prometheus, Grafana and Alertmanager stay `Pending` and `helm --wait` times out. Add the EBS CSI add-on (with IRSA/pod identity) and a `gp3` StorageClass to the stack first, or use `emptyDir` for a throwaway demo.
 
 ```typescript
 import * as cdk from 'aws-cdk-lib';
@@ -499,7 +503,7 @@ kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 909
 
 # Query examples:
 # - up{job="kubernetes-nodes"}
-# - kube_pod_container_resource_requests_cpu_cores
+# - kube_pod_container_resource_requests{resource="cpu"}  (the _cpu_cores metric was removed in kube-state-metrics v2.0)
 # - rate(container_cpu_usage_seconds_total[5m])
 ```
 
@@ -545,6 +549,8 @@ spec:
 ### Create PrometheusRule for HPA Alerts
 
 Create `k8s/prometheus-rules.yaml`:
+
+> **Two caveats on the rules below:** `HPAUnableToScale` keys on `ScalingLimited=true`, which is the normal state whenever an HPA sits at `minReplicas` or `maxReplicas` — alert on `AbleToScale=false` / `ScalingActive=false` instead, and treat `ScalingLimited` + `current == max` as the "maxed out" signal. And `HPAScalingThrashing` applies `rate()` to `status_current_replicas`, a gauge; use `changes(...[15m]) > 6` as the later rule in this post does.
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1

@@ -9,6 +9,8 @@ description: "深度解析 Claude Code 的 Context Window 機制：從底層原�
 readTime: "22 min"
 ---
 
+本文對 Claude Code 功能的描述以 2026-01 的文件為準，產品每月更新。
+
 在使用 Claude Code 進行開發時，你可能遇過這些情況：對話進行到一半，Claude 突然「忘記」了先前的討論內容；或是回應速度明顯變慢；甚至出現「context window 已滿」的警告。這些都與 **Context Window（上下文視窗）** 的管理有關。本文將深入解析 Context Window 的運作機制，並提供實用的管理策略。
 
 ## 🎯 什麼是 Context Window？
@@ -42,7 +44,7 @@ readTime: "22 min"
 │  │  └─ Claude Code 的基本指令和能力說明        │   │
 │  └────────────────────────────────────────────┘   │
 │                                                     │
-│  總容量: 200,000 tokens (Claude Sonnet 4.5)       │
+│  總容量: 200,000 tokens (示意，以 Sonnet 4.5 為例) │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -87,8 +89,10 @@ function hello() { return "world"; } = 約 10 tokens
 
 **實際可用空間分配：**
 
+以下分配比例為作者的示意估算，不是官方數字：「輸出空間 ~8,192 tokens」是舊一代模型的輸出上限，較新的模型輸出上限更高、context 也可達 1M tokens；實際數字請用 `/context` 查看。
+
 ```
-200,000 tokens Context Window 的典型分配：
+200,000 tokens Context Window 的分配示意：
 
 ┌─────────────────────────────────────────┐
 │ 系統提示: ~5,000 tokens (2.5%)         │
@@ -652,7 +656,7 @@ Step 4 (General Agent): 執行重構
        重構為 TypeScript 模組"
 
 問題：
-1. 5000 行的檔案 ≈ 25K tokens
+1. 5000 行的檔案 ≈ 25K tokens（粗估；密集的程式碼會更高）
 2. 重構建議的回應 ≈ 10K tokens
 3. 新的模組程式碼 ≈ 30K tokens
 4. 一次對話就用掉 65K tokens！
@@ -850,7 +854,7 @@ Step 5: 修復驗證 (5K tokens)
 "記住：API 版本為 v2，需要保持 v1 的向後相容"
 
 【好處】
-• 即使 Context 被摘要，關鍵決定會被保留
+• 即使 Context 被摘要，關鍵決定較可能被保留（這不是文件保證的機制；需要跨 session 保留的決定請寫進 CLAUDE.md 或用 `#` 記憶）
 • 後續討論可以參考這些決定
 • 避免重複討論已經決定的事項
 ```

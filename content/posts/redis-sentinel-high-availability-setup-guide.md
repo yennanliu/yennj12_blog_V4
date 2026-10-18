@@ -9,6 +9,8 @@ authors: ["yen"]
 readTime: "29 min"
 ---
 
+> Commands and versions in this guide are as of 2025-09 (Redis 7, Spring Boot 3); check the official docs for changes.
+
 ## 🎯 Introduction
 
 Redis Sentinel provides high availability and monitoring for Redis deployments. It's a distributed system that monitors Redis master and replica instances, performs automatic failover, and acts as a configuration provider for clients. This comprehensive guide covers Redis Sentinel architecture, setup procedures, Java integration, and production best practices.
@@ -200,6 +202,10 @@ appendfsync everysec
 
 **Sentinel Configuration (`sentinel-1.conf`):**
 
+The last argument of `sentinel monitor` is the **quorum**: the number of Sentinels that must agree the master is unreachable before it is flagged objectively down (ODOWN). Quorum does not authorise the failover itself — the Sentinel that wants to run it must still win a leader election backed by a **majority of all known Sentinels** (2 of 3 here, regardless of the quorum value). With quorum 2 and three Sentinels the two thresholds coincide; with quorum 1 a single Sentinel could declare ODOWN but still could not fail over alone.
+
+Sentinel cannot prevent a partitioned old master from accepting writes that are later discarded. The guard for that lives on the Redis side: `min-replicas-to-write 1` and `min-replicas-max-lag 10` make a master refuse writes once it has fewer than one replica acknowledging within 10 seconds, which bounds the window of lost writes during a split-brain.
+
 ```bash
 # Redis Sentinel Configuration
 port 26379
@@ -208,7 +214,7 @@ bind 0.0.0.0
 # Sentinel specific settings
 sentinel deny-scripts-reconfig yes
 
-# Monitor master - requires at least 2 sentinels to agree for failover
+# Monitor master - quorum 2: two Sentinels must agree before ODOWN is declared
 sentinel monitor mymaster redis-master 6379 2
 
 # Master password
@@ -490,6 +496,8 @@ exit 0
 
 **Application Configuration (`application.yml`):**
 
+> Spring Boot 3 moved these keys to `spring.data.redis.*`; the `spring.redis.*` prefix below (and in the `@Value` placeholders further down) is the Boot 2 form and is silently ignored on Boot 3, in which case Lettuce falls back to `localhost:6379`. Rename the prefix for Boot 3.
+
 ```yaml
 spring:
   redis:
@@ -657,6 +665,8 @@ public class RedisSentinelConfig {
 ### 3. Redis Service Implementation
 
 **Redis Service with Failover Handling:**
+
+> The metrics calls in this class are illustrative, not the real Micrometer API: `Counter.increment(Tags)` does not exist (use `meterRegistry.counter("redis.operations.total", "operation", "set", "status", "success").increment()`), `Timer` has no instance `builder()` (build once with `Timer.builder(...).register(registry)` per tag set), and a `Gauge` must be registered once with a supplier rather than re-registered on every tick.
 
 ```java
 @Service

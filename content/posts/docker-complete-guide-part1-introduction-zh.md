@@ -10,6 +10,8 @@ authors: ["yen"]
 readTime: "22 min"
 ---
 
+> 本文的指令與版本以 2025-10 為準；Docker 每季都有變動，請以官方文件為主。
+
 ## 🎯 前言
 
 Docker 是當今最流行的容器化技術，徹底改變了應用程式的開發、部署和運行方式。本系列文章將從基礎到進階，完整介紹 Docker 的各個面向。
@@ -117,12 +119,12 @@ graph LR
 |------|----------|-------------|-------------|
 | **啟動速度** | 分鐘級 | 分鐘級 | 秒級 |
 | **資源佔用** | 高 | 高（需要完整 OS） | 低（共享核心） |
-| **效能損耗** | 無 | 5-20% | <5% |
+| **效能損耗** | 無 | 5-20%（示意） | <5%（示意） |
 | **隔離性** | 低 | 高 | 中-高 |
 | **可移植性** | 差 | 中 | 優秀 |
 | **映像大小** | N/A | GB 級 | MB 級 |
 | **管理複雜度** | 低 | 高 | 中 |
-| **密度** | 低 | 低（10-100/主機） | 高（100-1000/主機） |
+| **密度** | 低 | 低（10-100/主機，示意） | 高（100-1000/主機，示意） |
 | **作業系統** | 受限於主機 | 可以不同 | 共享主機核心 |
 
 ### 虛擬機 vs Docker 詳細對比
@@ -411,12 +413,11 @@ graph TB
 **macOS 系統要求：**
 - macOS 10.15 或更新版本
 - 4GB RAM（最低），建議 8GB+
-- VirtualBox 或 HyperKit
+- Docker Desktop 內建的 Linux VM（Apple Virtualization framework + VirtioFS），不再需要 VirtualBox 或 HyperKit
 
 **Windows 系統要求：**
-- Windows 10 64-bit Pro/Enterprise/Education
-- 啟用 Hyper-V 和容器功能
-- WSL 2（Windows Subsystem for Linux）
+- Windows 10/11 64-bit（Home 版亦可，使用 WSL 2 後端）
+- WSL 2（Windows Subsystem for Linux）後端，為目前預設；Hyper-V 後端僅 Pro/Enterprise/Education 可選
 
 ### Ubuntu/Debian 安裝步驟
 
@@ -541,6 +542,8 @@ docker run hello-world
 ### Docker 配置檔案
 
 **Linux 配置檔案位置：** `/etc/docker/daemon.json`
+
+> 注意：下例的 `registry.docker-cn.com` 鏡像站已停止服務，請換成自己可用的 mirror 或刪除；`overlay2.override_kernel_check` 在現行 Docker Engine 已無作用（overlay2 不再做核心版本檢查），可直接移除。
 
 ```json
 {

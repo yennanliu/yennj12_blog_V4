@@ -73,7 +73,9 @@ readTime: "36 min"
 
 ## 🖼️ 工具選擇與成本分析
 
-### 工具 1：Midjourney V7（圖像生成）
+### 工具 1：Midjourney（圖像生成）
+
+> 本文所有提示詞以 `--v 6.1`（撰文時測試的版本）為準；實際使用時以 Midjourney 當前預設模型為準，直接刪去 `--v 6.1` 參數即可，其餘參數不變。
 
 **為什麼選擇 Midjourney？**
 
@@ -125,8 +127,8 @@ readTime: "36 min"
   • 靜態圖 = 無聊 = 跳出
   • 緩慢動態 = 吸引力 + 不干擾
 
-Runway Gen-3 優勢:
-  ✓ 目前最佳 AI 影片品質
+Runway Gen-3 優勢（撰文當時的模型，請以 Runway 當前版本為準）:
+  ✓ 撰文當時屬第一梯隊的 AI 影片品質
   ✓ 支援圖生影片（Image to Video）
   ✓ 可控制攝影機運動
   ✓ 生成長度 5-10 秒（可循環）
@@ -227,7 +229,7 @@ cinematic composition --ar 16:9 --style raw --v 6.1
   參數:
     --ar 16:9: 寬螢幕比例（直播標準）
     --style raw: 更真實，減少過度藝術化
-    --v 6.1: Midjourney 版本
+    --v 6.1: Midjourney 版本（撰文時測試版本；可省略以使用當前預設模型）
     --q 2: 最高品質
     --s 250: 風格化程度（0-1000，250 = 平衡）
 
@@ -792,7 +794,7 @@ Step 1: 準備工作
 
 1. 註冊 Runway: https://runwayml.com
 2. 訂閱 Pro Plan: $35/月（90 個影片）
-3. 進入 Gen-3 Alpha 介面
+3. 進入 Gen-3 Alpha 介面（撰文當時的版本；以 Runway 當前提供的模型為準）
 
 Step 2: 上傳靜態圖
 

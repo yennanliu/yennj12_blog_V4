@@ -264,6 +264,8 @@ if (currentLine == lineNumber) {
 
 **製作工具**：
 
+以下為示意程式碼，未經執行：MoviePy 沒有 `vfx.blur`，發光效果需改用 `vfx.gaussian_blur`（需 scikit-image）或先在影像層做模糊。
+
 ```python
 # 使用 MoviePy 自動生成梗圖影片
 
@@ -381,6 +383,8 @@ final.write_videofile("bug_feature_meme.mp4", fps=30)
 
 #### Bot #1：GitHub 通知機器人
 
+以下為示意程式碼，未經執行：discord.py 2.x 的 `commands.Bot` 必須傳入 `intents=`（如 `discord.Intents.default()`），否則無法啟動。
+
 ```python
 # 使用 discord.py + PyGithub
 
@@ -422,6 +426,8 @@ bot.run(os.getenv('DISCORD_BOT_TOKEN'))
 ```
 
 #### Bot #2：每日演算法挑戰
+
+以下為示意程式碼，未經執行：同樣需要建立帶 `intents` 的 `bot`，且 `ALGORITHM_CHANNEL_ID` 需自行定義。
 
 ```python
 import discord
@@ -988,7 +994,7 @@ Discord: YourHandle#1234
 📊 平台選擇建議：
 
 Patreon 優勢：
-✓ 佣金較低（5-12% vs YouTube 30%）
+✓ 平台抽成較低（2025-08 起新創作者統一 10%，另加金流手續費；YouTube 會員抽 30%）
 ✓ 福利彈性大（可整合外部工具）
 ✓ 數據透明（清楚的訂閱者分析）
 ✓ 支付方式多元
@@ -1309,6 +1315,8 @@ print(f"Shorts 爆發週：第 {breakout_week} 週")
 
 **3. 數據驅動決策**
 
+以下為示意程式碼，未經執行：YouTube Analytics API 沒有 `video==SHORT` 這個 filter，Shorts 需自行用影片長度（≤ 3 分鐘）或影片清單過濾。
+
 ```python
 # YouTube Analytics API 自動化追蹤
 
@@ -1372,8 +1380,8 @@ def get_top_performing_shorts(youtube, days=7):
 💰 收入結構（月收入 $8000 範例）：
 
 1. YouTube AdSense：         $2000 (25%)
-   - 平均 CPM $10
-   - 月觀看時數 20,000 小時
+   - 假設 RPM（每千次觀看實收）$4、月觀看 50 萬次 → $2,000（示意）
+   - 註: CPM 是廣告主每千次曝光的出價，不能直接乘觀看時數算收入
 
 2. 品牌贊助：                $2500 (31%)
    - 2-3 個長期合作夥伴
@@ -1560,7 +1568,7 @@ Slogan：
 🌊 市場定位分析：
 
 競爭對手分析：
-- Lofi Girl：已飽和（1200 萬訂閱）
+- Lofi Girl：已飽和（約 1,580 萬訂閱，2026-10）
 - ChilledCow：同質化競爭激烈
 - 環境音頻道：CPM 低、難變現
 

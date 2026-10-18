@@ -205,7 +205,7 @@ public class ParameterizedRunnable<T> implements Runnable {
                     lastException = e;
                     if (attempt < maxRetries) {
                         try {
-                            Thread.sleep(100 * attempt); // Exponential backoff
+                            Thread.sleep(100 * attempt); // Linear backoff (100 ms, 200 ms, 300 ms ...)
                         } catch (InterruptedException ie) {
                             Thread.currentThread().interrupt();
                             throw new RuntimeException("Interrupted during retry", ie);
@@ -1055,6 +1055,8 @@ public class SemaphoreExample {
 
 ### 🔍 Concurrency Testing Strategies
 
+> Caveat: the `testDeadlockScenario` method below ends with "Interrupt threads to break deadlock". That does not work for `synchronized`: a thread blocked on an intrinsic-lock monitor is not interruptible, so the two threads stay deadlocked (and the demo only exits because they are daemon-less threads your test runner eventually kills). To make a deadlock recoverable, acquire locks with `ReentrantLock.tryLock(timeout)` or `lockInterruptibly()`, and detect one with `ManagementFactory.getThreadMXBean().findDeadlockedThreads()`.
+
 ```java
 @Component
 public class ConcurrencyTestingExample {
@@ -1264,7 +1266,7 @@ public class ConcurrencyTestingExample {
         if (!completed) {
             System.out.println("Deadlock detected! Threads did not complete within timeout.");
 
-            // Interrupt threads to break deadlock
+            // NOTE: interrupt() does not release a synchronized monitor; see the caveat above
             thread1.interrupt();
             thread2.interrupt();
         } else {

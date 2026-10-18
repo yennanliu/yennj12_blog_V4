@@ -330,6 +330,8 @@ export function createApp(): Application {
 
 ### 🎯 Server Entry Point (server.ts)
 
+Caveat on the shutdown sequence below: `server.close(cb)` is asynchronous, but `process.exit(0)` runs synchronously right after it, so in-flight requests are cut off rather than drained — `await` the close (wrap it in a Promise) before exiting, and exit non-zero from the crash handlers.
+
 ```typescript
 // src/server.ts
 import { createApp } from './app';
@@ -493,6 +495,8 @@ GET    /api/v1/user-posts
 ## 🎭 Middleware Best Practices
 
 ### 🔐 Authentication Middleware
+
+Caveat on the `catch` ordering below: `jsonwebtoken`'s `TokenExpiredError` *extends* `JsonWebTokenError`, so the first `instanceof` branch matches expired tokens too and the "Token expired" branch is unreachable — test `TokenExpiredError` first.
 
 ```typescript
 // src/middleware/auth.ts
@@ -1111,6 +1115,8 @@ export const sanitizeUrl = (url: string): string => {
 
 ### 🚀 Caching Strategy
 
+Caveat on the caching middleware below: it keys on `req.originalUrl` alone and wraps `res.json` for every status code, so an authenticated `GET /api/v1/users` response is cached and replayed to every later caller for `duration` seconds — 4xx/5xx bodies included. Do not mount it under `authenticate`; if you keep it, key on user/role plus URL, cache only 2xx responses and honour `Cache-Control: private`.
+
 ```typescript
 // src/middleware/cache.ts
 import { Request, Response, NextFunction } from 'express';
@@ -1172,6 +1178,8 @@ export const invalidateCache = async (pattern: string): Promise<void> => {
 ```
 
 ### 📊 Database Query Optimization
+
+One inconsistency to flag: the config, `.env` and Compose sections of this post set up PostgreSQL, while this model (and the `express-mongo-sanitize` middleware above) assume MongoDB via Mongoose. Pick one — the Compose stack as written has no MongoDB for `connectDatabase()` to reach.
 
 ```typescript
 // src/models/User.ts (Mongoose example)
@@ -1607,6 +1615,8 @@ export default router;
 7. **Monitoring**: Health checks, logging, and metrics
 
 ### 🛠️ Essential Middleware Stack
+
+One ordering note before the list: both this block and the `app.ts` earlier in the post parse the body (`express.json`) before rate limiting. Put `rateLimit()` right after `helmet()`/`cors()`, ahead of body parsing and logging, so a request that is going to be rejected is never parsed — the order below should be read with that swap applied.
 
 ```typescript
 // Recommended middleware order

@@ -9,6 +9,8 @@ authors: ["yen"]
 readTime: "28 min"
 ---
 
+> Versions, APIs and prices in this guide are as of 2025-09 (the post date); AWS services and SDKs change frequently — verify against the current docs.
+
 ## 🎯 Introduction
 
 AWS Load Balancers are critical components for building highly available, fault-tolerant, and scalable applications in the cloud. They distribute incoming traffic across multiple targets, ensuring optimal resource utilization and system reliability. This comprehensive guide explores all AWS Load Balancer types, their unique features, and when to use each one for maximum effectiveness.
@@ -122,6 +124,8 @@ Application Load Balancer operates at Layer 7 (Application Layer) and is ideal f
 ```
 
 #### 🔧 ALB Configuration Service
+
+> Note: the default `sslPolicy` in this config, `ELBSecurityPolicy-TLS-1-2-2017-01`, is an old policy kept for compatibility; prefer `ELBSecurityPolicy-TLS13-1-2-2021-06` (TLS 1.3 + 1.2) for new listeners.
 
 ```java
 @Service
@@ -681,6 +685,8 @@ Network Load Balancer operates at Layer 4 (Transport Layer) and is designed for 
 
 ### 🛠️ NLB Implementation
 
+> **Caveat:** `configureConnectionIdle` below sets `idle_timeout.timeout_seconds`, which is an **ALB** load-balancer attribute — the API rejects it on an NLB. NLB idle timeout is a target-group attribute (`tcp.idle_timeout.seconds`, configurable since 2024; previously fixed at 350 s). The same TLS-policy note as the ALB section applies to the `sslPolicy` default here.
+
 ```java
 @Service
 @Slf4j
@@ -1006,6 +1012,8 @@ Gateway Load Balancer operates at Layer 3 (Network Layer) and is designed for de
 
 ### 🛠️ GWLB Implementation
 
+> **Caveat:** `extractServiceName` below derives a VPC endpoint service name from the GWLB ARN; no such mapping exists. You must first call `CreateVpcEndpointServiceConfiguration` with `gatewayLoadBalancerArns`, and use the `serviceName` it returns when creating the endpoint.
+
 ```java
 @Service
 @Slf4j
@@ -1261,7 +1269,7 @@ public class GatewayLoadBalancerService {
 | **WebSocket Support** | ✅ Yes | ✅ Yes | ❌ No | ❌ No |
 | **HTTP/2 Support** | ✅ Yes | ❌ No | ❌ No | ❌ No |
 | **Connection Draining** | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
-| **Cross-Zone LB** | ✅ On by default (can be disabled per target group) | ⚠️ Optional | ❌ No | ⚠️ Optional |
+| **Cross-Zone LB** | ✅ On by default (can be disabled per target group) | ⚠️ Optional | ⚠️ Optional (off by default) | ⚠️ Optional |
 | **Health Check Types** | HTTP, HTTPS | TCP, HTTP, HTTPS | TCP, HTTP, HTTPS | TCP, HTTP, HTTPS |
 | **SSL Termination** | ✅ Yes | ✅ Yes (TLS) | ❌ No | ✅ Yes |
 | **Source IP Preservation** | ✅ Yes (headers) | ✅ Yes (native) | ✅ Yes | ⚠️ Via X-Forwarded-For (HTTP) or Proxy Protocol (TCP) |
@@ -1311,6 +1319,8 @@ graph TD
 ## 📈 Monitoring and Health Checks
 
 ### 🔍 Load Balancer Monitoring Service
+
+> **Caveat:** the `LoadBalancer` dimension below is passed the load balancer *name*; CloudWatch expects the ARN suffix (`app/<name>/<id>` for ALB, `net/<name>/<id>` for NLB), so these queries return empty datapoints as written.
 
 ```java
 @Service

@@ -10,6 +10,8 @@ description: "Watch HPA scale a real Apache-PHP app on EKS: CDK in TypeScript pr
 readTime: "25 min"
 ---
 
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
+
 ## Series Overview
 
 This is **Part 3** of the Kubernetes Autoscaling Complete Guide series:
@@ -214,6 +216,8 @@ export class EksHpaDemoStack extends cdk.Stack {
     });
 
     // Install Metrics Server (required for HPA)
+    // Caveat: this addManifest ServiceAccount collides with the one the Helm
+    // chart below creates — keep only the Helm install or the deploy fails
     const metricsServerManifest = this.cluster.addManifest('metrics-server', {
       apiVersion: 'v1',
       kind: 'ServiceAccount',
@@ -701,17 +705,17 @@ kubectl logs -f load-generator
 
 ### Step 3: Observe Autoscaling Behavior
 
-**Timeline of Events:**
+**Timeline of Events** (illustrative; each step follows `desired = ceil(current × usage / 50%)`, see the formula at the end of this post):
 
 ```
 Time    CPU Usage    Replicas    HPA Action
 -----   ---------    --------    -----------
 0:00    5%           1           Normal operation
-1:00    65%          1           CPU exceeds target (50%)
-1:30    80%          2           Scale up to 2 pods
-2:00    70%          3           Scale up to 3 pods
-2:30    55%          4           Scale up to 4 pods
-3:00    45%          4           Stable (below target)
+1:00    65%          1           CPU exceeds target (50%) → ceil(1 × 1.3) = 2
+1:30    80%          2           Scale up → ceil(2 × 1.6) = 4
+2:00    60%          4           Scale up → ceil(4 × 1.2) = 5
+2:30    45%          5           Stable (ratio 0.9, inside the 10% tolerance)
+3:00    40%          5           Stable; scale-down waits for the stabilization window
 ```
 
 **Watch HPA metrics:**
@@ -879,6 +883,8 @@ kubectl delete pod -l run=load-generator
 ```
 
 ### Scenario 4: Test HPA Limits
+
+Note: busybox `sh` has no `{1..100}` brace expansion — use `seq 1 100` (`for i in $(seq 1 100)`) when you run this.
 
 ```bash
 # Set very high load to test maxReplicas

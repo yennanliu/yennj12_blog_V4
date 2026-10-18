@@ -13,6 +13,8 @@ readTime: "18 min"
 
 Java 虛擬機器（JVM）的記憶體管理是 Java 應用程式效能的核心關鍵。本文將深入探討 JVM 記憶體結構，特別是堆疊（Stack）與堆積（Heap）記憶體的運作機制，並提供實際的程式碼範例與最佳化策略。
 
+> 本文以 JDK 17 的 HotSpot（預設 G1 GC）行為為準；不同 JDK 版本與 GC 演算法的世代劃分與觸發時機會有差異。
+
 ## JVM 記憶體結構概覽
 
 JVM 記憶體主要分為以下幾個區域：
@@ -236,8 +238,9 @@ public class HeapMemoryDemo {
         // 物件生命週期追蹤
         Object youngObject = new Object();      // Eden 區
 
-        // 觸發 Minor GC
-        System.gc(); // 手動建議 GC（實際執行時機由 JVM 決定）
+        // 注意：System.gc() 是「請求一次 Full GC」（整個堆積，含老年世代），不是 Minor GC；
+        // 實際是否執行由 JVM 決定（-XX:+DisableExplicitGC 可關閉）
+        System.gc();
 
         // 長期持有的引用，防止被回收
         staticList.add(youngObject.toString());
@@ -292,6 +295,8 @@ public class GarbageCollectionAnalyzer {
     @Scheduled(fixedRate = 60000) // 每分鐘執行一次
     public void monitorMemoryUsage() {
         GCAnalysisResult result = analyzeGCPerformance();
+        // 注意：SLF4J 的 {} 佔位符不支援 {:.2f} 這類格式，下面會原樣印出 "{:.2f}"；
+        // 要控制小數位請先 String.format("%.2f", value) 再傳入
 
         log.info("=== JVM 記憶體使用情況 ===");
         log.info("Eden 區使用率：{:.2f}%", result.getEdenSpaceUsage());
@@ -514,6 +519,8 @@ public class JVMTuningGuide {
 
 ### 記憶體洩漏檢測與預防
 
+> 注意：下面的 `checkMemoryLeak` 每 30 秒呼叫一次 `System.gc()`，每次都是一次 stop-the-world 的 Full GC，在生產環境會製造自找的停頓，不適合當作監控手段。正式環境請改用 `-Xlog:gc*` 的 GC 日誌，或讀取 `GarbageCollectorMXBean` / `MemoryPoolMXBean` 的統計值；這段程式只是示意。
+
 ```java
 @Component
 public class MemoryLeakDetector {
@@ -610,6 +617,8 @@ public class MemoryLeakDetector {
 ## 實際應用案例
 
 ### 高效能記憶體管理範例
+
+> 注意：下面用 commons-pool 池化 `StringBuilder` / `ByteBuffer` 的寫法只是示意。在現代 JVM 上，小物件經由 TLAB 配置只需約 10 ns，而從池借出/歸還反而要付出同步與清理成本，還會把短命物件變成長命物件，加重老年世代負擔；池化只對昂貴的資源（連線、執行緒、大型 direct buffer）划算。
 
 ```java
 @Service
@@ -805,7 +814,8 @@ public class MemoryMonitoringController {
 
     @PostMapping("/gc")
     public ResponseEntity<String> triggerGC() {
-        // 注意：在生產環境中慎用手動觸發 GC
+        // 注意：這會觸發一次 stop-the-world Full GC，只適合除錯用途；
+        // 生產環境不應暴露這個端點（或至少要限制權限）
         long beforeGC = getUsedMemory();
 
         System.gc();

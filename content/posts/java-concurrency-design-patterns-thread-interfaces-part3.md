@@ -78,7 +78,7 @@ public class ProducerConsumerPattern {
                 while (!shutdown.get() && !Thread.currentThread().isInterrupted()) {
                     Task task = taskGenerator.generateTask();
 
-                    // Blocking put - waits if queue is full
+                    // Timed offer - waits up to 1 s if the queue is full, then gives up
                     boolean offered = taskQueue.offer(task, 1, TimeUnit.SECONDS);
 
                     if (offered) {
@@ -1145,6 +1145,8 @@ The Strategy pattern defines a family of algorithms, encapsulates each one, and 
 
 **1. Concurrent Strategy Execution:**
 
+> Caveat: in `executeRace` below, the returned `allResults` list is a snapshot taken when the *first* strategy succeeds, while the others may still be running, so callers can see a partial list; and `whenComplete` dereferences `result.isSuccess()` even when `throwable != null` (where `result` is `null`), which throws a `NullPointerException`. Treat it as a sketch of the pattern, not as production code.
+
 ```java
 public class ConcurrentStrategyPattern {
 
@@ -1686,6 +1688,8 @@ graph TD
 | **Command** | Task scheduling, Undo operations | Callable, ExecutorService | High | Variable |
 | **Strategy** | Algorithm selection, Fault tolerance | Callable, CompletableFuture | High | Optimized |
 | **Thread Pool Manager** | Enterprise resource management | All interfaces | High | Highly optimized |
+
+The "Performance" column is a qualitative ranking, not a measurement — nothing in this post was benchmarked. Use JMH on your own workload before choosing a pattern on performance grounds.
 
 ## 🎯 Conclusion
 

@@ -9,6 +9,8 @@ authors: ["yen"]
 readTime: "28 min"
 ---
 
+> Commands and versions in this guide are as of 2025-10; check the official Docker docs for changes.
+
 ## Introduction
 
 When working with Docker containers, understanding how to properly manage data persistence is crucial. Docker provides three main approaches for mounting data into containers: **Volumes**, **Bind Mounts**, and **tmpfs mounts**. Each has distinct characteristics, use cases, and trade-offs.
@@ -459,8 +461,10 @@ docker run \
 
 **2. Bind Propagation**
 
+The default propagation for a bind mount is `rprivate`, not `shared`; you only need the flag when the container must see (or publish) mounts made after it started.
+
 ```bash
-# Shared propagation (default)
+# Shared propagation (must be requested explicitly; the default is rprivate)
 docker run \
   --mount type=bind,source=/host/path,target=/container/path,bind-propagation=shared \
   ubuntu
@@ -480,8 +484,8 @@ docker run \
 
 ```bash
 # With SELinux label
-docker run -v /host/path:/container/path:z nginx:latest  # Private label
-docker run -v /host/path:/container/path:Z nginx:latest  # Shared label
+docker run -v /host/path:/container/path:z nginx:latest  # Shared label (several containers may use the path)
+docker run -v /host/path:/container/path:Z nginx:latest  # Private label (only this container may use it)
 ```
 
 ### Pros and Cons
@@ -899,6 +903,8 @@ docker run \
   myapp:latest
 
 # User namespaces to avoid root access
+# (--userns-remap is a dockerd daemon flag / daemon.json key, not a docker run option;
+#  once the daemon runs with it, containers are remapped automatically)
 docker run \
   --userns-remap=default \
   -v my-volume:/app/data \

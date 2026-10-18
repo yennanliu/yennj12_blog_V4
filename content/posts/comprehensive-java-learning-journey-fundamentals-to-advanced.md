@@ -293,7 +293,6 @@ graph TD
     A --> C[Runtime Polymorphism]
 
     B --> D[Method Overloading]
-    B --> E[Operator Overloading]
 
     C --> F[Method Overriding]
     C --> G[Interface Implementation]
@@ -522,19 +521,19 @@ Modern Java applications require sophisticated understanding of concurrent progr
 **Thread State Transitions**:
 ```mermaid
 stateDiagram-v2
-    [*] --> New
+    [*] --> New: new Thread()
     New --> Runnable: start()
-    Runnable --> Running: CPU Allocation
-    Running --> Runnable: Time Slice Expired
-    Running --> Blocked: Wait for Lock
-    Running --> Waiting: wait()/join()
-    Running --> Timed_Waiting: sleep()/wait(timeout)
+    Runnable --> Blocked: Wait for monitor lock
+    Runnable --> Waiting: wait()/join()
+    Runnable --> Timed_Waiting: sleep()/wait(timeout)
     Blocked --> Runnable: Lock Available
     Waiting --> Runnable: notify()/notifyAll()
     Timed_Waiting --> Runnable: Timeout/Interrupt
-    Running --> Terminated: Complete/Exception
+    Runnable --> Terminated: Complete/Exception
     Terminated --> [*]
 ```
+
+These are the six `Thread.State` values. There is no `Running` state in Java: a thread the scheduler is currently executing is still reported as `RUNNABLE`.
 
 **Threading Best Practices**:
 - **Thread Pool Management**: Using ExecutorService for efficient thread reuse
@@ -633,12 +632,12 @@ graph TD
     D --> K[getDeclaredFields()]
     D --> L[get()/set()]
 
-    F[Annotation Processing] --> G[Runtime Annotations]
-    F --> H[Compile-Time Processing]
-    F --> I[Custom Annotations]
+    M[Annotation Processing] --> N[Runtime Annotations]
+    M --> O[Compile-Time Processing]
+    M --> P[Custom Annotations]
 
     style A fill:#96ceb4
-    style F fill:#feca57
+    style M fill:#feca57
 ```
 
 **Reflection Applications**:
@@ -1054,7 +1053,7 @@ graph LR
 ### 📊 Project Impact & Learning Outcomes
 
 **Technical Achievements**:
-- **Comprehensive Coverage**: 50+ Java concepts explored through practical implementations
+- **Comprehensive Coverage**: a broad set of Java concepts explored through practical implementations
 - **Pattern Recognition**: Deep understanding of when and how to apply design patterns
 - **Framework Proficiency**: Hands-on experience with modern Java frameworks and tools
 - **Best Practices**: Industry-standard approaches to testing, performance, and architecture

@@ -9,7 +9,9 @@ description: "A comprehensive guide to database performance optimization techniq
 readTime: "15 min"
 ---
 
-Database performance is often the bottleneck in web applications. Over the past year, we've transformed our database layer from a source of constant performance issues to a highly optimized system that consistently delivers sub-millisecond response times.
+Database performance is often the bottleneck in web applications. This post walks through transforming a database layer from a source of constant performance issues into one whose worst queries drop from 45 s to 12 ms and whose p95 latency falls from 15 s to 50 ms. (The title's "sub-millisecond" overstates it: nothing in this post is measured below a millisecond; the realistic target is tens of milliseconds at p95.)
+
+> **Note:** The crisis figures below and the per-technique "Results" bullets are an illustrative composite, not measurements from one named system — see the note in "Results and Impact".
 
 ## The Performance Crisis
 
@@ -81,9 +83,9 @@ ON users (LOWER(email));
 ```
 
 **Results:**
-- Query time reduced from 45s to 12ms (99.97% improvement)
+- Query time reduced from 45s to 12ms (99.97% improvement; illustrative)
 - Index size kept minimal with partial indexes
-- No impact on write performance
+- Write cost: every new index adds one B-tree update per INSERT/UPDATE on the indexed columns, so three indexes are three extra writes — partial indexes keep that cost proportional to the rows they actually cover
 
 ### 3. Query Optimization Techniques
 
@@ -259,6 +261,8 @@ func optimizeConnectionPool() *sql.DB {
 
 ### Connection Pool Monitoring
 
+The `wait_count` line below is wrong as written: `db.Stats().WaitCount` is already cumulative, so `Counter.Add` re-adds the running total every tick and over-counts; export it as a gauge or add only the delta since the previous tick.
+
 ```go
 func monitorConnectionPool(db *sql.DB) {
     ticker := time.NewTicker(time.Minute)
@@ -354,6 +358,8 @@ WHERE created_at < $1  -- cursor from previous page
 ORDER BY created_at DESC 
 LIMIT 20;
 ```
+
+One caveat on the cursor form: `created_at` is not unique, so rows sharing a timestamp at the page boundary are skipped or repeated — cursor on `(created_at, id)` and compare the tuple (`WHERE (created_at, id) < ($1, $2)`) with a matching composite index.
 
 ```go
 type CursorPagination struct {
@@ -451,6 +457,8 @@ func (us *UserService) GetUserSummaries(ids []string) ([]*UserSummary, error) {
 
 ### Key Metrics Dashboard
 
+Caveat on the metrics block: observing a *mean* into a histogram throws away the distribution — record each query's duration instead, so `histogram_quantile` has real buckets to work with.
+
 ```go
 type DatabaseMetrics struct {
     QueryLatencyP50   time.Duration
@@ -490,6 +498,8 @@ func collectMetrics(db *sql.DB, cache cache.Cache) {
 ```
 
 ### Automated Performance Alerting
+
+The `HighQueryLatency` expression below is not valid PromQL for a histogram: `histogram_quantile` needs the `_bucket` series, a `rate()` window and a `by (le)` grouping — `histogram_quantile(0.95, sum(rate(db_query_duration_seconds_bucket[5m])) by (le)) > 1`.
 
 ```yaml
 # Prometheus alerting rules

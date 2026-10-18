@@ -10,6 +10,8 @@ description: "Keep autoscaling from becoming a cost or security hole: RBAC scope
 readTime: "30 min"
 ---
 
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
+
 ## Series Overview
 
 This is **Part 8** (Final) of the Kubernetes Autoscaling Complete Guide series:
@@ -84,6 +86,8 @@ Autoscaling without proper security and governance is a vulnerability multiplier
 ### Role Definitions
 
 #### 1. Cluster Admin (Full Control)
+
+> **Caveat:** the `aggregate-to-admin` label folds this ClusterRole into the built-in `admin` role, so every namespace admin inherits cluster-wide `*` on Karpenter NodePools and NodeClaims. Drop the label and bind the role explicitly to the platform team instead.
 
 ```yaml
 # Cluster-wide autoscaling admin
@@ -601,6 +605,8 @@ spec:
 ```
 
 ### Policy 3: Require Resource Requests for HPA
+
+> **Caveat:** the Rego below is "simplified" to the point of being wrong — it never looks up the target workload, so it denies **every** HPA that uses a CPU metric. A real version needs `data.inventory` (Gatekeeper sync) to read the Deployment's container requests before deciding.
 
 ```yaml
 apiVersion: templates.gatekeeper.sh/v1
@@ -1219,6 +1225,8 @@ rules:
 
 ### Comprehensive Audit Policy
 
+> **EKS caveat:** on EKS the control plane is managed — you cannot install an `audit.k8s.io` Policy, there is no `kube-apiserver` pod to `kubectl logs`, and no audit file on worker nodes. Audit logs go to CloudWatch Logs (the `audit` log type Part 3 enabled) and are queried with Logs Insights. The Policy, the Fluentd file tail and the `kubectl logs -l component=kube-apiserver` commands in this part apply to self-managed (kubeadm/kops) clusters only.
+
 ```yaml
 apiVersion: audit.k8s.io/v1
 kind: Policy
@@ -1290,6 +1298,8 @@ rules:
 ```
 
 ### Audit Log Aggregation
+
+> Self-managed clusters only — the file path below does not exist on EKS worker nodes (see the EKS caveat above).
 
 ```yaml
 # Fluentd for audit log shipping

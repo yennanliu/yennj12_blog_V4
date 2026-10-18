@@ -88,6 +88,8 @@ graph TD
 
 #### 🛠️ Range-Based Implementation
 
+Caveat on the `UserService` in the block below: it owns one `JdbcTemplate` and calls `setDataSource(...)` per request on that shared singleton, so two concurrent requests for different shards race and one of them executes on the wrong database. Use one `JdbcTemplate` per shard (a `Map<String, JdbcTemplate>`) or an `AbstractRoutingDataSource` keyed by a thread-local shard key; the same applies to the `ProductService` and `OrderService` examples later in this post.
+
 ```java
 @Component
 public class RangeBasedShardingStrategy implements ShardingStrategy {
@@ -324,6 +326,8 @@ graph TD
 ```
 
 #### 🛠️ Hash-Based Implementation
+
+Same caveat for the `ProductService` in this block: the per-call `setDataSource` on a shared `JdbcTemplate` is not thread-safe. Also, the `avg_price` aggregation below is an unweighted average of per-shard averages — weight each shard's average by its row count (or sum price and count across shards and divide) for the true mean.
 
 ```java
 @Component
@@ -635,6 +639,8 @@ graph TD
 ```
 
 #### 🛠️ Directory-Based Implementation
+
+Three caveats on the block below. `ShardDirectoryService.moveTenant` is `@Transactional`, but a Spring transaction binds to one `DataSource`, so it cannot enlist both the source and target shards — the copy/delete across two databases is not atomic (see the XA note at the end of the post), and the `DELETE` runs with no actual verification step. `OrderService` has the same shared-`JdbcTemplate` race as the earlier services. And `getGlobalOrderStatistics` reads `shardDirectoryService.shardDataSources`, which is a `private final` field of another class (compile error — expose a getter), and `avg_order_value` is again an unweighted average of per-shard averages.
 
 ```java
 // Shard directory service
@@ -1067,6 +1073,8 @@ graph TD
 
 ### 1. Shard Key Selection
 
+In the snippet below `tableName` is never declared (it would need to be a parameter of `analyzeCardinality`).
+
 ```java
 // Good shard key characteristics
 public class ShardKeyAnalysis {
@@ -1175,6 +1183,8 @@ public class ShardingDataSourceConfig {
 ```
 
 ### 3. Monitoring and Alerting
+
+Two Micrometer caveats on the collector below: the `Timer.Sample` is started *after* the `SELECT 1` it is meant to time, so the recorded duration is ~0 (start the sample before the query, or record `duration` directly with `timer.record(duration, NANOSECONDS)`); and the `shard.table.*` gauges are registered on freshly boxed `Number` objects that Micrometer holds only weakly, so they read `NaN` after the next GC — hold the values in a long-lived `AtomicLong` per (shard, table) and update that.
 
 ```java
 @Component

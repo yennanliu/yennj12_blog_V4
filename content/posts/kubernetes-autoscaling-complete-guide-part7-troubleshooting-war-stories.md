@@ -10,6 +10,8 @@ description: "Three autoscaling incidents replayed minute by minute: HPA thrashi
 readTime: "26 min"
 ---
 
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
+
 ## Series Overview
 
 This is **Part 7** of the Kubernetes Autoscaling Complete Guide series:
@@ -146,7 +148,7 @@ spec:
             memory: 512Mi
           limits:
             cpu: 2          # ❌ 4x request - causes throttling
-            memory: 1Gi     # ❌ 2x request - causes OOM
+            memory: 1Gi     # 2x request — fine; the CPU limit above is the problem
 ```
 
 **Cluster Autoscaler Configuration:**
@@ -466,18 +468,19 @@ spec:
         memory: 1Gi
       maxAllowed:
         memory: 8Gi
-      # ❌ No safety margin configured
+      # ❌ controlledValues left at its default (RequestsAndLimits):
+      #    the limit is scaled 1:1 with the request, so no headroom above it
       # ❌ mode: Auto sets both requests AND limits
 ```
 
-**What VPA Did:**
+**What VPA Did** (the recommender targets the P90 and adds a 15% margin by default — `--recommendation-margin-fraction=0.15` — so the request itself was reasonable; the failure was that the limit followed the request 1:1):
 
 ```
-Time 00:00 - VPA observes: avg 3.5GB, P95 3.8GB
-Time 00:15 - VPA sets: request=3.8GB, limit=3.8GB
+Time 00:00 - VPA observes: avg 3.5GB, P90 ≈ 3.5GB → target ≈ 3.5GB × 1.15 ≈ 4.0GB
+Time 00:15 - VPA sets: request=4.0GB; limit:request ratio was 1:1, so limit=4.0GB too
 Time 00:30 - Pod restarted with new limits
-Time 00:35 - Pod reaches 3.9GB
-Time 00:36 - OOMKilled (limit: 3.8GB)
+Time 00:35 - Redis + fork/copy-on-write overhead peaks at 4.1GB
+Time 00:36 - OOMKilled (limit: 4.0GB)
 Time 00:37 - Pod restart #1
 Time 00:42 - OOMKilled again
 Time 00:43 - Pod restart #2
@@ -642,7 +645,7 @@ spec:
 
 ### Lessons Learned
 
-1. **VPA needs safety margins** - Set limits higher than recommendations
+1. **VPA's margin covers the request, not the peak** - Keep the limit above the request instead of letting VPA scale both together
 2. **Requests ≠ Limits** - Use `controlledValues: RequestsOnly`
 3. **Application-level limits** - Don't rely solely on Kubernetes limits
 4. **Monitor OOMKills** - Set up automated detection and remediation
@@ -885,6 +888,8 @@ spec:
 ```
 
 **5. Spot Interruption Handler:**
+
+Note: this story's cluster ran Cluster Autoscaler. If you run Karpenter, do **not** also deploy aws-node-termination-handler — AWS's EKS best-practices guide advises against running both; Karpenter's SQS interruption queue (Part 2) handles spot interruptions itself.
 
 ```yaml
 # AWS Node Termination Handler
@@ -1309,7 +1314,7 @@ kubectl drain <spot-node> --ignore-daemonsets --delete-emptydir-data
 
 1. **Always set readiness probes** - Traffic to non-ready pods kills performance
 2. **HPA + CA delays compound** - Plan for 5-minute worst-case scaling time
-3. **VPA needs safety margins** - Set limits 2x higher than recommendations
+3. **Keep headroom between limit and request** - `controlledValues: RequestsOnly`; don't let VPA move the limit 1:1 with the request
 4. **PDBs are not optional** - Without them, chaos ensues
 5. **Spot needs diversity** - Single instance type = guaranteed interruption
 6. **Monitor metric lag** - 60-second lag can cause total failure during spikes
@@ -1319,6 +1324,8 @@ kubectl drain <spot-node> --ignore-daemonsets --delete-emptydir-data
 10. **OOMKills propagate** - One OOM can cascade to entire service
 
 ### Recommended SLOs
+
+These are illustrative targets, not measured benchmarks — set yours from your own scaling-latency histograms.
 
 ```yaml
 # SLO Targets
@@ -1353,7 +1360,7 @@ Autoscaling Accuracy: ±10% of optimal replica count
 Production Kubernetes autoscaling teaches lessons that can't be learned from documentation:
 
 - **Black Friday taught us**: Pre-warming and readiness probes are critical
-- **The OOMKill loop taught us**: VPA needs safety margins
+- **The OOMKill loop taught us**: VPA's 1:1 limit scaling needs headroom (`RequestsOnly`)
 - **The spot cascade taught us**: Instance diversity saves the day
 
 The best SRE teams learn from failures, document thoroughly, and build systems that fail gracefully. Every 2 AM page makes the system more resilient.

@@ -10,6 +10,8 @@ authors: ["yen"]
 readTime: "23 min"
 ---
 
+> 本文的指令與版本以 2025-10 為準；Kubernetes 每季都有變動，請以官方文件為主。
+
 ## 🎯 前言
 
 Kubernetes（常簡稱為 K8s）是目前最流行的容器編排平台，已成為雲原生應用的事實標準。本系列文章將全面介紹 Kubernetes 的核心概念、實務操作與生產部署。
@@ -623,6 +625,8 @@ kubectl config set-context my-context \
 
 ### 3. 驗證叢集健康狀態
 
+> 注意：`kubectl get componentstatuses`（`cs`）自 Kubernetes 1.19 起已棄用，新版叢集只會回傳空結果或警告；請改用 API Server 的健康端點 `kubectl get --raw /livez?verbose` 與 `/readyz?verbose`。
+
 ```bash
 # 查看叢集資訊
 kubectl cluster-info
@@ -889,7 +893,7 @@ graph TB
 
 **互動式學習：**
 - [Play with Kubernetes](https://labs.play-with-k8s.com/)
-- [Katacoda Kubernetes Scenarios](https://www.katacoda.com/courses/kubernetes)
+- Katacoda Kubernetes Scenarios（已於 2022 年關站，僅供參考舊教材名稱）
 - [Kubernetes by Example](https://kubernetesbyexample.com/)
 
 **認證考試：**

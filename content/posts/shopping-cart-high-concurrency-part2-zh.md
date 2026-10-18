@@ -12,6 +12,8 @@ readTime: "18 min"
 
 ## 前言
 
+> 本文環境：Spring Boot 3.2.5 / JDK 21（Virtual Threads 需 JDK 21；本篇 Dockerfile 與 PR #227 的 CI 映像為 JDK 17，見「多階段 Docker Build」的說明）。
+
 [第一篇](/posts/shopping-cart-high-concurrency-part1-zh/)解決了系統的吞吐量問題：Virtual Threads 讓執行緒不再阻塞在 I/O 上，HikariCP 調校讓資料庫連線不再是瓶頸，Redis 快取讓熱點讀取從記憶體直接回傳。
 
 但吞吐量提升後，反而暴露出一個更深層的問題：
@@ -95,6 +97,8 @@ public class RedissonConfig {
 連線池從預設的 10 提升到 64，理由和 HikariCP 類似：在高並發場景下，Redisson 需要同時持有大量連線來處理鎖的取得、心跳（watchdog）、以及快取操作。
 
 ### CartService：加入購物車的鎖
+
+先說清楚下面這段程式碼的兩個問題，免得被直接複製。第一，`CartService` 是**類別層級** `@Transactional`，而鎖在 `finally` 裡釋放——也就是鎖在事務 commit **之前**就放掉了，正是下一節 `OrderService` 診斷出來的「錯誤設計：鎖在事務內部」；正確做法同 `OrderService`：拿掉類別層級的 `@Transactional`，改用 `TransactionTemplate` 在鎖內開事務。第二，鎖保護的主體仍然是無條件的 `new Cart(...)` + `save`，所以開頭「購物車有 2 個 productX（重複！）」的競態只是被**序列化**，不是被**消除**——鎖內要先 `findByUserAndProduct` 再「有則加量、無則新增」，並在 `(user_id, product_id)` 上加唯一索引作為最後防線。
 
 ```java
 @Slf4j
@@ -567,7 +571,7 @@ class DataSourceRoutingTest {
 
 ---
 
-## 方案七：Docker HA 水平擴展
+## 方案六：Docker HA 水平擴展
 
 ### 生產架構設計
 
@@ -649,6 +653,8 @@ services:
 
 ### Nginx 設定
 
+注意下面的 `limit_req_zone` 寫在 `server {}` 裡，但 nginx 只允許它出現在 `http {}` 上下文——照抄會在 `nginx -t` 時收到 "directive is not allowed here"，整個 HA stack 起不來。把 `limit_req_zone` 移到 `http {}`，`limit_req` 留在 `server`/`location` 即可。
+
 ```nginx
 upstream shopping_cart_backend {
     least_conn;                     # 把請求導到連線數最少的實例（比 round-robin 更均勻）
@@ -687,6 +693,8 @@ server {
 這個系統用 Token（JWT-like 的 auth_token）做驗證，Token 存在 MySQL 並快取在 Redis，**沒有本地 Session**，天然支援水平擴展。這是微服務和容器化部署的基本前提。
 
 ### 多階段 Docker Build
+
+一個版本上的不一致要先交代：下面兩個 stage 都用 JDK/JRE **17** 映像，而第一篇的設定檔寫著 `REQUIRES Java 21`——在 17 的映像裡 `spring.threads.virtual.enabled` 會被忽略，Tomcat 仍是 200 條平台執行緒。要讓 Virtual Threads 真的生效，兩個 stage 都要換成 `-21` 版本（PR #228 後續的 commit 提到「129 tests pass (JDK 21)」，部署前請自行確認映像）。
 
 ```dockerfile
 # Stage 1：用 Maven 編譯
@@ -762,7 +770,7 @@ App Instance（Virtual Threads 處理 I/O 密集操作）
   ↓ PR #228
 方案 4：Redisson 分散式鎖（寫入正確性）
 方案 5：讀寫分離路由（讀取擴展性）
-方案 7：Docker HA（水平擴展 + 可用性）
+方案 6：Docker HA（水平擴展 + 可用性）
 ```
 
 每個改造都是為了解決上一個改造暴露的新問題：

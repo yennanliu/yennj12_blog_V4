@@ -10,6 +10,8 @@ authors: ["yen"]
 readTime: "30 min"
 ---
 
+> 本文的指令與版本以 2025-10 為準；Kubernetes 每季都有變動，請以官方文件為主。
+
 ## 🎯 前言
 
 經過前兩篇的學習，我們已經掌握了 Kubernetes 的基礎概念與核心資源操作。本文將深入探討進階功能與生產環境實踐，幫助你構建企業級的容器平台。
@@ -190,7 +192,10 @@ spec:
 | **Off** | 僅提供建議 | 不自動調整 |
 | **Initial** | 創建時設定 | 只在創建時應用 |
 | **Recreate** | 重建 Pod | 刪除並重建 Pod |
-| **Auto** | 自動調整 | 就地更新或重建 |
+| **Auto** | 自動調整 | 目前等同 Recreate（驅逐重建） |
+| **InPlaceOrRecreate** | 就地更新優先 | VPA 1.4+ 配合 K8s 1.33+ in-place resize；不行才重建 |
+
+> 註：`Auto` 從未真正「就地更新」，它一直是 Recreate 的別名；真正的就地調整要用 `InPlaceOrRecreate`（VPA 1.4 起為 alpha，需開啟 feature gate）。
 
 ### Cluster Autoscaler
 
@@ -617,6 +622,8 @@ spec:
 
 **3. 允許 DNS：**
 
+> 注意：下例把 `namespaceSelector` 與 `podSelector` 寫成 `to:` 底下的兩個項目，語意是 **OR**（kube-system 內所有 Pod，或本 namespace 內任何 `k8s-app=kube-dns` 的 Pod）。要限制為「kube-system 內的 kube-dns」必須像前面規則 3 一樣，把兩個 selector 放在同一個 `to:` 項目裡（AND）。
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -941,7 +948,7 @@ spec:
 # 安裝 Helm
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-# 添加倉庫
+# 添加倉庫（stable 倉庫已於 2020 年封存，僅能讀取舊 chart；新 chart 請用 Artifact Hub 搜尋）
 helm repo add stable https://charts.helm.sh/stable
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
@@ -1090,6 +1097,8 @@ spec:
 ```
 
 ### PrometheusRule 告警規則
+
+> 注意：下例 `HighCPUUsage` 的 `rate(container_cpu_usage_seconds_total)` 單位是 **CPU 核心數**，`> 0.8` 代表 0.8 核，不是 80%；要以百分比告警需除以 `kube_pod_container_resource_limits{resource="cpu"}`，否則 `humanizePercentage` 會把 0.8 核顯示成 80%。
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1

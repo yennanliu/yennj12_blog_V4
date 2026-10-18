@@ -10,6 +10,8 @@ description: "Autoscale the hard cases: StatefulSets with persistent volumes, mu
 readTime: "33 min"
 ---
 
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
+
 ## Series Overview
 
 This is **Part 6** of the Kubernetes Autoscaling Complete Guide series:
@@ -59,7 +61,7 @@ Traditional HPA with StatefulSets:
 
 **Scenario:** PostgreSQL cluster with read replicas that scale based on read query load.
 
-> **Warning:** An HPA changing `replicas` on a database StatefulSet does not configure replication, rebalance data or promote/demote anything. Each new pod must bootstrap itself as a streaming replica (e.g. via an operator such as CloudNativePG, Zalando postgres-operator or Crunchy PGO), and a scale-down can delete a replica that clients are still reading from. Only scale **read replicas** this way, only behind an operator that handles replica bootstrap, and never let an HPA touch the primary.
+> **Warning:** An HPA changing `replicas` on a database StatefulSet does not configure replication, rebalance data or promote/demote anything. Also note that the second metric in the HPA below, `pg_replication_lag_seconds`, is the wrong scaling signal: adding replicas does not reduce lag — it adds WAL senders to the primary. Scale read replicas on connections or CPU only; alert on lag separately. Each new pod must bootstrap itself as a streaming replica (e.g. via an operator such as CloudNativePG, Zalando postgres-operator or Crunchy PGO), and a scale-down can delete a replica that clients are still reading from. Only scale **read replicas** this way, only behind an operator that handles replica bootstrap, and never let an HPA touch the primary.
 
 ```yaml
 # PostgreSQL StatefulSet
@@ -306,6 +308,8 @@ spec:
 
 ### Pattern 1B: Redis Cache Cluster Autoscaling
 
+> **Warning:** the same caveat applies here. An HPA on a Redis Cluster StatefulSet adds pods that own no hash slots and removes pods without migrating theirs — nothing below reshards (`CLUSTER ADDSLOTS` / rebalance). Use an operator that handles resharding, or Sentinel-style replicas for read scaling; treat the YAML as an illustration of the metrics wiring only.
+
 ```yaml
 # Redis Cluster with dynamic scaling
 apiVersion: apps/v1
@@ -527,6 +531,8 @@ spec:
 ```
 
 ### Pattern 2A: Federated HPA with Cluster API
+
+> **Note:** the KubeFed resource below is illustrative — KubeFed is archived, and its placement API used `ReplicaSchedulingPreference` rather than per-cluster `weight` fields. Treat it as a sketch of the intent, not a manifest to apply.
 
 ```yaml
 # Install Cluster API
@@ -978,6 +984,8 @@ data:
 ## Pattern 3: Aggressive Cost Optimization
 
 ### Spot Instance Strategy with Multiple Fallbacks
+
+> **Caveat:** the Deployment at the end of this block tolerates `karpenter.sh/disruption`. Do **not** add that toleration — it is the pre-v1 name of the taint Karpenter uses to drain nodes (`karpenter.sh/disrupted` in v1), and tolerating it keeps your pods on nodes that are being removed, which is exactly what Part 2 warns against. Spot interruptions are handled by Karpenter's interruption queue, not by a toleration.
 
 ```yaml
 # Karpenter NodePool with spot + on-demand mix
@@ -2038,7 +2046,7 @@ spec:
 
 1. **Stateful Scaling**: Requires careful planning, slower policies, and split read/write architectures
 2. **Multi-Cluster**: Centralized metrics and intelligent distribution critical for success
-3. **Cost Optimization**: Spot instances + right-sizing + consolidation = 60-80% savings
+3. **Cost Optimization**: Spot instances + right-sizing + consolidation — commonly cited 60-80% savings (unsourced; depends on your on-demand baseline)
 4. **Batch Processing**: Queue-based autoscaling with KEDA scales jobs efficiently
 5. **Future**: ML-based prediction, serverless K8s, and service mesh integration emerging
 
@@ -2057,7 +2065,7 @@ Advanced autoscaling patterns unlock significant value:
 
 - **Stateful applications** can scale safely with proper planning
 - **Multi-cluster deployments** enable global scale and resilience
-- **Cost optimization** delivers 60-80% infrastructure savings
+- **Cost optimization** can deliver large (commonly cited 60-80%, unsourced) infrastructure savings
 - **Batch processing** scales efficiently with queue-based triggers
 - **Emerging technologies** push boundaries of what's possible
 

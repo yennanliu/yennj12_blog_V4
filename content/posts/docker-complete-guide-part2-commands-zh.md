@@ -10,6 +10,8 @@ authors: ["yen"]
 readTime: "28 min"
 ---
 
+> 本文的指令與版本以 2025-10 為準；Docker 每季都有變動，請以官方文件為主。
+
 ## 🎯 前言
 
 在上一篇文章中，我們了解了 Docker 的基礎概念與架構。本文將深入探討 Docker 指令的實務應用，從基礎操作到進階技巧，幫助你全面掌握 Docker CLI 的使用。
@@ -622,8 +624,8 @@ docker load < myimage.tar.gz
 docker run --rm -it myimage:tag sh
 docker run --rm -it --entrypoint sh myimage:tag
 
-# 掃描映像漏洞
-docker scan myimage:tag
+# 掃描映像漏洞（docker scan 已於 Docker Desktop 4.17 移除，改用 Docker Scout）
+docker scout cves myimage:tag
 
 # 查看映像詳細資訊
 docker inspect myimage:tag
@@ -1203,8 +1205,8 @@ docker history --no-trunc image-name:tag
 docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | \
   sort -k3 -h
 
-# 掃描安全漏洞
-docker scan image-name:tag
+# 掃描安全漏洞（docker scan 已移除，改用 Docker Scout）
+docker scout cves image-name:tag
 
 # 導出映像結構
 docker save image-name:tag -o image.tar

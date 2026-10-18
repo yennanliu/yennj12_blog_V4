@@ -10,6 +10,8 @@ description: "Choose the right pod autoscaler: resource-based HPA, custom and ex
 readTime: "34 min"
 ---
 
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
+
 ## Series Overview
 
 This is **Part 1** of the Kubernetes Autoscaling Complete Guide series:
@@ -1183,7 +1185,7 @@ spec:
 
 | Benefit | Description | Business Value |
 |---------|-------------|----------------|
-| **Scale to Zero** | Eliminate idle costs | 60-90% cost reduction for bursty workloads |
+| **Scale to Zero** | Eliminate idle costs | Commonly cited 60-90% cost reduction for bursty workloads (unsourced) |
 | **Event-Driven** | True reactive scaling | Sub-minute response to events |
 | **Rich Ecosystem** | 50+ built-in scalers | Rapid integration with existing systems |
 | **Multi-Trigger** | Combine multiple signals | Intelligent scaling decisions |
@@ -1261,6 +1263,8 @@ While this guide focuses on horizontal scaling, VPA deserves mention as a comple
 
 **VPA Use Cases:**
 
+Note on update modes: VPA has five — `Off`, `Initial`, `Recreate`, `Auto` and `InPlaceOrRecreate`. `Auto` currently behaves like `Recreate` (evict and recreate); in-place resizing comes only via `InPlaceOrRecreate` (VPA 1.4+, feature-gated), see Part 5.
+
 ```yaml
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
@@ -1273,7 +1277,7 @@ spec:
     name: webapp
 
   updatePolicy:
-    updateMode: "Auto"  # Auto, Recreate, Initial, Off
+    updateMode: "Auto"  # Off, Initial, Recreate, Auto, InPlaceOrRecreate
 
   resourcePolicy:
     containerPolicies:
@@ -1291,7 +1295,7 @@ spec:
 | Aspect | VPA | HPA |
 |--------|-----|-----|
 | **Scaling Direction** | Vertical (resources) | Horizontal (replicas) |
-| **Pod Disruption** | Requires pod restart | No disruption |
+| **Pod Disruption** | Pod restart in `Recreate`/`Auto`; in-place with `InPlaceOrRecreate` | No disruption |
 | **Stateful Applications** | Suitable | Complex |
 | **Cost Optimization** | Right-sizing | Capacity matching |
 | **Use Together?** | Yes, with caution | Complementary |
@@ -1335,7 +1339,7 @@ graph TD
 | Criteria | Resource HPA | Custom Metrics HPA | External Metrics HPA | KEDA |
 |----------|--------------|-------------------|---------------------|------|
 | **Setup Complexity** | ⭐ Simple | ⭐⭐⭐ Complex | ⭐⭐⭐⭐ Very Complex | ⭐⭐ Moderate |
-| **Latency** | 30-60s | 15-30s | 60-120s | 10-30s |
+| **Latency** (illustrative, unmeasured) | ~30-60s | ~15-30s | ~60-120s | ~10-30s |
 | **Scale to Zero** | ❌ No | ❌ No | ❌ No | ✅ Yes |
 | **Cost (Idle)** | Medium | Medium | Medium | **Zero** |
 | **Event-Driven** | ❌ Reactive | ⚠️ Partial | ⚠️ Partial | ✅ Native |
@@ -1453,6 +1457,8 @@ groups:
       summary: "HPA {{ $labels.horizontalpodautoscaler }} cannot fetch metrics"
 
   # Rapid scaling activity (possible thrashing)
+  # Caveat: current_replicas is a gauge, so rate() is meaningless here —
+  # use changes(kube_horizontalpodautoscaler_status_current_replicas[15m]) > 6 instead
   - alert: HPAScalingThrashing
     expr: |
       rate(kube_horizontalpodautoscaler_status_current_replicas[15m]) > 0.5
