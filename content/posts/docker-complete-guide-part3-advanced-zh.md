@@ -5,10 +5,12 @@ draft: false
 weight: 3
 description: "深入探討 Docker 進階主題，包含 Dockerfile 最佳實踐、多階段建立、Docker Compose 編排、網路進階配置、安全性強化、效能優化與生產環境部署策略。"
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Docker", "Dockerfile", "Docker Compose", "容器編排", "微服務", "CI/CD", "容器安全", "效能優化", "生產部署", "DevOps"]
+tags: ["Docker", "容器編排", "微服務", "CI/CD", "效能優化", "生產部署", "DevOps"]
 authors: ["yen"]
 readTime: "29 min"
 ---
+
+> 本文的指令與版本以 2025-10 為準；Docker 每季都有變動，請以官方文件為主。
 
 ## 🎯 前言
 
@@ -847,7 +849,7 @@ docker compose top
 | 類別 | 檢查項目 | 實施方法 |
 |------|----------|----------|
 | **基礎映像** | 使用最小化映像 | Alpine, Distroless |
-| **漏洞掃描** | 定期掃描映像 | `docker scan`, Trivy |
+| **漏洞掃描** | 定期掃描映像 | `docker scout cves`, Trivy |
 | **非 root 使用者** | 不使用 root 運行 | USER 指令 |
 | **密鑰管理** | 不在映像中存儲密鑰 | Docker Secrets, 環境變數 |
 | **網路隔離** | 最小權限網路 | 自訂網路, 防火牆規則 |
@@ -918,9 +920,11 @@ secrets:
 
 ### 4. 映像掃描
 
+> 注意：`docker scan`（Snyk）已於 Docker Desktop 4.17（2023）移除，由 Docker Scout 取代；下方 Clair 範例使用的 `--link` 是舊版容器連結機制，現行做法是把兩個容器放在同一個使用者自訂網路並以容器名互相解析。
+
 ```bash
-# 使用 Docker Scan
-docker scan myapp:latest
+# 使用 Docker Scout（取代已移除的 docker scan）
+docker scout cves myapp:latest
 
 # 使用 Trivy
 docker run --rm \
@@ -1119,6 +1123,8 @@ graph TB
 
 ### 高可用性配置
 
+> 注意：下例的 `deploy.replicas` / `update_config` / `placement` 只有 Docker Swarm（`docker stack deploy`）會處理，`docker compose up` 會忽略它們；而 `POSTGRES_REPLICATION_MODE` / `POSTGRES_MASTER_HOST` 是 `bitnami/postgresql` 映像的環境變數，官方 `postgres:15` 映像完全不認得，照抄會得到兩個互不相干的獨立資料庫而不是主從複製。
+
 ```yaml
 services:
   # 應用服務（多實例）
@@ -1302,6 +1308,7 @@ build:
     - develop
 
 # 部署到開發環境
+# 注意：docker/compose:latest 是已停止維護的 Compose V1 映像，實務上請改用內含 compose plugin 的 docker:cli 映像
 deploy-dev:
   stage: deploy
   image: docker/compose:latest

@@ -1,71 +1,31 @@
 ---
-title: "About YennJ12 Engineering"
-date: 2024-08-10
+title: "About"
+date: 2026-10-17
 type: "page"
 ---
 
-# About YennJ12 Engineering
+# 關於這個部落格
 
-Welcome to the YennJ12 Engineering Blog, where we share technical insights, architectural deep dives, and lessons learned from building scalable systems at scale.
+這是 Yen（[yennanliu](https://github.com/yennanliu)）的工程筆記，以繁體中文為主、英文為輔。內容不是泛泛的「技術分享」，而是五條有明確讀者的線：
 
-## Our Mission
+- **FDE 面試準備** — `fde-interview-guide`（52 篇情境題）與 `fde-core-concept`（25 篇機制篇）。前者給你面試情境與三個演進階段，後者是機制與數字的正典版本；兩邊互相連結。入口：[AI FDE 技能地圖](/posts/ai-fde-skill-map-zh/)。
+- **AI 工程從零開始** — 19 個 phase、43 篇的教學課程，從數學基礎到多代理與生產部署。不是面試教材，是一條可以照順序讀的課。
+- **系統架構與雲端** — AWS 原生 AI 系統、Kubernetes 自動擴縮、Docker、Redis、Java/Spring 後端。
+- **美股與產業** — SEC 10-K 深度解析（每個數字都追到申報文件）、半導體產業地圖、個股估值。教育性質，不構成投資建議。
+- **AI 工具與創作** — Claude Code、MCP、vLLM、RAGFlow、Ollama 等工具的原始碼閱讀，以及 24/7 音樂串流的實作。
 
-We believe that knowledge sharing is fundamental to advancing the field of software engineering. Through our blog, we aim to:
+每篇文章的目標只有一個：讀完之後你能向同事解釋這個概念，並且用它做決定。
 
-- **Share real-world experiences** from building production systems
-- **Document architectural decisions** and their trade-offs
-- **Provide practical guidance** for common engineering challenges  
-- **Foster learning** within the broader engineering community
+## About this blog (English)
 
-## What You'll Find Here
+Engineering notes by Yen ([yennanliu](https://github.com/yennanliu)), written mostly in Traditional Chinese. Five tracks with a specific reader in mind: Forward-Deployed-Engineer interview prep (scenario posts plus the mechanism "core concept" posts they link to), a 43-post AI-engineering curriculum, systems and cloud architecture, US-equity 10-K digests and industry maps (educational, not investment advice), and source-level reads of AI tooling such as Claude Code, MCP, vLLM and Ollama.
 
-Our content covers a wide range of topics, including:
+## 怎麼讀
 
-### Architecture & Design
-- Microservices patterns and best practices
-- Distributed systems design
-- System scalability strategies
-- API design and evolution
+- 想找某個主題：用上方 **Topics**（分類）或 **Series**（系列）選單；每篇文末的「相關文章與正典版本」會指向該主題最完整的一篇。
+- 想從頭學 AI 工程：從 [Phase 1](/posts/ai-eng-from-scratch-phase1-part1-linear-algebra-zh/) 開始照順序讀。
+- 準備 FDE 面試：先看技能地圖，再依讀者類型挑 5 篇。
 
-### Performance & Reliability  
-- Database optimization techniques
-- Caching strategies
-- Monitoring and observability
-- Incident response and post-mortems
+## 聯絡
 
-### Engineering Culture
-- Code review processes
-- Testing strategies
-- Developer productivity tools
-- Team scaling challenges
-
-### Emerging Technologies
-- Cloud-native architectures
-- Container orchestration
-- Infrastructure as code
-- DevOps practices
-
-## Our Team
-
-Our engineering team consists of experienced professionals who have built and scaled systems serving millions of users. Each author brings unique perspectives from their specialized domains.
-
-## Contributing
-
-While our blog primarily features content from our internal engineering team, we occasionally welcome guest posts from industry experts. If you have insights that would benefit our community, we'd love to hear from you.
-
-## Connect With Us
-
-We're always interested in engaging with the broader engineering community:
-
-- Follow us on Twitter for updates on new posts
-- Join the discussion in the comments section of our articles
-- Connect with our team members on LinkedIn
-- Check out our open-source contributions on GitHub
-
-## Technical Details
-
-This blog is built with Hugo and deployed using modern CI/CD practices. The source code for our theme and content structure is available on GitHub as an example of how to build technical blogs that scale.
-
----
-
-*Have questions about our content or want to suggest topics for future posts? Reach out to us at engineering-blog@yennj12.com*
+GitHub：[yennanliu](https://github.com/yennanliu)。文章內容如有錯誤，歡迎開 issue 或 PR 到 [yennj12_blog_V4](https://github.com/yennanliu/yennj12_blog_V4)。

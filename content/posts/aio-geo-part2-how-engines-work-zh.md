@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "拆解生成式引擎的檢索管線：AI crawler 名單與行為差異、內容如何被切成 chunk、rerank 階段淘汰了什麼、grounding 如何決定引用誰。附 8 個讓頁面永遠不被引用的技術死因與逐項診斷方法。"
 categories: ["all", "ai", "engineering", "business"]
-tags: ["GEO", "AIO", "RAG", "Chunking", "Reranking", "Crawler", "Embedding", "繁體中文", "SEO"]
+tags: ["GEO", "AIO", "RAG", "Chunking", "Reranking", "Embedding", "SEO"]
 authors: ["yen"]
 readTime: "16 min"
 ---
@@ -141,7 +141,7 @@ Allow: /
            • <meta name="robots" content="noai, noimageai">
 ```
 
-**Cloudflare 尤其要注意**：2024 年後預設對新網域啟用了 AI 爬蟲封鎖選項，很多人是在完全不知情的狀況下被擋掉的。檢查路徑：Security → Bots → AI Scrapers and Crawlers。
+**Cloudflare 尤其要注意**：2025 年 7 月起，新網域預設封鎖 AI 爬蟲（2026 年 9 月又改成依 Search / Agent / Training 分類的預設值，見 [Part 15 §一](/posts/aio-geo-part15-tools-stack-zh/)），很多人是在完全不知情的狀況下被擋掉的。檢查路徑：Security → Bots → AI Scrapers and Crawlers。
 
 診斷腳本：
 

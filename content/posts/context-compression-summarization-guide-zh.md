@@ -4,8 +4,7 @@ date: 2026-03-12T16:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "Claude Code", "Context Compression", "summarization", "token-optimization", "long-conversation", "memory-management", "agent-orchestration", "Development Tools"]
-summary: "多 Agent Token 優化系列 pt.3：深入探索 Context 壓縮與摘要技術，從滑動視窗、階層式摘要到語意壓縮，提供完整實作範例，幫助你打造可無限對話且成本可控的 AI 應用。"
+tags: ["AI", "Claude Code", "token-optimization", "agent-orchestration", "Developer Tools"]
 description: "多 Agent Token 優化系列 pt.3：深入探索 Context 壓縮與摘要技術，從滑動視窗、階層式摘要到語意壓縮，提供完整實作範例，幫助你打造可無限對話且成本可控的 AI 應用。"
 readTime: "35 min"
 ---
@@ -1851,7 +1850,7 @@ if __name__ == "__main__":
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                    Context 壓縮策略比較                              │
+│               Context 壓縮策略比較（壓縮率為示意估算）               │
 ├──────────────────┬──────────┬──────────┬──────────┬────────────────┤
 │ 策略             │ 壓縮率   │ 資訊保留 │ 實作複雜 │ 適用場景       │
 ├──────────────────┼──────────┼──────────┼──────────┼────────────────┤
@@ -1879,6 +1878,11 @@ if __name__ == "__main__":
 5. 企業級應用
    → 混合壓縮系統
 ```
+
+兩個表裡沒寫、但會決定你有沒有真的省到錢的事：
+
+- **壓縮本身要花 token。** 表中的壓縮率是示意估算，不是量測值；而且語意壓縮與混合壓縮每一輪使用者訊息都多打一次分類呼叫（`_classify_message`），每 N 輪再多一次摘要呼叫。以 Haiku 做分類、每次約 300 token 輸入計，1,000 輪就是 30 萬 token 的額外成本；只有在被壓掉的歷史 token 數明顯大於這個開銷時才划算。先算損益平衡的輪數，再決定開不開。
+- **摘要會打掉 Prompt Cache。** 把摘要以「[對話歷史摘要]」訊息對注入對話前段（見策略二組訊息的做法）等於改寫了訊息前綴，Prompt Caching（見本系列的 Prompt Caching 實戰指南）會從改動點之後全部失效。要兩者並用，就把摘要放在固定前綴之後、以獨立訊息附加，或接受每次摘要後多付一次快取寫入。
 
 ---
 

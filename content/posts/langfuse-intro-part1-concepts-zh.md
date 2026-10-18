@@ -6,7 +6,7 @@ description: "LLM 應用最可怕的地方,是它「壞掉時看起來跟正常�
 categories: ["all", "ai", "engineering"]
 tags: ["Langfuse", "LLM", "Observability", "LLMOps", "Tracing", "Evaluation", "Monitoring", "AI Engineering"]
 authors: ["yen"]
-readTime: "14 min"
+readTime: "7 min"
 ---
 
 > 傳統後端壞掉:噴 500、log 一條 stack trace、監控告警響——你馬上知道。
@@ -107,7 +107,7 @@ Langfuse 的所有功能,都建立在一個清晰的資料模型上。**搞懂�
 
 ### Observation(觀測):trace 裡的每一個步驟
 
-一個 trace 裡有很多步驟,每一步都是一個 **Observation**。Observation 有三種型別:
+一個 trace 裡有很多步驟,每一步都是一個 **Observation**。Observation 有三種基本型別:
 
 | 型別 | 代表什麼 | 例子 |
 |------|----------|------|
@@ -116,6 +116,8 @@ Langfuse 的所有功能,都建立在一個清晰的資料模型上。**搞懂�
 | **Event** | 一個時間點事件 | 記錄某個離散事件 |
 
 其中 **Generation 最特別**——它專門記錄 LLM 呼叫,會自動捕捉 model、input/output messages、token 數、成本、延遲。這是 LLM 可觀測性的核心。
+
+除了這三種,Langfuse 目前還定義了七種帶語意的型別,讓 agent 流程在 UI 上一眼看得出結構:**Agent**(一個 agent 的推理回合)、**Tool**(工具呼叫)、**Chain**(一串步驟)、**Retriever**(檢索)、**Evaluator**(評估呼叫)、**Embedding**(嵌入計算)、**Guardrail**(安全檢查)。它們在行為上都是 Span 的變體,只是多了型別標籤;用 SDK 建立時以 `as_type="tool"`、`as_type="agent"` 等指定。完整清單以官方 observation types 文件為準。
 
 ### 巢狀結構:Trace → Observation 的樹
 

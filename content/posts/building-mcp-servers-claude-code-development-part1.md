@@ -5,11 +5,12 @@ draft: false
 weight: 1
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "MCP", "Claude Code", "Development Tools", "Automation", "Python", "TypeScript", "tooling"]
-summary: "Complete guide to setting up Model Context Protocol (MCP) servers for Claude Code, from basic configuration to building custom tools that enhance your AI-powered development workflow."
-description: "Complete guide to setting up Model Context Protocol (MCP) servers for Claude Code, from basic configuration to building custom tools that enhance your AI-powered development workflow."
+tags: ["AI", "MCP", "Claude Code", "Developer Tools", "Automation", "Python", "TypeScript"]
+description: "Set up your first Model Context Protocol server for Claude Code, from config to custom Python and TypeScript tools, so Claude can call your own systems."
 readTime: "18 min"
 ---
+
+This post describes Claude Code and the MCP Python SDK as documented in 2025-09; both change monthly.
 
 ## 🎯 Introduction to MCP & Claude Code Integration
 
@@ -29,7 +30,7 @@ This multi-part series will take you from MCP basics to advanced implementations
 
 **Part 1 (This Post)**: Basic MCP server setup and simple custom tools
 **Part 2**: Advanced MCP patterns, database integration, and API connectors
-**Part 3**: Production deployment, security, and scaling considerations
+**Part 3**: Production deployment, security, and scaling considerations (planned; never written)
 
 > 💡 **Learning Goal**: By the end of this post, you'll have a working MCP server with custom tools that Claude Code can use to enhance your development workflow
 
@@ -94,7 +95,7 @@ source mcp-env/bin/activate  # On Windows: mcp-env\Scripts\activate
 pip install mcp
 
 # Install additional dependencies
-pip install asyncio aiofiles requests
+pip install aiofiles requests   # asyncio is in the standard library; the PyPI package of that name is an unrelated stub
 ```
 
 **For TypeScript Implementation:**
@@ -119,6 +120,9 @@ npm install axios fs-extra
 Let's start with a basic MCP server that provides simple utility tools:
 
 **Python Implementation (server.py):**
+
+> ⚠️ **SDK note:** this listing was written against MCP Python SDK v1 and, as written, will not start: `server.run()` takes an `InitializationOptions` (from `mcp.server.models`, with `server_name`, `server_version` and `capabilities`), not the `InitializeResult` wire type imported below. In the current SDK, prefer the `FastMCP` decorator API, which handles initialization for you. Also, `ast.Num` (used in the calculator tool) was removed in Python 3.14.
+
 ```python
 #!/usr/bin/env python3
 """

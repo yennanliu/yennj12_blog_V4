@@ -4,7 +4,7 @@ date: 2026-07-18T09:00:00+08:00
 draft: false
 description: "把本機 Ollama 模型接進真實應用的完整實戰:官方 Python/JS SDK、OpenAI 相容層、LangChain、Open WebUI,以及手把手打造一個離線可跑的本地 RAG。"
 categories: ["all", "ai", "engineering"]
-tags: ["Ollama", "LLM", "Python", "OpenAI API", "LangChain", "Open WebUI", "RAG", "Embeddings", "AI Engineering"]
+tags: ["Ollama", "LLM", "Python", "LangChain", "RAG", "Embeddings", "AI Engineering"]
 authors: ["yen"]
 readTime: "18 min"
 ---
@@ -312,9 +312,9 @@ print(len(vec))   # nomic-embed-text 是 768 維
 | `logprobs` | ❌ | 不支援 |
 | `logit_bias` | ❌ | 不支援 |
 | `n`(一次多個候選) | ❌ | 不支援,只回一個 |
-| `tool_choice` | ⚠️ | 部分支援,行為與雲端不完全一致 |
+| `tool_choice` | ❌ | 官方相容性清單列為不支援(無法強制模型呼叫特定工具) |
 
-**takeaway:對話、streaming、embeddings、JSON mode、工具呼叫這些主流功能都能無痛遷移;會出問題的是 `logprobs`、`n`、`logit_bias` 這類進階取樣參數。遷移前先確認你有沒有用到它們。**
+**takeaway:對話、streaming、embeddings、JSON mode、工具呼叫這些主流功能都能無痛遷移;會出問題的是 `logprobs`、`n`、`logit_bias`、`tool_choice` 這類進階參數。遷移前先確認你有沒有用到它們。**
 
 ### 實務:把現有 OpenAI 專案遷到 Ollama
 
@@ -537,7 +537,7 @@ pip install open-webui
 open-webui serve
 ```
 
-一樣開 http://localhost:3000。pip 版直接跑在你機器上,`localhost:11434` 就能連到 Ollama,不需要 `host.docker.internal` 那套。
+pip 版預設跑在 http://localhost:8080(Docker 版的 3000 只是 `-p 3000:8080` 的對外映射;想沿用 3000 可以 `open-webui serve --port 3000`)。pip 版直接跑在你機器上,`localhost:11434` 就能連到 Ollama,不需要 `host.docker.internal` 那套。
 
 ### 其他 GUI 選擇
 

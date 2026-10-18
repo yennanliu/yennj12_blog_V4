@@ -5,7 +5,7 @@ draft: false
 weight: 24
 description: "深入解析 ViT 的 Patch Embedding 機制、多模態融合策略（Early/Late/Cross-Modal Fusion）、CLIP/ALIGN 對比學習與多模態生產系統設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multimodal", "Vision Transformer", "ViT", "CLIP", "Fusion", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Multimodal", "CLIP", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "12 min"
 series: ["ai-eng-from-scratch"]
@@ -100,7 +100,7 @@ Vision Transformer 的核心洞見：**圖片可以被視為一個 patch 序列*
 - **CLS Token**：類比 BERT 的 `[CLS]`，是額外加入的可學習 token，在 Self-Attention 中與所有 patch token 互動，最終輸出作為全圖表示。
 - **Position Embedding**：ViT 使用 1D 可學習位置編碼（非 2D sinusoidal），研究發現模型可以隱式學習 2D 鄰近關係。
 - **計算複雜度**：Self-Attention 對序列長度 N 的複雜度為 O(N²)；197 tokens 在 ViT-B 下單張圖推理約 **8 ms**（A100，batch=1，FP16）。
-- **ViT-L/16 在 ImageNet-21k 預訓練 + ImageNet-1k fine-tune 達 87.76% Top-1**，超越 ResNet-152 的 83.8%，提升幅度 3.96 個百分點。
+- **ViT-L/16 在 ImageNet-21k 預訓練 + ImageNet-1k fine-tune 達 85.30% Top-1；改用 JFT-300M 預訓練則是 87.76%**，略高於同樣用 JFT-300M 的 BiT-L（ResNet152x4）87.54%（ViT 論文 Table 2）。差距不大，但 ViT 用的預訓練算力只有 BiT-L 的約 1/4。
 
 ---
 
@@ -197,7 +197,7 @@ Cross-Modal Fusion（中間層交叉注意力）:
            ▼ 融合後表示
 ```
 
-**三種策略量化比較**（電商搜尋任務，500 萬商品）：
+**三種策略量化比較**（電商搜尋任務，500 萬商品；示意估算，非實測）：
 
 | 指標 | Early Fusion | Late Fusion | Cross-Modal |
 |------|-------------|-------------|-------------|
@@ -237,7 +237,7 @@ Loss = -1/N × Σᵢ [ log exp(sim(vᵢ, tᵢ)/τ) / Σⱼ exp(sim(vᵢ, tⱼ)/�
 
 | 訓練資料規模 | ImageNet Zero-Shot Top-1 |
 |-------------|--------------------------|
-| 1500 萬圖文對 | 37.8% |
+| 約 1500 萬圖文對（YFCC 子集，論文消融）| 30% 多（量級示意）|
 | 4 億圖文對（CLIP 正式版） | **76.2%** |
 | 人工標注 ImageNet 1K（ResNet-50） | 76.1%（有監督基線） |
 
@@ -263,7 +263,7 @@ CLIP 用弱標注（網路爬取）的 4 億對達到了與有監督 ResNet-50 �
 
 - **Prompt Engineering 影響顯著**：「a photo of {class}」vs「a product image of {class}」在電商任務差距可達 3–5%
 - **Domain Shift**：CLIP 在通用圖片表現佳，但在醫療影像、衛星圖等專業域需 fine-tune
-- **Fine-tune 策略**：凍結 Visual Encoder，只 fine-tune Text Encoder + projection layer，可用 20 萬對資料在 A100×4 跑 1 天（約 $60）達到 3–8% 提升
+- **Fine-tune 策略**：凍結 Visual Encoder，只 fine-tune Text Encoder + projection layer，可用 20 萬對資料在 A100×4 跑 1 天（4 × 24 h × $3.09/GPU-h ≈ $300）達到 3–8% 提升
 - **批量大小影響**：對比學習依賴 large batch（CLIP 原版用 32768），smaller batch 需用 MoCo 等 memory bank 技巧
 
 ---
@@ -282,14 +282,14 @@ CLIP 用弱標注（網路爬取）的 4 億對達到了與有監督 ResNet-50 �
 - 效果：ImageNet zero-shot 76.4%（微幅超越 CLIP 的 76.2%）
 
 **BLIP（2022）**：
-- 核心貢獻：引入 **Bootstrapping**——用 CLIP 過濾雜訊資料，再用過濾後資料訓練 Caption 生成模型，迭代提升資料品質
+- 核心貢獻：引入 **Bootstrapping**——用自己訓練的 Captioner 補寫字幕、再用自己的 ITM（image-text matching）Filter 篩掉雜訊配對（CapFilt），迭代提升資料品質
 - 新能力：同時支援 Image Captioning、VQA、Image-Text Retrieval
 - 模型架構：Unified Encoder-Decoder（可做 understanding 也可做 generation）
 
 **Flamingo（2022）**：
 - 核心貢獻：**few-shot 多模態推理**，在 prompt 中插入任意張圖片
 - 技術：Perceiver Resampler（把可變長度 patch tokens 壓縮為固定 64 個 visual tokens）+ Gated Cross-Attention Layer 插入 frozen LLM
-- 效果：16-shot VQA 達 82.0%，超越當時 zero-shot SOTA
+- 效果：VQAv2 上 32-shot 達 67.6%（不需微調就逼近當時的微調 SOTA），全量 fine-tune 後 82.0%
 
 **演進趨勢總結**：
 
@@ -370,9 +370,9 @@ Cross-Attention 與拼接的差異已在決策 3 與 §五的比較表中涵蓋�
 |------|------------------|-------------------|-------------------|-------------------|
 | MRR@10（相關性）| 0.38 | 0.58 | 0.74 | +95% |
 | Recall@20（召回率）| 55% | 71% | 83% | +51% |
-| 新品類 Zero-Shot Recall@20 | 12% | 71% | 75% | +525% |
+| 新品類 Zero-Shot Recall@20 | 12% | 71% | 75% | +492%（(75−12)/12）|
 | P99 推理延遲 | 35 ms | 45 ms | 95 ms | 延遲 +171%（代價）|
-| 標注成本（初始建立索引）| $8,000 | $1,200（fine-tune）| $3,500 | 依策略不同 |
+| 標注成本（初始建立索引）| $8,000 | $300（fine-tune，見 §六）| $3,500 | 依策略不同 |
 | 細粒度屬性識別準確率 | 48% | 63% | 79% | +65% |
 | 使用者點擊率（CTR）| 3.2% | 5.1% | 6.4% | +100% |
 | NDCG@10 | 0.41 | 0.62 | 0.77 | +88% |
@@ -380,9 +380,9 @@ Cross-Attention 與拼接的差異已在決策 3 與 §五的比較表中涵蓋�
 > 以上為電商情境的示意估算，非實測數據。
 
 **關鍵洞察**：
-- **新品類 Zero-Shot** 是最大躍升點（+525%）：這代表業務可以在不補標注的情況下，CLIP 就能對新上架商品形成基本召回能力
+- **新品類 Zero-Shot** 是最大躍升點（+492%）：這代表業務可以在不補標注的情況下，CLIP 就能對新上架商品形成基本召回能力
 - **P99 延遲代價**：Cross-Modal Fusion 比純圖片搜尋慢 171%，但絕對值 95 ms 仍在 200 ms SLA 內
-- **標注成本**：CLIP fine-tune 僅需 20 萬對（$1,200 訓練成本），比傳統有監督標注節省 85%+
+- **標注成本**：CLIP fine-tune 僅需 20 萬對（約 $300 訓練成本），比傳統有監督標注的 $8,000 節省 95%+
 
 ---
 

@@ -5,9 +5,9 @@ draft: false
 weight: 5
 description: "從面試官的視角，深度拆解 RAG 的技術細節：Chunking 策略選擇、Embedding 模型挑選、向量資料庫設計、混合搜尋與 Reranking，以及 Context Window 爆炸的處理方式"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "RAG", "Chunking", "Embedding", "Vector DB", "Hybrid Search", "Reranking", "Interview", "Cloud", "RKK"]
+tags: ["AI", "FDE", "RAG", "Vector Database", "Interview", "Cloud", "RKK", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "15 min"
+readTime: "12 min"
 ---
 
 > 第一篇講了 RAG 是什麼。  
@@ -364,39 +364,13 @@ LangChain 的 `ContextualCompressionRetriever` 就是這個概念。
 
 ---
 
-## 六、面試回答完整示範
+## 六、答題骨架
 
-```
-面試官追問鏈的完整回答：
-
-Chunking：
-「我會先看文件的結構。如果是有標題的 Markdown 或技術文件，
- 我按標題切；如果是純文字的長文，用語意切分。
- Overlap 設 50 tokens，確保語意不會在邊界截斷。
- 我不會拍腦袋決定 Chunk Size——
- 我會用幾個不同的 size 跑 retrieval recall@5，
- 選表現最好的那個。」
-
-Embedding 模型：
-「GCP 環境我選 text-embedding-004，因為原生整合 Vertex AI，
- 而且支援 task_type——Query 和 Document 分開指定。
- 如果是中文為主的知識庫，我會認真評估 BGE 系列，
- 它的中文表現明顯優於通用多語言模型。
- 最終選擇我不靠直覺，用客戶的實際資料跑 recall benchmark。」
-
-Hybrid Search：
-「純向量搜尋對關鍵字不匹配的 query 有盲點。
- 我加 BM25 做 Hybrid Search，用 RRF 融合排名——
- 不是加權平均（量綱不同），而是把兩邊排名都轉成 1/(k+rank) 再加總。
- 如果還需要提升精準度，在 Top-50 上加 Cross-Encoder Reranker，
- 取最高分的 5 筆送進 context。」
-
-Context Window Overflow：
-「如果頻繁 overflow，我先看是不是 Chunk Size 設太大。
- 如果是跨文件的複雜問題，我用 Map-Reduce——
- 每個 chunk 先摘要，再合併摘要送 LLM 做最終回答。
- 代價是多幾次 LLM 呼叫，但比截斷來得準確。」
-```
+- Chunking 先用 §一「面試怎麼答」的三段結構：資料特性 → 策略與理由 → 怎麼驗證。
+- Embedding 選型回到「Embedding 模型選擇」一節的四個考量維度，強調用自己的資料跑 recall@k。
+- 純向量找不到時，依序帶「混合搜尋」的 Hybrid + RRF 與「Reranking」的兩階段架構，並交代 Reranking 的代價。
+- Overflow 走「Context Window Overflow」一節的五種策略，先說根本原因通常是 Chunk Size。
+- 被追問融合方式、Index 類型或 Parent-Child 存法時，答案在 §五 的三道地雷題。
 
 ---
 

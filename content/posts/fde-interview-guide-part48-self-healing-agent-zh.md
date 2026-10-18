@@ -5,9 +5,9 @@ draft: false
 weight: 48
 description: "深入解析如何在 LangGraph 中設計 Compiler-Validator Pattern，透過 Pydantic 強型別校驗、Critic Agent 反思重寫、Circuit Breaker 與 Human-in-the-loop，打造能自我修復的高可靠性供應鏈 Agent 架構。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "LangGraph", "Agent", "Self-Healing", "LLM", "Reliability"]
+tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "Agent", "LLM", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "21 min"
 ---
 
 > 大多數工程師的方法：在工具呼叫外面包一層 `try-catch`，失敗就 retry 三次。
@@ -188,7 +188,7 @@ readTime: "26 min"
 - Prometheus + Grafana 面板：即時追蹤 retry_count、validation_error_rate
 - MTTD：< 1 分鐘（自動偵測）；MTTR < 5 分鐘（自動修復率 ~72%，示意估算）
 
-**代價**：月費 ~$380（Critic Agent LLM 呼叫 + 監控基礎設施）
+**代價**：月費 ~$380（Critic Agent LLM 呼叫 + Redis + Pub/Sub + 監控基礎設施；比 Phase 1 的 $20 多 $360）
 
 ---
 
@@ -196,7 +196,7 @@ readTime: "26 min"
 
 ### 3.1 Schema 定義策略
 
-每一個工具的輸出都必須有對應的 Pydantic Model，且要設計得「嚴格但有彈性」：
+每一個工具的輸出都必須有對應的 Pydantic Model，且要設計得「嚴格但有彈性」（以下為 Pydantic v1 語法；v2 請改用 `Field(pattern=...)` 與 `@field_validator(mode='before')`，v2 已不接受 `regex=`）：
 
 ```python
 from pydantic import BaseModel, validator, Field
@@ -633,9 +633,9 @@ Trace: task_id=ORD-2026-00431
 | 選擇 | 選 X 的理由 | 不選 Y 的理由 | Flip Condition |
 |------|------------|--------------|----------------|
 | **Pydantic 硬校驗** vs 僅 try-catch | 攔截格式正確但語意錯誤的「偽正確」數據；ValidationError 訊息人類可讀，Critic Agent 能直接解讀 | try-catch 只攔截異常，HTTP 200 + 垃圾數據完全透傳，下游靜默污染 | 若外部 API 有 OpenAPI/JSON Schema 規範且嚴格遵守，try-catch 可能已足夠（但罕見） |
-| **Critic Agent（LLM 反思）** vs 規則引擎 | 應對未知格式漂移；LLM 能推理「DD/MM/YYYY → 加 date_format 參數」這種語意關聯 | 規則引擎需要預先枚舉所有可能錯誤，第三方 API 的格式變化無法預測 | 若錯誤類型有限且已知（< 10 種），純規則引擎成本更低（無 LLM 呼叫費 $0.008/次） |
+| **Critic Agent（LLM 反思）** vs 規則引擎 | 應對未知格式漂移；LLM 能推理「DD/MM/YYYY → 加 date_format 參數」這種語意關聯 | 規則引擎需要預先枚舉所有可能錯誤，第三方 API 的格式變化無法預測 | 若錯誤類型有限且已知（< 10 種），純規則引擎成本更低（無 LLM 呼叫費 $0.002/次） |
 | **Circuit Breaker（Redis 共享）** vs 本地狀態 | 多個 Worker 共享 CB 狀態，一個 Worker 發現 API 失敗立即保護所有 Worker | 本地 CB 狀態無法跨 Pod 共享，每個 Pod 都要踩一遍失敗才能觸發保護 | 單一 Worker / 單機部署時，本地 CB 足夠，省去 Redis 依賴 |
-| **max_retries=3 護欄** vs 無限重試 | 防止 Agent 陷入修復循環消耗 LLM Token 與 API 配額；最差情況下成本可預測 | 無限重試可能在 API 端修復前持續消耗，每次 Critic Agent 呼叫約 $0.008，無限重試 = 無限燒錢 | 若任務極其重要（如金融交割），可考慮 max_retries=10 但加上費用上限熔斷 |
+| **max_retries=3 護欄** vs 無限重試 | 防止 Agent 陷入修復循環消耗 LLM Token 與 API 配額；最差情況下成本可預測 | 無限重試可能在 API 端修復前持續消耗，每次 Critic Agent 呼叫約 $0.002（Flash），無限重試 = 無限燒錢 | 若任務極其重要（如金融交割），可考慮 max_retries=10 但加上費用上限熔斷 |
 | **Cloud Pub/Sub 通知** vs 直接 Slack API 呼叫 | 解耦通知與業務邏輯；Pub/Sub 有持久化保證，即使 Slack 暫時無法連線也不丟失事件 | 直接呼叫 Slack API 若失敗則通知丟失；且 Pub/Sub 可扇出至多個下游（PagerDuty、Email、JIRA 同時觸發） | 若系統規模小（< 100 事件/天），直接 Slack 呼叫複雜度更低 |
 | **gemini-1.5-flash for Critic** vs GPT-4 | Critic Agent 任務結構化明確，Flash 延遲 < 800ms，成本 $0.002/次；GPT-4 需要 3–5 秒，$0.03/次 | GPT-4 在非結構化推理上更強，但修復任務有固定 Prompt 範本，Flash 品質足夠（示意估算：修復成功率 Flash 72% vs GPT-4 78%，差距 6 個百分點，但成本差 15 倍；模型與價格以 2025 年撰文時為準，請以官方最新文件為準） | 若 Critic 需要處理極其複雜的參數重寫（如 GraphQL 查詢重構），換 claude-3-5-sonnet 或 GPT-4 |
 
@@ -648,10 +648,10 @@ Trace: task_id=ORD-2026-00431
 | **軟故障偵測率** | 0%（靜默失敗） | 94%（Pydantic 攔截 + Validator） | +94 pp |
 | **自動修復率**（無需人工） | 0% | 72%（Critic Agent 修復成功，採用 Flash） | +72 pp |
 | **MTTD**（平均偵測時間） | 2–4 小時（查報表才發現） | < 1 分鐘（即時 Validator） | -99% |
-| **MTTR**（平均修復時間） | 45 分鐘（人工排查 + 重跑） | 2.3 分鐘（自動修復），27 分鐘（人工介入） | -95% / -40% |
+| **MTTR**（平均修復時間） | 45 分鐘（人工排查 + 重跑） | 2.3 分鐘（自動修復：單次 Critic 修復本身約 2 秒，見 §七的 Trace；其餘是偵測窗口與最多 3 次重試的等待），27 分鐘（人工介入） | -95% / -40% |
 | **資料庫污染筆數**（事件期間） | ~28,000 筆（一夜未發現） | 0 筆（Validator 在寫入前攔截） | -100% |
 | **Critic Agent 平均延遲** | N/A | 1.8 秒（P50），3.2 秒（P99） | 新增 |
-| **月額外成本** | $0 | +$180（LLM 呼叫 + Redis + Pub/Sub） | +$180/月 |
+| **月額外成本** | $0 | +$360（Phase 3 月費 $380 − 基線 $20，見 §二） | +$360/月 |
 | **Dead Letter 事件率** | ~100%（所有錯誤都上報） | 28%（其餘被自動修復） | -72% |
 | **On-call 警報量**（月） | 340 次 | 75 次（其中 22% 為真正需人工介入） | -78% |
 | **API 切換延遲**（CB 觸發） | 無（只有人工操作） | < 50ms（CB 狀態讀取 Redis） | 新增能力 |
@@ -661,25 +661,14 @@ Trace: task_id=ORD-2026-00431
 
 ---
 
-## 十、面試答題要點
+## 十、答題骨架
 
-> *「我會在 LangGraph 中引入 Compiler-Validator Pattern：每個工具輸出都綁定一個 Pydantic BaseModel，Validator Node 做強型別硬校驗，成功走下一節點，失敗導向 Critic Agent。Critic Agent 拿到三份上下文——原始意圖、失敗日誌、備用工具清單——重新推理修正參數或切換工具，修正後回到 Worker 重試。State 機器設定 max_retries=3 護欄防無限循環，這一層預估能覆蓋約七成的自動修復場景（示意估算）。底層我還會部署 Circuit Breaker（Redis 共享狀態），連續 5 次失敗自動隔離問題 API，防止雪崩。若 3 次修復全部失敗，Dead Letter State 發布事件到 Cloud Pub/Sub，依訂單金額決定升級至 Slack 或 PagerDuty。這套架構的核心價值是：把「偵測」和「推理」分離，讓反思循環成為架構一等公民，而不是在業務邏輯裡散落一堆 try-catch，預期可將 MTTD 從數小時降到分鐘級，並在寫入前攔截資料庫污染。」*
-
----
-
-## 十一、面試常見追問與應對
-
-**Q：Critic Agent 自己呼叫 LLM 會不會也出錯？你如何確保 Critic Agent 的輸出可靠？**
-
-應對：Critic Agent 的輸出同樣需要 Schema 校驗。Critic 必須輸出嚴格 JSON（`strategy`、`tool_name`、`corrected_params`），若 JSON 解析失敗或不符合 Schema，直接跳過修復，進入 Dead Letter，不讓 Critic 本身的 Bug 再引發新的修復循環（「修復者的修復者」的無窮遞歸問題）。
-
-**Q：如果備用 API 也壞了，靜態快取數據有多久的時效性？業務可以接受嗎？**
-
-應對：這取決於業務 SLA。在供應鏈場景中，我們設定快取 TTL = 4 小時，並在回應中明確標注 `cached_at` 時間戳，讓下游業務邏輯自行判斷是否接受。對於「包裹到哪了」這種查詢，4 小時前的數據可能還可以接受（告知用戶「最後更新於 XX:XX」）；但對於「庫存是否足夠接單」，快取數據可能造成超賣，此時必須阻斷並上報人工。
-
-**Q：Critic Agent 每次呼叫 LLM 有額外延遲，如何保證端對端 SLA？**
-
-應對：Critic Agent 使用輕量模型（gemini-1.5-flash，P99 < 3.2 秒），且只在異常路徑觸發，正常路徑延遲不受影響（仍是 < 300ms）。異常路徑的 SLA 可以放寬：使用者寧可等 3 秒收到正確數據，也不要立刻收到錯誤數據。在 SLA 合約中，我們將自動修復路徑的 P99 設為 5 秒，與正常路徑的 300ms 分開計算。
+- 先用 §一 拆出兩種性質的故障，說明為何純 Retry 不夠。
+- 主幹照 §二 的三個演進階段講，核心模式接 §三 的 Pydantic Validator Node（偵測）與 §四 的 Critic Agent（推理），強調兩者分離。
+- 防雪崩與降級接 §五 的 Circuit Breaker 與 Fallback Matrix；三次修復失敗後的路徑接 §六 的 Dead Letter State 與 Human-in-the-Loop。
+- 追問「Critic 自己出錯怎麼辦」：Critic 的輸出同樣過 Schema 校驗，解析失敗直接進 Dead Letter，避免修復者的無窮遞歸（見 §四、§六）。
+- 追問「備用 API 也壞、快取多舊可接受」與「Critic 的額外延遲」：答案取決於業務 SLA——快取回應標注時間戳由下游判斷，異常路徑的 P99 與正常路徑分開計算（見 §五 的 Fallback Matrix、§七 的指標）。
+- 選型理由用 §八，收尾用 §九 的前後對比給 MTTD 與自動修復覆蓋率數字。
 
 ---
 

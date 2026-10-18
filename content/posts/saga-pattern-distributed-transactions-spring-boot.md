@@ -2,9 +2,9 @@
 title: "SAGA Pattern: Managing Distributed Transactions in Spring Boot Microservices"
 date: 2025-01-28T01:00:00+08:00
 draft: false
-description: "Complete guide to implementing SAGA pattern for distributed transactions in Java Spring Boot applications. Learn orchestration vs choreography approaches, failure handling, and best practices with real-world examples."
+description: "Replace two-phase commit with the SAGA pattern in Spring Boot: orchestration vs choreography, compensating transactions and when SAGA is the wrong tool."
 categories: ["all", "engineering", "architecture"]
-tags: ["Java", "Spring Boot", "SAGA Pattern", "Distributed Transactions", "Microservices", "Event Sourcing", "Orchestration", "Choreography"]
+tags: ["Java", "Spring Boot", "Microservices", "Orchestration"]
 authors: ["yen"]
 readTime: "23 min"
 ---
@@ -104,6 +104,9 @@ graph TD
 #### 🛠️ Java Spring Boot Implementation
 
 **SAGA Orchestrator Service:**
+
+> Caveat — the saga log must outlive the failure. The orchestrator below is class-level `@Transactional`, so when `executeStep` throws after `sagaRepository.save(saga)`, that save (and every COMPENSATING/COMPENSATED status row written afterwards) sits in a transaction Spring has already marked rollback-only; at the end the proxy throws `UnexpectedRollbackException` and the saga log is gone. The durable shape is: keep the orchestrator *non*-transactional and persist each step and status change through a separate bean method annotated `@Transactional(propagation = Propagation.REQUIRES_NEW)`, so each log write commits independently of the business step that follows it. Also note that `executeCompensationFlow` (called from `executeOrderSaga`) is never defined in this listing — `compensateFromStep` is the method that exists — and the `isSuccess()` branches are dead because `executeStep` throws on failure.
+
 ```java
 @Service
 @Transactional
@@ -770,6 +773,8 @@ public enum SagaStepType {
 
 Implementing recovery mechanisms for handling partial failures and system restarts:
 
+> Caveat: `@Scheduled` is a method-level annotation; the class-level copy below does not compile. Only the annotation on `recoverStuckSagas()` is valid.
+
 ```java
 @Component
 @Scheduled(fixedRate = 30000) // Run every 30 seconds
@@ -951,7 +956,8 @@ spring:
       acks: all
       retries: 3
       batch-size: 16384
-      linger-ms: 5
+      properties:
+        linger.ms: 5
       buffer-memory: 33554432
 
     consumer:
@@ -1034,7 +1040,7 @@ graph TD
 |--------|---------------|--------------|-------------------|
 | **Latency** | Medium | Low | High |
 | **Throughput** | Medium | High | Low |
-| **Complexity** | Medium | High | Low |
+| **Complexity** | Medium | High | High (protocol + coordinator) |
 | **Debugging** | Easy | Difficult | Easy |
 | **Fault Tolerance** | Medium | High | Low |
 | **Consistency** | Eventual | Eventual | Strong |
@@ -1060,6 +1066,9 @@ graph TD
 ### 🔧 Implementation Guidelines
 
 **1. Idempotency Design:**
+
+> Caveat: the check-then-insert below is only safe if `idempotency_key` carries a database unique constraint — without it, two concurrent requests with the same key both pass the `findByIdempotencyKey` check and both process the payment. Insert first, catch `DataIntegrityViolationException`, and treat that as "already processed".
+
 ```java
 @Service
 public class IdempotentPaymentService {

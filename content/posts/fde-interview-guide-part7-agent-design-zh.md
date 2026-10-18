@@ -5,9 +5,9 @@ draft: false
 weight: 7
 description: "從面試官的視角，深度拆解 Agent 系統設計的五大主題：ReAct vs Planner-Executor 架構選擇、Tool Routing 四層漏斗、Multi-Agent 邊界、Loop 終止策略，以及 Memory 系統設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "ReAct", "Planner", "Multi-Agent", "Tool Routing", "Memory", "LangGraph", "Interview", "Cloud", "RKK"]
+tags: ["AI", "FDE", "Agent", "Multi-Agent", "Interview", "Cloud", "RKK", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "13 min"
 ---
 
 > Agent 面試的陷阱不是問你能不能架起來。  
@@ -405,40 +405,13 @@ Peer Review（Generator + Critic）：
 
 ---
 
-## 八、面試回答完整示範
+## 八、答題骨架
 
-```
-面試官問：「你的 Agent 用 ReAct 還是 Planner-Executor？
-         工具有 20 個，怎麼處理？記憶怎麼設計？」
-
-完整回答：
-
-架構選擇：
-「我會先問：任務的步驟是否可以預先規劃？
- 如果是——例如定期報告生成——我選 Planner-Executor，
- 因為步驟 1 和步驟 2 互相獨立，可以並行，
- 總延遲從 T1+T2 降到 max(T1,T2)。
- 如果任務需要探索、下一步取決於上一步結果，我選 ReAct。」
-
-Tool Routing：
-「20 個工具，我不會把所有 schema 都塞進 context。
- 我設計一個四層漏斗：
- Rule-Based 過濾確定 pattern 的 → 
- Tool Retrieval 縮小到 Top-5 候選 →
- LLM 從 5 個裡選 1 個 →
- Input Validation 確保 tool call 參數安全。
- 這樣 LLM 只需要看 5 個工具的 schema，選擇準確率高，
- 而且 Rule-Based 這層對大量確定性的查詢幾乎零成本。」
-
-Memory 設計：
-「短期對話用 In-Context Memory 加 Summary Buffer——
- 超過 20 輪的歷史壓縮成摘要，保留最近 5 輪完整記錄。
- 跨 session 的用戶偏好和重要事件存 Vector Store，
- 每輪 retrieve 和 query 最相關的過去記憶注入 context。
- 什麼值得存長期記憶？
- 只有『會影響未來行為』的資訊——偏好、重大決策——才值得存。
- 天氣問題、日常查詢不需要長期記憶。」
-```
+- 架構選擇先用 §一 的決策矩陣反問「任務結構清楚嗎、需要並行嗎」，再說選哪個與它的限制。
+- 20 個工具的問題直接走 §二 的四層漏斗，並補一句 Tool Description 品質為什麼決定第二層的成敗。
+- 記憶問題用 §五 的四種記憶類型分層回答，再點出三個關鍵決策裡「什麼值得記」。
+- 若被延伸到 Multi-Agent 或失控，分別接 §三 的四個信號與 §四 的四種停滯模式。
+- 收尾用 §六 的速查表一句話對應問題與選擇；追問見 §七。
 
 ---
 

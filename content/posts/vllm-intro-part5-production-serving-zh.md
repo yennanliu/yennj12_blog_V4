@@ -5,7 +5,7 @@ draft: false
 weight: 5
 description: "vLLM 原始碼導讀系列最終篇：拆解 OpenAI 相容 API 的完整面、Multi-LoRA 多租戶服務、結構化輸出的取樣層約束、Prometheus 指標全表與症狀診斷鏈、P/D 分離與 KV Connector 的實際配置，以及一套不會騙自己的 benchmark 方法。"
 categories: ["all", "ai", "engineering", "infrastructure"]
-tags: ["vLLM", "Production", "LoRA", "Structured Output", "Observability", "Prometheus", "Kubernetes", "繁體中文"]
+tags: ["vLLM", "Production", "LoRA", "Observability", "Prometheus", "Kubernetes"]
 authors: ["yen"]
 readTime: "21 min"
 ---
@@ -332,7 +332,7 @@ Multi-LoRA 不是免費的：
 | 每個 token 多做 LoRA 矩陣運算 | 吞吐降 5–15% | 用較小的 rank |
 | adapter 不在 GPU 時要 swap | 首次請求 +20–80 ms | 提高 `max_loras` |
 | **前綴快取要分 adapter** | 命中率下降 | Part 2 提過：LoRA id 進 hash。這是正確性要求，不能省 |
-| 記憶體佔用 | `max_loras × rank × 層數 × hidden × 2 × 2 bytes` | rank 64、8 個 adapter 的 8B 模型約 1.5 GB |
+| 記憶體佔用 | `max_loras × rank × 層數 × hidden × 2 × 2 bytes`（每層只算一對投影） | rank 64、8 個 adapter 的 8B 模型：8 × 64 × 32 × 4096 × 2 × 2 B ≈ 268 MB；若 adapter 套到全部 7 個投影矩陣，再乘 7 ≈ 1.9 GB |
 
 ```
 選擇              選 Multi-LoRA 的理由              不選的理由 / 翻轉條件
@@ -437,7 +437,7 @@ vs outlines   ──────────────────────
 1. **首次使用某 schema 有編譯成本**（把 schema 編成 FSM/遮罩表），幾十到幾百毫秒。相同 schema 會被快取，所以**固定 schema 的服務只付一次**；每個請求都用不同 schema 的場景要留意。
 2. **約束會改變輸出分布**。強制 JSON 可能讓模型「為了合法而說謊」——例如 schema 要求 `amount: float` 但文件裡沒有金額，模型會編一個。**必要欄位應該設計成 `Optional`，並允許 `null`**。
 3. **推理模型要特別設定**：讓模型先自由思考再輸出結構化結果，需要 `--structured-outputs-config.enable_in_reasoning` 這類設定（依模型而異），否則約束會把思考過程也一起卡死。
-4. **吞吐影響**：每個 step 多一次遮罩計算，實測影響通常在 5% 以內。
+4. **吞吐影響**：每個 step 多一次遮罩計算，影響通常在個位數百分比（示意量級，依模型與 batch 而定）。
 
 ---
 
@@ -813,4 +813,4 @@ Part 5  服務：API 面、多租戶、結構化輸出、可觀測性、P/D 分�
 
 ---
 
-*本文基於 vLLM `main` 分支（2026 年 9 月，版本參考 0.19.x）、官方線上服務文件、LoRA 文件、結構化輸出文件、V1 指標設計文件與分離式預填充設計文件撰寫。所有端點、參數與指標名稱皆對照官方文件；成本、延遲與容量數字為量級估算，務必以自己的 benchmark 為準。vLLM 迭代極快，細節請以你安裝的版本為準。*
+*本文基於撰文時讀到的 vLLM `main` 分支（範例 image tag 為 `v0.19.1`，請換成你實際部署的版本）、官方線上服務文件、LoRA 文件、結構化輸出文件、V1 指標設計文件與分離式預填充設計文件撰寫。所有端點、參數與指標名稱皆對照官方文件；成本、延遲與容量數字為量級估算，務必以自己的 benchmark 為準。vLLM 迭代極快，細節請以你安裝的版本為準。*

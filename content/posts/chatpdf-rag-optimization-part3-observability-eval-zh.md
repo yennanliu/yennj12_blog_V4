@@ -4,7 +4,7 @@ date: 2026-06-30T11:00:00+08:00
 draft: false
 description: "沒有量測就沒有優化。本篇拆解 chatPDF 如何補上 RAG 的可觀測性最後一塊:opt-in 零開銷的 Langfuse 追蹤、執行緒安全的 singleton、評估歷史持久化、即時答案評分(faithfulness/relevance)、relevance gate,以及無外部依賴的 SVG 趨勢圖表。"
 categories: ["all", "ai", "engineering"]
-tags: ["RAG", "LLM", "ChatPDF", "Observability", "Langfuse", "Evaluation", "Tracing", "LLM-as-Judge", "Metrics"]
+tags: ["RAG", "LLM", "ChatPDF", "Observability", "Langfuse", "Evaluation", "Tracing", "Metrics"]
 authors: ["yen"]
 readTime: "11 min"
 ---
@@ -195,7 +195,7 @@ def apply_relevance_gate(query, chunks, threshold, scorer) -> list[dict]:
 1. **`kept or scored[:1]`**:如果門檻太嚴把所有 chunk 都濾掉了,**至少保留分數最高的那一個**——絕不讓 LLM 在「零 context」下硬答。
 2. **評分器失敗就原樣放行**:cross-encoder 掛了(模型載入失敗等),直接回傳原 chunks,**不讓觀測性功能拖垮主流程**——這跟 Langfuse 的設計哲學一致。
 
-門檻預設 0.0,約等於 sigmoid(0.5),也就是「相關的可能性大於不相關」這條邊界。
+門檻預設 0.0 是 logit 值,對應 sigmoid(0) = 0.5,也就是「相關的機率 ≥ 不相關」這條邊界。
 
 ---
 
@@ -283,7 +283,7 @@ prompt = _JUDGE_PROMPT.format(
 | 噪音過濾 | min_score | cross-encoder relevance gate(預設開,永不清空) |
 | judge 穩定性 | 含 `{}` 的 PDF 會崩 | 大括號轉義,+4 回歸測試 |
 | 趨勢視覺化 | 無 | 純 SVG GroupedBar / Trend 圖表 |
-| 測試 | — | +11 追蹤/歷史測試,後端 235 測試,覆蓋率 90.9% |
+| 測試 | — | +11 追蹤/歷史測試;撰文時後端累計 235 測試(含本系列未逐篇記述的中間 PR),覆蓋率 90.9% |
 
 ---
 

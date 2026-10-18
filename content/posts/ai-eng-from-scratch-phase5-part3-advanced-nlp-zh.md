@@ -5,7 +5,7 @@ draft: false
 weight: 11
 description: "深入解析 BERT/RoBERTa/DeBERTa 預訓練策略、問答系統架構、文字摘要、機器翻譯評估與 NLP 生產系統的工程挑戰"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "BERT", "Question Answering", "Text Summarization", "Machine Translation", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "NLP", "BERT", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "14 min"
 series: ["ai-eng-from-scratch"]
@@ -124,7 +124,7 @@ BERT（Bidirectional Encoder Representations from Transformers）的突破在於
 **關鍵數字：**
 - BERT-base：12 層、768 隱藏維度、12 attention heads、110M 參數
 - BERT-large：24 層、1024 隱藏維度、16 attention heads、340M 參數
-- 最大序列長度：512 tokens（約 300–400 中文字）
+- 最大序列長度：512 tokens（中文 BERT 以單字為 token，扣掉 [CLS]/[SEP] 約 510 個中文字）
 - 預訓練資料：BooksCorpus（800M 詞）+ Wikipedia（2,500M 詞）
 
 ---
@@ -167,7 +167,7 @@ ALBERT-xxlarge: 235M 參數，4096 hidden（效果更好！）
 
 - **Disentangled Attention**：內容向量和位置向量分開計算注意力，再合併
 - **Enhanced Mask Decoder**：加入絕對位置資訊於解碼階段
-- DeBERTa-v3-large 在多個 benchmark 超越 GPT-3（175B 參數），使用僅 304M 參數
+- DeBERTa-v3-large 僅 304M 參數，在 SuperGLUE 等 NLU benchmark 上的微調成績超越 few-shot 的 GPT-3（175B 參數）——比的是微調 vs few-shot，不是通用能力
 
 **生產選型建議：**
 
@@ -247,7 +247,7 @@ ALBERT-xxlarge: 235M 參數，4096 hidden（效果更好！）
 ```
 BM25 分數（歸一化） × α + DPR 分數（歸一化） × (1-α)
 建議 α = 0.5，可根據任務調整
-召回率: BM25 ~75%, DPR ~87%, Hybrid ~93%
+召回率（示意）: BM25 ~75%, DPR ~87%, Hybrid ~93%
 ```
 
 ---

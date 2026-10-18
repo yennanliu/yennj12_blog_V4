@@ -5,7 +5,7 @@ draft: false
 weight: 20
 description: "深入解析 LLM 預訓練工程：資料清洗管線、Scaling Laws、分散式訓練（DP/TP/PP）、梯度累積與 Chinchilla 最優計算分配"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "Pretraining", "Scaling Laws", "Distributed Training", "Data Pipeline", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "LLM", "Data Pipeline", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "17 min"
 series: ["ai-eng-from-scratch"]
@@ -30,9 +30,11 @@ series: ["ai-eng-from-scratch"]
 
 | 模型 | 參數量 | 訓練 Token | GPU 小時 | 估計成本 |
 |------|--------|-----------|---------|---------|
-| GPT-3 | 175B | 300B | ~3.5M A100 小時 | ~$4.6M |
-| LLaMA-2 7B | 7B | 2T | ~180K A100 小時 | ~$240K |
-| LLaMA-2 70B | 70B | 2T | ~1.7M A100 小時 | ~$2.3M |
+| GPT-3 | 175B | 300B | ~0.7M A100 小時（3.14×10²³ FLOP ÷ 40% MFU 推算） | ~$1.4M（常被引用的 $4.6M 是 2020 年以 V100 估算） |
+| LLaMA-2 7B | 7B | 2T | ~184K A100 小時（論文） | ~$370K |
+| LLaMA-2 70B | 70B | 2T | ~1.72M A100 小時（論文） | ~$3.4M |
+
+*成本以 A100 $2/GPU-h 計（本文統一採用此價格），示意估算。*
 | Mistral 7B | 7B | 未公開 | 未公開 | 未公開 |
 
 > 一次「失敗的」預訓練跑到 80% 才發現資料有問題，等於直接燒掉 $100K–$3.6M。
@@ -260,8 +262,9 @@ series: ["ai-eng-from-scratch"]
 
 **Chinchilla 最優公式：**
 ```
-N_optimal ≈ C^0.5 / 8.7    （最優參數量）
-D_optimal ≈ C^0.5 × 1.75   （最優 Token 數）
+由 C ≈ 6·N·D 與 D ≈ 20·N 推得（示意常數，論文原文以擬合曲線給出）：
+N_optimal ≈ C^0.5 / 11      （最優參數量，√120 ≈ 11）
+D_optimal ≈ C^0.5 × 1.83    （最優 Token 數，20/√120 ≈ 1.83）
 
 其中 C = 訓練計算量（FLOPs）
 簡化規則：D_optimal ≈ 20 × N_optimal
@@ -421,7 +424,7 @@ Chinchilla 最優是針對**訓練成本最優**，但工程上常見另一個�
 若資料異常：跳過該 batch，從 checkpoint 重新開始
 ```
 
-**實際成本估算：** 在 256 GPU 叢集（$8/GPU/hour），每次 Loss Spike 恢復（回退 500 步）約需 1–2 小時，成本約 $2K–$4K。大型訓練中可能發生 10–30 次，總恢復成本 $20K–$120K。
+**實際成本估算：** 在 256 張 A100 的叢集（$2/GPU/hour），每次 Loss Spike 恢復（回退 500 步）約需 1–2 小時，成本約 $0.5K–$1K（256 × 1–2 h × $2）。大型訓練中可能發生 10–30 次，總恢復成本 $5K–$30K；真正貴的是被浪費的那幾百步與工程師的時間。
 
 ---
 
@@ -491,9 +494,9 @@ dist_checkpoint.save(
 | 指標 | 差的設定 | 優化後 | 改善幅度 |
 |------|--------|-------|---------|
 | MFU（7B 模型，A100） | 22% | 45% | +105% |
-| Token 吞吐量（256 GPU） | 180K tok/s | 380K tok/s | +111% |
-| 1T Token 訓練時間 | 62 天 | 30 天 | -52% |
-| 訓練成本（1T Token，7B） | $480K | $230K | -52% |
+| Token 吞吐量（256 GPU）= 256 × 312 TFLOPS × MFU ÷ (6 × 7B) | ~420K tok/s | ~860K tok/s | +105% |
+| 1T Token 訓練時間 | ~28 天 | ~13.5 天 | -51% |
+| 訓練成本（1T Token，7B，A100 $2/GPU-h） | ~$340K | ~$166K | -51% |
 | Loss Spike 恢復時間 | 4–8 小時（人工） | 0.5–1 小時（自動） | -85% |
 | 資料清洗吞吐量 | 5 TB/hr（單機） | 80 TB/hr（Spark 集群） | +1500% |
 

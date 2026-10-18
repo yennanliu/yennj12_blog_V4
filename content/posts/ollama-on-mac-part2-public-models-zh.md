@@ -4,7 +4,7 @@ date: 2026-07-16T09:00:00+08:00
 draft: false
 description: "從硬體、任務到量化,一套可落地的 Ollama 開源模型選型心智模型:看懂 Llama / Qwen / Gemma / Mistral / Phi / DeepSeek 家族,選對尺寸與量化,讓你的 Mac 跑出最佳性價比。"
 categories: ["all", "ai", "engineering"]
-tags: ["Ollama", "LLM", "Open Models", "Llama", "Qwen", "Gemma", "Mistral", "DeepSeek", "Quantization", "AI Engineering"]
+tags: ["Ollama", "LLM", "Llama", "Qwen", "Gemma", "Quantization", "AI Engineering"]
 authors: ["yen"]
 readTime: "20 min"
 ---
@@ -203,12 +203,12 @@ Ollama 的模型命名有固定文法,看懂了就能從名稱直接判斷一半
 | 參數量 | 約需 RAM(含 overhead) | 適合的 Mac | 代表模型 | 體感速度* |
 |--------|----------------------|-----------|----------|----------|
 | 1B–3B | 約 2–3 GB | 任何 8GB Mac、MacBook Air | `llama3.2:3b`、`gemma3:1b` | 很快(30–60+ t/s) |
-| 7B–8B | 約 5–6 GB | 16GB Mac(甜蜜點) | `qwen3:8b`、`mistral:7b` | 順(15–40 t/s) |
+| 7B–8B | 約 5–6 GB | 16GB Mac(甜蜜點) | `qwen3:8b`、`mistral:7b` | 順(20–60 t/s) |
 | 12B–14B | 約 9–11 GB | 16GB 勉強 / 24GB 舒適 | `gemma3:12b`、`phi4` | 中等(10–25 t/s) |
 | 27B–32B | 約 20–24 GB | 32GB+ Mac | `gemma3:27b`、`qwen3:32b` | 偏慢(5–15 t/s) |
 | 70B | 約 40–48 GB | 64GB+(M-series Pro/Max) | `llama3.3:70b` | 慢(2–8 t/s) |
 
-\* 速度為 Apple Silicon 上的**約略**範圍,實際受晶片型號(M1/M2/M3/M4)、context 長度、量化等級影響很大,僅供相對比較。
+\* 速度為 Apple Silicon 上的**約略**範圍,實際受晶片型號(M1/M2/M3/M4)、context 長度、量化等級影響很大,僅供相對比較。本系列統一以第五篇 §6.6「實際速度概略區間」的數字為準,量測方法見同篇 §6.5。
 
 **選型口訣(對齊 Part 1 的 RAM 規則)**:
 

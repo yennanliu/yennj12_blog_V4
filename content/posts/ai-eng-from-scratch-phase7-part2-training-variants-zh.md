@@ -5,7 +5,7 @@ draft: false
 weight: 15
 description: "深入解析 Transformer 訓練：學習率 Warmup/Schedule、梯度裁剪、混合精度訓練、Encoder-only/Decoder-only/Encoder-Decoder 架構選型，以及 MoE 混合專家系統"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Transformer", "Training", "MoE", "BERT", "GPT", "T5", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Transformer", "BERT", "GPT", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "15 min"
 series: ["ai-eng-from-scratch"]
@@ -42,7 +42,7 @@ FP16 的最大值約 65504，一旦梯度超過就 overflow 變 NaN，整批訓�
 
 用 Decoder-only 做分類：浪費計算，需要特殊 pooling；用 Encoder-only 做生成：無法自回歸，強行做需要 mask 技巧。錯誤的架構選型讓精度天花板提前到來。
 
-**核心量化**：
+**核心量化（示意估算，非實測數據）**：
 
 | 問題 | 未處理時的後果 | 處理後的改善 |
 |------|-------------|-------------|
@@ -104,7 +104,7 @@ LR 曲線示意（Warmup 2000 steps + Cosine Decay）：
 - **Cosine Decay**：末期 LR 平滑趨近 min_lr，避免震盪，最常用。
 - **Linear Decay**：簡單，但末期下降過急，最後幾千步學習率可能過低。
 - **Constant**：適合 RL fine-tuning，不適合 pre-training。
-- **WSD（Warmup-Stable-Decay）**：Mistral/Llama 3 採用，穩定期 LR 不變，便於 checkpoint 繼續訓練。
+- **WSD（Warmup-Stable-Decay）**：MiniCPM、DeepSeek 等採用（Llama 3 仍用 cosine），穩定期 LR 不變，便於 checkpoint 繼續訓練。
 
 ### 3.2 梯度裁剪（Gradient Clipping）
 
@@ -343,9 +343,9 @@ P_i = router 對 Expert i 的平均 softmax 機率
 標準 Transformer 的 attention 計算複雜度為 O(n²)，序列長度超過 4K 後記憶體開銷呈爆炸性增長。
 
 **問題規模**：
-- 4K context，7B 模型：KV cache 約 4GB（BF16）
-- 32K context：約 32GB，一張 A100 只夠放 KV cache
-- 128K context：約 128GB，需要多 GPU 分片
+- 4K context，7B（MHA，32 層 × 32 KV heads × 128 dim）：KV cache 約 2.1GB（BF16，2×32×32×128×4096×2 bytes，與 Phase 7 Part 1 §六一致）
+- 32K context：約 17GB，加上 14GB 權重，一張 A100 40GB 只夠放單一請求
+- 128K context：約 69GB，需要 GQA 或多 GPU 分片
 
 ### 7.1 Sliding Window Attention（Mistral / Phi）
 
@@ -445,24 +445,24 @@ Flash Attention vs 標準 Attention 的取捨見 [Phase 7 Part 1 §八](/posts/a
 
 | 任務 | Encoder-only | Decoder-only | Encoder-Decoder |
 |------|-------------|-------------|----------------|
-| 情感分類（SST-2） | 96.4%（BERT-large） | 94.1%（GPT-3 few-shot） | 95.2%（T5-large） |
-| NER（CoNLL-2003 F1） | 93.1（BERT） | 89.7（LLaMA few-shot） | 91.4（T5） |
-| 機器翻譯（BLEU En-De） | N/A（無生成） | 26.4（GPT-4） | 31.2（T5-11B） |
-| 程式碼生成（HumanEval） | N/A | 48.1%（CodeLlama-34B） | 42.3%（CodeT5+） |
-| 語義搜尋（NDCG@10） | 0.794（BGE-large） | 0.741（E5-mistral） | 0.768（GTR-XXL） |
+| 情感分類（SST-2） | 94.9%（BERT-large，BERT 論文） | 通常靠 few-shot / 微調，無同條件可比數字 | —（T5 以微調取得同級分數） |
+| NER（CoNLL-2003 F1） | 92.8（BERT-large，BERT 論文） | — | — |
+| 機器翻譯（BLEU WMT14 En-De） | N/A（無生成） | — | 32.1（T5-11B，T5 論文） |
+| 程式碼生成（HumanEval pass@1） | N/A | 48.8%（Code Llama 34B，Code Llama 論文） | — |
 
-*示意估算，非實測數據*
+*只列有論文出處的數字；「—」表示沒有同條件可比的公開數字。三類架構的強項分別是理解／判別、生成與指令跟隨、序列到序列轉換，表格只用來說明「用錯家族會留下幾個百分點的差距」，不是排行榜。*
 
 ### 9.3 推論速度（7B 模型，A100 單卡，batch=1）
 
-| 配置 | Prefill 延遲 | Decode 速度 | KV Cache（4K ctx） |
-|------|------------|------------|-------------------|
-| BF16 + 無 Flash Attn | 45ms | 28 tok/s | 4GB |
-| BF16 + Flash Attn 2 | 18ms | 35 tok/s | 3.8GB（節省 IO） |
-| INT8 量化（AWQ） | 20ms | 52 tok/s | 2.1GB |
-| INT4 量化（GPTQ） | 22ms | 68 tok/s | 1.2GB |
+| 配置 | Prefill 延遲（512 tokens） | Decode 速度 | KV Cache（4K ctx，BF16） |
+|------|--------------------------|------------|------------------------|
+| BF16 + 無 Flash Attn | ~45ms | ~100 tok/s | 2.1GB |
+| BF16 + Flash Attn 2 | ~40ms | ~100 tok/s | 2.1GB（省的是 HBM 往返，不是容量） |
+| INT8 權重+啟動量化（SmoothQuant W8A8） | ~40ms | ~180 tok/s | 2.1GB |
+| INT4 權重量化（AWQ / GPTQ，W4A16） | ~45ms | ~250 tok/s | 2.1GB |
+| 以上任一 + KV Cache INT8 量化 | 同上 | 同上 | 1.05GB |
 
-*示意估算，非實測數據*
+*示意估算，非實測數據。權重量化只縮小權重（7B：BF16 13.4 GB → INT8 6.7 GB → INT4 3.4 GB），KV Cache 的大小由層數 × KV heads × head_dim × 上下文長度 × dtype 決定（2×32×32×128×4096×2 bytes ≈ 2.1 GB，與 [Phase 7 Part 1 §六](/posts/ai-eng-from-scratch-phase7-part1-transformer-architecture-zh/) 一致），要縮小它得另外做 KV Cache 量化或改用 GQA。decode 速度 ≈ HBM 頻寬 ÷ 權重大小（batch=1 時）。*
 
 ---
 

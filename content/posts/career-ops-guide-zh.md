@@ -4,8 +4,7 @@ date: 2026-04-11T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai"]
-tags: ["Career-Ops", "求職", "AI", "應聘工具", "職業發展", "自動化", "career", "job-search"]
-summary: "深入講解 Career-Ops，一個由 AI 驅動的求職系統，幫助你在數百個工作機會中找到最適合的職位。涵蓋安裝、配置、使用技巧和策略，助力你高效求職。"
+tags: ["Career-Ops", "AI", "自動化"]
 description: "深入講解 Career-Ops，一個由 AI 驅動的求職系統，幫助你在數百個工作機會中找到最適合的職位。涵蓋安裝、配置、使用技巧和策略，助力你高效求職。"
 readTime: "17 min"
 ---

@@ -4,11 +4,12 @@ date: 2026-03-12T22:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "Claude Code", "Multi-Agent", "agent-specialization", "token-optimization", "System Design", "API", "agent-orchestration", "Development Tools"]
-summary: "深入探索 Agent 專責化策略：從單一通用 Agent 到專業分工的專家團隊，涵蓋職責劃分、System Prompt 精簡、工具最小化配置、模型差異化選擇等完整實作，幫助你大幅降低 System Prompt 的 Token 消耗並提升輸出品質。"
+tags: ["AI", "Claude Code", "Multi-Agent", "token-optimization", "System Design", "API", "agent-orchestration", "Developer Tools"]
 description: "深入探索 Agent 專責化策略：從單一通用 Agent 到專業分工的專家團隊，涵蓋職責劃分、System Prompt 精簡、工具最小化配置、模型差異化選擇等完整實作，幫助你大幅降低 System Prompt 的 Token 消耗並提升輸出品質。"
 readTime: "24 min"
 ---
+
+本文對 Claude Code 功能的描述以 2026-03 的文件為準，產品每月更新。
 
 在《多 Agent 系統的 Token 用量調優指南》中，我們介紹了 **Agent 專責化** 作為降低 System Prompt Token 消耗的核心策略。本文將深入實作層面，探討如何將臃腫的「全能 Agent」拆分為精準的「專家團隊」，讓每個 Agent 只專注於單一職責，從而大幅減少每次 API 呼叫的固定成本。
 
@@ -61,7 +62,7 @@ readTime: "24 min"
 │  - 30+ 個工具的 Schema                                              │
 │  [工具定義... 5000 tokens]                                          │
 │                                                                     │
-│  總計：~16,000 tokens 的 System Prompt                              │
+│  總計：~16,000 tokens 的 System Prompt（示意假設，未實測）          │
 │  問題：每次呼叫都發送全部內容，即使只做簡單翻譯                    │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
@@ -88,7 +89,7 @@ readTime: "24 min"
 │ Model: Haiku    │  │ Model: Haiku    │  │ Model: Sonnet   │
 └─────────────────┘  └─────────────────┘  └─────────────────┘
 
-效益計算：
+效益計算（示意，未實測）：
 - 通用 Agent 每次呼叫：16,000 tokens
 - 專責 Agent 平均每次：2,300 tokens
 - 節省：85% 的 System Prompt tokens
@@ -783,6 +784,8 @@ if __name__ == "__main__":
 
 ### 根據任務複雜度選擇模型
 
+價格以 2026-10 官方牌價為準（每百萬 tokens，input / output：Haiku 4.5 $1 / $5、Sonnet 5 $2 / $10、Opus 5.5 $4 / $20），請以 Anthropic 官方定價頁為準。
+
 ```python
 from enum import Enum
 from dataclasses import dataclass
@@ -806,23 +809,23 @@ MODEL_CONFIGS = {
     ModelTier.FAST: ModelConfig(
         tier=ModelTier.FAST,
         model_id="claude-haiku-4-5-20251001",
-        # 價格為撰文時的舊版示意值，請以 Anthropic 官方定價頁為準
-        input_cost_per_1m=0.80,
-        output_cost_per_1m=4.0,
+        # 2026-10 官方牌價（每百萬 tokens）
+        input_cost_per_1m=1.0,
+        output_cost_per_1m=5.0,
         best_for=["分類", "摘要", "格式化", "簡單審查", "路由決策"]
     ),
     ModelTier.BALANCED: ModelConfig(
         tier=ModelTier.BALANCED,
         model_id="claude-sonnet-5",
-        input_cost_per_1m=3.0,
-        output_cost_per_1m=15.0,
+        input_cost_per_1m=2.0,
+        output_cost_per_1m=10.0,
         best_for=["程式碼生成", "分析", "一般任務", "協調"]
     ),
     ModelTier.POWERFUL: ModelConfig(
         tier=ModelTier.POWERFUL,
         model_id="claude-opus-5-5",
-        input_cost_per_1m=15.0,
-        output_cost_per_1m=75.0,
+        input_cost_per_1m=4.0,
+        output_cost_per_1m=20.0,
         best_for=["複雜架構", "創意設計", "深度分析", "關鍵決策"]
     ),
 }
@@ -1359,7 +1362,7 @@ if __name__ == "__main__":
 ## 效能比較與分析
 
 ```
-專責化 vs 通用 Agent 對比：
+專責化 vs 通用 Agent 對比（示意，未實測；16,000 tokens 的通用 System Prompt 為假設值）：
 
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    Token 使用量對比                                  │
@@ -1373,16 +1376,16 @@ if __name__ == "__main__":
 │ 5 次呼叫總固定成本 │ 105,000 tok   │ 16,500 tok    │ 84%            │
 └────────────────────┴───────────────┴───────────────┴────────────────┘
 
-成本計算（假設 Sonnet $3/1M input，未啟用 Prompt Caching；價格以撰文時為準）：
+成本計算（假設 Sonnet 5 $2/1M input，未啟用 Prompt Caching；價格以 2026-10 官方牌價為準）：
 
 5 個任務的固定成本：
-- 通用 Agent: 105,000 × $3 / 1M = $0.315
-- 專責 Agent: 16,500 × $3 / 1M = $0.0495
-- 節省: $0.2655 (84%)
+- 通用 Agent: 105,000 × $2 / 1M = $0.21
+- 專責 Agent: 16,500 × $2 / 1M = $0.033
+- 節省: $0.177 (84%)
 
 模型差異化額外節省：
-- 若 3/5 任務使用 Haiku: 再節省 ~60%
-- 總節省: 90%+
+- 若 3/5 任務改用 Haiku 4.5（$1/1M）: 固定成本降為 $0.0231，再節省 30%
+- 總節省: ~89%
 ```
 
 ---

@@ -5,10 +5,12 @@ draft: false
 weight: 2
 description: "完整的 Docker 指令參考手冊，涵蓋容器管理、映像操作、網路配置、資料卷管理等實務操作，配合大量範例與表格說明，從基礎到進階全面掌握 Docker CLI。"
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Docker", "容器化", "Docker CLI", "指令教學", "DevOps", "容器管理", "映像管理", "實務操作"]
+tags: ["Docker", "容器化", "DevOps", "實務操作"]
 authors: ["yen"]
 readTime: "28 min"
 ---
+
+> 本文的指令與版本以 2025-10 為準；Docker 每季都有變動，請以官方文件為主。
 
 ## 🎯 前言
 
@@ -622,8 +624,8 @@ docker load < myimage.tar.gz
 docker run --rm -it myimage:tag sh
 docker run --rm -it --entrypoint sh myimage:tag
 
-# 掃描映像漏洞
-docker scan myimage:tag
+# 掃描映像漏洞（docker scan 已於 Docker Desktop 4.17 移除，改用 Docker Scout）
+docker scout cves myimage:tag
 
 # 查看映像詳細資訊
 docker inspect myimage:tag
@@ -1203,8 +1205,8 @@ docker history --no-trunc image-name:tag
 docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | \
   sort -k3 -h
 
-# 掃描安全漏洞
-docker scan image-name:tag
+# 掃描安全漏洞（docker scan 已移除，改用 Docker Scout）
+docker scout cves image-name:tag
 
 # 導出映像結構
 docker save image-name:tag -o image.tar

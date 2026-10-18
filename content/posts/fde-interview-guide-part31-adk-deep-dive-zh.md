@@ -5,9 +5,9 @@ draft: false
 weight: 31
 description: "以系統設計視角深度拆解 Google Agent Development Kit（ADK）：四種 Agent 類型的選擇邏輯、Tool 宣告系統的設計原理、Multi-Agent 的狀態共享機制，以及 ADK 在 Vertex AI 上的部署模式與 LangGraph 的根本差異"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "ADK", "Agent", "Cloud", "Vertex AI", "Multi-Agent", "Tool", "System Design", "RKK", "Interview"]
+tags: ["AI", "FDE", "Agent", "Cloud", "System Design", "RKK", "Interview", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "14 min"
 ---
 
 > ADK 不只是「Google 版的 LangGraph」。  
@@ -300,7 +300,8 @@ LangGraph 的狀態模型：
 ADK 的狀態模型：
   Session State 是一個 key-value store
   所有 Agent 和 Tool 都可以讀寫
-  框架管理持久化（支援 in-memory / Cloud Firestore / Cloud SQL）
+  框架管理持久化：InMemorySessionService（開發）/ DatabaseSessionService（Cloud SQL 等 SQL DB）
+  / VertexAiSessionService（Agent Engine 託管）
 
 Session State 的 key 前綴（scope）：
 
@@ -337,9 +338,9 @@ ADK Agent → Vertex AI Agent Engine
 特點：
   ├── 全託管（不需要管 Container、Scaling、Load Balancing）
   ├── 原生整合 Vertex AI 的監控和日誌
-  ├── Session State 自動持久化到 Firestore
+  ├── Session State 由託管的 VertexAiSessionService 持久化
   ├── 支援 Streaming（逐字回應）
-  └── 內建 Rate Limiting 和 Auth
+  └── 存取控制走 IAM（Rate limiting 要自己在前面的 gateway 做）
 
 適合：標準企業 Agent 部署，想要最少的 Infra 維護
 
@@ -382,9 +383,10 @@ ADK Agent → Container → Cloud Run
 ```
 答：功能上類似，但 ADK ParallelAgent 做了更多事：
     1. 狀態隔離：每個 sub_agent 有自己的 context，不會互相污染
-    2. 錯誤隔離：一個 sub_agent 失敗不影響其他（LangGraph 需要自己實作）
+    2. 錯誤處理有掛點：sub_agent 的例外會往上拋，要靠 before/after_agent_callback
+       或工具層的 try/except 做隔離——不是免費的，但掛點是框架給的
     3. 可觀測性：ADK 框架自動記錄每個 sub_agent 的執行 trace
-    4. 重試策略：可以設定 per-agent 的 retry policy
+    4. 重試 / 降級策略：在 callback 統一實作，不用每個 sub_agent 各寫一份
     asyncio.gather 只是並行執行，沒有這些 Agent 層面的保護。
     對生產系統，ADK ParallelAgent 比 asyncio.gather 更可靠。
 ```
@@ -430,40 +432,13 @@ ADK Agent → Container → Cloud Run
 
 ---
 
-## 八、面試回答完整示範
+## 八、答題骨架
 
-```
-面試官情境：保險公司需要並行查三個系統後做審核決策
-
-架構選擇（30 秒）：
-「我選 ADK。客戶在 GCP + Google Workspace，
- ADK 原生整合 Vertex AI，不需要額外配置，
- 而且這個工作流的結構很清楚——並行查詢 + 彙整決策——
- ADK 的 ParallelAgent + LlmAgent 直接對應這個模式，
- 比用 LangGraph 從零搭少很多 boilerplate。」
-
-架構設計（2 分鐘）：
-「最外層是一個 SequentialAgent，兩個步驟：
- 步驟一：ParallelAgent，三個 sub_agents 同時執行：
-   policy_agent 查核保資料庫，
-   medical_agent 查醫療記錄，
-   fraud_agent 跑詐欺偵測模型。
- 三個結果都寫入 session 範圍（不加前綴）的 State。
- 步驟二：decision_agent（LlmAgent），
-   讀取 session State 裡的三份資料，
-   用 Gemini Pro 做最終審核決策。
-
- 理賠金額超過閾值，decision_agent 有一個 Tool 是 require_human_approval，
- 觸發 Human-in-the-Loop，等審核人員確認再執行。」
-
-部署（30 秒）：
-「部署到 Vertex AI Agent Engine——
- 全託管、不需要管 Container，
- Session State 自動持久化到 Firestore，
- 審計日誌直接進 Cloud Audit Logs。
- 如果之後需要客製化 middleware（例如加入 PII 遮罩層），
- 再遷移到 Cloud Run。」
-```
+- 先用 §二 的根本差異說出選 ADK 的理由（客戶已在 GCP，流程是並行查詢 + 彙整決策），並帶出 §七 地雷 4 的放棄條件。
+- 架構用 §三 的 Agent 類型組合：SequentialAgent 包一個 ParallelAgent（三個查詢 sub_agent）接一個 LlmAgent 做決策。
+- 資料如何在 sub_agent 之間流動，用 §五 的 Session State 與 scope 規則回答，順帶提 §七 地雷 3 的 PII 原則。
+- 超過閾值的理賠走 Human-in-the-Loop，以 §四 的 Tool 宣告方式掛成一個 Tool。
+- 部署依 §六：先 Agent Engine，需要客製 middleware 時再遷 Cloud Run。
 
 ---
 

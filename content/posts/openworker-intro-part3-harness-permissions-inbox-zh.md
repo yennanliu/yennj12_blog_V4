@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "拆解 OpenWorker 的安全外殼：58 行的 RiskClass 如何撐起整個權限系統、五種執行模式的決策流程、shell allowlist 的前綴比對陷阱、跨 session 的 Inbox 決策佇列與 durable resume，以及 SSRF 防護、prompt injection 防線與稽核軌跡。"
 categories: ["all", "ai", "engineering"]
-tags: ["OpenWorker", "AI Agent", "Agent Harness", "Security", "Prompt Injection", "SSRF", "Python", "繁體中文"]
+tags: ["OpenWorker", "AI Agent", "Agent Harness", "Security", "Prompt Injection", "SSRF", "Python"]
 authors: ["yen"]
 readTime: "19 min"
 series: ["openworker-intro"]

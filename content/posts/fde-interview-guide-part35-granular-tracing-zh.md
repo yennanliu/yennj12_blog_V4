@@ -5,9 +5,9 @@ draft: false
 weight: 35
 description: "以系統設計視角拆解 Agentic AI 系統的可觀測性：為什麼 Log 不夠、Span 樹的結構設計、OpenTelemetry 與 Cloud Trace 的整合模式、Sampling 策略的 Trade-off，以及一條 Trace 應該回答哪五個診斷問題"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Observability", "Tracing", "OpenTelemetry", "Cloud Trace", "Vertex AI", "Agent", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Observability", "Agent", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "13 min"
+readTime: "10 min"
 ---
 
 > 面試官問「P95 延遲突然升高，你怎麼辦？」  
@@ -303,17 +303,13 @@ PII 處理       記錄 Prompt 內容         只記錄 token 數/長度  只記
 
 ---
 
-## 九、面試答題要點
+## 九、答題骨架
 
-> *「這道題的核心是：當 Multi-Agent 系統出問題，你如何在不重現問題的情況下找到根因。*
->
-> *架構設計：每個 Agent.run、LLM.generate、Tool.call、Vector Search 都有獨立的 Span，帶 latency_ms、token 數、success/fail 等 Attributes。用 OpenTelemetry SDK + Cloud Trace Exporter，BatchSpanProcessor 非同步上送，對 Agent 的效能影響 < 1%。*
->
-> *診斷流程：打開 Cloud Trace，過濾 latency > 10s 的請求，看瀑布圖找最長 Span。如果是 vector_search：索引或配置問題。如果是 tool.call 且 success=false：外部依賴問題。如果是 llm.generate 且 input_tokens 異常大：context 截斷問題。*
->
-> *Sampling 策略：Production 正常流量 1% 採樣，異常請求（latency > 5s）100% 保留。控制 Cloud Trace 成本，同時確保能診斷所有異常。*
->
-> *PII 原則：Span Attributes 只記錄 token 數和長度，不記錄 Prompt 原文和 LLM 輸出內容——這些可能含有 PII，不應該進入 Trace 儲存。」*
+- 先用 §一 說清楚為什麼這題 Log 答不了：要在不重現問題的情況下找根因，需要 Trace。
+- 架構依 §二 的 Span 樹與 §三 的 Attribute 設計講，接 §四 說明 OpenTelemetry + Cloud Trace 怎麼上送、額外開銷多少。
+- 「5 分鐘內定位」直接走 §五 的五個診斷問題：過濾慢請求、看瀑布圖找最長 Span、由 Span 類型對應根因。
+- 成本與採樣用 §六 的 Trade-off 回答（正常流量低採樣、異常請求全保留）。
+- 收尾點 §七 的系統效應與 §八 的總覽，並補一句 PII 原則：Attribute 只記長度與 token 數，不記原文。
 
 ---
 

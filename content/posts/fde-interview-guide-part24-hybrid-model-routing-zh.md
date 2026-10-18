@@ -5,9 +5,9 @@ draft: false
 weight: 24
 description: "以系統設計視角拆解 Hybrid Model Routing 架構：Semantic Router 的設計原理、小模型 vs 大模型的路由決策框架、如何用 Eval Pipeline 確保路由器不會犧牲整體品質，以及 Gemma 與 Gemini 的混合部署策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Model Routing", "Semantic Router", "Gemma", "Gemini", "Cost Optimization", "System Design", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Agent", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "17 min"
+readTime: "9 min"
 ---
 
 > 為什麼用 Gemini Pro 回答「你好！」？  
@@ -31,13 +31,13 @@ readTime: "17 min"
 
 路由後的世界：
   70% 簡單請求 → Gemma-7b（自托管 GKE）
-    成本：近乎零（只有 GKE 運算成本，約 $0.05/1M tokens 等效）
+    成本：近乎零（只有 GKE 運算成本，約 $0.08/1M tokens 等效，推算見第六節）
     延遲：0.2~0.5 秒（本地推理）
   30% 複雜請求 → Gemini Pro
     成本：$1.25/1M tokens
     延遲：2~5 秒
 
-整體節省：70% × 95% cost reduction = ~66% 成本降低
+整體節省：理論上限 70% × (1 − 0.08/1.25) ≈ 66%；計入 GPU 常駐與路由器成本後約 51%（見第七節）
 
 代價（路由器的風險）：
   如果路由器誤判，把複雜問題送給 Gemma-7b
@@ -132,7 +132,7 @@ readTime: "17 min"
 ┌──────────────────────┐   ┌──────────────────────────────┐
 │  Gemma-7b on GKE     │   │  Gemini 1.5 Pro (Vertex AI) │
 │  低延遲、低成本      │   │  高品質、有 Tool-calling      │
-│  ~0.3s / ~$0.05/1Mtp │   │  ~3s / ~$1.25/1M input tp   │
+│  ~0.3s / ~$0.08/1Mtp │   │  ~3s / ~$1.25/1M input tp   │
 └──────────────────────┘   └──────────────────────────────┘
 ```
 
@@ -266,13 +266,13 @@ GKE 部署考量：
   4,200M tokens / (2,000 tokens/sec × 86,400 sec/day) ≈ 24 個 GPU-天
   （≈ 583 GPU 小時，理論滿載只要 ~$350/月）
   實務上要為尖峰流量與常駐 Warm Pod 預留，以約 3 張 L4 常駐計
-  ~$1,440/月（GKE L4 GPU 費用，含冗餘的示意值）
+  3 × 720 小時 × $0.60 = ~$1,296/月（GKE L4 GPU 費用，含冗餘的示意值）
 
   路由器費用（Embedding + 少量 LLM 判斷）：~$100/月
 
-  總計：~$3,790/月
+  總計：$2,250 + $1,296 + $100 = ~$3,646/月
 
-節省：$7,500 - $3,790 = $3,710/月（節省 49%）
+節省：$7,500 - $3,646 = $3,854/月（節省 51%）
 投資回報率：路由系統開發成本通常 1~2 個月回本
 ```
 
@@ -280,17 +280,13 @@ GKE 部署考量：
 
 ---
 
-## 八、面試答題要點
+## 八、答題骨架
 
-> *「設計混合路由系統要解決兩個問題：準確路由 + 品質保障。*
->
-> *路由架構用兩層：Layer 1 是 Rule-based 快速過濾（< 1ms），處理明顯的簡單或複雜請求；Layer 2 是 Semantic Router，用輕量 Embedding 模型計算當前請求和黃金範例的相似度，超過 0.88 閾值的送 Gemma，不確定的保守策略送 Gemini。*
->
-> *Gemma 部署在 GKE 上用 vLLM 服務，比 Vertex AI API 便宜約 15 倍。保持至少 2 個 Warm Pod 避免冷啟動延遲。*
->
-> *品質保障：每日從生產日誌抽 5%，做 Shadow Run（同一請求同時跑 Gemma 和 Gemini），比較答案差距，計算誤判率。如果某類 Query 誤判率超過 10%，自動調高路由閾值，確保那類問題更容易被判為複雜、路由到 Gemini。*
->
-> *量化的成本節省：在 10 萬請求/天的規模，從 $7,500/月降到 $3,790/月，節省約 49%。」*
+- 先用 §一 說明路由器的收益與誤判風險，把設計核心定在「誤判率可接受」。
+- 路由方案用 §二 的比較表帶出雙層架構，再照 §三 講 Rule-based 與 Semantic Router 的分工及保守策略。
+- 範例庫的維護講 §四 的三個原則，特別是誤判方向的不對稱性。
+- 品質保障走 §五 的 Shadow Evaluation 與動態閾值調整。
+- 部署與 ROI 分別接 §六 的 GKE 考量與 §七 的成本試算。
 
 ## 相關文章與正典版本
 

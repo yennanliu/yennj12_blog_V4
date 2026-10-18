@@ -5,7 +5,7 @@ draft: false
 weight: 10
 description: "最後一個案例沒有搜尋引擎。一家 400 人公司把 GEO 的原則用在自己的內部 AI 助手上——私有 repo、Confluence、Slack 全接進 RAG，答案卻錯得離譜。診斷結果和公開網站一模一樣：內容不是不存在，是不可引用。"
 categories: ["all", "ai", "engineering", "business"]
-tags: ["GEO", "RAG", "內部知識庫", "Vertex AI Search", "Bedrock", "Confluence", "文件工程", "案例研究", "繁體中文", "Case Study"]
+tags: ["GEO", "RAG", "Bedrock", "案例研究", "Case Study"]
 authors: ["yen"]
 readTime: "19 min"
 ---
@@ -441,7 +441,8 @@ CHECKS = [
 
 商業側（估算）
   平均每次查詢節省時間             —            8.5 分鐘（自陳）
-  每月節省人時                    —            約 190 小時
+  每日節省人時（1,340 × 8.5 分）   —            約 190 小時
+  每月節省人時（21 個工作日）       —            約 4,000 小時
   新人 onboarding 到第一次 PR      18 天        11 天
 ```
 
@@ -465,6 +466,8 @@ doc_audit CI + 週報                6
 ---
 
 ## 六、三個 insight
+
+> 數字為示意量級，請以自己的基線為準。
 
 ### 1. 內部 RAG 的問題 95% 是文件問題，不是模型問題
 

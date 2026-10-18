@@ -5,9 +5,9 @@ draft: false
 weight: 3
 description: "從面試官的視角，整理 FDE 面試中仍然高頻的傳統 ML / AI 基礎知識，包含 Transformer、Embedding、評估指標與 Fine-tuning 的工程視角"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Machine Learning", "Transformer", "Embedding", "Evaluation", "Fine-tuning", "Interview", "Cloud", "RKK"]
+tags: ["AI", "FDE", "ML", "Evaluation", "Interview", "Cloud", "RKK", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "13 min"
+readTime: "12 min"
 ---
 
 > 有人覺得 FDE 只需要會包 API。  
@@ -223,7 +223,7 @@ FDE 的客戶場景：
 ```
 Full Fine-tuning 的問題：
   修改所有模型參數 → 需要和原模型一樣大的 GPU 記憶體
-  Gemini 2B → 需要數十 GB GPU RAM
+  Gemma 2B → 需要數十 GB GPU RAM
   Gemma 9B → 需要數百 GB GPU RAM → 一般企業負擔不起
 
 LoRA 的做法：
@@ -322,11 +322,14 @@ Self-Consistency    有效       多次呼叫，成本高
 ```
 答：Encoder-only（如 BERT）的 Embedding 是雙向的——
     每個 token 能看到句子中所有其他 token，
-    適合做語意相似度和分類任務（也是大多數 Embedding 模型的基礎架構）。
-    Decoder-only（如 GPT/Gemini）的 Embedding 是單向的——
-    每個 token 只能看到它之前的 token，
-    設計目標是生成，不是 Embedding。
-    所以 RAG 用的 Embedding 模型通常是 Encoder-based 的。
+    歷史上大多數 Embedding 模型（BGE、E5、Sentence-BERT）都建在這類架構上。
+    Decoder-only（如 GPT/Gemini）的 Embedding 原生是單向的——
+    每個 token 只能看到它之前的 token，預訓練目標是生成。
+    但現今前段班的 Embedding 模型（gemini-embedding、e5-mistral、
+    NV-Embed、Qwen3-Embedding）多半是 decoder 模型經對比學習微調
+    再加 pooling 得到的。
+    所以關鍵不是 encoder 或 decoder，而是有沒有用對比學習目標
+    把「語意相近 → 向量相近」訓進去。
 ```
 
 **地雷 2：「LoRA 的 rank 設多少？你怎麼決定？」**
@@ -352,32 +355,13 @@ Self-Consistency    有效       多次呼叫，成本高
 
 ---
 
-## 九、面試回答完整示範
+## 九、答題骨架
 
-```
-面試官期待的回答（ML 基礎確認題）：
-
-Self-Attention：
-「Self-Attention 讓每個 token 能直接和句子中所有其他 token
- 計算相關性，解決了 RNN 遠距離依賴難學的問題。
- 核心是 Q、K、V 三個矩陣——
- Q 問「我需要什麼資訊」，K 說「我有什麼資訊」，
- 兩者相乘得到相關性分數，再乘 V 得到加權的資訊。」
-
-Fine-tuning vs RAG：
-「我會先問客戶：你的知識需要頻繁更新嗎？需要引用文件來源嗎？
- 如果是，選 RAG——改 DB 就更新知識，不需要重新訓練。
- 如果客戶需要固定的輸出格式或特定語氣，
- 或者有大量標注資料，才考慮 Fine-tuning。
- 兩者的根本差異是：RAG 是知識外部化，Fine-tuning 是知識內化。」
-
-Overfitting 偵測：
-「Fine-tuning 時同時監控 Train Loss 和 Validation Loss。
- 如果 Train Loss 持續下降但 Val Loss 開始上升，
- 就是 Overfitting 的信號。
- 標準做法是 Early Stopping——
- Val Loss 上升超過 5% 時停止，使用最低 Val Loss 的 checkpoint。」
-```
+- Self-Attention 先用 §一 的 Q/K/V 直觀講機制，再補 Positional Encoding 為什麼必要。
+- Fine-tuning vs RAG 直接套 §五 的選擇框架，並回到 §二 的 Embedding 選型說明 RAG 這條路的工程細節。
+- Overfitting 偵測用 §四 的 train/val loss 走勢與 Early Stopping 規則回答，再連到 §三 的指標說明怎麼量化。
+- 若面試官延伸到幻覺或 Temperature，用 §七 的成因與緩解表、§六 的 Temperature 選擇邏輯接住。
+- 收尾留意 §八 的地雷題：Encoder/Decoder embedding 差異與 LoRA rank 的決定方式。
 
 ---
 

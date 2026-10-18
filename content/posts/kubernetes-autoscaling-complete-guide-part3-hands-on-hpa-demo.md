@@ -5,18 +5,19 @@ draft: false
 weight: 3
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "HPA", "Autoscaling", "AWS", "EKS", "CDK", "TypeScript", "Tutorial", "Demo", "Apache", "DevOps"]
-summary: "Part 3 of the Kubernetes Autoscaling series: Hands-on tutorial demonstrating Horizontal Pod Autoscaler with a real Apache-PHP application. Includes complete AWS CDK infrastructure code, Kubernetes manifests, load testing, and step-by-step deployment guide."
-description: "Part 3 of the Kubernetes Autoscaling series: Hands-on tutorial demonstrating Horizontal Pod Autoscaler with a real Apache-PHP application. Includes complete AWS CDK infrastructure code, Kubernetes manifests, load testing, and step-by-step deployment guide."
+tags: ["Kubernetes", "HPA", "Autoscaling", "AWS", "EKS", "CDK", "TypeScript", "DevOps"]
+description: "Watch HPA scale a real Apache-PHP app on EKS: CDK in TypeScript provisions the cluster, YAML deploys the workload, then you load-test and observe 1 to 10 pods."
 readTime: "25 min"
 ---
+
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
 
 ## Series Overview
 
 This is **Part 3** of the Kubernetes Autoscaling Complete Guide series:
 
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Application-level autoscaling theory and approaches
-- **[Part 2: Cluster Autoscaling & Cloud Providers](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Infrastructure-level autoscaling strategies
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Application-level autoscaling theory and approaches
+- **[Part 2: Cluster Autoscaling & Cloud Providers](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Infrastructure-level autoscaling strategies
 - **Part 3 (This Post)**: Hands-On HPA Demo - Practical implementation with Apache-PHP application
 
 ---
@@ -215,6 +216,8 @@ export class EksHpaDemoStack extends cdk.Stack {
     });
 
     // Install Metrics Server (required for HPA)
+    // Caveat: this addManifest ServiceAccount collides with the one the Helm
+    // chart below creates — keep only the Helm install or the deploy fails
     const metricsServerManifest = this.cluster.addManifest('metrics-server', {
       apiVersion: 'v1',
       kind: 'ServiceAccount',
@@ -702,17 +705,17 @@ kubectl logs -f load-generator
 
 ### Step 3: Observe Autoscaling Behavior
 
-**Timeline of Events:**
+**Timeline of Events** (illustrative; each step follows `desired = ceil(current × usage / 50%)`, see the formula at the end of this post):
 
 ```
 Time    CPU Usage    Replicas    HPA Action
 -----   ---------    --------    -----------
 0:00    5%           1           Normal operation
-1:00    65%          1           CPU exceeds target (50%)
-1:30    80%          2           Scale up to 2 pods
-2:00    70%          3           Scale up to 3 pods
-2:30    55%          4           Scale up to 4 pods
-3:00    45%          4           Stable (below target)
+1:00    65%          1           CPU exceeds target (50%) → ceil(1 × 1.3) = 2
+1:30    80%          2           Scale up → ceil(2 × 1.6) = 4
+2:00    60%          4           Scale up → ceil(4 × 1.2) = 5
+2:30    45%          5           Stable (ratio 0.9, inside the 10% tolerance)
+3:00    40%          5           Stable; scale-down waits for the stabilization window
 ```
 
 **Watch HPA metrics:**
@@ -880,6 +883,8 @@ kubectl delete pod -l run=load-generator
 ```
 
 ### Scenario 4: Test HPA Limits
+
+Note: busybox `sh` has no `{1..100}` brace expansion — use `seq 1 100` (`for i in $(seq 1 100)`) when you run this.
 
 ```bash
 # Set very high load to test maxReplicas
@@ -1073,15 +1078,15 @@ kubectl logs -f deployment/<name>  # Application logs
 For more autoscaling knowledge, explore the series:
 
 ### Autoscaling Series
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Theory and approaches
-- **[Part 2: Cluster Autoscaling](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Node-level autoscaling
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Theory and approaches
+- **[Part 2: Cluster Autoscaling](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Node-level autoscaling
 
 ### Kubernetes Fundamentals
-- **[Kubernetes Complete Guide (Part 1): Introduction](./kubernetes-complete-guide-part1-introduction-zh.md)** - Architecture and concepts
-- **[Kubernetes Complete Guide (Part 3): Advanced Features](./kubernetes-complete-guide-part3-advanced-zh.md)** - Production practices
+- **[Kubernetes Complete Guide (Part 1): Introduction](/posts/kubernetes-complete-guide-part1-introduction-zh/)** - Architecture and concepts
+- **[Kubernetes Complete Guide (Part 3): Advanced Features](/posts/kubernetes-complete-guide-part3-advanced-zh/)** - Production practices
 
 ### Production Kubernetes
-- **[Building Production Kubernetes Platform on AWS EKS](./building-production-kubernetes-platform-aws-eks-cdk.md)** - Full platform architecture
+- **[Building Production Kubernetes Platform on AWS EKS](/posts/building-production-kubernetes-platform-aws-eks-cdk/)** - Full platform architecture
 
 ## Conclusion
 

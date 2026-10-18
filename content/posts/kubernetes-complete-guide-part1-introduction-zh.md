@@ -5,10 +5,12 @@ draft: false
 weight: 1
 description: "深入淺出介紹 Kubernetes 容器編排平台，涵蓋核心概念、架構設計、元件功能、與 Docker 的關係，以及完整的安裝配置教學。從零開始掌握 K8S 基礎知識。"
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "容器編排", "雲原生", "微服務", "Docker", "DevOps", "叢集管理", "基礎教學"]
+tags: ["Kubernetes", "容器編排", "微服務", "Docker", "DevOps", "基礎教學"]
 authors: ["yen"]
 readTime: "23 min"
 ---
+
+> 本文的指令與版本以 2025-10 為準；Kubernetes 每季都有變動，請以官方文件為主。
 
 ## 🎯 前言
 
@@ -623,6 +625,8 @@ kubectl config set-context my-context \
 
 ### 3. 驗證叢集健康狀態
 
+> 注意：`kubectl get componentstatuses`（`cs`）自 Kubernetes 1.19 起已棄用，新版叢集只會回傳空結果或警告；請改用 API Server 的健康端點 `kubectl get --raw /livez?verbose` 與 `/readyz?verbose`。
+
 ```bash
 # 查看叢集資訊
 kubectl cluster-info
@@ -889,7 +893,7 @@ graph TB
 
 **互動式學習：**
 - [Play with Kubernetes](https://labs.play-with-k8s.com/)
-- [Katacoda Kubernetes Scenarios](https://www.katacoda.com/courses/kubernetes)
+- Katacoda Kubernetes Scenarios（已於 2022 年關站，僅供參考舊教材名稱）
 - [Kubernetes by Example](https://kubernetesbyexample.com/)
 
 **認證考試：**

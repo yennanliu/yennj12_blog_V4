@@ -5,7 +5,7 @@ draft: false
 weight: 37
 description: "深入解析 AI 系統可觀測性工程：LLM 追蹤（Traces/Spans）、提示版本管理、模型效能漂移偵測、成本歸因分析與 AI 告警策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Infrastructure", "Observability", "Monitoring", "LLM", "Tracing", "Production", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Observability", "Monitoring", "LLM", "Tracing", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "15 min"
 series: ["ai-eng-from-scratch"]
@@ -44,7 +44,7 @@ series: ["ai-eng-from-scratch"]
 | 漂移型態 | 無（確定性系統） | 概念漂移、分佈漂移、模型版本漂移 |
 | 告警閾值 | 靜態（> 500ms alert） | 動態（品質分數 7 日移動平均下降 > 5%） |
 
-開頭提到的「答案怪怪的」就是典型的**語意品質退化**。系統層面一切正常，但輸出品質已悄悄崩潰。沒有 AI-native 可觀測性，這種問題的 MTTR 往往超過 3 天。
+開頭提到的「答案怪怪的」就是典型的**語意品質退化**。系統層面一切正常，但輸出品質已悄悄崩潰。沒有 AI-native 可觀測性，這種問題往往要好幾天才會被發現與修復（示意）。
 
 ---
 
@@ -73,7 +73,7 @@ Trace: user_request_abc123
 │   ├── attr: user_id=u_456, feature=qa_search
 │   │
 │   ├── Span: rag_retrieval [120ms]
-│   │   ├── attr: query_embedding_model=text-embed-v3
+│   │   ├── attr: query_embedding_model=text-embedding-3-small
 │   │   ├── attr: top_k=5, similarity_threshold=0.75
 │   │   ├── attr: docs_retrieved=5, docs_filtered=3
 │   │   └── attr: retrieval_latency_ms=118
@@ -91,7 +91,7 @@ Trace: user_request_abc123
 │   │   ├── attr: gen_ai.usage.output_tokens=312
 │   │   ├── attr: gen_ai.request.temperature=0.3
 │   │   ├── attr: gen_ai.response.finish_reasons=["tool_calls"]
-│   │   └── attr: cost_usd=0.00847（自訂屬性）
+│   │   └── attr: cost_usd=0.01097（自訂屬性：2,096 × $3/M + 312 × $15/M）
 │   │
 │   └── Span: execute_tool search_web [340ms]  ← 模型回傳後才執行，
 │       ├── attr: gen_ai.tool.name=search_web       是 LLM Span 的兄弟節點
@@ -190,9 +190,9 @@ Prompt Registry
 
 品質指標（如 faithfulness score）往往方差很大（標準差 ±0.15），需要足夠樣本才能達到統計顯著性。
 
-經驗法則：要偵測 5% 的品質差異，在 α=0.05, power=0.80 的條件下，需要約 **3,200 個樣本/組**。在 10K DAU 系統上，40% 流量的 challenger 每天約收到 4,000 請求，**大約需要 1 天**才能下結論。
+經驗法則：要偵測 0.05 分（滿分 1）的品質差異，在 σ ≈ 0.15、α=0.05、power=0.80 的雙樣本 t 檢定下，每組需要 n = 2 × ((1.96 + 0.84) × 0.15 / 0.05)² ≈ **141 個樣本**；若想偵測 0.02 分的差異，樣本數隨 1/δ² 膨脹到約 880/組。在 10K DAU 系統上，40% 流量的 challenger 每天約收到 4,000 請求，樣本數幾小時就夠，但 LLM 評分有日內週期與偏態，**至少跑滿 1 個完整的日週期**再下結論。
 
-低於 1,000 QPS 的系統：不要急著做 A/B，至少跑 3 天收集足夠樣本。
+日請求量低於 1,000 的系統：不要急著做 A/B，至少跑 3 天才收得到每組一百多個樣本。
 
 **Prompt 版本的四種變更類型（影響告警閾值不同）：**
 
@@ -240,7 +240,7 @@ PSI > 0.2：顯著偏移，需調查
 ```
 
 對於 LLM 輸入，做法是：
-1. 將用戶 query 做 embedding（用輕量模型，如 text-embed-v3）
+1. 將用戶 query 做 embedding（用輕量模型，如 text-embedding-3-small）
 2. 用 PCA 降到 20 維
 3. 每個維度計算 PSI，取最大值作為整體偏移分數
 

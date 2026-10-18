@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "動手建知識圖譜：命名實體辨識（NER）、實體消歧、關係抽取的完整管線，並用 Python + spaCy + Neo4j + Cypher 把純文字變成可查詢的圖。"
 categories: ["all", "ai", "engineering"]
-tags: ["Knowledge Graph", "知識圖譜", "Neo4j", "Cypher", "NER", "spaCy", "Graph Database"]
+tags: ["Knowledge Graph", "知識圖譜", "Neo4j", "NER", "spaCy", "Graph Database"]
 authors: ["yen"]
 readTime: "11 min"
 series: ["knowledge-graph"]

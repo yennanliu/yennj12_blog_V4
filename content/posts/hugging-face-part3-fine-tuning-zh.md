@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "什麼時候才該微調？從資料準備、LoRA/QLoRA 原理、TRL SFTTrainer 完整訓練程式碼，到評估、合併、量化與部署的全流程。含超參數決策表與六種失敗模式診斷。"
 categories: ["all", "ai", "engineering"]
-tags: ["Hugging Face", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "TRL", "LLM", "Python", "繁體中文"]
+tags: ["Hugging Face", "Fine-tuning", "LoRA", "QLoRA", "PEFT", "TRL", "LLM", "Python"]
 authors: ["yen"]
 readTime: "19 min"
 series: ["hugging-face"]
@@ -90,7 +90,7 @@ series: ["hugging-face"]
 
 ### 2.1 資料品質的量級效應
 
-實測（同一個 7B 底模、同一組超參數、同一評估集）：
+示意估算（假設同一個 7B 底模、同一組超參數、同一評估集；數字為量級示意，非實測）：
 
 ```
   訓練資料                          任務準確率      格式合規率
@@ -372,14 +372,14 @@ def find_linear_names(model):
     return sorted(names)
 ```
 
-實測差異（7B、5,000 筆、其餘超參相同）：
+示意估算（Qwen2.5-7B、r=16；參數量為實際計算值，VRAM 與準確率為量級示意，非實測）：
 
 ```
   target_modules            可訓練參數    VRAM     任務準確率
   ──────────────────────────────────────────────────────────
-  q_proj, v_proj              4.2 M      9.8 GB     84.1%
-  全部 attention              8.4 M     10.4 GB     86.7%
-  全部 attention + MLP       20.0 M     11.6 GB     91.2%   ← 建議
+  q_proj, v_proj              5.0 M      9.8 GB     84.1%
+  全部 attention             10.1 M     10.4 GB     86.7%
+  全部 attention + MLP       40.4 M     11.6 GB     91.2%   ← 建議
 ```
 
 **多花 1.8GB 換 7 個百分點，幾乎永遠划算。**
@@ -495,7 +495,6 @@ trainer = SFTTrainer(
 )
 
 trainer.model.print_trainable_parameters()
-# trainable params: 20,185,088 || all params: 7,635,801,088 || trainable%: 0.2643
 
 trainer.train()
 trainer.save_model(f"{OUTPUT_DIR}/final")
@@ -704,7 +703,7 @@ AutoTokenizer.from_pretrained(ADAPTER).save_pretrained(MERGED)
 print("合併完成")
 ```
 
-> **不要用 4-bit 載入的底模來合併。** 那會把量化誤差永久烘進權重，實測任務準確率會掉 2–5 個百分點。QLoRA 訓練時用 4-bit 是為了省記憶體，合併時必須回到 bf16——這一步在 CPU 上做即可，只需要足夠的 RAM（7B 約需 20GB）。
+> **不要用 4-bit 載入的底模來合併。** 那會把量化誤差永久烘進權重，任務準確率通常會掉幾個百分點（幅度依任務而定，示意量級）。QLoRA 訓練時用 4-bit 是為了省記憶體，合併時必須回到 bf16——這一步在 CPU 上做即可，只需要足夠的 RAM（7B 約需 20GB）。
 
 ### 7.2 部署選擇
 

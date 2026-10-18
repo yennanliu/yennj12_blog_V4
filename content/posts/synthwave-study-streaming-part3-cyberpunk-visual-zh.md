@@ -5,8 +5,7 @@ draft: false
 weight: 3
 authors: ["yen"]
 categories: ["all", "business", "creative"]
-tags: ["賽博龐克", "霓虹燈", "視覺設計", "Midjourney", "80年代", "復古美學", "After Effects", "Streaming", "visual-design"]
-summary: "系列第三篇：掌握賽博龐克視覺設計精髓、使用 AI 生成霓虹燈美學場景、復刻 80 年代經典設計元素，以及創造沉浸式的直播視覺體驗。"
+tags: ["賽博龐克", "視覺設計", "Midjourney", "80年代", "Streaming", "visual-design"]
 description: "系列第三篇：掌握賽博龐克視覺設計精髓、使用 AI 生成霓虹燈美學場景、復刻 80 年代經典設計元素，以及創造沉浸式的直播視覺體驗。"
 readTime: "32 min"
 ---
@@ -272,6 +271,8 @@ HUD 介面:
 ## 🎨 Midjourney 生成 Synthwave 視覺
 
 ### 場景類型與提示詞庫
+
+以下提示詞均以 `--v 6.1`（撰文時測試的版本）為準；實際使用時以 Midjourney 當前預設模型為準，直接刪去 `--v 6.1` 即可。
 
 #### 類型 A：經典 Outrun 場景（40% 使用）
 

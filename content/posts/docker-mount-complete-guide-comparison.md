@@ -2,12 +2,14 @@
 title: "Docker Mount Complete Guide: Volumes, Bind Mounts, and tmpfs Comparison"
 date: 2025-10-11T10:00:00+08:00
 draft: false
-description: "Comprehensive guide to Docker mount types including volumes, bind mounts, and tmpfs. Learn the differences, use cases, pros/cons, and best practices for persisting data in Docker containers with practical examples."
+description: "Choose the right Docker mount every time: volumes for production data, bind mounts for development, tmpfs for secrets, compared on performance and backup."
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Docker", "Containers", "Docker Volumes", "Bind Mount", "tmpfs", "Data Persistence", "DevOps", "Container Storage", "Docker Best Practices"]
+tags: ["Docker", "Containers", "DevOps"]
 authors: ["yen"]
 readTime: "28 min"
 ---
+
+> Commands and versions in this guide are as of 2025-10; check the official Docker docs for changes.
 
 ## Introduction
 
@@ -459,8 +461,10 @@ docker run \
 
 **2. Bind Propagation**
 
+The default propagation for a bind mount is `rprivate`, not `shared`; you only need the flag when the container must see (or publish) mounts made after it started.
+
 ```bash
-# Shared propagation (default)
+# Shared propagation (must be requested explicitly; the default is rprivate)
 docker run \
   --mount type=bind,source=/host/path,target=/container/path,bind-propagation=shared \
   ubuntu
@@ -480,8 +484,8 @@ docker run \
 
 ```bash
 # With SELinux label
-docker run -v /host/path:/container/path:z nginx:latest  # Private label
-docker run -v /host/path:/container/path:Z nginx:latest  # Shared label
+docker run -v /host/path:/container/path:z nginx:latest  # Shared label (several containers may use the path)
+docker run -v /host/path:/container/path:Z nginx:latest  # Private label (only this container may use it)
 ```
 
 ### Pros and Cons
@@ -899,6 +903,8 @@ docker run \
   myapp:latest
 
 # User namespaces to avoid root access
+# (--userns-remap is a dockerd daemon flag / daemon.json key, not a docker run option;
+#  once the daemon runs with it, containers are remapped automatically)
 docker run \
   --userns-remap=default \
   -v my-volume:/app/data \

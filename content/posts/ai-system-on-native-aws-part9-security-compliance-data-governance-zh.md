@@ -2,9 +2,9 @@
 title: "AI System on Native AWS - Part 9 - 企業 AI 安全、合規與資料治理"
 date: 2026-07-26T09:00:00+08:00
 draft: false
-description: "當 AI 系統處理的是病歷、金流、個資,而且要通過稽核時,資安與合規不是加分項而是上線的門票。本篇把這個橫跨所有系統的維度單獨講透:用 PrivateLink/VPC endpoint 讓資料永不觸網、KMS 客戶金鑰全程加密、Macie + Comprehend 做 PII 偵測與去識別化、Lake Formation 做資料湖細粒度授權、Organizations SCP 從組織層鎖死可用模型與區域、CloudTrail + Guardrails 做全鏈稽核,全部用 CDK(CloudFormation)描述,對應 HIPAA/GDPR 的實際控制點。"
+description: "受管制產業的 AI 合規是上線門票:PrivateLink 讓 Bedrock 呼叫永不觸網、KMS 客戶金鑰全程加密、Macie + Comprehend 找出並去識別化 PII、Lake Formation 細粒度授權、SCP 從組織層畫紅線,全部 code 進 CDK stack。"
 categories: ["all", "ai", "engineering"]
-tags: ["AWS", "CDK", "CloudFormation", "Security", "Compliance", "Data Governance", "PrivateLink", "KMS", "Lake Formation", "Enterprise"]
+tags: ["AWS", "CDK", "CloudFormation", "Security", "Compliance", "KMS", "Enterprise"]
 authors: ["yen"]
 readTime: "13 min"
 ---

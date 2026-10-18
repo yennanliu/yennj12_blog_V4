@@ -5,20 +5,21 @@ draft: false
 weight: 5
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "VPA", "Vertical Pod Autoscaler", "Resource Optimization", "Cost Optimization", "Right-sizing", "Performance", "FinOps", "DevOps", "Optimization"]
-summary: "Part 5 of the Kubernetes Autoscaling series: Deep dive into Vertical Pod Autoscaler (VPA), resource right-sizing strategies, combining VPA with HPA, and production-grade resource optimization techniques for cost-effective Kubernetes operations."
-description: "Part 5 of the Kubernetes Autoscaling series: Deep dive into Vertical Pod Autoscaler (VPA), resource right-sizing strategies, combining VPA with HPA, and production-grade resource optimization techniques for cost-effective Kubernetes operations."
+tags: ["Kubernetes", "VPA", "Cost Optimization", "Performance", "FinOps", "DevOps", "Optimization"]
+description: "Right-size pod requests with Vertical Pod Autoscaler: update modes, safe VPA + HPA combinations, production configs and the monthly cost of over-provisioning."
 readTime: "35 min"
 ---
+
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
 
 ## Series Overview
 
 This is **Part 5** of the Kubernetes Autoscaling Complete Guide series:
 
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Application-level autoscaling theory
-- **[Part 2: Cluster Autoscaling & Cloud Providers](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Infrastructure-level autoscaling
-- **[Part 3: Hands-On HPA Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)** - Practical implementation with Apache-PHP
-- **[Part 4: Monitoring, Alerting & Threshold Tuning](./kubernetes-autoscaling-complete-guide-part4-monitoring-alerting.md)** - Production observability
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Application-level autoscaling theory
+- **[Part 2: Cluster Autoscaling & Cloud Providers](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Infrastructure-level autoscaling
+- **[Part 3: Hands-On HPA Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)** - Practical implementation with Apache-PHP
+- **[Part 4: Monitoring, Alerting & Threshold Tuning](/posts/kubernetes-autoscaling-complete-guide-part4-monitoring-alerting/)** - Production observability
 - **Part 5 (This Post)**: VPA & Resource Optimization - Right-sizing and cost optimization
 
 ---
@@ -76,7 +77,7 @@ VPA OPTIMIZED:
 
 | Metric | Without VPA | With VPA | Impact |
 |--------|-------------|----------|--------|
-| **Resource Waste** | 40-70% typical | 5-15% | 60%+ cost reduction |
+| **Resource Waste** | 40-70% (commonly cited, unsourced) | 5-15% (illustrative) | Large reduction, measure your own |
 | **OOMKilled Events** | Common | Rare | Better reliability |
 | **CPU Throttling** | Frequent | Minimal | Improved performance |
 | **Manual Tuning Time** | Hours/week | Automated | Operational efficiency |
@@ -133,10 +134,10 @@ VPA OPTIMIZED:
 |--------|-----|-----|
 | **Scaling Direction** | Vertical (resources per pod) | Horizontal (number of pods) |
 | **What it Changes** | CPU/memory requests & limits | Replica count |
-| **Pod Disruption** | Yes (recreation required) | No (gradual) |
+| **Pod Disruption** | Yes in `Recreate`/`Auto`; none with `InPlaceOrRecreate` (VPA 1.4+, feature-gated) | No (gradual) |
 | **Best For** | Right-sizing, cost optimization | Traffic scaling, load handling |
 | **Stateful Apps** | Suitable | Complex |
-| **Response Time** | Minutes (pod restart) | Seconds to minutes |
+| **Response Time** | Minutes (pod restart, or faster in-place) | Seconds to minutes |
 | **Use Case** | Unknown resource needs | Known scaling patterns |
 | **Combine with Other** | Can combine with HPA (carefully) | Can combine with VPA |
 
@@ -295,7 +296,7 @@ export class EksVpaStack extends cdk.Stack {
 
 ## Part 2: VPA Update Modes
 
-VPA supports four update modes that control how it applies recommendations:
+VPA supports five update modes that control how it applies recommendations (`Off`, `Initial`, `Recreate`, `Auto` — which today behaves like `Recreate` — and `InPlaceOrRecreate`):
 
 ### Mode 1: Off (Recommendation Only)
 
@@ -496,7 +497,7 @@ spec:
 
   # Update policy
   updatePolicy:
-    updateMode: "Auto"  # Off, Initial, Recreate, Auto
+    updateMode: "Auto"  # Off, Initial, Recreate, Auto, InPlaceOrRecreate
 
   # Resource policy (constraints and rules)
   resourcePolicy:
@@ -1279,6 +1280,8 @@ spec:
 
 ### Strategy 3: Cost Attribution & Showback
 
+> **Metrics caveat:** the `kube_verticalpodautoscaler_*` series were removed from kube-state-metrics in v2.9 (2023); they only exist if you configure KSM's `customResourceState` for `autoscaling.k8s.io/v1 VerticalPodAutoscaler`. The metric `kube_verticalpodautoscaler_spec_resourcepolicy_container_policies_target` used below never existed (the recommendation lives in `..._status_recommendation_containerrecommendations_target`), and VPA metrics carry `target_name`, not `pod`, so the `on(pod, namespace)` joins below return nothing as written. Treat these rules as a sketch.
+
 ```yaml
 # Prometheus rules for cost tracking
 apiVersion: monitoring.coreos.com/v1
@@ -1365,6 +1368,8 @@ data:
 ## Part 7: Monitoring VPA
 
 ### VPA Metrics
+
+> **Metrics caveat:** the alert rules below reference `kube_verticalpodautoscaler_*` series, which kube-state-metrics dropped in v2.9 — they need a `customResourceState` config (see Strategy 3 above), and they join on `target_name`, not `pod`.
 
 ```yaml
 # ServiceMonitor for VPA components
@@ -1714,7 +1719,7 @@ kubectl apply -f vpa-recreate-mode-prod.yaml
 
 ### VPA Value Proposition
 
-1. **Cost Optimization**: 40-70% reduction in wasted resources
+1. **Cost Optimization**: commonly cited 40-70% reduction in wasted resources (unsourced; measure your own baseline)
 2. **Performance**: Right-sized pods perform better
 3. **Automation**: Reduces manual resource tuning effort
 4. **Reliability**: Prevents OOMKilled events
@@ -1748,10 +1753,10 @@ kubectl apply -f vpa-recreate-mode-prod.yaml
 ## Related Topics
 
 ### Autoscaling Series
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - HPA theory and approaches
-- **[Part 2: Cluster Autoscaling](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Node-level autoscaling
-- **[Part 3: Hands-On HPA Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)** - Practical implementation
-- **[Part 4: Monitoring & Alerting](./kubernetes-autoscaling-complete-guide-part4-monitoring-alerting.md)** - Observability
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - HPA theory and approaches
+- **[Part 2: Cluster Autoscaling](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Node-level autoscaling
+- **[Part 3: Hands-On HPA Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)** - Practical implementation
+- **[Part 4: Monitoring & Alerting](/posts/kubernetes-autoscaling-complete-guide-part4-monitoring-alerting/)** - Observability
 
 ## Conclusion
 

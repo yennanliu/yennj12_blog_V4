@@ -3,11 +3,11 @@ title: "FDE 面試準備指南（三十八）：RKK 實戰——從 POC 到 Prod
 date: 2026-06-05T16:00:00+08:00
 draft: false
 weight: 38
-description: "以系統設計視角拆解 AI 系統從 POC 到生產最容易失敗的五個差距：Token Budget 失控、延遲 SLA 差距、Session State 消失、錯誤處理不完整、Rollback 機制缺席；包含生產化 Go-Live 清單、Prompt 版本控制、模型版本釘選、Canary 部署設計，以及每個差距對系統效能和穩定性的量化影響"
+description: "RAG + Agent POC 上線前必須補的五個差距:Token Budget 失控、冷啟動拖垮延遲 SLA、Session State 消失、外部 API 錯誤處理、Rollback 缺席,附 Go-Live 清單、Prompt 版本控制、模型釘選與 Canary 部署設計。"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Production", "POC", "Deployment", "Rollback", "SLA", "Token Budget", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Production", "POC", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "18 min"
+readTime: "10 min"
 ---
 
 > 同一個 Agent，Demo 時跑得很好。  
@@ -103,8 +103,8 @@ SLA 失效路徑：
   Production 問題：
 
   問題 A：Cloud Run Cold Start
-  Auto-Scale Scale-Out 後，新實例啟動需要 8-12 秒
-  第一個打到新實例的用戶：等了 12 秒
+  Auto-Scale Scale-Out 後，新實例啟動需要 8-15 秒（容器啟動 + 載入模型，見 Part 39）
+  第一個打到新實例的用戶：等了 15 秒
 
   問題 B：外部 API Spike
   SAP API 在月結日前壓力大，P99 從 200ms 變成 8 秒
@@ -123,7 +123,7 @@ SLA 設計：
   │                                                              │
   │  Cold Start 解法：                                            │
   │  Cloud Run min-instances = 2（高峰期可調高）                   │
-  │  代價：持續計費，即使沒有流量（$10-30/月）                      │
+  │  代價：持續計費，即使沒流量（≈ $50/月，推算見 Part 39）      │
   │  判斷：P95 SLA 要求 < 5s → min-instances 是必要成本           │
   │                                                              │
   │  Tool Timeout 設計：                                          │
@@ -163,8 +163,10 @@ Session State 持久化方案對比：
 
   方案            延遲      成本      複雜度      適合場景
   ──────────────────────────────────────────────────────────────
-  Firestore       10-50ms   低        低          ADK 原生整合，推薦預設
-  （ADK 內建）                                     大多數企業 Agent
+  Firestore       10-50ms   低        低          自行實作 SessionService
+  （自建；ADK 內建                                 （或改用 Agent Engine 的
+   的是 InMemory/                                  VertexAiSessionService），
+   Database/VertexAi）                             大多數企業 Agent
   ──────────────────────────────────────────────────────────────
   Cloud           < 5ms     中        中          高頻讀寫，
   Memorystore                                      對 Session 延遲敏感
@@ -182,7 +184,49 @@ Session State 的設計原則：
 
 ---
 
-## 五、差距 5：Rollback 機制設計
+## 五、差距 4：錯誤處理
+
+```
+失效路徑：
+
+  POC：SAP API 永遠在 200ms 內回應，沒有人寫過 timeout。
+  Production：月結日 SAP 回應 30 秒 → Agent 的 Tool 呼叫掛著等
+            → Cloud Run 請求逾時 → 回 500
+            → 用戶看到的是 stack trace，不是「請稍後再試」
+
+  更糟的版本：Tool 回傳 500 的錯誤文字 → Agent 把它當成查詢結果
+            → 幻覺出「您的訂單不存在」。
+
+三層錯誤處理：
+
+  ┌──────────────────────────────────────────────────────────────┐
+  │  Layer 1：每個 Tool 有 timeout + 有界重試                    │
+  │    timeout ≈ 正常 P99 的 5 倍（SAP 200ms → 1s；LLM → 10s）   │
+  │    最多重試 2 次、指數退避，只重試冪等的讀取類 Tool          │
+  │                                                              │
+  │  Layer 2：Graceful Fallback（降級而不是崩潰）                │
+  │    SAP 逾時 → 回「無法取得即時庫存，以下是 10 分鐘前的快取」 │
+  │    Vector DB 掛掉 → 退回關鍵字搜尋，而不是回 500             │
+  │                                                              │
+  │  Layer 3：結構化錯誤 + 全域 Exception Handler                │
+  │    Tool 回傳 {"error": "SAP_TIMEOUT", "retryable": true}     │
+  │    Agent 看得懂、不會把它當成資料；用戶只看到友好訊息，      │
+  │    stack trace 進 Cloud Logging，不進回應                    │
+  └──────────────────────────────────────────────────────────────┘
+
+哪些錯誤該重試、哪些該直接降級：
+
+  錯誤類型            重試？       降級方式
+  ──────────────────────────────────────────────────────────────
+  Timeout / 503       是（2 次）   回快取或「稍後再試」
+  429 Rate Limit      是（退避）   排隊，告知用戶預估等待時間
+  4xx 參數錯誤        否           把錯誤結構化回給 Agent，讓它修正參數
+  業務邏輯錯誤        否           回傳結構化錯誤，由 Agent 向用戶說明
+```
+
+---
+
+## 六、差距 5：Rollback 機制設計
 
 ```
 失效路徑：
@@ -194,7 +238,7 @@ Session State 的設計原則：
   Rollback 三層設計：
 
   ┌──────────────────────────────────────────────────────────────┐
-  │  Layer 1：Prompt 版本控制（1 分鐘內 Rollback）                │
+  │  Layer 1：Prompt 版本控制（< 5 分鐘 Rollback）                │
   │                                                              │
   │  PROMPT_REGISTRY = {                                         │
   │    "v2": "你是法務助理...",        ← 當前 stable             │
@@ -242,7 +286,7 @@ Session State 的設計原則：
 
 ---
 
-## 六、生產化 Go-Live 清單
+## 七、生產化 Go-Live 清單
 
 ```
 五個差距對應的 Go-Live 檢查項目：
@@ -273,21 +317,21 @@ Session State 的設計原則：
   （前提）       □ Error Rate / 延遲 Alert 已設定
   ──────────────────────────────────────────────────────────────
 
-  總計：8 個工作天，一個工程師可以完成。
+  總計：2+2+1+2+1+2 = 10 個工作天，一個工程師兩週可以完成。
   如果超過 5 個項目未完成 → 建議先 Internal Pilot（50 個內部用戶），
   不要直接開放給全部用戶。
 ```
 
 ---
 
-## 七、系統效應：生產化設計對系統的量化影響
+## 八、系統效應：生產化設計對系統的量化影響
 
 ```
 維度          有生產化設計              沒有生產化設計
 ──────────────────────────────────────────────────────────────────
 Token 成本    可預測（$0.02-0.025/req）  暴跌（最差 $0.12/req，8 倍）
 ──────────────────────────────────────────────────────────────────
-P95 延遲      < 5s（有 min-instances）   8-12s（Cold Start）
+P95 延遲      < 5s（有 min-instances）   8-15s（Cold Start）
              < 8s（有 Tool Timeout）    可能無限等待（無 Timeout）
 ──────────────────────────────────────────────────────────────────
 Session 穩定  用戶感知到的連續對話        每 15 分鐘對話重置
@@ -301,7 +345,7 @@ Rollback 時間 < 5 分鐘（環境變數切換）    30-60 分鐘（改代碼�
 
 生產化工程成本 vs 收益：
 
-  成本：8 個工作天（一個工程師）
+  成本：10 個工作天（一個工程師）
   收益：
     ├── 防止帳單爆炸（Token Budget）
     ├── SLA 達標（Cold Start 消除）
@@ -314,17 +358,13 @@ Rollback 時間 < 5 分鐘（環境變數切換）    30-60 分鐘（改代碼�
 
 ---
 
-## 八、面試答題要點
+## 九、答題骨架
 
-> *「這道題考的是：知道 POC 和 Production 之間有哪些具體差距，以及如何系統性地填補它們——而不只是說『還需要測試』。*
->
-> *五個差距：Token Budget 失控（需要截斷策略和 Cost Alert）；延遲 SLA 差距（需要 min-instances 和 Tool Timeout）；Session State 消失（需要 Firestore 持久化）；錯誤處理不完整（需要 Graceful Fallback 和全域 Exception Handler）；Rollback 機制缺席（需要 Prompt 版本控制、模型版本釘選、Canary 部署）。*
->
-> *和客戶 CTO 的溝通方式：不說「還沒準備好」，說「下個月上線可以，但建議先做 2 週 Internal Pilot，同時並行處理這 5 件事，8 個工作天可以完成。Pilot 讓我們在真實流量下驗證，把影響範圍控制在 50 個內部用戶，而不是第一天就開放給所有用戶出問題。」*
->
-> *Rollback 的設計邏輯：Prompt 版本控制讓我在 1 分鐘內 Rollback，不需要改代碼重新部署。模型版本釘選防止 Google 的更新悄悄改變系統行為。Canary 部署讓我在 10% 流量上驗證 24 小時，確認沒問題再全量。」*
-
----
+- 先用 §一 說明這題考的是具體差距，不是「還需要測試」。
+- 逐一列差距並給對應解法：Token Budget（§二）、延遲 SLA（§三）、Session State（§四）、錯誤處理（§五）、Rollback（§六）。
+- 對 CTO 的說法用 §七 的 Go-Live 清單：不說「還沒準備好」，說 Internal Pilot 加並行處理清單、幾個工作天完成。
+- Rollback 的三個機制（Prompt 版本控制、模型版本釘選、Canary）依 §六 的順序講。
+- 收尾用 §八 的量化數字說明生產化是基本門檻而不是優化。
 
 **系列導航**
 

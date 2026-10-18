@@ -5,7 +5,7 @@ draft: false
 weight: 4
 description: "拆解 QM 的分層防禦：三種 security posture 如何組合、命令政策的 scannableCommand 如何遞迴拆解八層 shell 混淆、ReDoS 防護的自製 regex 編譯器、內容篩檢分類器的分塊與重試，以及三個「刻意不給 Agent」的動作與 12 條誠實列出的已知限制。"
 categories: ["all", "ai", "engineering"]
-tags: ["QM", "AI Agent", "Security", "Prompt Injection", "Threat Model", "ReDoS", "繁體中文"]
+tags: ["QM", "Agent", "Security", "Prompt Injection"]
 authors: ["yen"]
 readTime: "19 min"
 series: ["qm-deep-dive"]

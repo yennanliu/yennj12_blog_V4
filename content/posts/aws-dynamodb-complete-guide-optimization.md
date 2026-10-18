@@ -2,12 +2,14 @@
 title: "AWS DynamoDB Complete Guide: Architecture, Indexing & Performance Optimization"
 date: 2025-09-29T10:02:35+08:00
 draft: false
-tags: ["AWS", "DynamoDB", "NoSQL", "Database", "Performance", "Optimization", "Java", "Architecture", "Cloud Computing"]
+tags: ["AWS", "DynamoDB", "Database", "Performance", "Optimization", "Java", "Architecture", "Cloud Computing"]
 categories: ["all", "engineering", "infrastructure"]
 authors: ["yen"]
-description: "Comprehensive guide to AWS DynamoDB covering data structures, architecture, indexing strategies, secondary indexes, sort keys, and performance optimization techniques for high-speed I/O operations."
+description: "Design DynamoDB tables that stay fast at scale: partition and sort key choices, GSI vs LSI tradeoffs, when DynamoDB is the wrong fit, capacity tuning in Java."
 readTime: "25 min"
 ---
+
+> Versions, APIs and prices in this guide are as of 2025-09 (the post date); AWS services and SDKs change frequently — verify against the current docs.
 
 ## Introduction
 
@@ -75,7 +77,7 @@ graph TB
 | **Data Model** | Key-Value & Document | Relational Tables | Document |
 | **Schema** | Schema-less | Fixed Schema | Flexible Schema |
 | **Scaling** | Horizontal (Auto) | Vertical (Manual) | Horizontal (Manual) |
-| **Consistency** | Eventually Consistent | ACID Transactions | Configurable |
+| **Consistency** | Eventually consistent reads by default; strongly consistent reads and ACID transactions (`TransactWriteItems`) available | ACID Transactions | Configurable |
 | **Query Language** | PartiQL & APIs | SQL | MongoDB Query Language |
 | **Performance** | Single-digit millisecond | Variable | Variable |
 | **Management** | Fully Managed | Self-Managed | Self/Managed Options |
@@ -270,6 +272,8 @@ public class DynamoDBDataTypesDemo {
 ## Indexing Strategies
 
 ### Global Secondary Indexes (GSI)
+
+> **Caveat:** `queryTopScores` below uses `TopScore >= :minScore` as the key condition on `TopPlayerIndex`, whose **partition** key is `TopScore`. DynamoDB rejects that — a partition-key condition must be an equality; range operators only apply to the sort key. To query "top scores", put `TopScore` as the GSI's sort key under a constant partition key (e.g. `"LEADERBOARD"`, write-sharded if hot).
 
 ```java
 @Service
@@ -613,8 +617,10 @@ public class IndexDesignPatterns {
 | **IoT data ingestion** | ✅ Handles massive writes | ❌ Bottlenecks | ⚠️ Good |
 | **Session management** | ✅ Fast key-value access | ❌ Overkill | ✅ Also good |
 | **Complex reporting** | ❌ Limited analytics | ✅ Excellent SQL | ⚠️ Aggregation framework |
-| **ACID transactions** | ⚠️ Limited support | ✅ Full ACID | ⚠️ Limited |
+| **ACID transactions** | ✅ Supported (`TransactWriteItems`/`TransactGetItems`, up to 100 items) | ✅ Full ACID | ⚠️ Limited |
 | **Ad-hoc queries** | ❌ Requires known access patterns | ✅ Flexible SQL | ✅ Flexible |
+
+> **Caveat:** the leaderboard update below uses `SET #score = ... + :increment` under a "replace if higher" condition, so it **adds** the new score to the old one instead of replacing it. Use `SET #score = :newScore` with the same condition.
 
 ```java
 @Service
@@ -706,6 +712,8 @@ public class DynamoDBUseCaseExamples {
 ## Performance Optimization Strategies
 
 ### Hot Partition Prevention
+
+> **Caveat:** the `updateTableCapacity` helper at the end of this block calls a `ModifyTable` API that does not exist — the real operation is `UpdateTable` (`UpdateTableRequest` / `dynamoDbClient.updateTable(...)`).
 
 ```java
 @Service
@@ -1273,6 +1281,8 @@ public class DynamoDBTransactionService {
 ## Performance Monitoring and Optimization
 
 ### CloudWatch Metrics and Alarms
+
+> **Caveat:** the two "throttling" alarms below watch `UserErrors` and `SystemErrors`, which are client (4xx) and service (5xx) error counts, not throttles. Throttling is reported by `ReadThrottleEvents` / `WriteThrottleEvents` (and `ThrottledRequests`).
 
 ```java
 @Component

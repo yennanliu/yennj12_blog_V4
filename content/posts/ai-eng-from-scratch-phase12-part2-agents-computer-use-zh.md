@@ -5,7 +5,7 @@ draft: false
 weight: 25
 description: "深入解析多模態 Agent 架構：OCR+VLM 文件理解、電腦視覺 UI 自動化、SeeAct/Computer Use 系統設計與安全邊界"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multimodal", "Agent", "Computer Use", "VLM", "Document AI", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Multimodal", "Agent", "VLM", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "13 min"
 series: ["ai-eng-from-scratch"]
@@ -99,11 +99,11 @@ series: ["ai-eng-from-scratch"]
 | 元件 | 延遲 | 精度 | 成本 |
 |------|------|------|------|
 | PaddleOCR（本地） | 80–150ms/頁 | 95–97% | ~$0 |
-| AWS Textract | 800–1,500ms/頁 | 98–99% | $0.015/頁 |
+| AWS Textract | 800–1,500ms/頁 | 98–99% | $0.0015/頁（純文字）～ $0.015/頁（表格）|
 | Layout Analysis（LayoutLMv3） | 120–200ms/頁 | 94% | ~$0（本地）|
 | VLM 表格推理（Claude Sonnet） | 2,000–4,000ms | 91–95% | $0.003–0.015/頁 |
 
-**關鍵設計決策**：Layout Analysis 必須在 OCR 之前執行，否則 OCR 引擎會把表格的欄位文字混在一起，無法還原結構關係。對於掃描 PDF，先做去偏斜（deskew）可將 OCR 精度從 88% 提升至 96%。
+**關鍵設計決策**：Layout Analysis 必須在 OCR 之前執行，否則 OCR 引擎會把表格的欄位文字混在一起，無法還原結構關係。對於掃描 PDF，先做去偏斜（deskew）可明顯拉高 OCR 精度（示意：88% → 96%，非實測）。
 
 **表格提取的特殊挑戰**：合併儲存格（merged cells）在 OCR 輸出中會丟失結構資訊。解法：用 Layout Analysis 先偵測表格邊界，再用 VLM 進行語意對齊（semantic alignment），根據視覺位置還原欄列關係。這個步驟讓複雜表格的正確提取率從 67% 提升至 89%。
 
@@ -219,7 +219,7 @@ drag(x1,y1, x2,y2)      # 拖曳
 - **座標飄移**：解析度不同、縮放比例改變，導致點擊位置偏差
 - **遮擋問題**：Tooltip、Dropdown 遮住目標元素
 - **載入競態**：截圖時元素已存在但尚未可點擊（disabled 狀態）
-- **視覺相似性**：兩個相似按鈕（「確認」vs「確認並送出」）VLM 誤判率高達 8%
+- **視覺相似性**：兩個相似按鈕（「確認」vs「確認並送出」）VLM 誤判率可達數 %（示意：~8%，非實測）
 
 **可靠性提升策略：**
 

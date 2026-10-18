@@ -2,9 +2,9 @@
 title: "Data Consistency Patterns in Java Enterprise Applications"
 date: 2025-01-28T00:00:00+08:00
 draft: false
-description: "Comprehensive guide to implementing data consistency patterns in Java applications, including optimistic locking, pessimistic locking, and distributed transactions with real-world case studies and trade-off analysis."
+description: "Stop double bookings and lost updates in Java: optimistic vs pessimistic locking, JPA versioning, two-phase commit and its alternatives, with the cost of each."
 categories: ["all", "engineering", "architecture"]
-tags: ["Java", "Spring Boot", "Data Consistency", "Concurrency", "Distributed Systems", "JPA", "Two-Phase Commit"]
+tags: ["Java", "Spring Boot", "Concurrency", "Distributed Systems", "JPA"]
 authors: ["yen"]
 readTime: "25 min"
 ---
@@ -145,6 +145,9 @@ public class Booking {
 ```
 
 **Service Layer with Optimistic Locking:**
+
+> Caveat — where the exception actually surfaces: with class-level `@Transactional`, JPA runs the `@Version` check at flush/commit, which happens *after* `bookRoom` returns. The `catch (OptimisticLockException e)` inside the method therefore never fires, and Spring hands the caller an `ObjectOptimisticLockingFailureException` instead; the `ConcurrentBookingException` that `@Retryable` keys on is never thrown. In addition, `bookRoomWithRetry` calls `bookRoom` on `this`, a self-invocation that bypasses the Spring proxy, so neither the transaction boundary nor the retry interceptor applies. The working shape is: catch `ObjectOptimisticLockingFailureException` in the *caller* (the controller, or a separate `@Retryable` bean), or `saveAndFlush` inside a `REQUIRES_NEW` method so the version check runs inside the `try`.
+
 ```java
 @Service
 @Transactional
@@ -359,6 +362,9 @@ public class PessimisticBookingService {
 ```
 
 **Advanced Lock Management:**
+
+> Caveat: `cleanupUnusedLocks` below races `computeIfAbsent` — a lock can be removed from the map between another thread's `computeIfAbsent` and its `tryLock`, after which two threads hold *different* `ReentrantLock` objects for the same key. Use `Striped`/`Guava` locks, a reference-counted wrapper, or simply never evict.
+
 ```java
 @Component
 public class LockManager {
@@ -485,6 +491,9 @@ public class BookingMetrics {
 ```
 
 **Adaptive Booking Service:**
+
+> Caveat: `AdaptiveBookingService` is class-level `@Transactional`, so when the optimistic attempt fails, the pessimistic fallback runs inside the *same* transaction, which the failed flush has already marked rollback-only — the fallback's writes are discarded at commit (`UnexpectedRollbackException`). Keep the adaptive service non-transactional (or `Propagation.NOT_SUPPORTED`) and let each delegate open its own transaction.
+
 ```java
 @Service
 @Transactional

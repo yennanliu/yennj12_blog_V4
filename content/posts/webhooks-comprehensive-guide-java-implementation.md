@@ -2,9 +2,9 @@
 title: "Webhooks: Complete Guide with Java Implementation - Event-Driven Architecture, Real-Time Integrations, and Best Practices"
 date: 2025-09-29T08:06:11+08:00
 draft: false
-description: "Master webhooks with comprehensive comparisons to HTTP calls and polling, real-world Java implementations, and practical examples using Stripe, Shopify, and GitHub APIs. Learn when to use webhooks, security best practices, and production-ready patterns."
+description: "Webhooks vs polling vs HTTP calls, then a production Spring Boot receiver with signature verification, idempotency and retries, with Stripe and GitHub examples."
 categories: ["all", "engineering", "architecture"]
-tags: ["Webhooks", "Event-Driven Architecture", "Java", "Spring Boot", "API Integration", "Real-Time Systems", "Stripe", "GitHub", "Shopify", "HTTP", "REST API", "Integration"]
+tags: ["Java", "Spring Boot", "API Integration", "GitHub", "Shopify", "HTTP", "REST API", "Integration"]
 authors: ["yen"]
 readTime: "32 min"
 ---
@@ -269,7 +269,7 @@ public class WebhookController {
 
 ### ❌ When NOT to Use Webhooks
 
-1. **High-Frequency Updates** (>1000/second)
+1. **High-Frequency Updates** (the exact ceiling is illustrative — on the order of hundreds to thousands of events per second, streaming or polling beats one HTTP call per event)
 2. **Request-Response Patterns** requiring immediate responses
 3. **Client-Initiated Queries** for specific data
 4. **Environments with strict firewall restrictions**
@@ -818,7 +818,11 @@ public class WebhookController {
 }
 ```
 
+Note on the `parse*Event` helpers above: a default `new ObjectMapper()` has `FAIL_ON_UNKNOWN_PROPERTIES=true` and expects camelCase, so a real Stripe/GitHub/Shopify payload (`pending_webhooks`, `api_version`, `full_name` — including this post's own test JSON later) fails to deserialise. Configure `PropertyNamingStrategies.SNAKE_CASE` and disable `FAIL_ON_UNKNOWN_PROPERTIES`, or use each provider's SDK types.
+
 ### 4. Event Processing Service
+
+Three caveats on the processor below. (1) `extractPaymentIntent` casts `event.getData().getObject()` to `PaymentIntent`, but that field is declared `Object` in the DTO, so Jackson materialises it as a `LinkedHashMap` and the cast throws `ClassCastException` on every event — use the Stripe SDK (`Webhook.constructEvent(...)` and `event.getDataObjectDeserializer()`), or type `data.object` as a `JsonNode`/polymorphic type. (2) `@Retryable` already retries three times, and the `catch` block *also* calls `retryService.scheduleRetry(...)` before rethrowing, so one failure is retried by Spring Retry and re-queued by the retry service; because the method is `@Async`, the controller's try/catch never sees any of it. Pick one retry path. (3) `WebhookRetryService` is referenced but never defined in this post.
 
 ```java
 @Service
@@ -1117,6 +1121,8 @@ public class WebhookEventProcessor {
 ```
 
 ### 5. Event Models and DTOs
+
+Caveat on the DTOs below: they are camelCase POJOs (`pendingWebhooks`, `previousAttributes`, `customerEmail`, `fullName`) but Stripe, GitHub and Shopify send snake_case (`pending_webhooks`, `api_version`, `full_name`) — see the `ObjectMapper` note above. Also, a Stripe `PaymentIntent` carries `receipt_email`, not `customer_email`; the customer's address lives on the `Customer` object.
 
 ```java
 // Stripe Event Models
@@ -1945,7 +1951,7 @@ Webhooks are essential for modern event-driven architectures, providing efficien
 
 ### 📋 Best Practices:
 
-1. **Idempotency**: Design webhook handlers to be idempotent
+1. **Idempotency**: Design webhook handlers to be idempotent — in practice that means persisting `(provider, event_id)` with a unique constraint *before* processing and skipping duplicates, which the code in this post does not yet show; every provider above delivers at-least-once and will retry
 2. **Validation**: Always verify webhook signatures and payloads
 3. **Async Processing**: Use asynchronous processing for complex operations
 4. **Monitoring**: Implement comprehensive logging and metrics

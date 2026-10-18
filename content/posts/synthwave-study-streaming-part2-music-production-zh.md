@@ -5,8 +5,7 @@ draft: false
 weight: 2
 authors: ["yen"]
 categories: ["all", "business", "creative"]
-tags: ["Synthwave", "AI音樂", "Suno", "合成器", "音樂製作", "BPM", "音色設計", "Streaming", "music-production"]
-summary: "系列第二篇：掌握 AI 生成 Synthwave 音樂的核心技巧、80 年代經典合成器音色重現、BPM 與節奏設計、以及如何策展出讓程式設計師進入心流的完美播放列表。"
+tags: ["Synthwave", "AI音樂", "BPM", "Streaming"]
 description: "系列第二篇：掌握 AI 生成 Synthwave 音樂的核心技巧、80 年代經典合成器音色重現、BPM 與節奏設計、以及如何策展出讓程式設計師進入心流的完美播放列表。"
 readTime: "29 min"
 ---
@@ -71,7 +70,7 @@ Synthwave 特徵:
   • Yamaha DX7（1983）
     - 音色: 明亮、清脆、數位
     - 特徵: FM 合成、Bell 音色
-    - 代表作品: "Take On Me" - a-ha
+    - 常被提及的作品: "Take On Me" - a-ha（該主題 riff 常被歸於 Juno-60 等類比合成器，各方說法不一）
 
   • Prophet-5（1978）
     - 音色: 經典、平滑、飽滿

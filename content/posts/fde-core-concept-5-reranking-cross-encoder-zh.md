@@ -5,7 +5,7 @@ draft: false
 weight: 5
 description: "深入拆解兩階段檢索架構——ANN 快速粗召回搭配 Cross-Encoder 精準重排，如何將 RAG 系統的 MRR@5 從 0.61 提升至 0.79，並可望明顯降低幻覺率。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "CrossEncoder", "Reranking"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "Reranking"]
 authors: ["yen"]
 readTime: "11 min"
 ---
@@ -276,7 +276,7 @@ Query ──▶ ANN Top-50
 
 | 錯誤模式 | 後果 | 正確做法 |
 |---------|------|---------|
-| 直接用 Cross-Encoder 搜索全庫（跳過 ANN 粗召回） | O(N) 逐一評分，10萬文件需 ~1000 秒，完全不可用 | 必須先用 ANN 縮小至 20–100 候選，再 CE 精排 |
+| 直接用 Cross-Encoder 搜索全庫（跳過 ANN 粗召回） | O(N) 逐一評分：150 ms / 50 docs = 3 ms/doc，10 萬文件需 100,000 × 3 ms ≈ 300 秒，完全不可用 | 必須先用 ANN 縮小至 20–100 候選，再 CE 精排 |
 | Rerank Top-50 但傳給 LLM 仍是 Top-50 | Reranking 完全無效，幻覺率未改善 | Reranking 後只傳 Top-3 到 Top-5 給 LLM |
 | 忽略 CE score 過濾，強制填滿 Top-5 | 低分文件（score < 0.3）仍進入 context，引入雜訊 | 設定最低 score 門檻，寧可傳 2 篇高分也不傳 5 篇低分 |
 | 在 <200ms SLA 場景強上 Cross-Encoder | CE 本身 150ms，加上 ANN 和 LLM 必然破 SLA | SLA < 200ms 用 ColBERT 或 ANN-only；SLA < 500ms 用 CE |
@@ -288,9 +288,9 @@ Query ──▶ ANN Top-50
 
 ## 五、與其他核心主題的關聯
 
-- **Part 3 — 向量資料庫與 HNSW**：Re-ranking 的 Stage 1 完全依賴 ANN 索引，HNSW recall@50 的品質上限決定了 CE 能優化的空間——若 ANN 連 50 個候選都召回不全，CE 再強也無能為力。
-- **Part 4 — RAG Pipeline 設計**：Re-ranking 是 RAG retrieve → rerank → generate 三步中的核心 rerank 環節；Part 4 說明了完整 pipeline，本篇深入 rerank 機制。
-- **Part 6 — Embedding Model 選型與 Fine-tuning**：Bi-Encoder 的 embedding 品質決定粗召回品質；對 Cross-Encoder 做 domain fine-tuning 需要同樣的 MS MARCO 格式訓練數據。
+- **向量資料庫與 HNSW**（本系列 [Vector Drift & Blue-Green Indexing](/posts/fde-core-concept-15-vector-drift-blue-green-zh/)）：Re-ranking 的 Stage 1 完全依賴 ANN 索引，HNSW recall@50 的品質上限決定了 CE 能優化的空間——若 ANN 連 50 個候選都召回不全，CE 再強也無能為力。
+- **RAG Pipeline 設計**（本系列 [Hybrid Search & RRF](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)）：Re-ranking 是 RAG retrieve → rerank → generate 三步中的核心 rerank 環節；Hybrid Search 一篇說明了 retrieve 階段，本篇深入 rerank 機制。
+- **Embedding Model 選型與 Fine-tuning**：Bi-Encoder 的 embedding 品質決定粗召回品質；對 Cross-Encoder 做 domain fine-tuning 需要同樣的 MS MARCO 格式訓練數據。
 - **fde-interview-guide Part 31–32（ADK / Vertex AI 產品棧）**：Vertex AI Ranking API 是本篇 Layer 2 的核心元件，理解 Vertex AI 整體產品棧有助於評估受管理服務 vs 自建的取捨。
 
 ---

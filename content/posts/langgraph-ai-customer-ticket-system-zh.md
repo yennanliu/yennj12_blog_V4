@@ -4,7 +4,7 @@ date: 2026-10-15T09:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "engineering"]
-tags: ["LangGraph", "LangChain", "Agent", "客服系統", "工作流", "Human-in-the-loop", "FastAPI", "Backend"]
+tags: ["LangGraph", "LangChain", "Agent", "工作流", "FastAPI", "Backend"]
 description: "用一個客服工單流程（接收 → 分類 → 路由 → 解決或升級 → 結案）走完 LangGraph 1.x 後端的關鍵決定：state 欄位分類、Command 路由、interrupt 交給人審、RetryPolicy 與有上限的重寫迴圈、PostgresSaver 持久化與串流 API。"
 readTime: "17 min"
 aliases: ["/posts/langgraph-ai-backend-core-code-zh/", "/posts/langgraph-ai-backend-ideas-zh/", "/posts/langgraph-ai-backend-architecture-zh/", "/posts/langgraph-ai-backend-logic-zh/"]

@@ -4,7 +4,7 @@ date: 2026-06-27T10:00:00+08:00
 draft: false
 description: "Planet Labs（NYSE: PL）三部曲完整選股分析（中）：從 $51.76 高點回落 45% 後的均線結構、支撐阻力、RSI / MACD / 布林通道，到內部人士交易、機構持股（含 Alphabet）、9% 空頭興趣、總體經濟與國防預算週期，全面拆解籌碼與市場情緒。"
 categories: ["all", "finance"]
-tags: ["Stock Analysis", "PL", "Planet Labs", "Technical Analysis", "Short Interest", "Institutional Ownership", "Insider Trading", "Macro", "Satellite", "InvestSkill", "繁體中文", "Investment"]
+tags: ["Stock Analysis", "PL", "Planet Labs", "Technical Analysis", "Short Interest", "Satellite", "InvestSkill", "Investment"]
 authors: ["yen"]
 readTime: "14 min"
 ---
@@ -47,6 +47,8 @@ readTime: "14 min"
 
 <a id="1"></a>
 ## 一、均線系統與趨勢判斷
+
+> 📅 **數據基準日**：本篇所有均線、RSI、MACD、布林通道等技術指標，皆為以 2026-06-26 收盤價估算的近似值（標示「估」者尤其如此）；機構持股、空單與分析師數據為截至 2026-06-26 的第三方彙整，未具名供應商，各家數字略有差異。
 
 PL 與（上篇 RKLB 範例中那種「多頭完美排列」的標的）**完全不同**——它剛經歷一次主升段後的大幅回檔，技術面進入「高檔修正 / 中期盤整」階段。
 
@@ -317,6 +319,8 @@ PL 的機構結構是「**廣泛機構化 + 策略股東背書**」——432 家
 ║  空頭性質         估值型空方（漲多 + 高 P/S）          ║
 ╚══════════════════════════════════════════════════════╝
 ```
+
+> 9.03% 是供應商口徑的「空單 / 流通股」比例，反推分母約 356M 股，與（下）篇用市值 ÷ 股價反推的 ~330M 股數估計並不一致——屬不同口徑（流通股 vs 總股數、資料日期不同），比例只供量級參考。
 
 ### 8.1 空頭擠壓（Short Squeeze）潛力評估
 

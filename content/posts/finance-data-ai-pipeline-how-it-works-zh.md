@@ -2,9 +2,9 @@
 title: "finance_data 是怎麼運作的:用 Cron + LLM 全自動生成股票研究報告"
 date: 2026-06-30T12:00:00+08:00
 draft: false
-description: "finance_data 是一個全自動的 AI 投資研究平台:每天靠 GitHub Actions cron 定時觸發,用 yfinance 抓市場數據、爬 Finviz/StockAnalysis/Roic.ai 補齊基本面,再餵給 Claude / OpenAI / Gemini 生成繁體中文研究報告,最後由 MkDocs 建置部署。本篇完整拆解這條 pipeline 的每一個環節。"
+description: "拆解 finance_data 如何零人工產出 30+ 檔股票的繁中研究報告:GitHub Actions cron 觸發、yfinance 與 Finviz/StockAnalysis/Roic.ai 抓數據、Claude / OpenAI / Gemini 生成、MkDocs 建置部署,每個齒輪怎麼咬合。"
 categories: ["all", "ai", "engineering"]
-tags: ["LLM", "Automation", "GitHub Actions", "Cron", "yfinance", "Finance", "RAG", "Claude", "Data Pipeline", "MkDocs"]
+tags: ["LLM", "Automation", "GitHub Actions", "Cron", "Finance", "RAG", "Claude", "Data Pipeline"]
 authors: ["yen"]
 readTime: "17 min"
 ---

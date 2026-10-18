@@ -5,7 +5,7 @@ draft: false
 weight: 5
 description: "端到端實戰：用 LLM 把純文字文件自動抽成三元組、寫入 Neo4j、再接 GraphRAG 做問答。完整可跑的 Python 程式碼與架構演進建議。"
 categories: ["all", "ai", "engineering"]
-tags: ["Knowledge Graph", "知識圖譜", "GraphRAG", "LLM", "Neo4j", "LangChain", "Project"]
+tags: ["Knowledge Graph", "知識圖譜", "GraphRAG", "LLM", "Neo4j", "LangChain"]
 authors: ["yen"]
 readTime: "11 min"
 series: ["knowledge-graph"]

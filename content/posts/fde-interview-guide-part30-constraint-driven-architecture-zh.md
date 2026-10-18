@@ -5,9 +5,9 @@ draft: false
 weight: 30
 description: "以 Google FDE 顧問視角拆解限制驅動的 AI 架構設計：當客戶說「所有資料不能離開我們的 VPC」，你的 Vertex AI 架構要怎麼調整、VPC Service Controls 的設計原理、Private Service Connect 的部署模式，以及金融與政府客戶常見的合規限制應對"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Consultant", "VPC", "Security", "Vertex AI", "GCP", "Compliance", "Architecture", "Interview", "Cloud", "RKK"]
+tags: ["AI", "FDE", "Security", "Vertex AI", "Interview", "Cloud", "RKK", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "17 min"
+readTime: "11 min"
 ---
 
 > 大多數的架構設計課程從「最優解」出發。  
@@ -88,7 +88,7 @@ readTime: "17 min"
 └─────────────────────────────────────────────────────────┘
 
 效果：
-├── Vertex AI 的 API 呼叫不經過公共網路
+├── 只有邊界內的專案與身份能呼叫 Vertex AI API（VPC-SC 是 API 邊界控制，不是網路路由——流量不出公網靠第六節的 PSC）
 ├── 資料留在客戶的 GCP Organization 內
 └── 即使 IAM 憑證外洩，也無法從 VPC 外存取資料
 ```
@@ -191,14 +191,18 @@ VPC-SC Perimeter 內的 Vertex AI ≠ 外部服務
 ```
 Vertex AI 的 Audit Log 設定：
 
-# 在 GCP Organization 層級啟用 Data Access Audit Logs
-gcloud organizations add-iam-policy-binding ${ORG_ID} \
-  --member="allUsers" \
-  --role="roles/logging.viewer" \
-  --condition=None
-
-# 啟用 Vertex AI 的 Data Access log
+# 啟用 Vertex AI 的 Data Access Audit Logs：
+# 先取出現有 IAM policy，加入下面的 auditConfigs 區塊，再寫回
+gcloud projects get-iam-policy ${PROJECT_ID} > policy.yaml
+# （編輯 policy.yaml，加入 auditConfigs）
 gcloud projects set-iam-policy ${PROJECT_ID} policy.yaml
+
+# 讀取 Data Access log 的權限只給稽核團隊這個具名 group
+# ⚠️ 不要把 roles/logging.viewer 綁給 allUsers / allAuthenticatedUsers——
+#    尤其在 Organization 層級，那會讓整個組織的 log 對外公開，而且跟啟用稽核日誌無關
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+  --member="group:audit-team@bank.example" \
+  --role="roles/logging.privateLogViewer"
 
 policy.yaml 內容：
   auditConfigs:
@@ -242,9 +246,10 @@ Client 的 Security Operations Center（SOC）即時監控
 為什麼需要 Private Service Connect（PSC）？
 
 預設的 Vertex AI API 呼叫路徑：
-  Your VPC → 公共網路 → Vertex AI endpoint
+  Your VPC → *.googleapis.com 的公網 IP → Vertex AI endpoint
   
-  問題：流量經過公共網路（銀行 IT 說 NO）
+  問題：目的地是公網位址（開了 Private Google Access 流量其實仍留在
+        Google 骨幹，但銀行 IT 的防火牆規則與稽核把它視為外網連線）
 
 PSC 的路徑：
   Your VPC → PSC Endpoint（Internal IP）→ Vertex AI
@@ -252,27 +257,32 @@ PSC 的路徑：
   整個路徑不離開 Google 的骨幹網路，
   不需要配置 NAT 或 Firewall 開外網洞
 
-設定步驟：
-# 1. 在 VPC 內建立 PSC endpoint
+設定步驟（PSC for Google APIs 模式）：
+# 1. 在 VPC 內保留一個內部 IP 給 PSC endpoint
 gcloud compute addresses create vertex-ai-psc \
-  --region=asia-east1 \
-  --subnet=my-subnet \
-  --addresses=10.0.0.100  # 私有 IP
+  --global --purpose=PRIVATE_SERVICE_CONNECT \
+  --network=my-vpc --addresses=10.0.0.100
 
-# 2. 建立 Forwarding Rule 指向 Vertex AI 服務
-gcloud compute forwarding-rules create vertex-ai-psc-rule \
-  --region=asia-east1 \
-  --network=my-vpc \
+# 2. 建立指向 Google APIs bundle 的 Forwarding Rule
+gcloud compute forwarding-rules create vertexaipsc \
+  --global --network=my-vpc \
   --address=vertex-ai-psc \
-  --target-service-attachment=projects/.../serviceAttachments/...
+  --target-google-apis-bundle=all-apis
 
-# 3. 應用程式改用私有 IP
+# 3. 建一個 Private DNS zone，把 *.googleapis.com 解析到 10.0.0.100
+#    應用程式照常連 asia-east1-aiplatform.googleapis.com，
+#    TLS 憑證的主機名不變，封包卻走 PSC endpoint
+gcloud dns managed-zones create googleapis \
+  --dns-name=googleapis.com. --visibility=private --networks=my-vpc
+gcloud dns record-sets create "*.googleapis.com." --zone=googleapis \
+  --type=CNAME --rrdatas=googleapis.com.
+gcloud dns record-sets create googleapis.com. --zone=googleapis \
+  --type=A --rrdatas=10.0.0.100
+
+# 4. 應用程式不用改 api_endpoint
+#    （不要把它設成 10.0.0.100 這種裸 IP：憑證的 SNI / hostname 驗證會失敗）
 import vertexai
-vertexai.init(
-    project="my-project",
-    location="asia-east1",
-    api_endpoint="10.0.0.100"  # PSC 的私有 IP
-)
+vertexai.init(project="my-project", location="asia-east1")
 ```
 
 ---
@@ -312,7 +322,7 @@ vertexai.init(
 限制                           GCP 解法
 ────────────────────────────────────────────────────────────────
 「資料不能出台灣/特定國家」     Region 鎖定（asia-east1）
-                               VPC-SC Data Residency Policy
+                               Org Policy（gcp.resourceLocations）
 
 「API 不能走公網」              Private Service Connect
                                VPC Service Controls

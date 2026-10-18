@@ -30,7 +30,7 @@ readTime: "18 min"
 
 **強答案長什麼樣**
 
-「我從 vLLM logprobs 抽取前 10 個 token 的 Shannon 熵值，H < 1.5 本地結束，H > 2.5 立刻 TCP RST 中斷本地串流並升級 Vertex AI。PII 偵測在熵值路由之前執行，命中則強制留在 on-premise，數據絕不出境。75% 本地處理的混合成本約 $0.00388/query，比全雲端 $0.015 節省 74%，這個數字我是用加權平均即席算出的。」
+「我從 vLLM logprobs 抽取前 10 個 token 的 Shannon 熵值，H < 1.5 本地結束，H > 2.5 立刻關閉本地串流（vLLM 偵測到 client 斷線會 abort 請求）並升級 Vertex AI。PII 偵測在熵值路由之前執行，命中則強制留在 on-premise，數據絕不出境。75% 本地處理的混合成本約 $0.0038/query，比全雲端 $0.015 節省 74%，這個數字我是用加權平均即席算出的。」
 
 這個回答展示了信號來源、具體閾值、隱私保護順序、生產層面的成本計算，面試官會繼續深挖細節，而不是換題。
 
@@ -123,15 +123,15 @@ H ≈ -Σᵢ₌₁⁵⁰ pᵢ · log₂(pᵢ)   （長尾機率極小，忽略�
          │               │
     ┌────▼────┐      ┌────▼────┐
     │ ABORT   │      │ t < 10? │
-    │ TCP RST │      │ 繼續等  │
+    │ CLOSE   │      │ 繼續等  │
     │ 升級    │      │ t ≥ 10? │
     │ 雲端    │      │ 本地完成│
     └─────────┘      └─────────┘
 ```
 
-**為什麼是前 10 個 token？** 實驗顯示前 10 token 的平均熵與全文熵的 Pearson 相關係數 ≈ 0.87，前 20 token 升至 0.91，前 50 token 升至 0.93。多等 40 個 token 只換來 0.06 的相關係數提升，以 GPU 成本衡量不合算。10 token ≈ 本地 GPU 上 15–30 ms，是可接受的 early-exit 點。
+**為什麼是前 10 個 token？** 以示意量級來說（需用自家資料驗證），前 10 token 的平均熵與全文熵的 Pearson 相關係數約 0.87，前 20 token 升至 0.91，前 50 token 升至 0.93。多等 40 個 token 只換來 0.06 的相關係數提升，以 GPU 成本衡量不合算。10 token ≈ 本地 GPU 上 15–30 ms，是可接受的 early-exit 點。
 
-**TCP RST 中斷**：發送 RST 而非 FIN，因為 FIN 需要四次揮手確認，RST 單向強制關閉，節省 1–3 ms 的連接拆除時間。vLLM 的 `abort()` API 會在服務端同步停止 KV cache 計算，避免殭屍請求繼續消耗 VRAM。
+**中斷串流**：client 端直接關閉串流回應即可——HTTP client 無法選擇送 RST 還是 FIN，那是 kernel 的事，也不是省錢的關鍵。vLLM 偵測到 client 斷線後會 abort 該請求並釋放 KV cache，避免殭屍請求繼續消耗 VRAM；真正省下的是剩餘 token 的生成成本，所以「越早斷越省」。
 
 ### 2.5 隱私路由層（必須先於熵值路由）
 
@@ -190,16 +190,16 @@ PII 偵測工具的選型考量：
   │  混合策略（75% 本地，25% 雲端）                              │
   │  Blended cost = 0.75 × $0.0001 + 0.25 × $0.015             │
   │               = $0.000075 + $0.00375                        │
-  │               = $0.00388 / query                            │
+  │               = $0.003825 / query                           │
   │                                                              │
   │  對比全雲端：$0.015 / query                                  │
-  │  節省：(0.015 - 0.00388) / 0.015 ≈ 74%                     │
+  │  節省：(0.015 - 0.003825) / 0.015 ≈ 74.5%                  │
   └──────────────────────────────────────────────────────────────┘
 ```
 
 **盈虧平衡計算**：GPU idle 成本 $1,080/月需要多少查詢量才能回本？
 
-假設每日 query 量 D，月 query = 30D。全雲端月成本 = 30D × $0.015。混合月成本 = 30D × $0.00388 + $1,080。盈虧平衡：30D × 0.015 = 30D × 0.00388 + 1,080 → D ≈ 3,200 queries/day。低於此量，全雲端更便宜；高於此量，混合架構划算。
+假設每日 query 量 D，月 query = 30D。全雲端月成本 = 30D × $0.015。混合月成本 = 30D × $0.003825 + $1,080。盈虧平衡：30D × 0.015 = 30D × 0.003825 + 1,080 → D ≈ 3,200 queries/day。低於此量，全雲端更便宜；高於此量，混合架構划算。
 
 ### 2.7 Logprobs API 呼叫實作細節
 
@@ -230,7 +230,7 @@ for chunk in response:
     if len(entropy_values) >= 10:
         h_avg = sum(entropy_values) / len(entropy_values)
         if h_avg > UPPER_THRESHOLD:
-            response.close()   # TCP RST equivalent
+            response.close()
             return escalate_to_cloud(user_query)
         elif h_avg < LOWER_THRESHOLD:
             break              # 本地夠自信，不再等待
@@ -261,7 +261,7 @@ for chunk in response:
 | 決策點 | 選擇 | 選擇理由 | 不選的替代方案 | 不選的理由 |
 |-------|------|---------|--------------|-----------|
 | 路由信號 | logprobs 熵值 | 生成過程內生信號，零額外推理成本，latency 零增加 | 預訓練分類器 | 額外 20–80ms RTT，誤差疊加，需持續再訓練 |
-| 中斷機制 | TCP RST + vLLM abort() | 強制立即終止，避免殭屍計算消耗 VRAM，節省剩餘 token 的 GPU 成本 | 等待生成完畢後丟棄 | 完整 GPU 算力浪費，early-exit 設計失效 |
+| 中斷機制 | 關閉串流，vLLM 偵測斷線後 abort | 提早終止，避免殭屍計算消耗 VRAM，節省剩餘 token 的 GPU 成本 | 等待生成完畢後丟棄 | 完整 GPU 算力浪費，early-exit 設計失效 |
 | 熵值計算窗口 | 前 10 token | 相關係數 0.87，平衡準確性與中斷時機，GPU 成本最小化 | 前 50 token | 相關係數 0.93（僅多 0.06），但多 40 token 的 GPU 成本不合算 |
 | 本地推理框架 | vLLM | 原生 logprobs API、精準的 stream abort()、KV cache 管理、高吞吐量 | Ollama | abort() 不精準，生成可能繼續，無生產級 KV cache 管理 |
 | PII 偵測順序 | 在熵值路由之前 | 隱私是硬性合規邊界，必須在任何路由決策之前確立，順序錯了就已違規 | 在路由決策之後 | 高熵含 PII 查詢可能先送出雲端，攔截時已出境，合規即失效 |
@@ -304,7 +304,7 @@ for chunk in response:
 
 | 指標 | 全雲端（baseline） | Model Routing 部署後 | 變化 |
 |------|-------------------|---------------------|------|
-| 每日推理成本（10K query/day） | $150 | $38.8 | -74% |
+| 每日成本（10K query/day） | $150 | $38.3 推理（10K × $0.003825）+ $36 GPU idle（$1,080 ÷ 30）= $74.3 | -50%（只看推理費是 -74%） |
 | P50 首 token 延遲 | 180ms（Vertex AI） | 45ms（本地熱機） | -75% |
 | P95 首 token 延遲 | 420ms | 280ms（混合） | -33% |
 | PII 出境事件 | 無法保證 | 0（強制本地） | 合規達成 |
@@ -362,7 +362,7 @@ for chunk in response:
          │ no PII
          ▼
   ┌──────────────┐  H > 2.5   ┌──────────────────────┐
-  │ 本地 vLLM    │  TCP RST   │  Vertex AI           │
+  │ 本地 vLLM    │  close()   │  Vertex AI           │
   │ Entropy 監測 │───────────▶│  Gemini Pro          │
   │ (前10 token) │            │  Provisioned TP      │
   └──────┬───────┘            └──────────────────────┘
@@ -425,7 +425,7 @@ Gemma-2B（$0.00003/q）→ Gemma-9B（$0.0001/q）→ Gemini Pro（$0.015/q）
 | 錯誤模式 | 後果 | 正確做法 |
 |---------|------|---------|
 | 用預分類器而非 logprobs 信號 | 額外 20–80ms 延遲，分類器誤差疊加路由誤差，MLOps 負擔加重 | 直接從 vLLM stream logprobs 計算熵值，零額外推理成本 |
-| 等整個回應生成完才判斷熵值 | 完整燒掉 GPU 算力再丟棄結果，early-exit 設計完全失效 | 前 10 token 即判斷，命中即 TCP RST + vLLM abort()，節省剩餘生成成本 |
+| 等整個回應生成完才判斷熵值 | 完整燒掉 GPU 算力再丟棄結果，early-exit 設計完全失效 | 前 10 token 即判斷，命中即關閉串流、vLLM 偵測斷線後 abort()，節省剩餘生成成本 |
 | 隱私路由在熵值路由之後執行 | 高熵含 PII 查詢先送雲端，攔截時已出境，違反合規 | PII 偵測永遠先行，結果決定路由上限，熵值只決定效能優化路徑 |
 | 閾值硬編碼不做領域校準 | 查詢分布偏移後本地準確率悄悄跌破 90%，使用者體驗劣化但無告警 | 離線 1,000 筆標記資料集校準，生產後每月重新校準，閾值存環境變數 |
 | 本地模型允許 scale-to-zero | 首次請求冷啟動 8–12 秒，SLA 完全破壞，使用者以為系統掛了 | Keep-alive ping 每 30 秒，GPU idle 成本計入 TCO，盈虧平衡分析決定 break-even query volume |
@@ -445,7 +445,7 @@ Gemma-2B（$0.00003/q）→ Gemma-9B（$0.0001/q）→ Gemini Pro（$0.015/q）
 
 ## 八、面試一句話（Killer Phrase）
 
-> *「Semantic Model Routing 的核心洞察是：不需要額外分類器，因為模型在生成第一個 token 時就已透過 logprobs 告訴你它有多大把握——Shannon 熵就是這個信號，且是零額外計算成本的。我的實作是從 vLLM stream 讀取前 10 個 token 的 logprobs，計算平均熵值，H < 1.5 本地直接完成，H > 2.5 立刻 TCP RST 中斷並升級 Vertex AI Gemini Pro；但在這之前，PII 偵測層必須先執行，含個資的請求強制留在 on-premise，不管熵值多高、模型多不確定，數據絕不出境。這個架構在 75% 本地處理率下，blended cost 降至 $0.00388/query，對比全雲端 $0.015 節省 74%；但本地模型必須 keep-alive 熱機，GPU idle 成本是 TCO 的一部分，break-even 在 3,200 queries/day 以上才划算，這個數字需要在架構決策時明確對齊。」*
+> *「Semantic Model Routing 的核心洞察是：不需要額外分類器，因為模型在生成第一個 token 時就已透過 logprobs 告訴你它有多大把握——Shannon 熵就是這個信號，且是零額外計算成本的。我的實作是從 vLLM stream 讀取前 10 個 token 的 logprobs，計算平均熵值，H < 1.5 本地直接完成，H > 2.5 立刻關閉本地串流（vLLM 斷線即 abort）並升級 Vertex AI Gemini Pro；但在這之前，PII 偵測層必須先執行，含個資的請求強制留在 on-premise，不管熵值多高、模型多不確定，數據絕不出境。這個架構在 75% 本地處理率下，blended cost 降至 $0.003825/query，對比全雲端 $0.015 節省 74%；但本地模型必須 keep-alive 熱機，GPU idle 成本是 TCO 的一部分（計入後 10K query/day 的日成本是 $74 而非 $38，節省約 50%），break-even 在 3,200 queries/day 以上才划算，這個數字需要在架構決策時明確對齊。」*
 
 ## 相關文章與正典版本
 

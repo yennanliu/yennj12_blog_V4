@@ -5,7 +5,7 @@ draft: false
 weight: 13
 description: "深入剖析如何透過 Checkpoint + Compare-And-Swap 保證分佈式 Agent 在 Pod OOM、搶佔或網路分割後，重啟時精確跳過已完成步驟，實現零重複副作用的斷點續傳。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Distributed", "Idempotency", "LangGraph"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "LangGraph"]
 authors: ["yen"]
 readTime: "18 min"
 ---
@@ -184,7 +184,7 @@ idempotency_key 的組成：
 sha256( user_id + ":" + step_id + ":" + version_id )
   └─ user_id：確保不同用戶的同一步驟不衝突
   └─ step_id：確保同一用戶的不同步驟不衝突
-  └─ version_id：確保重試（version++ 後）與原始呼叫不衝突
+  └─ version_id：只在 CAS 成功後遞增——崩潰重試沿用同一 key（去重），完成後的刻意重跑才拿到新 key
 
 範例：
   user_id  = "u-8821"
@@ -192,14 +192,18 @@ sha256( user_id + ":" + step_id + ":" + version_id )
   version_id = 5
   key = sha256("u-8821:step-003:5") = "a3f9c2..."
 
-重試時（版本遞增）：
-  version_id = 6  ← CAS 寫入後 version 變成 6
-  key = sha256("u-8821:step-003:6") = "d71e4b..."  ← 不同 key，新的呼叫
+崩潰後重試（version 未變）：
+  version_id = 5  ← POST-WRITE 的 CAS 尚未成功，快照裡仍是 5
+  key = sha256("u-8821:step-003:5") = "a3f9c2..."  ← 相同 key，下游去重，不會雙重副作用
+
+步驟完成後再被刻意重跑（version 已遞增）：
+  version_id = 6  ← CAS 成功後 version 才變成 6
+  key = sha256("u-8821:step-003:6") = "d71e4b..."  ← 不同 key，是一次新的、語意不同的呼叫
 ```
 
 **為什麼 version_id 要納入 key？**
 
-若只用 `user_id + step_id`，當某個步驟在 pending 狀態下被重跑（例如 POST-WRITE 失敗，系統決定整個步驟重新執行），重跑的呼叫會攜帶與原始呼叫相同的 key，讓下游誤判為重複呼叫而去重 → 實際上是兩次語意不同的呼叫（一次成功、一次因為 POST-WRITE 失敗需要確認）。納入 `version_id` 後，每次嘗試都有唯一 key，下游去重語意精確。
+關鍵在於 `version_id` **只在 POST-WRITE 的 CAS 成功後才遞增**。Pod 在工具已執行、POST-WRITE 尚未完成時崩潰，快照裡的 version 仍是 5，新 Worker 重跑會帶著**相同的** key，下游據此去重——這正是 exactly-once 的來源；重試絕對不能變成一次新的呼叫，否則就是雙重副作用。`version_id` 要處理的是另一種情況：步驟已經 completed（v→6）之後被刻意重跑（人工 replay、補償流程），這在語意上確實是一次新的呼叫，不該被上一次的 key 擋掉。若只用 `user_id + step_id`，這種合法的二次執行會被下游永久去重。
 
 **下游服務不支援 idempotency_key 時的降級策略：**
 
@@ -232,7 +236,7 @@ sha256( user_id + ":" + step_id + ":" + version_id )
 | 總恢復時間（10 步驟 Agent） | < 100ms | 讀快照 + 重播 state |
 | 重複通知率（5 次 retry 後） | 0.03%（示意目標） | 非量測值，需以自己系統驗證 |
 | DLT 積壓 SLO | < 30 分鐘 | 超過即觸發 P1 事件 |
-| Spanner read/write unit 成本 | $0.003 / $0.009 per million ops | 10 萬次/天執行 × 10 步驟 × 2 writes ≈ $0.18/天 |
+| Spanner 計費方式 | 按 node / processing-unit 小時 + 儲存計費，不按操作次數 | 10 萬次/天 × 10 步驟 × 2 writes = 200 萬 writes/天 ≈ 23 writes/s，單一 regional node（$0.90/h × 720 h ≈ $648/月）即可吸收 |
 
 ---
 
@@ -432,7 +436,7 @@ Client ────────────▶│ Pub/Sub Topic                 
 
 - **Part 1（Context Management）**：LangGraph `StateGraph` 的 `state` 物件既是 Context Window 的載體，也是 Checkpoint 的主體。理解 state 的序列化格式（預設 JSON，可換 protobuf 節省 30–60% 空間）直接影響 Spanner 的儲存成本與寫入延遲。State 過大時（> 100KB），Checkpoint 本身會成為寫入瓶頸。
 
-- **fde-interview-guide Part 35–38**（生產工程落地）：Checkpoint 的 write latency（single-region ~10ms，multi-region ~40ms）會疊加到每個 tool call 上，對高頻 Agent（每秒 100+ tool calls）不可忽略。生產環境需將此納入 SLO 延遲預算計算，並考慮 Spanner 的 read/write unit 成本（10 萬次執行/天 × 10 步驟 × 2 writes ≈ 約 $0.18/天）。
+- **fde-interview-guide Part 35–38**（生產工程落地）：Checkpoint 的 write latency（single-region ~10ms，multi-region ~40ms）會疊加到每個 tool call 上，對高頻 Agent（每秒 100+ tool calls）不可忽略。生產環境需將此納入 SLO 延遲預算計算，並考慮 Spanner 的容量規劃：10 萬次執行/天 × 10 步驟 × 2 writes = 200 萬 writes/天（≈ 23 writes/s）；Spanner 按 node / processing-unit 小時與儲存計費而非按操作，這個量級一個 regional node（$0.90/h × 720 h ≈ $648/月）就能吸收。
 
 **快速判斷框架：你需要哪個層次？**
 

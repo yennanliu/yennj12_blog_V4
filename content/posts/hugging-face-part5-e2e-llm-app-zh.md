@@ -5,7 +5,7 @@ draft: false
 weight: 5
 description: "把前四篇串起來：用 bge-m3 + FAISS + reranker + 微調模型，從文件切分、混合檢索、引用生成、FastAPI 服務化到 Gradio 部署與線上評估，一套可直接執行的完整專案程式碼。"
 categories: ["all", "ai", "engineering"]
-tags: ["Hugging Face", "RAG", "LLM", "FAISS", "Gradio", "FastAPI", "vLLM", "Python", "繁體中文"]
+tags: ["Hugging Face", "RAG", "LLM", "FAISS", "Gradio", "FastAPI", "vLLM", "Python"]
 authors: ["yen"]
 readTime: "22 min"
 series: ["hugging-face"]
@@ -302,7 +302,7 @@ def _sliding_split(text: str, max_chars: int, overlap: int) -> list[str]:
     return out
 ```
 
-> **`text` 欄位前綴標題路徑，是一個投入極低、回報極高的技巧。** 一個孤立的片段「必須於七日內提出申請」幾乎無法被檢索到；但加上路徑後變成「退換貨 > 流程 > 期限\n必須於七日內提出申請」，嵌入向量就帶有足夠的語意訊號了。實測命中率提升 8–14 個百分點。
+> **`text` 欄位前綴標題路徑，是一個投入極低、回報極高的技巧。** 一個孤立的片段「必須於七日內提出申請」幾乎無法被檢索到；但加上路徑後變成「退換貨 > 流程 > 期限\n必須於七日內提出申請」，嵌入向量就帶有足夠的語意訊號了。示意估算：命中率約可提升 8–14 個百分點（量級示意，非實測）。
 
 ---
 
@@ -524,7 +524,7 @@ def decide(hits: list[Hit]) -> str:
     return "refuse"
 ```
 
-**這個閘門省下的不只是幻覺，還有錢。** 實測約 11% 的查詢會被閘門攔下，這 11% 完全不需要呼叫 LLM——直接回一句「我在文件中找不到相關資訊，已為您轉接真人客服」，既準確又便宜。
+**這個閘門省下的不只是幻覺，還有錢。** 示意估算：約 11% 的查詢會被閘門攔下（量級示意，非實測），這 11% 完全不需要呼叫 LLM——直接回一句「我在文件中找不到相關資訊，已為您轉接真人客服」，既準確又便宜。
 
 ---
 
@@ -625,7 +625,7 @@ def verify_citations(answer: str, citations: list[dict]) -> tuple[str, list[int]
 
 ### 6.1 這段 prompt 裡每條規則的來由
 
-| 規則 | 沒有它會發生什麼 | 實測影響 |
+| 規則 | 沒有它會發生什麼 | 示意影響（估算，非實測） |
 |------|----------------|---------|
 | 「只根據參考資料」 | 模型用預訓練知識回答，講出過時的退貨政策 | 幻覺率 22% → 9% |
 | 「必須標註來源編號」 | 使用者無法驗證，客服人員不敢用 | 可信度評分 3.1 → 4.4 |

@@ -5,12 +5,14 @@ draft: false
 weight: 1
 description: "深入剖析一個真實 Spring Boot 購物車系統如何從「默認設定」升級到能承受 C10K 的生產級高並發架構：JDK 21 Virtual Threads、HikariCP 連線池調校、Redis 分層快取設計，以及升級到 Spring Boot 3.2 過程中的關鍵踩坑。"
 categories: ["all", "engineering", "architecture"]
-tags: ["Spring Boot", "Java", "High Concurrency", "Redis", "HikariCP", "Virtual Threads", "Backend", "繁體中文"]
+tags: ["Spring Boot", "Java", "High Concurrency", "Redis", "Backend"]
 authors: ["yen"]
 readTime: "17 min"
 ---
 
 ## 前言
+
+> 本文環境：Spring Boot 3.2.5 / JDK 21（Virtual Threads 需 JDK 21；PR #227 的 CI 與 Part 2 的 Docker 映像為 JDK 17，詳見方案一的說明）。
 
 電商系統有一個非常典型的流量特徵：平時風平浪靜，一到促銷活動瞬間湧入幾千上萬個並發請求。
 
@@ -126,6 +128,8 @@ spring.threads.virtual.enabled=true
 
 Spring Boot 會自動把 Tomcat 的執行緒池換成 Virtual Thread executor，**每個請求都跑在自己的虛擬執行緒上**，不再受 Tomcat 執行緒數限制。
 
+一個誠實的註記：這是 **JDK 21 分支**的行為。PR #227 本身只把這個設定放進檔案並標註「ready to uncomment when running on JDK 21」，CI 改跑 JDK 17，第二篇的 Dockerfile 也是 `eclipse-temurin:17-jre`——在 JDK 17 上 Spring Boot 會忽略 `spring.threads.virtual.enabled`，Tomcat 仍然是 200 條平台執行緒，後面「每個請求一個虛擬執行緒」的推論只在映像換成 JDK 21 後才成立。
+
 ### 為什麼購物車系統特別適合 Virtual Threads？
 
 購物車的大多數操作都是 **I/O 密集型**：
@@ -195,7 +199,7 @@ MySQL 有一個硬限制：`max_connections`，預設是 151。超過這個數�
 ```
 
 對一台 8 核的應用伺服器，理論最佳值大約是 17-20。我們設定 50 是因為：
-- 考慮到多個應用實例共用 MySQL（`50 × n_instances < 151`）
+- 考慮到多個應用實例共用 MySQL（`50 × n_instances < 151`，也就是預設的 `max_connections` 下最多 3 個實例，3 × 50 = 150）；注意這是本篇的設計值——第二篇合併的 HA compose 實際改為每個實例 20 條、並把 MySQL 的 `max_connections` 調到 200，所以上限變成 10 個實例，兩個實例只用掉 40 條
 - 購物車的查詢通常很短，連線快速釋放
 - 保留一定緩衝給 DBA 工具和監控系統使用
 
@@ -299,12 +303,14 @@ public User getUser(String token) {
     return null;
 }
 
-// 用戶重新登入時呼叫，必須讓舊 token 的快取失效
+// 用戶重新登入時呼叫（見下方關於 evict key 的說明）
 @CacheEvict(value = RedisConfig.CACHE_TOKENS, key = "#authenticationToken.token")
 public void saveConfirmationToken(AuthenticationToken authenticationToken) {
     repository.save(authenticationToken);
 }
 ```
+
+這裡有一個要坦白的缺口：`saveConfirmationToken` 的 `@CacheEvict` key 是**新** token 的值，而新 token 根本還沒被快取過，所以這個 evict 其實是空操作；真正該失效的**舊** token 並沒有被清掉，會在 Redis 裡繼續有效直到 TTL 到期（最長 15 分鐘）。正確做法是在儲存前先用 user 查出舊 token 並 evict 它，或是把快取 key 改成 user id 並 evict 那個 key——無論哪種，都要在文件裡寫明殘留視窗。
 
 快取後的流程：
 

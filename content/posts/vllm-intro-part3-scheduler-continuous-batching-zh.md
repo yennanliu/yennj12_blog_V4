@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "vLLM 原始碼導讀系列第三篇：拆解連續批次的實作、V1 統一 token 預算排程器如何取代 V0 的雙軌制、Chunked Prefill 在 TTFT 與 ITL 之間的取捨、搶佔與重算機制、投機解碼的接受率數學，以及一份可直接套用的調參手冊。"
 categories: ["all", "ai", "engineering", "architecture"]
-tags: ["vLLM", "Scheduler", "Continuous Batching", "Chunked Prefill", "Speculative Decoding", "LLM", "AI", "繁體中文"]
+tags: ["vLLM", "LLM", "AI"]
 authors: ["yen"]
 readTime: "17 min"
 ---
@@ -419,7 +419,7 @@ E[tokens] = (1 − α^(k+1)) / (1 − α)
 |---|---|---|---|---|---|
 | n-gram（重複性文本） | 0.7 | 3 | ~0 | 2.6 | **2.6×** |
 | n-gram（一般文本） | 0.2 | 3 | ~0 | 1.25 | 1.25× |
-| EAGLE / MTP | 0.75 | 4 | 0.1 | 3.2 | **2.3×** |
+| EAGLE / MTP | 0.75 | 4 | 0.1 | 3.05 | **2.2×** |
 | draft model 1B→70B | 0.6 | 5 | 0.05 | 2.4 | 1.9× |
 | draft model 1B→8B | 0.6 | 5 | 0.3 | 2.4 | **0.96×（虧了）** |
 

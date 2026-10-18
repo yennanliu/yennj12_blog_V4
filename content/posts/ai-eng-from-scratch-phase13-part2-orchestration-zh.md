@@ -5,7 +5,7 @@ draft: false
 weight: 27
 description: "深入解析 AI 工作流程編排：LangChain/LlamaIndex/Haystack 框架比較、DAG 管線設計、有狀態工作流程、錯誤重試與生產監控"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LangChain", "LlamaIndex", "Orchestration", "Pipeline", "Workflow", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "LangChain", "Orchestration", "Pipeline", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "19 min"
 series: ["ai-eng-from-scratch"]
@@ -272,7 +272,7 @@ class RAGWorkflow(Workflow):
 
 **知識圖譜整合**：`KnowledgeGraphIndex` 自動從文件提取實體關係，支援多跳查詢。對「誰是 A 公司 CEO 的前任老闆？」這類問題，準確率可明顯高於純向量搜尋（幅度依資料而定）。
 
-**多模態支援**：ImageIndex 處理圖片，TableIndex 處理結構化資料。混合內容文件（PDF 含表格）的解析品質通常優於通用 Loader（幅度依文件而定）。
+**多模態支援**：`MultiModalVectorStoreIndex` 處理圖片，`PandasQueryEngine` 等結構化查詢引擎處理表格資料。混合內容文件（PDF 含表格）的解析品質通常優於通用 Loader（幅度依文件而定）。
 
 **Sub-Question 引擎**：自動把複雜問題分解成多個子問題，分別查詢後合併答案。對複雜分析型問題的 recall 通常有明顯提升。
 
@@ -453,7 +453,7 @@ class CircuitBreaker:
 ```
 選擇          選 X 的理由                      不選 Y 的理由
 ─────────────────────────────────────────────────────────────────
-LangChain     社群最大（GitHub 90K+ stars）      LlamaIndex：資料連接場景較弱
+LangChain     社群最大（GitHub star 數居同類之冠）      LlamaIndex：資料連接場景較弱
               LCEL 表達式簡潔，串流原生支援       自建：重複造輪子，缺乏 tracing
               LangSmith 整合，可觀測性一流        Haystack：文件較少，社群較小
 

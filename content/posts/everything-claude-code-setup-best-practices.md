@@ -4,13 +4,15 @@ date: 2026-01-24T16:30:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "tools"]
-tags: ["Claude Code", "AI", "Development Tools", "MCP", "Agents", "Automation", "Best Practices", "Productivity", "Testing", "DevOps"]
+tags: ["Claude Code", "AI", "Developer Tools", "MCP", "Agent", "Automation", "Best Practices", "DevOps"]
 summary: "Master the everything-claude-code repository: a comprehensive collection of production-ready agents, skills, hooks, and MCP configurations evolved over 10+ months of intensive use. Learn setup, best practices, and advanced techniques to supercharge your Claude Code workflow."
-description: "Deep dive into the everything-claude-code repository by an Anthropic hackathon winner. Discover how to set up, customize, and leverage production-ready agents, skills, hooks, commands, and MCP configurations for maximum productivity with Claude Code."
+description: "Install and tailor the everything-claude-code agents, skills, hooks and MCP configs, then manage the context window and run its TDD and review workflows."
 readTime: "22 min"
 ---
 
-The [everything-claude-code](https://github.com/affaan-m/everything-claude-code) repository represents one of the most comprehensive and battle-tested collections of Claude Code configurations available today. Created by an Anthropic hackathon winner and evolved over 10+ months of intensive daily use building real products, this repository had earned its 22.3k stars (as of January 2026) by providing production-ready solutions to common development challenges.
+This post describes Claude Code and the repository as documented in 2026-01; both change monthly.
+
+The [everything-claude-code](https://github.com/affaan-m/everything-claude-code) repository (since renamed `affaan-m/ECC`) is one of the most comprehensive collections of Claude Code configurations available. This post describes it as it stood in January 2026; its star count and the author's background are not independently verified here, so they are left out.
 
 This post provides a complete guide to setting up, customizing, and mastering this powerful plugin collection, along with best practices learned from real-world usage.
 
@@ -320,7 +322,7 @@ ls ~/.claude/agents/
 
 **This is the most important lesson from the repository's documentation.**
 
-Claude Code has a 200k token context window, but poor configuration can shrink effective capacity to 70k tokens. The culprit? Too many MCP servers and tools active simultaneously.
+Claude Code's context window was 200k tokens on the models current in January 2026; newer models offer 1M, and the exact size depends on the model you run. Recent versions of Claude Code also defer MCP tool definitions instead of loading every one up front, so the arithmetic below is illustrative — but the principle still holds: too many MCP servers and tools active at once eat into the room you have for code.
 
 ### **The Problem**
 
@@ -338,8 +340,8 @@ Claude Code has a 200k token context window, but poor configuration can shrink e
 └── kubernetes.json      # 35 tools
 
 Total: 169 tools loaded into every conversation!
-Context consumed: ~130k tokens just for tool definitions
-Remaining for code: ~70k tokens
+Context consumed: ~34k tokens just for tool definitions (169 × ~200, illustrative)
+Remaining for code: ~166k tokens of a 200k window
 ```
 
 ### **The Solution: Project-Specific MCP Configurations**
@@ -361,16 +363,16 @@ Remaining for code: ~70k tokens
 }
 
 # Result: ~40 tools total
-# Context consumed: ~30k tokens
-# Remaining for code: ~170k tokens
+# Context consumed: ~8k tokens (40 × ~200, illustrative)
+# Remaining for code: ~192k tokens of a 200k window
 ```
 
 ### **Context Optimization Guidelines**
 
-From the repository's best practices:
+Rules of thumb (the first two are this post's, not quoted from the repository README):
 
-1. **Fewer than 10 MCP servers per project** - More than this significantly degrades performance
-2. **Under 80 total active tools** - Each tool definition consumes ~200 tokens
+1. **Fewer than 10 MCP servers per project** - beyond that, tool definitions start to crowd out code
+2. **Under 80 total active tools** - each tool definition costs on the order of ~200 tokens when loaded (newer Claude Code versions defer MCP tool definitions until they are needed)
 3. **Project-specific configurations** - Different MCP servers for different projects
 4. **Disable unused tools** - Even within enabled MCPs, disable tools you don't need
 5. **Monitor token usage** - Use `/context` to see current consumption
@@ -530,7 +532,9 @@ Create specialized agents for your domain:
 
 **Usage:**
 ```bash
-/agent api-integration-specialist "integrate Stripe payment API"
+# There is no /agent command. Name the subagent in your prompt (or let Claude
+# pick it from its description); /agents lists and edits the ones you have.
+Use the api-integration-specialist subagent to integrate the Stripe payment API
 ```
 
 ### **2. Custom Skills for Your Stack**
@@ -703,7 +707,7 @@ When rules conflict, higher priority wins.
 
 **Problem**: Hooks triggering other hooks creates infinite loops.
 
-**Solution**: Implement circuit breakers:
+**Solution**: Implement circuit breakers. Note that Claude Code hooks are not JavaScript functions and there is no `{ skip: true }` contract: a `command` hook is a shell command that receives the event as JSON on stdin and blocks by exiting with code 2 (or returns a JSON decision on stdout). The script below is pseudo-code for the idea; wire it up as a command hook that exits 2 when the counter trips.
 
 ```javascript
 // scripts/run-tests-with-circuit-breaker.js
@@ -922,13 +926,14 @@ jobs:
 
       - name: Setup Claude Code
         run: |
-          npm install -g @anthropic/claude-code
+          npm install -g @anthropic-ai/claude-code
           # Copy repository agents/skills
           cp -r .claude-config/* ~/.claude/
 
       - name: Run Code Review
         run: |
-          claude code /code-review --pr ${{ github.event.pull_request.number }}
+          # /code-review is a bundled skill; run it headless (or use anthropics/claude-code-action)
+          claude -p "/code-review ${{ github.event.pull_request.number }}"
 
       - name: Post Review Comments
         uses: actions/github-script@v7
@@ -1010,7 +1015,7 @@ The everything-claude-code repository represents the evolution of Claude Code fr
 
 1. **Start Minimal**: Don't enable everything at once. Add components as you identify needs.
 
-2. **Context is King**: Manage your context window carefully. Fewer than 10 MCPs per project, under 80 total tools.
+2. **Context is King**: Manage your context window carefully. As a rule of thumb, fewer than 10 MCPs per project and under 80 total tools.
 
 3. **Customize Relentlessly**: The provided agents and skills are starting points. Adapt them to your stack, team, and domain.
 
@@ -1034,7 +1039,7 @@ The repository is MIT licensed and actively maintained. Whether you're a solo de
 Start with what resonates. Modify for your stack. Remove what you don't use. Add your own patterns. The goal isn't to use every feature—it's to use the right features for your context.
 
 **Repository**: [github.com/affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code)
-**Stars**: 22.3k | **Forks**: 2.7k | **License**: MIT
+**License**: MIT (star and fork counts change daily; see the repository, since renamed `affaan-m/ECC`)
 
 ---
 

@@ -5,21 +5,22 @@ draft: false
 weight: 6
 authors: ["yen"]
 categories: ["all", "engineering", "architecture", "infrastructure"]
-tags: ["Kubernetes", "K8S", "Autoscaling", "StatefulSet", "Multi-Cluster", "Cost Optimization", "Spot Instances", "FinOps", "Advanced Patterns", "Batch Jobs", "DevOps"]
-summary: "Part 6 of the Kubernetes Autoscaling series: Advanced autoscaling patterns for stateful applications, multi-cluster deployments, cost optimization strategies, batch job scaling, and emerging technologies. Real-world architectures and production-grade implementations."
-description: "Part 6 of the Kubernetes Autoscaling series: Advanced autoscaling patterns for stateful applications, multi-cluster deployments, cost optimization strategies, batch job scaling, and emerging technologies. Real-world architectures and production-grade implementations."
+tags: ["Kubernetes", "Autoscaling", "Cost Optimization", "FinOps", "DevOps"]
+description: "Autoscale the hard cases: StatefulSets with persistent volumes, multi-cluster and multi-region, Spot-based cost cutting and queue-driven batch jobs."
 readTime: "33 min"
 ---
+
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
 
 ## Series Overview
 
 This is **Part 6** of the Kubernetes Autoscaling Complete Guide series:
 
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Application-level autoscaling theory
-- **[Part 2: Cluster Autoscaling & Cloud Providers](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Infrastructure-level autoscaling
-- **[Part 3: Hands-On HPA Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)** - Practical implementation
-- **[Part 4: Monitoring, Alerting & Threshold Tuning](./kubernetes-autoscaling-complete-guide-part4-monitoring-alerting.md)** - Production observability
-- **[Part 5: VPA & Resource Optimization](./kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization.md)** - Right-sizing strategies
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Application-level autoscaling theory
+- **[Part 2: Cluster Autoscaling & Cloud Providers](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Infrastructure-level autoscaling
+- **[Part 3: Hands-On HPA Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)** - Practical implementation
+- **[Part 4: Monitoring, Alerting & Threshold Tuning](/posts/kubernetes-autoscaling-complete-guide-part4-monitoring-alerting/)** - Production observability
+- **[Part 5: VPA & Resource Optimization](/posts/kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization/)** - Right-sizing strategies
 - **Part 6 (This Post)**: Advanced Autoscaling Patterns - Stateful apps, multi-cluster, cost optimization
 
 ---
@@ -60,7 +61,7 @@ Traditional HPA with StatefulSets:
 
 **Scenario:** PostgreSQL cluster with read replicas that scale based on read query load.
 
-> **Warning:** An HPA changing `replicas` on a database StatefulSet does not configure replication, rebalance data or promote/demote anything. Each new pod must bootstrap itself as a streaming replica (e.g. via an operator such as CloudNativePG, Zalando postgres-operator or Crunchy PGO), and a scale-down can delete a replica that clients are still reading from. Only scale **read replicas** this way, only behind an operator that handles replica bootstrap, and never let an HPA touch the primary.
+> **Warning:** An HPA changing `replicas` on a database StatefulSet does not configure replication, rebalance data or promote/demote anything. Also note that the second metric in the HPA below, `pg_replication_lag_seconds`, is the wrong scaling signal: adding replicas does not reduce lag — it adds WAL senders to the primary. Scale read replicas on connections or CPU only; alert on lag separately. Each new pod must bootstrap itself as a streaming replica (e.g. via an operator such as CloudNativePG, Zalando postgres-operator or Crunchy PGO), and a scale-down can delete a replica that clients are still reading from. Only scale **read replicas** this way, only behind an operator that handles replica bootstrap, and never let an HPA touch the primary.
 
 ```yaml
 # PostgreSQL StatefulSet
@@ -307,6 +308,8 @@ spec:
 
 ### Pattern 1B: Redis Cache Cluster Autoscaling
 
+> **Warning:** the same caveat applies here. An HPA on a Redis Cluster StatefulSet adds pods that own no hash slots and removes pods without migrating theirs — nothing below reshards (`CLUSTER ADDSLOTS` / rebalance). Use an operator that handles resharding, or Sentinel-style replicas for read scaling; treat the YAML as an illustration of the metrics wiring only.
+
 ```yaml
 # Redis Cluster with dynamic scaling
 apiVersion: apps/v1
@@ -528,6 +531,8 @@ spec:
 ```
 
 ### Pattern 2A: Federated HPA with Cluster API
+
+> **Note:** the KubeFed resource below is illustrative — KubeFed is archived, and its placement API used `ReplicaSchedulingPreference` rather than per-cluster `weight` fields. Treat it as a sketch of the intent, not a manifest to apply.
 
 ```yaml
 # Install Cluster API
@@ -979,6 +984,8 @@ data:
 ## Pattern 3: Aggressive Cost Optimization
 
 ### Spot Instance Strategy with Multiple Fallbacks
+
+> **Caveat:** the Deployment at the end of this block tolerates `karpenter.sh/disruption`. Do **not** add that toleration — it is the pre-v1 name of the taint Karpenter uses to drain nodes (`karpenter.sh/disrupted` in v1), and tolerating it keeps your pods on nodes that are being removed, which is exactly what Part 2 warns against. Spot interruptions are handled by Karpenter's interruption queue, not by a toleration.
 
 ```yaml
 # Karpenter NodePool with spot + on-demand mix
@@ -2039,18 +2046,18 @@ spec:
 
 1. **Stateful Scaling**: Requires careful planning, slower policies, and split read/write architectures
 2. **Multi-Cluster**: Centralized metrics and intelligent distribution critical for success
-3. **Cost Optimization**: Spot instances + right-sizing + consolidation = 60-80% savings
+3. **Cost Optimization**: Spot instances + right-sizing + consolidation — commonly cited 60-80% savings (unsourced; depends on your on-demand baseline)
 4. **Batch Processing**: Queue-based autoscaling with KEDA scales jobs efficiently
 5. **Future**: ML-based prediction, serverless K8s, and service mesh integration emerging
 
 ## Related Topics
 
 ### Autoscaling Series
-- **[Part 1: HPA Fundamentals](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)**
-- **[Part 2: Cluster Autoscaling](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)**
-- **[Part 3: Hands-On Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)**
-- **[Part 4: Monitoring & Alerting](./kubernetes-autoscaling-complete-guide-part4-monitoring-alerting.md)**
-- **[Part 5: VPA & Resource Optimization](./kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization.md)**
+- **[Part 1: HPA Fundamentals](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)**
+- **[Part 2: Cluster Autoscaling](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)**
+- **[Part 3: Hands-On Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)**
+- **[Part 4: Monitoring & Alerting](/posts/kubernetes-autoscaling-complete-guide-part4-monitoring-alerting/)**
+- **[Part 5: VPA & Resource Optimization](/posts/kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization/)**
 
 ## Conclusion
 
@@ -2058,7 +2065,7 @@ Advanced autoscaling patterns unlock significant value:
 
 - **Stateful applications** can scale safely with proper planning
 - **Multi-cluster deployments** enable global scale and resilience
-- **Cost optimization** delivers 60-80% infrastructure savings
+- **Cost optimization** can deliver large (commonly cited 60-80%, unsourced) infrastructure savings
 - **Batch processing** scales efficiently with queue-based triggers
 - **Emerging technologies** push boundaries of what's possible
 

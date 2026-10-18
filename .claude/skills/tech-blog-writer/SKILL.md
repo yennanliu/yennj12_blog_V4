@@ -25,6 +25,13 @@ the post will be too.
 3. **Tension** — the reason this is not obvious: a tradeoff, a common mistake, a scale cliff.
 4. **Takeaway** — the decision or skill the reader leaves with.
 
+**Model the post on the site's best.** Before drafting, skim one of these and match its shape:
+`ollama-on-mac-part2-*` (tutorial with decision tables and real flip conditions),
+`vllm-intro-part3-*` (source-reading series that derives its numbers in front of the reader),
+`qm-multiplayer-agent-part1-*` (project showcase with a thesis and commit-pinned facts),
+`ai-system-on-native-aws-part4-*` (architecture post whose cost argument builds section by section),
+`mkdocs-site-size-deploy-perf-tuning-zh` (short post with a dated PR and recomputable percentages).
+
 Then check the repo: `ls content/posts/ | grep <topic>` for existing posts to link to or avoid
 duplicating, and — for a series part — open the two previous parts to match voice, depth and
 series navigation.

@@ -29,7 +29,7 @@ series: ["ai-eng-from-scratch"]
 Agent 的失敗模式完全不同，它是「狀態機式」的：每一步的輸出決定下一步走哪條路。
 
 **問題一：非確定性執行路徑。**
-同一個輸入，Agent 可能走 3 步或 15 步。一個客服 Agent 回答「退貨政策」應該 2 步搞定，但如果 LLM 判斷需要查訂單狀態再查庫存再查物流，就變成 12 步、花了 $0.08 而非 $0.01。乘以每天 5,000 個請求，這個差距是 $350 vs $50，每月差 $9,000。
+同一個輸入，Agent 可能走 3 步或 15 步。一個客服 Agent 回答「退貨政策」應該 2 步搞定，但如果 LLM 判斷需要查訂單狀態再查庫存再查物流，就變成 12 步、花了 $0.08 而非 $0.01。乘以每天 5,000 個請求，這個差距是 $400 vs $50（5,000 × $0.08 vs 5,000 × $0.01），每月差 $10,500。
 
 **問題二：無限迴圈風險。**
 Agent 的 ReAct 迴圈沒有硬性上限時，一個錯誤的工具呼叫結果可能讓 Agent 不斷重試同一個動作。真實案例：一個資料分析 Agent 因為 SQL 工具回傳空結果，誤判為「需要更多查詢」，觸發 87 次 LLM 呼叫，花費 $23 才被手動停止。
@@ -44,7 +44,7 @@ Agent 的 ReAct 迴圈沒有硬性上限時，一個錯誤的工具呼叫結果�
 傳統 LLM 的最壞情況是輸出有害文字。Agent 能呼叫工具、讀寫資料庫、發 Email、執行程式碼、呼叫付款 API。Prompt Injection 攻擊的後果從「LLM 說壞話」變成「Agent 刪資料庫」或「Agent 以公司名義傳送釣魚郵件」。
 
 **問題六：版本管理困難。**
-LLM 的輸出行為可能因模型版本更新而改變，即使你沒有改任何程式碼。GPT-4o 2024-11 版本和 2025-05 版本在工具選擇上的行為差異高達 15%。你的 Agent 需要有辦法在不重新部署的情況下固定模型版本，並且追蹤模型版本更新後的行為漂移。
+LLM 的輸出行為可能因模型版本更新而改變，即使你沒有改任何程式碼。例如 GPT-4o 的 `2024-08-06` 與 `2024-11-20` 快照在工具選擇上的行為就不完全相同，差異幅度要在你自己的評估集上量測。你的 Agent 需要有辦法在不重新部署的情況下固定模型版本，並且追蹤模型版本更新後的行為漂移。
 
 這六個問題加在一起，讓 Agent 生產化的工程難度遠超一般 ML serving。
 
@@ -215,7 +215,7 @@ LLM 的輸出行為可能因模型版本更新而改變，即使你沒有改任�
             ├── Step 1：LLM Think
             │       span_id: s1，duration: 850ms
             │       input_tokens: 1,200，output_tokens: 180
-            │       cost: $0.0072
+            │       cost: $0.0087
             │       └── Tool Call: search_docs
             │               span_id: s1t1，duration: 120ms
             │               tool_input: {"query": "退貨政策"}
@@ -224,7 +224,7 @@ LLM 的輸出行為可能因模型版本更新而改變，即使你沒有改任�
             ├── Step 2：LLM Think
             │       span_id: s2，duration: 920ms
             │       input_tokens: 1,580，output_tokens: 95
-            │       cost: $0.0094
+            │       cost: $0.0093
             │       └── Tool Call: query_db
             │               span_id: s2t1，duration: 45ms
             │               tool_input: {"user_id": 42, "type": "orders"}
@@ -233,17 +233,19 @@ LLM 的輸出行為可能因模型版本更新而改變，即使你沒有改任�
             └── Step 3：LLM Think（Final Answer）
                     span_id: s3，duration: 780ms
                     input_tokens: 1,820，output_tokens: 310
-                    cost: $0.0109
+                    cost: $0.0138
                     └── Final Answer（no tool call）
 
         Trace Summary：
             total_steps: 3
             total_input_tokens: 4,600
             total_output_tokens: 585
-            total_cost: $0.0275
+            total_cost: $0.0318
             total_duration: 2,715ms
             completion_status: success
 ```
+
+（費用以 GPT-4o 推出時的 $5/1M input、$15/1M output 計，例如 Step 1 = 1,200 × $5/1M + 180 × $15/1M = $0.0087；2024-08 之後的快照為 $2.5/$10，數字約減半。）
 
 ### 每個 Span 必帶的欄位
 
@@ -259,8 +261,8 @@ LLM 的輸出行為可能因模型版本更新而改變，即使你沒有改任�
 | `tool_input_hash` | `sha256:abc` | 工具輸入的 hash（原文脫敏） |
 | `llm_decision_type` | `tool_call` / `final_answer` | LLM 本步驟的決策類型 |
 | `duration_ms` | `965` | 本步驟總耗時（含工具執行） |
-| `cost_usd` | `0.0094` | 本步驟 LLM 費用 |
-| `model_id` | `gpt-4o-2025-05` | 使用的模型版本（追蹤行為漂移） |
+| `cost_usd` | `0.0093` | 本步驟 LLM 費用 |
+| `model_id` | `gpt-4o-2024-11-20` | 使用的模型版本（追蹤行為漂移） |
 | `user_tier` | `pro` | 用戶層級（成本歸因） |
 
 ### Trace 推送架構
@@ -398,7 +400,7 @@ if new_total > user_daily_limit:
 | p95 | 22,000ms | 8–12 個 LLM 呼叫 + 慢速工具 |
 | p99 | 45,000ms | 複雜任務或工具重試 |
 
-如果用同步 HTTP 處理，10 個並發請求就有 10 個 thread 被阻塞 6–45 秒。FastAPI 預設 worker=4，4 個請求就會讓後續的請求卡住。
+如果用同步 HTTP 處理，10 個並發請求就有 10 個 thread 被阻塞 6–45 秒。uvicorn 預設只有 1 個 worker，即使開到 4 個，4 個長請求也會讓後續的請求卡住。
 
 ### Worker Pool 架構
 
@@ -449,7 +451,7 @@ if new_total > user_daily_limit:
 
 | 用戶類型 | 桶容量 | 填充速率 | 效果 |
 |---------|-------|---------|------|
-| 免費用戶 | 5 tokens | 0.5 token/秒 | 最多 10 req/分鐘，偶爾爆量 5 個 |
+| 免費用戶 | 5 tokens | 1 token/6 秒（≈ 0.17/秒）| 最多 10 req/分鐘，偶爾爆量 5 個 |
 | Pro 用戶 | 20 tokens | 2 token/秒 | 最多 120 req/分鐘 |
 | 企業 API | 100 tokens | 10 token/秒 | 最多 600 req/分鐘 |
 
@@ -478,6 +480,8 @@ Agent 的安全防護必須是「縱深防禦」，而非單點保護。
 | 毒性內容 | Detoxify 分類器，閾值 0.7 | 94% | 拒絕 + 用戶警告 |
 | 長度上限 | `len(input) > 10,000 chars` | 100% | 截斷到前 10,000 字 |
 | 注入特殊字元 | Unicode 控制字元、ANSI escape | 100% | 清理 |
+
+> 準確率欄為示意估算，非實測；regex 類規則的召回率尤其依賴規則集，上線前用自己的紅隊樣本量測。
 
 **Layer 2：輸出驗證（Output Guardrails）**
 

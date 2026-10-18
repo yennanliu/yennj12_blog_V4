@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "vLLM 原始碼導讀系列第二篇：拆解 PagedAttention 的分頁機制與 kernel 記憶體佈局、Copy-on-Write 共享、自動前綴快取的 hash 鏈與 LRU 淘汰、KV cache 量化與多層卸載，以及一份能讓你算出併發上限的記憶體規劃手冊。"
 categories: ["all", "ai", "engineering"]
-tags: ["vLLM", "PagedAttention", "KV Cache", "LLM", "AI", "GPU", "Prefix Caching", "繁體中文"]
+tags: ["vLLM", "PagedAttention", "KV Cache", "LLM", "AI", "GPU"]
 authors: ["yen"]
 readTime: "17 min"
 ---
@@ -489,7 +489,7 @@ vllm serve <model> --kv-cache-dtype fp8
 
 代價與注意事項：
 
-1. **品質**：FP8 E4M3 有 3 個尾數位。對大多數生成任務影響落在噪聲範圍內；但對「從 100K context 中精確找出某個數字」這類 needle-in-haystack 任務，實測會有可量測的退化。**上線前用你自己的評測集比一次**，不要憑感覺。
+1. **品質**：FP8 E4M3 有 3 個尾數位。對大多數生成任務影響落在噪聲範圍內；但對「從 100K context 中精確找出某個數字」這類 needle-in-haystack 任務，可能出現可量測的退化（幅度依模型與任務而定，示意）。**上線前用你自己的評測集比一次**，不要憑感覺。
 2. **硬體**：FP8 KV 需要 Ada（L40S/4090）或 Hopper（H100/H200）以上；Ampere（A100）沒有原生 FP8，走軟體轉換會賠掉部分收益。
 3. **前綴快取相容**：兩者可以同時開。
 4. **kernel 支援**：不是所有 attention backend 都支援 FP8 KV，啟動時注意有沒有 fallback 警告。

@@ -5,7 +5,7 @@ draft: false
 weight: 1
 description: "從零認識 Hugging Face：Hub、Transformers、Datasets、Spaces 五大支柱的關係，帳號與 Token 設定、CLI 安裝、快取機制，以及三行程式碼跑起第一個模型。含完整可執行範例。"
 categories: ["all", "ai", "engineering"]
-tags: ["Hugging Face", "Transformers", "LLM", "AI", "MLOps", "Python", "繁體中文"]
+tags: ["Hugging Face", "Transformers", "LLM", "AI", "MLOps", "Python"]
 authors: ["yen"]
 readTime: "22 min"
 series: ["hugging-face"]

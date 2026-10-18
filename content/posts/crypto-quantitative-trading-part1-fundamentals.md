@@ -5,15 +5,17 @@ draft: false
 weight: 1
 authors: ["yen"]
 categories: ["all", "engineering", "finance"]
-tags: ["Cryptocurrency", "Bitcoin", "Ethereum", "Quantitative Trading", "Python", "Data Analysis", "Trading Algorithms", "Technical Analysis", "Financial Engineering"]
+tags: ["Cryptocurrency", "Bitcoin", "Ethereum", "Python", "Technical Analysis"]
 summary: "Master the fundamentals of cryptocurrency quantitative trading. Learn essential concepts, data collection methods, technical indicators, and build your first crypto trading analysis pipeline with Python. Complete with practical examples for Bitcoin and Ethereum."
-description: "Comprehensive guide to crypto quantitative trading fundamentals. Explore market microstructure, data sources, technical indicators, and statistical analysis. Build production-ready data pipelines for Bitcoin and Ethereum with Python, pandas, and ccxt."
+description: "Start crypto quant trading on solid ground: market microstructure, exchange data sources, technical indicators and statistical tests in a Python pipeline."
 readTime: "25 min"
 ---
 
-Cryptocurrency markets operate 24/7/365, generating massive amounts of data with unprecedented volatility and liquidity dynamics. Unlike traditional markets, crypto provides perfect conditions for quantitative trading: programmatic access, no market hours restrictions, and rich historical data. This three-part series will guide you from fundamental concepts to production-ready quantitative trading systems.
+Cryptocurrency markets operate 24/7/365, generating massive amounts of data with unprecedented volatility and liquidity dynamics. Unlike traditional markets, crypto provides perfect conditions for quantitative trading: programmatic access, no market hours restrictions, and rich historical data. This three-part series walks from fundamental concepts to a complete, deliberately simplified quantitative trading workflow. The code is a teaching demo: no backtest or live-trading result is reported anywhere in the series, so treat every strategy in it as untested until you have run it on your own data.
 
 In Part 1, we'll establish the foundational knowledge and tools you need to begin quantitative analysis of cryptocurrency markets.
+
+> ⚠️ **Disclaimer**: Educational analysis only — not investment advice. The code in this series is a teaching demo: it has not been run against live markets, no backtest or live result is reported, and nothing here is a recommendation to buy, sell or trade any asset. Trading cryptocurrencies can lose all of your capital. Do your own research and consult a licensed professional before risking money.
 
 ## What is Quantitative Trading in Crypto?
 

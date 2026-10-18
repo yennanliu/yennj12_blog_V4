@@ -5,9 +5,9 @@ draft: false
 weight: 17
 description: "以系統設計視角拆解 MCP（Model Context Protocol）的安全邊界：Agent 的工具授權架構、Human-in-the-loop OAuth 流程、Tool Input Validation 防禦層，以及如何防止 Tool Injection 攻擊"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "MCP", "OAuth", "Tool Calling", "Security", "System Design", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Agent", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "17 min"
+readTime: "9 min"
 ---
 
 > MCP 不只是「讓 Agent 能呼叫更多工具」。  
@@ -190,7 +190,7 @@ Token 生命週期管理架構：
 
   設計原則：
   ├── Refresh Token 用加密方式存在 Secret Manager
-  ├── Access Token 只存在記憶體（不寫磁碟）
+  ├── Access Token 只放記憶體或加密的 Redis（TTL ≤ token 壽命），不落磁碟
   └── 每次 Token Refresh 都寫入 Audit Log
 ```
 
@@ -273,25 +273,23 @@ FDE 推薦：
 ```
 GCP 組件對應：
 
-  OAuth Token 存儲    → Secret Manager（加密，有版本管理）
+  Refresh Token 存儲  → Secret Manager（加密，有版本管理）
   MCP Server 部署     → Cloud Run（無伺服器，自動擴展）
   Input Validation    → 在 Cloud Run 的 Middleware 實作
   Audit Logging       → Cloud Logging + Cloud Audit Logs
   Rate Limiting       → Apigee API Gateway（有內建 quota 管理）
-  Token 快取          → Memorystore Redis（避免頻繁查詢 Secret Manager）
+  Access Token 快取   → Memorystore Redis（TTL ≤ token 壽命、傳輸與靜態加密，避免頻繁查詢 Secret Manager）
 ```
 
 ---
 
-## 八、面試答題要點
+## 八、答題骨架
 
-> *「這個問題有三個層次：*
->
-> *第一，User Impersonation（身分代入）：Agent 必須以真實用戶身分而非系統帳號呼叫企業 API。我的設計是 HITL OAuth 流程——當 Agent 第一次需要呼叫需要授權的工具時，進入 Interrupt 狀態，觸發 OAuth 授權請求，用戶確認後 Token 注入 Tool Execution Context，Agent 才繼續執行。Token 使用 Refresh Token 機制透明更新，過期時自動換取新 Token。*
->
-> *第二，Tool Injection 防禦：LLM 產生的 JSON 參數絕對不能直接傳給企業 API。MCP Server 中間層要做三層驗證：Schema 驗證（格式是否合法）、Business Logic 驗證（業務規則，例如金額上限、郵件域名白名單）、異常偵測（呼叫頻率是否正常）。*
->
-> *第三，最小權限：每次 OAuth 請求只申請完成當前任務所需的最小 Scope，Token 只存在記憶體，不寫磁碟，所有操作完整 Audit Log。」*
+- 先用 §一 的三個授權挑戰框定問題：身分代入、最小權限、Token 生命週期。
+- 身分授權走 §三 的架構圖與 §四 的 HITL OAuth 流程，再補 §四「Token 過期的處理」。
+- Tool Injection 防禦直接講 §五 的三層 Input Validation，強調全部落在 MCP Server 的 middleware。
+- 被問為什麼不用服務帳號或預先取 Token 時，用 §六 的方案比較表與 §四 的 HITL 理由回答。
+- 收尾用 §七 的 GCP 組件對應，把每一層落到具體服務。
 
 ---
 

@@ -4,8 +4,7 @@ date: 2026-03-13T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai"]
-tags: ["LLM", "Post-training", "Fine-tuning", "Qwen", "Hugging Face", "RLHF", "LoRA", "PEFT", "Open Source", "AI", "Machine Learning", "MLOps"]
-summary: "全面介紹開源 LLM 的 Post-Training 方法，包含 SFT、RLHF、DPO、ORPO、持續預訓練等技術，以 Qwen 為範例，深入分析各方法的優缺點、所需資源與適用場景，幫助你選擇最合適的訓練策略。"
+tags: ["LLM", "Fine-tuning", "Hugging Face", "LoRA", "Open Source", "AI", "ML", "MLOps"]
 description: "全面介紹開源 LLM 的 Post-Training 方法，包含 SFT、RLHF、DPO、ORPO、持續預訓練等技術，以 Qwen 為範例，深入分析各方法的優缺點、所需資源與適用場景，幫助你選擇最合適的訓練策略。"
 readTime: "17 min"
 ---
@@ -117,9 +116,9 @@ lora_config = LoraConfig(
 
 model = get_peft_model(model, lora_config)
 model.print_trainable_parameters()
-# trainable params: 83,886,080 || all params: 7,615,832,064
-# trainable%: 1.10%  ← 只需訓練 1% 的參數！
 ```
+
+以 Qwen2.5-7B（28 層、hidden 3584、intermediate 18944、KV 維度 512）、r=16 套在全部七個投影矩陣上實算：每層 2 × 16 × (3584+3584) + 2 × 16 × (3584+512) + 3 × 16 × (3584+18944) = 1,441,792，乘 28 層 ≈ **4,037 萬個可訓練參數，約佔 7.6B 的 0.53%**——只需訓練不到 1% 的參數。
 
 ### 優缺點分析
 
@@ -346,6 +345,10 @@ orpo_trainer.train()
 | **適用場景** | GPU 資源有限；快速實驗偏好對齊 |
 | **硬體需求** | 比 DPO 省 30~40% VRAM |
 
+### 補充：GRPO 與 RLVR——2025 年後推理模型的主流作法
+
+上面的 RLHF／DPO／ORPO 都是「偏好對齊」：訊號來自人類或獎勵模型對兩個回答的比較。DeepSeek-R1 之後，推理類模型的後訓練主流改成 **GRPO（Group Relative Policy Optimization）** 搭配 **RLVR（Reinforcement Learning with Verifiable Rewards）**：對同一題採樣一組（例如 8 個）回答，用**可驗證的規則**打分——數學答案對不對、程式碼有沒有通過測試、輸出格式是否合規——再以組內的相對優勢（每個回答的分數減組平均、除以組標準差）更新策略。它不需要訓練獎勵模型、不需要價值網路（記憶體比 PPO 省一半以上），而且獎勵不會被模型「騙」，因為是程式算出來的。代價是只適用於答案可自動驗證的任務；開放式寫作仍要回到 DPO 這類偏好方法。TRL 的 `GRPOTrainer` 已可直接用，獎勵函數是普通的 Python 函式，多個獎勵的權重放在 `GRPOConfig(reward_weights=[...])` 上。可執行的範例與訓練健康指標（`rewards/accuracies`、`rewards/margins`）請看 [Hugging Face 實戰（四）：後訓練 — 從 SFT 到 DPO、ORPO 與 GRPO](/posts/hugging-face-part4-post-training-zh/)。
+
 ---
 
 ## 方法五：持續預訓練（Continued Pre-Training / Domain Adaptive Pre-Training）
@@ -428,7 +431,7 @@ trainer.train()
 # 使用 mergekit 進行模型合併
 # pip install mergekit
 
-# mergekit YAML 設定（SLERP 方法）
+# mergekit YAML 設定
 merge_config = """
 models:
   - model: Qwen/Qwen2.5-7B-Instruct

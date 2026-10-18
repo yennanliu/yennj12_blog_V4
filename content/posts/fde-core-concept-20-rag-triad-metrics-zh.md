@@ -20,7 +20,7 @@ readTime: "11 min"
 
 - **你能否把「LLM 答得好不好」拆解成可量化的子問題。** 弱答案：「我們用 ROUGE 或 BLEU 評估。」——這是序列生成指標，對 RAG 完全不適用，暴露了對 RAG 工作流程的根本誤解。
 - **你是否理解幻覺的成因與偵測手段。** 弱答案：「幻覺是 LLM 的問題，換模型就好。」——強答案會指出 Groundedness（忠實度）是反幻覺的核心指標，並說明如何用 NLI 模型逐句驗證。
-- **你能否把評估指標接進可觀測性管道（OTel → Prometheus → Grafana），讓它在生產中持續追蹤而非一次性評測。** 弱答案只談離線評測；強答案談 span attributes、rolling average dashboard、以及 alert threshold。
+- **你能否把評估指標接進可觀測性管道（OTel → Prometheus → Grafana），讓它在生產中持續追蹤而非一次性評測。** 弱答案只談離線評測；強答案談 OTel metrics（histogram）加 span attributes、rolling average dashboard、以及 alert threshold。
 
 ---
 
@@ -56,15 +56,15 @@ RAG Triad 由 TruEra（現為 Snowflake 旗下）提出，對應 RAG pipeline �
 
 **定義**：檢索到的 chunks 中，真正與查詢相關的比例。
 
-**計算方式**：
+**計算方式**（TruLens / RAGAS 的定義）：
 
 ```
-score = mean( cosine_sim(embed(query), embed(chunk_i)) )
+score = mean( judge_relevance(query, chunk_i) )   # LLM judge 逐 chunk 給 0–1 分
         for i in retrieved_chunks
 ```
 
-- 使用與索引相同的 embedding model（如 `text-embedding-004`，768 維）
-- 門檻值：**> 0.75** 為可接受；< 0.65 代表 retrieval 嚴重失準
+- TruLens 與 RAGAS 都用 LLM 逐 chunk 判斷「這段內容對回答 query 有沒有用」再取平均（RAGAS 的 `context_precision` 另外考慮排序）
+- 便宜的代理指標是 `mean(cosine_sim(embed(query), embed(chunk_i)))`，但原始 cosine 的數值範圍是 embedding model 專屬的（同一組文本在不同模型下可能落在 0.6–0.8 或 0.2–0.5），**門檻必須用自家 golden set 逐模型校準**，沒有通用的 0.75；下方示意圖的門檻即為校準後的值
 - 若使用 hybrid search，對向量分數與 BM25 分數做加權平均後再閾值過濾
 
 **低分症狀**：答案答非所問、LLM 被迫「自由發揮」補足缺失的背景知識。
@@ -73,10 +73,10 @@ score = mean( cosine_sim(embed(query), embed(chunk_i)) )
 Query Embedding (768-dim)
 [0.12, -0.34, 0.87, ...]
          │
-         │ cosine similarity
+         │ relevance（LLM judge，或校準後的 cosine 代理）
          ▼
 Chunk 1: sim = 0.82  ✓ 相關
-Chunk 2: sim = 0.61  ✗ 不相關（低於 0.75 門檻）
+Chunk 2: sim = 0.61  ✗ 不相關（低於校準後門檻 0.75）
 Chunk 3: sim = 0.79  ✓ 相關
          │
          ▼
@@ -116,7 +116,7 @@ Output JSON: {"claims": [{"claim": "...", "support": "..." | "[UNSUPPORTED]"}]}
 
 Groundedness Score = 1 - (UNSUPPORTED claims / total claims)
 
-**為什麼 Groundedness 是反幻覺的核心指標**：LLM 幻覺分兩類——「憑空捏造」與「錯誤外推」。兩者都會讓 NLI 判定為 NEUTRAL 或 CONTRADICT，因此 Groundedness < 0.80 直接等同於幻覺率 > 20%，在醫療、法律、金融場景不可接受。
+**為什麼 Groundedness 是反幻覺的核心指標**：LLM 幻覺分兩類——「憑空捏造」與「錯誤外推」。兩者都會讓 NLI 判定為 NEUTRAL 或 CONTRADICT，因此 Groundedness < 0.80 代表至少 20% 的宣稱在 context 裡找不到支撐——其中一部分是幻覺、一部分只是 context 沒涵蓋（NEUTRAL），但在醫療、法律、金融場景兩者都不可接受。
 
 ### 指標 3：Answer Relevance（答案相關度）
 
@@ -173,7 +173,7 @@ Answer → 生成問題 →  Q1: "Pod 失敗後如何自動重啟？"     sim=0.
 
 **實作**：
 - 使用 `trulens-eval`（開源）或 `ragas` 套件，直接計算三個指標
-- 以 cosine similarity 計算 Context Relevance 與 Answer Relevance
+- 以 cosine similarity 作為 Context Relevance 與 Answer Relevance 的廉價代理（門檻用 golden set 校準）
 - Groundedness 使用 LLM Judge（呼叫同一個 LLM，額外成本約 $0.002/query）
 - 每次 model 版本更新時跑一次評測，結果存入 CSV
 
@@ -222,6 +222,8 @@ with tracer.start_as_current_span("rag_request") as span:
     span.set_attribute("rag.intent_class",      classify_intent(query))
     span.set_attribute("rag.model_version",     MODEL_VERSION)
 ```
+
+注意：span attributes 只會進 trace 後端（Cloud Trace / Jaeger），**不會**自動變成 Prometheus 時間序列。要讓下面的 `avg_over_time(rag_groundedness[1h])` 有資料，必須另外用 OTel Metrics API 記錄一個 `Histogram`（例如 `rag.groundedness`）並透過 Collector 的 Prometheus exporter 匯出，或在 Collector 加 `spanmetrics` connector 從 span attributes 產生指標；span attributes 留作單筆 trace 的 drill-down。
 
 **Alert 設定（Prometheus AlertManager）**：
 
@@ -289,7 +291,7 @@ groups:
 - **Regression gate**：CI/CD 管道中，新 prompt template 或 embedding model 上線前須跑 golden dataset 評測，三個指標均不得下降超過 2%
 - **Intent-based breakdown**：不同 intent class（如「技術查詢」vs「政策查詢」）的 Groundedness 差異可達 0.15，混合平均會遮蔽問題
 
-**成本估算**：每百萬請求約 $15–40（LLM Judge API） + Prometheus 儲存 $5/月。複雜度：高，需要專責 infra 工程師維護 OTel pipeline。
+**成本估算**：LLM Judge 以 Layer 1 的 $0.002/query 計，每百萬請求全量評估約 $2,000；若只對 5% 流量抽樣評估則約 $100，另加 NLI 模型推論與 Prometheus 儲存 $5/月。複雜度：高，需要專責 infra 工程師維護 OTel pipeline。
 
 ---
 
@@ -303,22 +305,22 @@ groups:
 | 以全域平均掩蓋 intent 差異 | 「技術查詢」Groundedness 0.91 + 「法規查詢」0.67 → 平均 0.79，看似安全但法規場景已嚴重幻覺 | 按 intent_class 分群監控，各群獨立設 alert threshold |
 | 門檻值一成不變 | 系統上線初期 Groundedness 0.78 可接受，但半年後 query 分布變化，0.78 可能已不足 | 每季根據用戶反饋與業務需求重新校準門檻 |
 | 評測集用訓練資料 | Groundedness 虛高（LLM 記住訓練資料，而非真正從 context 推導） | 評測集與訓練資料嚴格隔離；使用真實用戶查詢的隨機樣本 |
-| 忽略 Context Relevance 對 Groundedness 的連鎖影響 | 以為 Groundedness 低是 LLM 問題，其實是 retriever 拿回無關文本，LLM 只好「自由發揮」 | 三角診斷：先看 Context Relevance，若 < 0.75 則先修 retriever 再評 Groundedness |
+| 忽略 Context Relevance 對 Groundedness 的連鎖影響 | 以為 Groundedness 低是 LLM 問題，其實是 retriever 拿回無關文本，LLM 只好「自由發揮」 | 三角診斷：先看 Context Relevance，若低於校準門檻則先修 retriever 再評 Groundedness |
 
 ---
 
 ## 五、與其他核心主題的關聯
 
-- **向量資料庫與 Hybrid Search（Part 18）**：Context Relevance 的上游。Hybrid Search（向量 + BM25）+ Reranker 是將 Context Relevance 從 0.68 提升至 0.84 的主要手段。
-- **LLM 評測與 LLM-as-Judge（Part 17）**：Groundedness 的 LLM Judge 實作方式直接複用 LLM-as-Judge 框架；理解評審 prompt 設計與評分偏差（position bias）是必要前提。
-- **OpenTelemetry 分散式追蹤（Part 12）**：RAG Triad 指標透過 OTel span attributes 送進可觀測性管道，需要理解 span、trace context propagation 與 exporter 設定。
-- **SLO/SLA 與 Error Budget（Part 15）**：Groundedness < 0.80 可定義為 SLO violation，消耗 error budget，觸發 freeze 新 prompt 版本上線。
+- **Hybrid Search 與 Reranking（Core Topic 4、5）**：Context Relevance 的上游。Hybrid Search（向量 + BM25）+ Reranker 是將 Context Relevance 從 0.68 提升至 0.84 的主要手段。
+- **LLM 評測與 LLM-as-Judge（Core Topic 19）**：Groundedness 的 LLM Judge 實作方式直接複用 LLM-as-Judge 框架；理解評審 prompt 設計與評分偏差（position bias）是必要前提。
+- **OpenTelemetry 分散式追蹤（FDE Guide Part 35）**：RAG Triad 指標透過 OTel metrics 與 span attributes 送進可觀測性管道，需要理解 span、trace context propagation 與 exporter 設定。
+- **SLO/SLA 與 Error Budget（Core Topic 22）**：Groundedness < 0.80 可定義為 SLO violation，消耗 error budget，觸發 freeze 新 prompt 版本上線。
 
 ---
 
 ## 六、面試一句話（Killer Phrase）
 
-> *「RAG 系統的品質評估不能只看一個數字——我使用 RAG Triad 三角指標：Context Relevance 衡量 retriever 是否拿到相關文本（門檻 > 0.75），Groundedness 衡量 LLM 是否忠於 context 而非憑空捏造（< 0.80 觸發 warning，< 0.70 觸發 oncall），Answer Relevance 衡量答案是否真正回答了問題。在生產環境中，我把這三個指標作為 OpenTelemetry span attributes 非同步發送，用 Prometheus 聚合 7 天滾動平均，在 Grafana 按 intent class 與 model version 分群監控——這樣才能在幻覺率惡化的早期發現問題，而非等到用戶投訴。實測數據顯示，加入 hybrid search 與 reranker 後，Groundedness 從 0.71 提升至 0.89，幻覺相關客訴下降了約 60%。」*
+> *「RAG 系統的品質評估不能只看一個數字——我使用 RAG Triad 三角指標：Context Relevance 衡量 retriever 是否拿到相關文本（LLM judge 逐 chunk 打分；cosine 只是需逐模型校準的代理），Groundedness 衡量 LLM 是否忠於 context 而非憑空捏造（< 0.80 觸發 warning，< 0.70 觸發 oncall），Answer Relevance 衡量答案是否真正回答了問題。在生產環境中，我把這三個指標以 OTel Histogram 指標非同步發送（span attributes 另留作 drill-down），用 Prometheus 聚合 7 天滾動平均，在 Grafana 按 intent class 與 model version 分群監控——這樣才能在幻覺率惡化的早期發現問題，而非等到用戶投訴。以示意量級來說，加入 hybrid search 與 reranker 後，Groundedness 可能從 0.71 提升至 0.89，幻覺相關客訴隨之明顯下降。」*
 
 ## 相關文章與正典版本
 

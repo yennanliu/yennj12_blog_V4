@@ -5,9 +5,9 @@ draft: false
 weight: 19
 description: "以系統設計視角拆解 Multi-Agent 系統的 Observability 架構：為什麼多 Agent 的評估比 RAG 複雜一個量級、Granular Tracing 的設計原理、Trajectory Evaluation 方法，以及如何找出是哪個 Agent 拖累了整體表現"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Evaluation", "Tracing", "Observability", "LangSmith", "OpenTelemetry", "System Design", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Agent", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "11 min"
 ---
 
 > 評估 RAG 系統：一個問題進去，一個答案出來，量化兩者的關係。  
@@ -138,7 +138,9 @@ Time →
           ├── Tool: query_erp ──────── 2,900ms ⚠️⚠️ 超慢！
           └── LLM Generation ────────── 750ms
 
-Total E2E: 5,450ms（基本上由 Finance Agent 的 ERP 查詢決定）
+Total E2E: 若順序執行 450 + 1,200 + 3,800 = 5,450ms；
+           Legal / Finance 並行 fan-out 後 450 + max(1,200, 3,800) = 4,250ms，
+           仍由 Finance Agent 的 ERP 查詢決定
 
 結論：瓶頸在 Tool: query_erp（2.9s）
       → 優先優化：加 Cache / 改查詢 SQL / 升級 ERP 連接
@@ -181,9 +183,11 @@ Total E2E: 5,450ms（基本上由 Finance Agent 的 ERP 查詢決定）
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│  3. Trajectory Exact Match（執行路徑評估）                   │
+│  3. Trajectory Match（執行路徑評估）                         │
 │                                                             │
 │  問題：Agent 的執行路徑是否符合預期的最優路徑？               │
+│  Exact Match 是 0/1 判定（路徑完全相同才算），下例為 0；    │
+│  實務上更常用下面的 Path Efficiency 連續分數                │
 │                                                             │
 │  黃金路徑（Golden Trajectory）：                             │
 │    Router → Legal → Finance → Synthesis → Answer           │
@@ -321,17 +325,13 @@ Step 5：Verify
 
 ---
 
-## 八、面試答題要點
+## 八、答題骨架
 
-> *「Multi-Agent 的評估需要比 RAG 多一個維度：不只看最終答案，也要看每個 Agent 的個別表現。*
->
-> *追蹤架構：用 OpenTelemetry 為 Graph 中的每個 Node 和每次 Tool Call 注入 Span，統一收集到 Cloud Trace。每個 Span 記錄：延遲、token 用量、輸入輸出、錯誤原因。*
->
-> *評估指標四層：Routing Accuracy（Router 分派對不對）、Tool Execution Accuracy（工具呼叫成功率）、Trajectory Exact Match（執行路徑效率）、Cost/Token Efficiency（成本效率）。*
->
-> *診斷方法：從 Aggregate 視圖找到哪個 Agent 分數低，再 drill down 到那個 Agent 的 Trace，找到是哪類 Query、哪個 Tool Call 出問題，最後追到 Root Cause（可能是 Tool Schema 描述不清、API 格式不符等具體問題）。*
->
-> *Eval Pipeline 整合進 CI/CD，每次部署前跑完整評估，和 Baseline 比較，任何 Agent 指標下降超過 5% 就阻止部署並觸發 Alert。」*
+- 先用 §一 說明 Multi-Agent 評估為什麼要多一個維度：不只看最終答案，也看每個 Agent。
+- 追蹤架構講 §二 的三層 Span 設計，再用 §三 的瀑布圖示範怎麼找到瓶頸。
+- 指標體系按 §四 的四類逐一帶過，每類說一個計算方式。
+- 管線與治理接 §五 的 Eval Pipeline 與 Regression Detector；工具選型見 §六。
+- 收尾用 §七 的五步診斷流程，示範從 Aggregate 視圖 drill down 到 Root Cause。
 
 ---
 

@@ -5,7 +5,7 @@ draft: false
 weight: 33
 description: "以 Google RKK 面試官的第一人稱視角，完整拆解 FDE RKK 面試的時間結構、五個評分維度、四個面試階段、「雇用」和「強力雇用」的實際差距，以及最常見的七個失敗模式"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "RKK", "Interview", "Cloud", "Playbook", "Scoring", "System Design"]
+tags: ["AI", "FDE", "RKK", "Interview", "Cloud", "Playbook", "System Design", "fde-interview-guide"]
 authors: ["yen"]
 readTime: "16 min"
 ---
@@ -18,7 +18,7 @@ readTime: "16 min"
 
 ## 一、RKK 是什麼輪
 
-FDE 的面試流程通常有幾輪，RKK（Role-based Knowledge）是其中技術含量最高的一輪。
+FDE 的面試流程通常有幾輪，RKK（Role-Related Knowledge，官方縮寫是 RRK；本系列沿用社群常用的 RKK）是其中技術含量最高的一輪。
 
 ```
 FDE 面試流程（通常）：
@@ -297,7 +297,7 @@ Google 的評分不是「對不對」，而是在五個維度上給 1-4 分。
              通常 ROI 在 3 個月內就回收。
              如果他的 use case 對品質要求沒那麼高，
              我會建議先試 Gemini Flash，
-             成本可以降到原來的 20%，
+             單價可以降一個數量級以上（Part 29 的試算約 40 倍），
              同時準備一個 A/B test 的計畫，
              讓數字說明品質差距是不是可以接受的。」
 ```

@@ -5,7 +5,7 @@ draft: false
 weight: 11
 description: "深入剖析如何以非同步訊息傳遞取代同步 HTTP 請求，防止 LLM 推論延遲（2–30 秒）耗盡 Web Server 連線池，支撐 50,000+ 並發用戶，改善幅度達 250 倍。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Architecture", "Pub/Sub", "AsyncDesign"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Architecture", "Pub/Sub"]
 authors: ["yen"]
 readTime: "18 min"
 ---
@@ -273,7 +273,7 @@ def process_message(message: pubsub_v1.Message):
 - Worker 單點故障：Pod crash → 同一條訊息要等 ack deadline（預設 10 秒）過期才重試
 - 無冪等性：重複投遞 → 重複 LLM 呼叫 → 費用加倍
 - 無 Backpressure：Worker 可能 OOM，造成 Pod 重啟雪崩
-- Client 輪詢造成不必要的 Firestore 讀取費用（10,000 用戶 × 2次/秒 = 20,000 reads/s ≈ $0.06/s = $5,000/月）
+- Client 輪詢造成不必要的 Firestore 讀取費用（10,000 用戶 × 2 次/秒 = 20,000 reads/s × 2.6M s/月 ≈ 5.2 × 10¹⁰ reads × $0.06/100K reads ≈ $31,000/月）
 
 **成本估算：** 低。1 個 Cloud Run Job 或 1 個 GKE Pod，1–2 天可上線。Pub/Sub 費用約 $0.04 / 百萬條訊息。以 50,000 DAU、每人每天 5 個 LLM 請求計算，每月 Pub/Sub 費用約 $0.30——幾乎可忽略，系統主要成本仍在 LLM API 呼叫與 GKE 節點上。
 
@@ -285,7 +285,7 @@ Layer 1 最適合的部署目標：**驗證 async pipeline 的可行性**，並�
 
 **相較 Layer 1 新增的元件與設計決策：**
 
-**① 冪等性（Idempotency）：** Firestore 事務 + message_id 作為 document ID，確保重複投遞安全忽略。LLM API 費用節省可觀——Pub/Sub 重複率通常 < 1%，但在 Worker rolling update 期間可能短暫升至 5–10%。
+**① 冪等性（Idempotency）：** Firestore 事務 + payload 裡的 job_id（Web Server 生成、Client 輪詢用的那個 UUID）作為 document ID，確保重複投遞安全忽略。LLM API 費用節省可觀——Pub/Sub 重複率通常 < 1%，但在 Worker rolling update 期間可能短暫升至 5–10%。
 
 **② MaxOutstandingMessages 設定：** 依 Pod RAM / 單一請求記憶體峰值計算，防止 OOM kill。這是最容易被忽視但影響最大的配置。
 
@@ -304,7 +304,8 @@ Web Server 透過 SSE 推送 { job_id, status, result }
 Client 收到後關閉 SSE 連線
 
 費用對比：
-  輪詢（2s 間隔）：10,000 users × 30 reads/user × $0.06/100K reads = $1,800/月
+  輪詢（2s 間隔、60 秒 job）：10,000 users × 30 reads/user = 300K reads × $0.06/100K = $0.18/批
+                           全天持續輪詢（20,000 reads/s × 2.6M s/月 × $0.06/100K）≈ $31,000/月
   SSE：每個 job 只有 1 次 Firestore write + 1 次 onSnapshot = 幾乎可忽略
 ```
 
@@ -382,9 +383,9 @@ BigQuery 分析每日費用：
 
 | 錯誤模式 | 後果 | 正確做法 |
 |---------|------|---------|
-| Worker 不做 idempotency check，直接處理每條訊息 | Pub/Sub at-least-once 重複投遞 → 重複呼叫 LLM，費用倍增；若 LLM 有副作用（如寫 DB），資料重複 | 用 Pub/Sub message_id 作為 Firestore document ID，事務內檢查 status ≠ "pending" 則直接 ack 跳過 |
+| Worker 不做 idempotency check，直接處理每條訊息 | Pub/Sub at-least-once 重複投遞 → 重複呼叫 LLM，費用倍增；若 LLM 有副作用（如寫 DB），資料重複 | 用 payload 裡的 job_id（Web Server 生成的 UUID，Client 也用它輪詢）作為 Firestore document ID，事務內檢查 status ≠ "pending" 則直接 ack 跳過；失敗時先把 status 留在 pending 再 nack，否則重投遞會被當成已處理 |
 | 不設 MaxOutstandingMessages，Worker 無限拉取 | 大量訊息同時進入 Worker → 記憶體溢出（OOM kill）→ Pod 重啟 → 訊息重新入隊 → 雪崩效應，所有訊息都在重試 | 依 Pod RAM / 單一請求記憶體峰值計算，加 0.7 安全係數；4GB Pod + 400MB/request → MaxOutstandingMessages = 7 |
-| Client 輪詢頻率過高（每 500ms 一次） | Firestore 讀取費用激增；10,000 用戶 × 2次/秒 = 20,000 reads/s ≈ $5,000/月；Firestore 也可能觸發流量限制 | 改用 SSE 或 WebSocket 推送；若仍用輪詢，用 exponential backoff（1s → 2s → 4s → max 30s），並在 job 完成後停止輪詢 |
+| Client 輪詢頻率過高（每 500ms 一次） | Firestore 讀取費用激增；10,000 用戶 × 2 次/秒 = 20,000 reads/s × 2.6M s/月 × $0.06/100K ≈ $31,000/月；Firestore 也可能觸發流量限制 | 改用 SSE 或 WebSocket 推送；若仍用輪詢，用 exponential backoff（1s → 2s → 4s → max 30s），並在 job 完成後停止輪詢 |
 | Pub/Sub ack deadline 設太短（預設 10s） | LLM 推論 15 秒 > ack deadline 10s → Pub/Sub 誤判超時重投 → 同一 job 被多個 Worker 同時處理 → 競爭條件，結果可能被覆蓋 | 將 ack deadline 設為 max_llm_latency × 2（例如 60s）；LLM 呼叫過程中每 30 秒呼叫 modifyAckDeadline 延長 |
 | 不設 Dead-Letter Topic | 持續失敗的訊息（格式錯誤、LLM 持續 5xx）無限重試，佔用 Worker 資源；真正的 backlog 被「毒訊息」堵塞 | 設 max_delivery_attempts = 5，配置 Dead-Letter Topic + Monitoring alert；人工或自動 replay 機制處理 DLQ 訊息 |
 | KEDA minReplicaCount = 0，但沒說明冷啟動影響 | 流量突然湧入時，0 → 第一個 Pod 就緒需要 60–90 秒（含 GKE node provisioning）；這段時間訊息積壓，用戶等待結果 | 在 SLA 中明確說明「首次請求可能需要 2 分鐘」；或設 minReplicaCount = 1 維持暖機 Pod（約 $30/月，避免冷啟動） |
@@ -394,13 +395,13 @@ BigQuery 分析每日費用：
 
 ## 五、與其他核心主題的關聯
 
-- **Part 7（LLM Serving 與推論優化）**：Worker 呼叫 LLM 的方式（streaming vs batch、token budget 控制、retry 策略）直接影響 Pub/Sub 的 ack deadline 設定與 Worker Pod 的記憶體需求——streaming 模式需要更長的 ack deadline，但可以更早開始寫部分結果到 Firestore。
+- **LLM Serving 與推論優化**（本系列 [TTFT & Throughput Optimization](/posts/fde-core-concept-16-ttft-throughput-optimization-zh/)）：Worker 呼叫 LLM 的方式（streaming vs batch、token budget 控制、retry 策略）直接影響 Pub/Sub 的 ack deadline 設定與 Worker Pod 的記憶體需求——streaming 模式需要更長的 ack deadline，但可以更早開始寫部分結果到 Firestore。
 
-- **Part 9（資料庫選型：Firestore vs Spanner vs Redis）**：job 狀態儲存需要兼顧寫入速度與讀取一致性；Firestore 適合 per-job document 存取模式（每個 job_id 獨立文件，無熱點）；Redis 可作為熱點狀態快取，讓 Client 輪詢時在 < 1ms 內得到回應，而不是每次都打 Firestore。
+- **資料庫選型（Firestore vs Spanner vs Redis）**：job 狀態儲存需要兼顧寫入速度與讀取一致性；Firestore 適合 per-job document 存取模式（每個 job_id 獨立文件，無熱點）；Redis 可作為熱點狀態快取，讓 Client 輪詢時在 < 1ms 內得到回應，而不是每次都打 Firestore。
 
-- **Part 14（Observability：Traces、Metrics、Logs 三位一體）**：job_id 作為 trace context propagation 的 carrier，讓 Web Server → Pub/Sub → Worker → LLM 的完整延遲鏈路在 Cloud Trace 中可視化。關鍵 metric：Pub/Sub unacked message count（容量指標）、Worker LLM call P99 latency（效能指標）、DLQ 訊息數量（健康指標）。
+- **Observability（Traces、Metrics、Logs 三位一體）**（本系列 [Structured Troubleshooting](/posts/fde-core-concept-22-structured-troubleshooting-zh/)）：job_id 作為 trace context propagation 的 carrier，讓 Web Server → Pub/Sub → Worker → LLM 的完整延遲鏈路在 Cloud Trace 中可視化。關鍵 metric：Pub/Sub unacked message count（容量指標）、Worker LLM call P99 latency（效能指標）、DLQ 訊息數量（健康指標）。
 
-- **Part 19（Cost Engineering：算力費用優化）**：KEDA 將 Worker Pod 縮到 0 是 async pipeline 最大的成本優勢——同步架構需要預留足夠 worker capacity 應付峰值（假設峰值是均值的 10 倍，就要常備 10 倍的機器），async 架構只在有訊息時才有 Pod 費用，閒置期間費用接近 $0。
+- **Cost Engineering（算力費用優化）**：KEDA 將 Worker Pod 縮到 0 是 async pipeline 最大的成本優勢——同步架構需要預留足夠 worker capacity 應付峰值（假設峰值是均值的 10 倍，就要常備 10 倍的機器），async 架構只在有訊息時才有 Pod 費用，閒置期間費用接近 $0。
 
 ---
 
@@ -424,7 +425,7 @@ BigQuery 分析每日費用：
 | 指標 | 同步架構 | Async Pipeline（Layer 2） | 改善幅度 |
 |------|---------|--------------------------|---------|
 | **最大並發用戶** | ~200（連線池上限） | 50,000+（Pub/Sub + KEDA） | 250× |
-| **Web Server 回應時間** | 2–30 秒（等 LLM 完成） | < 50ms（寫 Pub/Sub + 回 202） | 400× P50 |
+| **Web Server 回應時間** | 2–30 秒（等 LLM 完成） | < 50ms（寫 Pub/Sub + 回 202） | 40–600×（2–30 s ÷ 50 ms） |
 | **LLM endpoint 連線數** | 與並發用戶數正比（200 用戶 = 200 連線） | 與 Worker Pod 數正比（獨立控制，上限 100 pods × MaxOutstandingMessages = 700 連線） | 解耦 |
 | **503 錯誤率（峰值）** | 流量超過 200 並發 → 50%+ 503 | 流量超過 100 pods × 0.47 jobs/s = 47 jobs/s → 訊息積壓，但不 503 | 無雪崩 |
 | **Pod idle 費用** | 需要常備 worker 應付峰值（峰值 10× 均值 → 常備 10× 費用） | KEDA scale-to-zero，idle 費用 $0 | 60–80% 節省 |
@@ -439,7 +440,7 @@ BigQuery 分析每日費用：
 ## 八、面試一句話（Killer Phrase）
 
 
-> *「同步 LLM 架構的根本問題不是速度，而是資源佔用時間：一個 15 秒的推論請求讓 HTTP 連線整整被持有 15 秒，1,000 個並發用戶就需要 1,000 個同時持有的連線，超過連線池上限後整個系統雪崩，加機器也無法解決因為瓶頸在 LLM endpoint 的連線數上限。Async Event-Driven Pipeline 的核心是將『接受請求』與『完成運算』的生命週期完全解耦——Web Server 在 50ms 內寫訊息到 Cloud Pub/Sub 並回 202，Worker Pool 獨立訂閱並處理，以 Pub/Sub message_id 作為 idempotency key 防止重複 LLM 呼叫，結果透過 SSE 推送給 Client；再搭配 KEDA 依 unacked message 數量在 90 秒內從 0 自動擴到 100 個 Pod，整體架構讓相同的後端資源從支撐 200 個並發用戶提升到 50,000 個，改善幅度 250 倍，而且 idle 期間 Pod 縮到 0，費用幾乎為零。」*
+> *「同步 LLM 架構的根本問題不是速度，而是資源佔用時間：一個 15 秒的推論請求讓 HTTP 連線整整被持有 15 秒，1,000 個並發用戶就需要 1,000 個同時持有的連線，超過連線池上限後整個系統雪崩，加機器也無法解決因為瓶頸在 LLM endpoint 的連線數上限。Async Event-Driven Pipeline 的核心是將『接受請求』與『完成運算』的生命週期完全解耦——Web Server 在 50ms 內寫訊息到 Cloud Pub/Sub 並回 202，Worker Pool 獨立訂閱並處理，以 job_id 作為 idempotency key 防止重複 LLM 呼叫，結果透過 SSE 推送給 Client；再搭配 KEDA 依 unacked message 數量在 90 秒內從 0 自動擴到 100 個 Pod，整體架構讓相同的後端資源從支撐 200 個並發用戶提升到 50,000 個，改善幅度 250 倍，而且 idle 期間 Pod 縮到 0，費用幾乎為零。」*
 
 ## 相關文章與正典版本
 

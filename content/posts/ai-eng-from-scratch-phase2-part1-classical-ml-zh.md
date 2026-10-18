@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "深入解析線性回歸、邏輯回歸、決策樹、SVM、特徵工程等傳統 ML 技術為何在結構化資料的生產 AI 系統中仍是首選，附完整決策框架與量化比較"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Machine Learning", "Linear Regression", "Decision Tree", "SVM", "Feature Engineering", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "ML", "SVM", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "18 min"
 series: ["ai-eng-from-scratch"]
@@ -342,13 +342,12 @@ SVM 的核心思想：找到一個決策邊界，使其與最近的訓練點（�
 
 **Target Encoding 的洩漏問題**：
 
-直接用訓練集的目標均值編碼類別，會造成資料洩漏。正確做法是 K-Fold Target Encoding：
+直接用訓練集的目標均值編碼類別，會造成資料洩漏。正確做法是 K-Fold（cross-fitted）Target Encoding：把訓練集切成 K 折，每一折的編碼值只用「其他 K−1 折」的目標均值計算，這樣每筆樣本的編碼都不含自己的標籤。注意下方的 `category_encoders.TargetEncoder` 只做 smoothing，直接對整個訓練集 `fit_transform` 仍然會洩漏；要搭配 `KFold` 迴圈，或改用 `sklearn.preprocessing.TargetEncoder`（其 `fit_transform` 內建 cross-fitting）。
 
 ```python
 # 錯誤做法（洩漏）
 df['city_encoded'] = df.groupby('city')['target'].transform('mean')
 
-# 正確做法（K-Fold）
 from category_encoders import TargetEncoder
 encoder = TargetEncoder(smoothing=10)  # smoothing 防止小樣本過擬合
 ```

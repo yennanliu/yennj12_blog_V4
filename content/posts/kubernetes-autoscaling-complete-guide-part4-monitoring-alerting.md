@@ -5,19 +5,20 @@ draft: false
 weight: 4
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "Monitoring", "Prometheus", "Grafana", "Alerting", "EKS", "Observability", "Metrics", "Dashboard", "AlertManager", "DevOps"]
-summary: "Part 4 of the Kubernetes Autoscaling series: Complete guide to monitoring EKS autoscaling with Prometheus and Grafana. Includes CDK setup, alerting rules, custom dashboards, and threshold tuning strategies for production-grade observability."
-description: "Part 4 of the Kubernetes Autoscaling series: Complete guide to monitoring EKS autoscaling with Prometheus and Grafana. Includes CDK setup, alerting rules, custom dashboards, and threshold tuning strategies for production-grade observability."
+tags: ["Kubernetes", "Monitoring", "Prometheus", "Grafana", "EKS", "Observability", "Metrics", "DevOps"]
+description: "See and tune autoscaling on EKS: Prometheus and Grafana via CDK, HPA-specific dashboards, AlertManager rules for thrashing and capacity, and threshold tuning."
 readTime: "30 min"
 ---
+
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
 
 ## Series Overview
 
 This is **Part 4** of the Kubernetes Autoscaling Complete Guide series:
 
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Application-level autoscaling theory
-- **[Part 2: Cluster Autoscaling & Cloud Providers](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Infrastructure-level autoscaling
-- **[Part 3: Hands-On HPA Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)** - Practical implementation with Apache-PHP
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Application-level autoscaling theory
+- **[Part 2: Cluster Autoscaling & Cloud Providers](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Infrastructure-level autoscaling
+- **[Part 3: Hands-On HPA Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)** - Practical implementation with Apache-PHP
 - **Part 4 (This Post)**: Monitoring, Alerting & Threshold Tuning - Production observability
 
 ---
@@ -99,6 +100,8 @@ The `kube-prometheus-stack` includes Prometheus, Grafana, AlertManager, and expo
 #### Step 1: Update CDK Stack
 
 Add Prometheus stack to `lib/eks-hpa-demo-stack.ts`:
+
+> **Storage caveat:** the PVCs below ask for `storageClassName: 'gp3'`, but the Part 3 cluster installs neither the `aws-ebs-csi-driver` add-on nor a `gp3` StorageClass, so Prometheus, Grafana and Alertmanager stay `Pending` and `helm --wait` times out. Add the EBS CSI add-on (with IRSA/pod identity) and a `gp3` StorageClass to the stack first, or use `emptyDir` for a throwaway demo.
 
 ```typescript
 import * as cdk from 'aws-cdk-lib';
@@ -500,7 +503,7 @@ kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 909
 
 # Query examples:
 # - up{job="kubernetes-nodes"}
-# - kube_pod_container_resource_requests_cpu_cores
+# - kube_pod_container_resource_requests{resource="cpu"}  (the _cpu_cores metric was removed in kube-state-metrics v2.0)
 # - rate(container_cpu_usage_seconds_total[5m])
 ```
 
@@ -546,6 +549,8 @@ spec:
 ### Create PrometheusRule for HPA Alerts
 
 Create `k8s/prometheus-rules.yaml`:
+
+> **Two caveats on the rules below:** `HPAUnableToScale` keys on `ScalingLimited=true`, which is the normal state whenever an HPA sits at `minReplicas` or `maxReplicas` — alert on `AbleToScale=false` / `ScalingActive=false` instead, and treat `ScalingLimited` + `current == max` as the "maxed out" signal. And `HPAScalingThrashing` applies `rate()` to `status_current_replicas`, a gauge; use `changes(...[15m]) > 6` as the later rule in this post does.
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -1522,13 +1527,13 @@ sum(container_memory_working_set_bytes)
 ## Related Topics
 
 ### Autoscaling Series
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Theory and approaches
-- **[Part 2: Cluster Autoscaling](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Node-level autoscaling
-- **[Part 3: Hands-On HPA Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)** - Implementation guide
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Theory and approaches
+- **[Part 2: Cluster Autoscaling](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Node-level autoscaling
+- **[Part 3: Hands-On HPA Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)** - Implementation guide
 
 ### Kubernetes Monitoring
-- **[Kubernetes Complete Guide (Part 3): Advanced Features](./kubernetes-complete-guide-part3-advanced-zh.md)** - Includes monitoring setup (Traditional Chinese)
-- **[Building Production Kubernetes Platform on AWS EKS](./building-production-kubernetes-platform-aws-eks-cdk.md)** - Production observability patterns
+- **[Kubernetes Complete Guide (Part 3): Advanced Features](/posts/kubernetes-complete-guide-part3-advanced-zh/)** - Includes monitoring setup (Traditional Chinese)
+- **[Building Production Kubernetes Platform on AWS EKS](/posts/building-production-kubernetes-platform-aws-eks-cdk/)** - Production observability patterns
 
 ## Conclusion
 

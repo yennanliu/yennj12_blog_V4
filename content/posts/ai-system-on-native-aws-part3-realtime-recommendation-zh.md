@@ -2,9 +2,9 @@
 title: "AI System on Native AWS - Part 3 - 即時個人化推薦系統"
 date: 2026-07-20T09:00:00+08:00
 draft: false
-description: "推薦系統是最經典、商業價值最直接的 AI 系統。本篇用純 AWS 原生服務打造一套即時個人化推薦:Kinesis 收即時行為、SageMaker Feature Store 管線上/離線特徵、SageMaker Endpoint 做低延遲推論、DynamoDB 當候選集與快取,並用 API Gateway + Lambda 對外服務。全部用 CDK(CloudFormation)描述,深入談 online/offline 特徵一致性、召回+排序兩階段、冷啟動與 A/B 測試。"
+description: "即時推薦的難點是特徵的即時性與線上線下一致:用 Kinesis 收行為事件、SageMaker Feature Store 杜絕 training-serving skew、SageMaker Endpoint 毫秒推論、DynamoDB 撐高併發,並以 CDK 部署整條管線。"
 categories: ["all", "ai", "engineering"]
-tags: ["AWS", "CDK", "CloudFormation", "SageMaker", "Kinesis", "Feature Store", "Recommendation", "DynamoDB", "MLOps", "AI Engineering"]
+tags: ["AWS", "CDK", "CloudFormation", "SageMaker", "Kinesis", "DynamoDB", "MLOps", "AI Engineering"]
 authors: ["yen"]
 readTime: "13 min"
 ---

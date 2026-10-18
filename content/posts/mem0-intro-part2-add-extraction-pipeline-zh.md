@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "Mem0 原始碼導讀系列第二篇：逐行拆解 _add_to_vector_store() 的八個階段、為什麼 v3 放棄了論文裡的 ADD/UPDATE/DELETE/NOOP 四動作模型、UUID 映射成整數的防幻覺技巧、md5 去重的邊界，以及一次 add() 到底花多少錢。"
 categories: ["all", "ai", "engineering"]
-tags: ["Mem0", "AI Agent", "Memory", "LLM", "Prompt Engineering", "spaCy", "繁體中文"]
+tags: ["Mem0", "AI Agent", "Memory", "LLM", "Prompt Engineering", "spaCy"]
 authors: ["yen"]
 readTime: "17 min"
 ---
@@ -81,9 +81,9 @@ Mem0 的[原始論文](https://arxiv.org/abs/2504.19413)描述的是一個兩階
 | N+1 次 LLM 呼叫 | **一次**。既有記憶與新訊息一起餵進同一個 prompt，只回傳要新增的 |
 | ID 幻覺 | **把 UUID 映射成 "0"、"1"、"2"**，LLM 只看得到整數 |
 
-改版的效果，官方數字是 **LoCoMo 71.4 → 91.6、LongMemEval 67.8 → 93.4，同時萃取延遲大約減半**。
+改版的效果，官方數字是 **LoCoMo 71.4 → 92.5、LongMemEval 67.8 → 94.4，同時萃取延遲大約減半**（與 Part 1、Part 5 引用的 mem0.ai/research 現行數字一致）。
 
-**但這不是免費的。** 代價寫在同一份評測文件的 LongMemEval 分項裡：`knowledge_update` 是所有分項中最低的 93.6，官方的解釋是「older facts are preserved rather than overwritten, so semantically similar prior facts can still surface alongside newer ones」。
+**但這不是免費的。** 代價寫在同一份評測文件的 LongMemEval 分項裡：`knowledge_update` 是分項中相對最弱的一項，官方的解釋是「older facts are preserved rather than overwritten, so semantically similar prior facts can still surface alongside newer ones」。
 
 **翻譯成人話：你會撈到過時的事實。** 這個代價被有意識地接受了，並把解決它的責任推給兩個地方——檢索階段的排序（Part 3），以及 Platform 的背景整合（Part 5）。**如果你用 OSS，這塊是你自己的責任。**
 
@@ -540,7 +540,7 @@ m.add(messages, user_id="u_1", expiration_date="2026-12-31")
 ADD-only            不可逆錯誤消失（沒有 DELETE）      四動作模型：能主動維持
 vs ADD/UPDATE/      保留時序脈絡                       記憶庫乾淨，不需要外部
    DELETE/NOOP      1 次 LLM 呼叫而非 1+N              治理
-                    LoCoMo 71.4→91.6                   ─────────────────────────
+                    LoCoMo 71.4→92.5                   ─────────────────────────
                     ─────────────────────────────────────────────────────────
                     翻轉條件：你的場景記憶量小且高度結構化（例如只記 20 個固定
                     欄位的使用者設定），四動作模型的自動維護反而更省事。但那種
@@ -602,8 +602,8 @@ vs 同步 add()       可以用佇列削 LLM rate limit 的峰     寫入完成�
 | 去重 | 靠 LLM 判斷 | **LLM + md5 雙層** | 字面重複 100% 擋掉 |
 | LLM 失敗 | 靜默回傳空清單 | **拋 `LLMError`** | 呼叫端能分辨「服務掛了」與「沒東西可記」 |
 | 記憶總量 | 會被壓縮 | **單調成長** | ← 這是代價，需要外部治理 |
-| LoCoMo | 71.4 | **91.6** | |
-| LongMemEval | 67.8 | **93.4** | |
+| LoCoMo | 71.4 | **92.5** | |
+| LongMemEval | 67.8 | **94.4** | |
 
 最後三行要一起看：**分數大幅提升，但代價是把記憶治理的責任推給了使用者。** 在 Platform 上那個責任由 Dream 承接；在 OSS 上，它是你的。
 

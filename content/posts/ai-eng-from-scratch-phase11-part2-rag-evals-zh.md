@@ -94,8 +94,8 @@ RAG 系統分為兩條獨立管線，時序不同、瓶頸不同。
 │                ▼  ~600ms（含網路）                               │
 │         LLM 生成（with context）                                 │
 │                │                                                │
-│                ▼  總計 P95 ~750ms（無 Re-rank）                  │
-│                    P95 ~1,800ms（含 Re-rank）                    │
+│                ▼  總計 P95 ≈ 1,265ms（無 Re-rank；逐段相加）      │
+│                    P95 ≈ 1,385ms（含 Re-rank）                   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -109,6 +109,8 @@ RAG 系統分為兩條獨立管線，時序不同、瓶頸不同。
 | RRF Fusion | 1ms | 2ms | 否 |
 | Cross-Encoder Re-rank | 60ms | 120ms | 否 |
 | LLM Generation | 400ms | 1,200ms | 否 |
+
+逐段 P95 相加（18 + 45 + 2 + 1,200 = 1,265 ms；加 Re-rank 120 ms = 1,385 ms）是端到端 P95 的上界——各段的尖峰不會同時發生，實測端到端值通常低一些。預算的大頭永遠是 LLM 生成，Re-rank 的 +120 ms 只佔不到 10%。
 
 ### Embedding 模型選型：開源 vs 閉源
 
@@ -144,10 +146,10 @@ Embedder 是兩條管線共用的元件（換模型就得全量重建索引）�
 > 此表為 2024 年的模型與價格快照：Cohere 已推出 embed-v4，Qwen3-Embedding 等新一代開源模型也已進入 MTEB 前段。選型前請以當前 MTEB 排行與官方定價為準。
 
 **自部署 BGE-M3 成本估算**（中等規模）：  
-- 1 台 A10G GPU（4 vCPU, 24GB VRAM）：~$1.5/hr（AWS g5.xlarge）  
-- 日均 200K 次 Embedding 查詢：~$36/day vs text-embedding-3-small $4/day  
-- 換算：API 每次約 $0.00002（$4 ÷ 200K），自部署是約 $36/day 的固定成本，損益平衡點約在 $36 ÷ $0.00002 ≈ 1.8M queries/day
-- 建議：< 約 1.8M queries/day 用閉源 API 更划算；超過後自部署才開始有成本優勢（隱私或資料落地要求則不受此門檻限制）
+- 1 台 A10G GPU（4 vCPU, 24GB VRAM）：~$1.0/hr（AWS g5.xlarge on-demand，us-east-1）  
+- 日均 200K 次 Embedding 查詢：24 × $1.0 ≈ $24/day vs text-embedding-3-small $4/day  
+- 換算：API 每次約 $0.00002（$4 ÷ 200K），自部署是約 $24/day 的固定成本，損益平衡點約在 $24 ÷ $0.00002 ≈ 1.2M queries/day
+- 建議：< 約 1.2M queries/day 用閉源 API 更划算；超過後自部署才開始有成本優勢（隱私或資料落地要求則不受此門檻限制）
 
 #### Embedding 維度壓縮（Matryoshka Representation Learning）
 
@@ -200,6 +202,8 @@ Chunking 是 RAG 效果最容易被低估的變數。切太小丟失上下文，
 | Semantic | 中（~25ms/chunk）| 0.78 | 0.80 | 中 | 10K–100K |
 | Hierarchical | 慢（~40ms/chunk）| 0.84 | 0.87 | 高 | 100K+ |
 
+> Recall@5 與 Faithfulness 欄為示意量級，非實測數據；相對順序（Fixed < Semantic < Hierarchical）在多數企業文件集上成立，絕對值請用自己的評估集重測。
+
 ---
 
 ## 五、Hybrid Search：BM25 + Dense 向量的融合
@@ -249,7 +253,7 @@ RRF_score(d) = Σ_r  1 / (k + rank_r(d))
 - `rank_r(d)`：文件 d 在第 r 路檢索結果中的排名
 - 對 BM25 結果和 Dense 結果各算一次，加總後重新排序
 
-**實際效果**：  
+**示意效果**（量級參考，非實測）：  
 - Dense-only Recall@5：0.71  
 - Hybrid Recall@5：0.83（**+12 個百分點**）  
 - 專有名詞（型號、條號）命中率：0.54 → 0.79（+25pp）
@@ -319,7 +323,7 @@ RAGAS 是針對 RAG 系統設計的自動化評估框架，核心四個指標：
 | **Context Precision** | 檢索到的 Chunk 有多少是真正有用的 | 有用 Chunk / 總 Chunk 數 | ≥ 0.70 |
 | **Context Recall** | 黃金答案所需的資訊有多少被檢索到 | 需要標注 Ground Truth | ≥ 0.75 |
 
-**RAGAS 成本**：每筆評估約 $0.003（GPT-4o 為評判模型）；若改用 GPT-4o-mini 降至 $0.0004/筆，但準確度下降 ~6%。
+**RAGAS 成本**：每筆評估約 $0.003（GPT-4o 為評判模型）；若改用 GPT-4o-mini 降至 $0.0004/筆，但評判品質會下降，幅度依資料集而異，上線前用自己的標注集量測一致率。
 
 ### G-Eval
 
@@ -330,7 +334,7 @@ G-Eval 使用 Chain-of-Thought 讓 LLM 先**解釋評分理由**再給分，對�
 2. 讓 LLM 生成 CoT 推理：「這個回答引用了 Context 的第二段，但第三句話沒有來源…」
 3. 基於 CoT 輸出分數
 
-**G-Eval 與人類評審一致率**：Pearson 相關係數 ~0.82（RAGAS 約 0.74）。
+**G-Eval 與人類評審一致率**：G-Eval 論文（Liu et al. 2023）在 SummEval 上與人類評分的 Spearman 相關約 0.5，已明顯高於 ROUGE / BERTScore 類傳統指標；RAGAS 論文報告的與人類一致率也在同一量級。這些都是摘要 / QA 資料集上的數字，自己的領域請先用標注集量測再採信。
 
 ### LLM-as-Judge
 
@@ -386,7 +390,7 @@ Chunking 與 Re-ranking 的取捨已在 §四、§六 的比較表中給出，�
 | 面向 | Pgvector | Pinecone | Weaviate |
 |------|---------|---------|---------|
 | 最適文件量 | < 5M vectors | 5M–500M | 1M–100M |
-| 成本 | 最低（已有 PG）| 最高（$70+/mo）| 中等 |
+| 成本 | 最低（已有 PG）| 最高（托管，按用量計費另有最低月費）| 中等 |
 | Hybrid 支援 | 需自建 BM25 | 內建 | 內建 |
 | 維護負擔 | 高（自管）| 零（托管）| 中 |
 | **Flip Condition** | 超過 5M vectors 或需托管 → Pinecone | 成本敏感 + 已有 PG → Pgvector | 需要 Hybrid 且不想用 Pinecone → Weaviate |
@@ -397,7 +401,7 @@ Chunking 與 Re-ranking 的取捨已在 §四、§六 的比較表中給出，�
 |------|------------|---------|
 | 成本 | $0.002/筆 | $0.5–2/筆 |
 | 速度 | 批次 1K 筆/分鐘 | 人工 10–20 筆/小時 |
-| 一致率 | ~85% vs 人類 | 人與人 ~90% |
+| 一致率 | ~85% vs 人類（MT-Bench，GPT-4 評審）| 人與人 ~81%（MT-Bench）|
 | 偏差風險 | 存在（需設計緩解）| 低 |
 | **Flip Condition** | 高風險決策（上市文件審查）→ 人工評估；日常品質監控 → LLM-as-Judge |
 
@@ -413,7 +417,7 @@ Chunking 與 Re-ranking 的取捨已在 §四、§六 的比較表中給出，�
 | Context Precision | 0.55 | 0.78 | +42% |
 | Context Recall | 0.60 | 0.81 | +35% |
 | Recall@5 | 0.71 | 0.83 | +17% |
-| P95 Latency | 850ms | 1,800ms | −（+112%，因 Re-rank）|
+| P95 Latency | 1,250ms | 1,400ms | −（+12%，Re-rank +120 ms）|
 | Cost per Query | $0.004 | $0.008 | +100% |
 | 客服轉人工率 | 38% | 14% | **−63%** |
 | 每月維護工時 | 20h（人工抽查）| 8h（自動化 + 偶發告警）| −60% |
@@ -453,7 +457,7 @@ Faithfulness 下降
                 抽樣對比：舊版 vs 新版輸出
 ```
 
-**常見根因**：  
+**常見根因**（比例為示意）：  
 - 文件更新後未重建索引（Stale Index，佔 40% 案例）  
 - Embedding 模型靜默升級，向量空間不一致（佔 25%）  
 - LLM System Prompt 被意外修改（佔 20%）  

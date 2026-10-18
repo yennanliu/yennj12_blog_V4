@@ -75,7 +75,7 @@ AI 成本工程的核心挑戰：**在成本、延遲、品質三角之間找到
                    ▼
 ┌─────────────────────────────────────────┐
 │         AI API Provider                  │
-│    (單一模型，如 claude-3-5-sonnet)       │
+│    (單一模型，如 claude-sonnet-4-5)       │
 └─────────────────────────────────────────┘
 ```
 
@@ -437,7 +437,7 @@ Phase 3 的路由加入品質反饋迴路：
 async def submit_batch_job(tasks: list[dict]) -> str:
     batch_id = await batch_api.create_batch(
         requests=tasks,
-        completion_window="24h",   # 或 "1h" 取決於 SLA
+        completion_window="24h",
         metadata={"job_type": "content_summarization"}
     )
     # 存入 DB 追蹤狀態
@@ -485,7 +485,7 @@ Batch Embedding      Spot（100%）           冪等任務，中斷後重新提�
 
 ### 7.3 Spot 搶佔應對策略
 
-Spot 實例的搶佔通知通常提前 2 分鐘（雲端廠商標準）。應對措施：
+Spot 實例的搶佔通知很短：AWS 提前 2 分鐘，GCP 與 Azure 只有 30 秒。應對措施：
 
 1. **Checkpoint 機制**：每 5 分鐘存儲訓練狀態到持久化存儲（S3/GCS）
 2. **分散可用區**：同時在 3 個 AZ 請求 Spot，降低全部被搶佔的概率
@@ -614,7 +614,7 @@ await metrics.record({
 
 | 選擇 | 選 Spot 的理由 | 不選 Spot 的理由 |
 |------|---------------|-----------------|
-| 成本 | 60–80% 折扣，對長期訓練效果顯著；可混合（80% Spot + 20% OD） | 搶佔通知只有 2 分鐘 |
+| 成本 | 60–80% 折扣，對長期訓練效果顯著；可混合（80% Spot + 20% OD） | 搶佔通知只有 30 秒–2 分鐘 |
 | 可恢復性 | 與 Checkpoint 配合可完全冪等，適合 > 4 小時的訓練任務 | 需要 Checkpoint 邏輯（開發成本） |
 | 供應 | 分散 3 個 AZ 降低全部被搶佔的機率 | 某些區域 Spot 供應不穩定 |
 

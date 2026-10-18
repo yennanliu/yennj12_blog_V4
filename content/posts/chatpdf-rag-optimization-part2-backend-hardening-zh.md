@@ -2,9 +2,9 @@
 title: "ChatPDF RAG 優化（二）：後端強化與進階 RAG —— 安全、資源邊界、多查詢擴展"
 date: 2026-06-30T10:30:00+08:00
 draft: false
-description: "RAG demo 能跑,不代表能上線。本篇拆解 chatPDF 如何補上 production 該有的防線:上傳的 PDF magic bytes 驗證與 OOM 防護、BM25 的 LRU 快取、多查詢擴展、檢索評分過濾、頁碼級引用、LLM gateway 重試退避——把 RAG pipeline 從「能跑」變成「能扛」。"
+description: "把 chatPDF 的 RAG 從能跑變成能扛:PDF magic bytes 驗證與 OOM 防護、BM25 LRU 快取、多查詢擴展、檢索評分過濾、頁碼級引用、LLM gateway 重試退避,每道防線附 PR 實作。"
 categories: ["all", "ai", "engineering"]
-tags: ["RAG", "LLM", "ChatPDF", "Security", "Backend", "Production", "Multi-Query", "LRU Cache", "API Hardening"]
+tags: ["RAG", "LLM", "ChatPDF", "Security", "Backend", "Production"]
 authors: ["yen"]
 readTime: "11 min"
 ---
@@ -23,7 +23,7 @@ readTime: "11 min"
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  後端強化(165 測試,+30 新增)                        │
+│  後端強化(撰文時後端共 165 測試)                    │
 │  ├─ 安全:上傳驗證、輸入邊界、刪除順序、錯誤訊息淨化  │
 │  ├─ 資源:檔案大小限制、BM25 LRU 快取、歷史視窗      │
 │  └─ 進階 RAG:多查詢擴展、檢索評分、頁碼引用、去重    │
@@ -245,7 +245,7 @@ temperature 參數化的好處:**生成答案用 0.0(穩定),judge/評估呼叫�
 | context 品質 | 含弱命中噪音 | min_score 過濾(效果未量測) |
 | 引用 | 僅檔名 | 頁碼級可查證 |
 | API 穩定性 | 直接失敗 | 重試 + 退避 |
-| 測試 | — | 後端 165 測試全綠(+30 新增),前端 +10 Vitest |
+| 測試 | — | 撰文時後端 165 測試全綠(含本 PR 與中間 PR 新增),前端 +10 Vitest |
 
 ---
 

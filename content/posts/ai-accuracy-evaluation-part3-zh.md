@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "RAG 系統的評估遠不只是看回答品質，還要驗證檢索忠誠度與事實接地性。本文介紹 Faithfulness、Relevance、Context Precision 等 RAG 專屬指標，以及如何使用 RAGAS 框架自動化評估流程。"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "RAG", "LLM", "RAGAS", "Faithfulness", "Hallucination", "Evaluation", "繁體中文"]
+tags: ["AI", "RAG", "LLM", "RAGAS", "Hallucination", "Evaluation"]
 authors: ["yen"]
 readTime: "13 min"
 ---
@@ -71,7 +71,7 @@ RAG 的評估比純 LLM 更複雜，因為它有兩個可能出錯的環節：
 
 **定義**：答案中的每一個聲明（claim），是否都能從提供的 Context 中找到支持？
 
-$$\text{Faithfulness} = \frac{\text{有 Context 支持的聲明數}}{\text{答案中的聲明總數}}$$
+`Faithfulness = 有 Context 支持的聲明數 / 答案中的聲明總數`
 
 **Faithfulness = 1.0** 意味著模型完全根據文件回答，沒有任何「幻覺（Hallucination）」。
 
@@ -130,7 +130,7 @@ def calculate_answer_relevance(question, answer, llm):
 
 **定義**：檢索器找到的 Context 中，有多大比例是真正有用的（相關的）？
 
-$$\text{Context Precision} = \frac{\text{有用的 Context 段落數}}{\text{檢索到的 Context 段落總數}}$$
+`Context Precision = 有用的 Context 段落數 / 檢索到的 Context 段落總數`
 
 **問題情境**：假設你的 RAG 系統每次檢索 5 個段落，但只有 1 個段落真正和問題相關，另外 4 個是「看起來相關但實際無用」的噪音。
 
@@ -138,9 +138,11 @@ Context Precision 就是在衡量這個「信噪比」。精確率低意味著�
 
 ### 2.4 Context 召回率（Context Recall）
 
-**定義**：要回答這個問題所需的所有資訊，有多大比例被成功檢索到了？
+**定義**：要回答這個問題所需的所有資訊，有多大比例被成功檢索到了？它是對照**標準答案（ground truth）**來算的，而不是對照模型的回答——拿模型回答來算的是 Faithfulness。
 
-$$\text{Context Recall} = \frac{\text{答案中有 Context 支持的句子數}}{\text{答案的句子總數}}$$
+`Context Recall = 標準答案中可歸因於檢索到的 Context 的句子數 / 標準答案的句子總數`
+
+因此這個指標需要資料集提供 `ground_truth`（RAGAS 0.2 稱為 `reference`），沒有標準答案就算不出來。
 
 這個指標評估的是檢索器的「完整性」——有沒有漏掉關鍵資訊？
 
@@ -185,7 +187,7 @@ $$\text{Context Recall} = \frac{\text{答案中有 Context 支持的句子數}}{
 
 **Expected Calibration Error (ECE)**：
 
-$$ECE = \sum_{b=1}^{B}\frac{|B_b|}{n}\left|\text{acc}(B_b) - \text{conf}(B_b)\right|$$
+`ECE = Σ_{b=1..B} (|B_b| / n) × |acc(B_b) − conf(B_b)|`
 
 ECE 越低，模型越「自知」——它知道自己什麼時候在說確定的事，什麼時候在猜測。對於企業應用來說，一個過度自信卻頻繁出錯的 AI 系統，比一個承認不確定性的系統危險得多。
 

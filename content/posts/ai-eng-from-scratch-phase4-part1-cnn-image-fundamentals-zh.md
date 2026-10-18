@@ -5,7 +5,7 @@ draft: false
 weight: 6
 description: "深入解析卷積神經網路的工程直覺：卷積運算、池化、ResNet/EfficientNet 架構演進、影像資料增強與遷移學習策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Computer Vision", "CNN", "ResNet", "Transfer Learning", "Image Classification", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Computer Vision", "CNN", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "16 min"
 series: ["ai-eng-from-scratch"]
@@ -150,7 +150,7 @@ Stride=1, Padding=0 → 輸出尺寸 = (5-3)/1 + 1 = 3
 ```
 
 **參數共享的威力：**
-- 全連接層：5×5 輸入 → 3×3 輸出 = 225 × 9 = 2,025 參數
+- 全連接層：5×5 輸入（25 個值）→ 3×3 輸出（9 個值）= 25 × 9 = 225 參數
 - 卷積層：只需 3×3 = **9 個參數**（同一組權重在整張圖滑動）
 - 在 224×224 影像上，一層 64 個 3×3 卷積核 = 64 × 9 × 3 = 1,728 參數（vs FC 的 ~150K × 64 = 9.6M 參數）
 
@@ -221,7 +221,7 @@ GAP 讓模型天然支援任意輸入解析度，也大幅降低過擬合風險�
 |------|------|--------|----------------------|----------|
 | AlexNet | 2012 | 61M | 57.1% | ReLU、Dropout、GPU 訓練 |
 | VGG-16 | 2014 | 138M | 71.5% | 深度堆疊 3×3 conv |
-| GoogLeNet | 2014 | 7M | 74.8% | Inception module、GAP |
+| GoogLeNet | 2014 | 7M | 69.8%（torchvision 權重；原論文只報 top-5） | Inception module、GAP |
 | ResNet-50 | 2015 | 25M | 76.1% | 殘差連接（Skip Connection） |
 | EfficientNet-B0 | 2019 | 5.3M | 77.1% | 複合縮放（Compound Scaling） |
 | ConvNeXt-T | 2022 | 29M | 82.1% | 現代化 CNN 設計原則 |
@@ -373,7 +373,9 @@ Backbone 已收斂在 ImageNet 特徵，用大 LR 會破壞這些有用的特徵
 
 ### 正規化（Normalization）的正確做法
 
-**永遠使用資料集的統計量，不要用 ImageNet 的：**
+**從頭訓練時用資料集的統計量；Fine-tune 預訓練 Backbone 時，預設保留預訓練（ImageNet）的統計量：**
+
+Backbone 的權重是在 ImageNet 正規化後的輸入分布上學到的，沿用同一組 mean/std 才能讓預訓練特徵「對得上」。只有在領域差距極大（灰階醫療影像、衛星影像、紅外線）時，才改用自己資料集的統計量，並讓 BN 層在新資料上重新估計 running statistics。下面的例子是後者：
 
 ```python
 # 錯誤做法（對醫療影像）：
@@ -387,7 +389,7 @@ dataset_std  = [0.195, 0.201, 0.189]
 transform = Normalize(mean=dataset_mean, std=dataset_std)
 ```
 
-使用錯誤的正規化統計量會讓 Backbone 的特徵分布偏移，等效於 domain shift，可能讓 Fine-tune 收斂更慢或準確率下降 2–5%。
+正規化統計量與 Backbone 期望的輸入分布不一致，等效於 domain shift，可能讓 Fine-tune 收斂更慢或準確率下降（示意：2–5%）。中間路線是保留 ImageNet 統計量、但先用新資料重新估計 BN 的 running mean/var，再開始 Fine-tune。
 
 ### 類別不平衡的處理策略
 
@@ -413,10 +415,10 @@ transform = Normalize(mean=dataset_mean, std=dataset_std)
 | 參數量 | 5.3M | 25M |
 | Top-1 Acc | 77.1% | 76.1% |
 | FLOPs | 0.39B | 4.1B |
-| CoreML 推論 (iPhone 14) | ~45ms | ~180ms |
+| CoreML 推論 (iPhone 14，示意估算) | ~45ms | ~180ms |
 | Fine-tune 複雜度 | 稍高（Compound Scaling） | 直覺簡單 |
 
-**選 EfficientNet-B0 的理由：** 行動端部署時，EfficientNet-B0 推論速度快 4×，準確率還更高。
+**選 EfficientNet-B0 的理由：** 行動端部署時，EfficientNet-B0 的 FLOPs 少約 10×（0.39B vs 4.1B），實際推論速度快數倍（示意估算約 4×），準確率還更高。
 
 **翻轉條件：** 若伺服器端部署且 Batch size 很大，ResNet-50 的硬體利用率更好。
 

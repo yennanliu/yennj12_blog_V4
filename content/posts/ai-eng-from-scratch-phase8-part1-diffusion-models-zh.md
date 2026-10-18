@@ -5,7 +5,7 @@ draft: false
 weight: 16
 description: "深入解析擴散模型工程原理：DDPM/DDIM 前向與反向過程、Stable Diffusion 潛在空間架構、ControlNet/LoRA 微調、生產推論優化"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Generative AI", "Diffusion Models", "Stable Diffusion", "ControlNet", "Image Generation", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Generative AI", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "16 min"
 series: ["ai-eng-from-scratch"]
@@ -189,7 +189,7 @@ $$x_{t-1} = \sqrt{\bar{\alpha}_{t-1}} \underbrace{\left(\frac{x_t - \sqrt{1-\bar
 ### 步數 vs. 品質取捨
 
 ```
-FID（越低越好）vs. 推論步數（SD v1.5, 512×512）
+FID（越低越好）vs. 推論步數（SD v1.5, 512×512；示意估算，非實測數據）
 
 步數   FID     時間(A100)   適用場景
 ────────────────────────────────────────
@@ -322,7 +322,7 @@ $$W' = W + \Delta W = W + BA$$
 | LoRA (r=4) | 3.7M | 15 MB | 15–30 min |
 | LoRA (r=64) | 58M | 230 MB | 1–2 hr |
 
-**電商場景建議**：LoRA r=16，用 200–500 張品牌風格圖訓練 2000 步，**15 MB 的 LoRA 權重**即可讓生成圖與品牌視覺一致。
+**電商場景建議**：LoRA r=16，用 200–500 張品牌風格圖訓練 2000 步，**約 60 MB 的 LoRA 權重**（r=4 為 15 MB，r=16 參數量 4 倍）即可讓生成圖與品牌視覺一致。
 
 ---
 
@@ -344,14 +344,13 @@ pipe.enable_xformers_memory_efficient_attention()
 ```
 ONNX 導出 → TensorRT 引擎編譯 → INT8/FP16 量化校準
 
-時間線（SD v1.5, 512×512, A10G）：
+時間線（SD v1.5, 512×512, DDIM 20 步, A10G；示意估算，與 §二、§八、§九的 1.0s / 0.7s 同一基準）：
 ──────────────────────────────────────────────
-原始 PyTorch fp32    : 8.2s / 20步
-PyTorch fp16         : 3.1s / 20步  (-62%)
-fp16 + xFormers      : 2.3s / 20步  (-72%)
-TensorRT fp16        : 1.4s / 20步  (-83%)
-TensorRT INT8        : 0.9s / 20步  (-89%)
-TensorRT INT8 + CUDA : 0.7s / 20步  (-91%)
+原始 PyTorch fp32    : 3.5s / 20步
+PyTorch fp16         : 1.4s / 20步  (-60%)
+fp16 + xFormers      : 1.0s / 20步  (-71%)
+TensorRT fp16        : 0.8s / 20步  (-77%)
+TensorRT INT8        : 0.7s / 20步  (-80%)
 ```
 
 **INT8 量化注意事項**：
@@ -416,7 +415,7 @@ Flip：256×256 低解析度任務，pixel diffusion 架構更簡單，無 VAE �
 ```
 選擇        選 LoRA 的理由                  不選 Full Fine-tuning 的理由
 ──────────────────────────────────────────────────────────────
-LoRA        15 MB vs 3.4 GB，部署成本低     865M 參數訓練需 80GB VRAM
+LoRA        15–60 MB vs 3.4 GB，部署成本低     865M 參數訓練需 80GB VRAM
             多個 LoRA 可動態組合            每個風格獨立模型難以維護
             15–30 min 訓練，快速迭代        模型版本管理複雜度 O(n)
 
@@ -452,7 +451,7 @@ Flip：極高保真需求（醫療影像、衛星圖像）時，量化誤差不�
 | SDXL Turbo 4步 | 0.3s | 12.4 | 8GB | $0.06 | 即時預覽 |
 | LCM 4步 | 0.3s | 11.8 | 5GB | $0.06 | 快速迭代 |
 
-*成本基準：A10G $0.75/hr，GPU 利用率 70%，512×512*
+*成本基準：A10G $0.75/hr，以純 GPU 時間計（成本/千張 = 0.75 ÷ 3600 × 生成秒數 × 1000），512×512；示意估算，FID 欄為示意，非實測數據*
 
 *示意估算，非實測數據*
 

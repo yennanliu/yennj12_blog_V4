@@ -5,7 +5,7 @@ draft: false
 weight: 9
 description: "深入解析資料主權架構的技術控制堆疊，涵蓋 VPC Service Controls、Organization Policy、Vertex AI 區域端點及審計證據，幫助工程師在面試中精準回答金融與醫療合規場景。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Compliance", "SovereignAI", "DataResidency"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Compliance"]
 authors: ["yen"]
 readTime: "18 min"
 ---
@@ -18,7 +18,7 @@ readTime: "18 min"
 
 面試官出這道題，真正測試的是三個維度的工程判斷力：
 
-- **法規翻譯能力**：HIPAA 的「Protected Health Information 不得離開美國」、台灣個人資料保護法（PDPA）的「特種個資需要額外保護措施」、金管會對金融機構雲端使用的指引——這些法規條文候選人能否翻譯成具體技術控制？弱答是「我們用私有雲」，強答是列出五層控制並說明每層的法規對應點。
+- **法規翻譯能力**：GDPR 第五章的「個資離開 EEA 須有適足性認定或標準契約條款（SCC）」（HIPAA 本身並沒有資料落地要求，只規範保護措施與 BAA）、台灣個人資料保護法（PDPA）的「特種個資需要額外保護措施」、金管會對金融機構雲端使用的指引——這些法規條文候選人能否翻譯成具體技術控制？弱答是「我們用私有雲」，強答是列出五層控制並說明每層的法規對應點。
 - **AI 系統特殊性理解**：傳統應用的資料主權相對直覺（資料庫在哪裡），但 LLM 系統的複雜在於：推論時的 KV cache 是暫存資料、Embedding 是資料的另一種形式、Fine-tuning 過程資料會進入梯度計算——這些「衍生資料」的地理位置同樣受合規要求限制。
 - **陷阱識別與風險評估**：Batch Prediction 跨 region 執行的預設行為、VPC-SC dry-run 忘了切換 enforce、multi-region KMS key 的金鑰複製行為——這三個是最常在真實合規審計中踩到的地雷，能說出這些才代表有實戰經驗。
 
@@ -139,7 +139,7 @@ API 請求（含 Bearer Token）
 Vertex AI 提供兩種 endpoint 類型：
 
 ```
-全球端點（預設，不合規）        區域端點（合規）
+全球端點（global，不合規）      區域端點（合規）
          │                           │
          ▼                           ▼
   aiplatform.googleapis.com   asia-east1-aiplatform.googleapis.com
@@ -301,7 +301,7 @@ constraints/gcp.resourceLocations:
         │
         ▼（HTTPS to customer HSM）
 ┌───────────────────────────────────┐
-│  客戶自有 HSM（Thales / AWS CloudHSM）
+│  客戶自有 HSM（Thales / Utimaco）
 │  ├─ KEK 永不離開客戶機房           │
 │  ├─ 雲端服務商無法解密任何資料      │
 │  └─ 加密/解密操作在 HSM 內執行     │
@@ -432,7 +432,7 @@ Cloud Audit Logs 的完整性保護：日誌一旦寫入後，即使 Project Own
 | 只設 GCS bucket region，未設 Vertex AI location 參數 | LLM 推論在全球叢集執行，含敏感資料的 prompt 和 KV cache 可能存在於其他 region | 所有 Vertex AI API 呼叫顯式傳入 `location` 參數；封裝成公司內部 SDK wrapper 強制設定 |
 | Batch Prediction Job 使用預設設定（未設 region） | Job 被調度到全球工作節點，資料暫存在非指定 region 的機器顯存中 | 在 `BatchPredictionJob.create()` 顯式設定 `location="asia-east1"`；加入 CI/CD 檢查 |
 | VPC-SC 邊界未包含 Cloud Build / Cloud Functions / Pub/Sub | CI/CD 流水線或事件驅動架構成為資料出境的側道 | 盤點所有會接觸受保護資料的服務，全部納入服務邊界；使用 VPC-SC 的 `restricted services` 清單 |
-| 使用 Multi-region KMS key（如 `asia`）而非 Regional key | 金鑰物料被複製到邊界外的 region（如東南亞），加密操作也可能在遠端執行 | 建立 `asia-east1` regional key；在 Org Policy 中加入 `constraints/gcp.disableCloudKMSCryptoKeyVersionExternalImport` 防止意外導入 |
+| 使用 Multi-region KMS key（如 `asia`）而非 Regional key | 金鑰物料被複製到邊界外的 region（如東南亞），加密操作也可能在遠端執行 | 建立 `asia-east1` regional key；在 Org Policy 中用 `constraints/gcp.resourceLocations` 把 KMS key ring 限制在 `in:asia-east1-locations`，從源頭擋掉 multi-region key 的建立 |
 | VPC-SC 跳過 dry-run 直接切換 enforced 模式 | 合法 API 呼叫（如 CI/CD、監控系統）被誤擋，生產服務中斷，回退需要時間 | 強制執行 2 週 dry-run 期；分析 `DRYRUN_VIOLATION` 日誌；為每類合法存取建立 Access Level 例外 |
 | 只啟用 Admin Activity Audit Log，未啟用 Data Access Log | 稽核機關要求的「誰在何時存取了哪筆資料」無法提供，無法通過合規審計 | 明確啟用 `DATA_READ` 和 `DATA_WRITE`；事先估算日誌量（大型系統可達 GB/天），規劃 BigQuery 儲存成本 |
 | 認為簽署 DPA 等於技術合規 | 合約保護在資料已跨境後才有效；實際資料外洩時的懲罰仍無法避免 | DPA 是必要條件，技術控制（VPC-SC + Org Policy + Region Pinning）是充分條件；兩者同時需要 |
@@ -441,13 +441,13 @@ Cloud Audit Logs 的完整性保護：日誌一旦寫入後，即使 Project Own
 
 ## 七、與其他核心主題的關聯
 
-- **IAM 與最小權限原則（Part 5）**：VPC-SC 是網路層圍籬，IAM 是身份層圍籬，兩者功能互補而非替代。VPC-SC 防止資料「從哪裡出去」，IAM 控制「誰能做什麼」；真實的合規架構兩層同時需要，單靠任一層都有風險。
+- **IAM 與最小權限原則**：VPC-SC 是網路層圍籬，IAM 是身份層圍籬，兩者功能互補而非替代。VPC-SC 防止資料「從哪裡出去」，IAM 控制「誰能做什麼」；真實的合規架構兩層同時需要，單靠任一層都有風險。
 
-- **LLM 推論架構與延遲優化（Part 6）**：選擇 asia-east1 區域端點時，需要評估相對台灣企業用戶的網路 RTT（約 5–15ms）是否在 SLA 預算內；如果選擇更合規但更遠的 region，推論 P99 延遲可能增加 80–120ms，影響用戶體驗，這是 Compliance vs Performance 的典型 tradeoff。
+- **LLM 推論架構與延遲優化**（本系列 [TTFT & Throughput Optimization](/posts/fde-core-concept-16-ttft-throughput-optimization-zh/)）：選擇 asia-east1 區域端點時，需要評估相對台灣企業用戶的網路 RTT（約 5–15ms）是否在 SLA 預算內；如果選擇更合規但更遠的 region，推論 P99 延遲可能增加 80–120ms，影響用戶體驗，這是 Compliance vs Performance 的典型 tradeoff。
 
-- **多租戶隔離（Part 11）**：金融機構的多行庫場景中，A 銀行的資料不能被 B 銀行的模型見到；這在 Sovereign AI 架構中需要每個租戶一個 VPC-SC 邊界 + 專屬 Vertex AI 端點，成本是單租戶架構的 N 倍，需要在商業模式層面決策。
+- **多租戶隔離**（本系列 [Backpressure & Fair-Share](/posts/fde-core-concept-12-backpressure-fair-share-zh/)）：金融機構的多行庫場景中，A 銀行的資料不能被 B 銀行的模型見到；這在 Sovereign AI 架構中需要每個租戶一個 VPC-SC 邊界 + 專屬 Vertex AI 端點，成本是單租戶架構的 N 倍，需要在商業模式層面決策。
 
-- **安全事件回應（Part 15）**：VPC-SC 的 `403 VPC_SC_VIOLATION` 日誌是資料外洩嘗試的第一線偵測訊號；Audit Log 的保留策略（90 天熱、3 年冷）直接影響事後取證能力，也是 HIPAA Breach Notification Rule（60 天通報期）的基礎。
+- **安全事件回應**：VPC-SC 的 `403 VPC_SC_VIOLATION` 日誌是資料外洩嘗試的第一線偵測訊號；Audit Log 的保留策略（90 天熱、3 年冷）直接影響事後取證能力，也是 HIPAA Breach Notification Rule（60 天通報期）的基礎。
 
 ---
 

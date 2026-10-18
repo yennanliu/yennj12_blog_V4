@@ -5,7 +5,7 @@ draft: false
 weight: 7
 description: "深入解析 YOLO/Faster-RCNN 目標偵測架構、Mask R-CNN 語義分割、IoU/mAP 評估框架與工業部署的延遲優化策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Computer Vision", "Object Detection", "YOLO", "Segmentation", "mAP", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Computer Vision", "YOLO", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "11 min"
 series: ["ai-eng-from-scratch"]
@@ -177,13 +177,13 @@ RPN 在每個特徵圖位置預測 k 個 anchor 是否包含物件（objectness 
 
 | 維度 | Faster R-CNN | YOLOv8 |
 |------|-------------|--------|
-| COCO mAP@0.5:0.95 | ~46（R50-FPN） | 53.9（v8x） |
-| A100 延遲 | 150–200ms | 10–30ms |
+| COCO mAP@0.5:0.95 | 40.2（R50-FPN，detectron2 model zoo；R101-FPN 42.0） | 53.9（v8x） |
+| GPU 延遲（batch=1） | ~40ms（V100，detectron2 model zoo 38ms/img） | 10–30ms |
 | 小物件（< 32px）精度 | 較好（ROI Align 精細） | 略差 |
 | 實作複雜度 | 高（RPN + ROI 兩段訓練） | 低（端對端） |
 | 部署工具鏈 | detectron2 / mmdetection | Ultralytics |
 
-結論：**精度優先 + 延遲 > 100ms 可接受** → Faster R-CNN；**延遲 < 30ms** → YOLOv8。
+結論：在 COCO 整體 mAP 上現代 YOLO 已經領先，Faster R-CNN 的優勢在小物件與精細定位。**小物件 / 定位精度優先 + 延遲 ~50ms 可接受** → Faster R-CNN；**延遲 < 30ms** → YOLOv8。
 
 ---
 
@@ -227,8 +227,8 @@ Skip connection 將編碼器的細粒度特徵直接拼接到解碼器對應層�
 關鍵改進 ROI Align：替代 ROI Pooling 的整數取整，改用雙線性插值，消除特徵錯位，mask AP 提升 ~10%。
 
 **效能數字**：
-- COCO mask AP：Mask R-CNN R50-FPN = 34.6，R101-FPN = 36.1
-- A100 延遲：約 100–150ms（FP32），FP16 + TRT = 60–80ms
+- COCO mask AP：Mask R-CNN R50-FPN = 37.2，R101-FPN = 38.6（detectron2 model zoo，3× schedule）
+- GPU 延遲：約 45–55ms（FP32，V100，detectron2 model zoo），FP16 + TRT 示意約 25–30ms
 - 適用場景：醫療病灶標注、工業零件抓取姿態估計
 
 ---
@@ -252,7 +252,7 @@ IoU = //// 面積 / (GT + Pred - ////)
 ```
 
 IoU 閾值的工程含義：
-- IoU = 0.5：允許框的中心偏移 ≤ 25% 物件寬度
+- IoU = 0.5：兩個同尺寸的框沿一軸錯開比例 s 時 IoU = (1−s)/(1+s)，IoU = 0.5 對應中心偏移 ≤ 33% 物件寬度
 - IoU = 0.75：嚴格對齊，適合手術機器人等精密場景
 - IoU = 0.5:0.95（COCO 標準）：多閾值平均，更全面
 
@@ -314,8 +314,8 @@ IoU 閾值的工程含義：
 | YOLOv8n | RTX 3060 | 37.3 mAP | 37.1 / 36.8 | 9ms | **6ms** | **4ms** |
 | YOLOv8l | RTX 3060 | 52.9 mAP | 52.7 / 52.1 | 45ms | 18ms | 12ms |
 | YOLOv8x | A100 | 53.9 mAP | 53.7 / 53.2 | 55ms | 10ms | 7ms |
-| Faster R-CNN R50 | A100 | 46.0 mAP | 45.8 / 45.1 | 200ms | 80ms | 55ms |
-| Mask R-CNN R101 | A100 | 38.8 mask AP | 38.5 / 37.9 | 220ms | 90ms | 65ms |
+| Faster R-CNN R50-FPN | A100 | 40.2 mAP | 40.0 / 39.4 | 40ms | 20ms | 15ms |
+| Mask R-CNN R101-FPN | A100 | 38.6 mask AP | 38.4 / 37.8 | 55ms | 28ms | 20ms |
 
 *示意估算，非實測數據*
 
@@ -326,7 +326,7 @@ IoU 閾值的工程含義：
 | YOLOv8n FP16 單副本 | T4 | 1 | $180 | 8ms |
 | YOLOv8l FP16 | RTX 3090 | 1 | $290 | 20ms |
 | YOLOv8x INT8 | A10G | 1 | $380 | 9ms |
-| Faster R-CNN FP16 | A100 | 1 | $720 | 85ms |
+| Faster R-CNN FP16 | A100 | 1 | $720 | 25ms |
 
 *示意估算，非實測數據*
 

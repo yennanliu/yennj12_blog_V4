@@ -5,9 +5,9 @@ draft: false
 weight: 36
 description: "以系統設計視角拆解生產級 AI 評估管線：黃金資料集的建立原則、離線評估架構（RAGAS vs Vertex AI Evaluation Service）、CI/CD 品質閘門設計、Safety 作為獨立評估維度，以及線上評估的抽樣策略與 Trade-off"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Evaluation", "RAGAS", "Vertex AI", "CI/CD", "Safety", "Pipeline", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Evaluation", "Vertex AI", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "13 min"
+readTime: "10 min"
 ---
 
 > Eval Pipeline 和 Eval 的差別：  
@@ -241,8 +241,8 @@ CI 報告格式（讓工程師看到的不只是 PASS/FAIL）：
   ┌──────────────────┬──────────┬──────────┬──────────┐
   │ 指標             │ Baseline │ 本次     │ 變化      │
   ├──────────────────┼──────────┼──────────┼──────────┤
-  │ Faithfulness     │ 0.87     │ 0.91 ✅  │ +0.04    │
-  │ Context Recall   │ 0.83     │ 0.86 ✅  │ +0.03    │
+  │ Faithfulness     │ 0.91     │ 0.94 ✅  │ +0.03    │
+  │ Context Recall   │ 0.86     │ 0.88 ✅  │ +0.02    │
   │ Safety 越界率    │ 0%       │ 0%   ✅  │ 無變化    │
   │ P95 Latency      │ 3,200ms  │ 3,450ms  │ +250ms ⚠ │
   └──────────────────┴──────────┴──────────┴──────────┘
@@ -312,17 +312,13 @@ CI 報告格式（讓工程師看到的不只是 PASS/FAIL）：
 
 ---
 
-## 九、面試答題要點
+## 九、答題骨架
 
-> *「這道題的核心是：不靠人記得去評估，而是讓品質退化在影響用戶之前被系統自動擋住。*
->
-> *四層架構：黃金資料集（律師建立 200 題，四種題型，Git 版本控制）；離線評估（Vertex AI Evaluation Service + 獨立的 Safety 評估）；CI/CD 品質閘門（Faithfulness >= 0.90、Safety 越界 == 0%，否則 Block 部署）；線上評估（影子評分 3% 抽樣 + 人工抽查每週 50 筆）。*
->
-> *法律場景的特殊設計：Safety 評估是獨立維度，越界率 > 0% 直接 Block，不和 Accuracy 指標一起加權。Faithfulness 閾值用 0.90 不用 0.80，因為漏掉一個風險條款的代價是千萬，不是用戶體驗略差。這個閾值是和客戶的法務長一起決定的，不是工程師自己設定的。*
->
-> *成本分析：200 題的 Eval CI 每次大約 $0.40 的 LLM 費用。每週改 5 次 Prompt → 每週 $2。這個成本和它防止的業務風險相比是微不足道的。」*
-
----
+- 開場用 §一 定調：不靠人記得去評估，讓品質退化在影響用戶前被系統擋下。
+- 依 §二 的四層架構逐層展開：黃金資料集（§三）、離線評估（§四）、CI/CD 閘門（§六）、線上評估（§七）。
+- 法律場景的特殊處理放 §五：Safety 是獨立維度、越界率 > 0% 直接 Block，不與 Accuracy 加權。
+- 閾值怎麼訂、和誰訂，用 §六 的閘門規則回答，強調是與法務長共同決定的。
+- 收尾引 §八 的系統效應與成本數字，說明 Eval 成本相對於業務風險是微不足道的。
 
 **系列導航**
 

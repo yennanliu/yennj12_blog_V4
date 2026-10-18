@@ -228,7 +228,7 @@ Step 5: LLM 整合結果，生成最終回應
 
 1. **工具描述品質直接影響呼叫準確率**。Description 含有使用情境、參數說明、回傳格式，可明顯提升正確工具選擇率（例如從七成多提升到九成以上，此為示意估算，請用自己的查詢集量測）。
 
-2. **Strict Mode（參數強制驗證）**：啟用後 LLM 只能生成符合 Schema 的 arguments，消除格式錯誤，但稍微增加首 token 延遲（+50–100ms）。大多數生產系統應啟用。
+2. **Strict Mode（參數強制驗證）**：啟用後 LLM 只能生成符合 Schema 的 arguments，消除格式錯誤；代價是每個新 schema 第一次使用時有一次性的編譯延遲，之後會被快取。大多數生產系統應啟用。
 
 3. **Parallel Tool Calls**：LLM 可同時發出多個工具請求。例如同時查訂單狀態和物流資訊，總延遲降至單次工具延遲（300ms），而非兩次串行（600ms）。
 
@@ -236,7 +236,7 @@ Step 5: LLM 整合結果，生成最終回應
 
 ## 四、MCP 協議：標準化工具介面的工程設計
 
-MCP（Model Context Protocol）是 Anthropic 於 2024 年末發布的開放協議，用 JSON-RPC 2.0 作為傳輸層，定義了 AI Host 與工具提供者之間的標準合約。
+MCP（Model Context Protocol）是 Anthropic 於 2024 年末發布的開放協議，用 JSON-RPC 2.0 作為訊息格式（傳輸層另由 stdio / Streamable HTTP 承載），定義了 AI Host 與工具提供者之間的標準合約。
 
 ```
 ┌────────────────────────────────────────────────────┐

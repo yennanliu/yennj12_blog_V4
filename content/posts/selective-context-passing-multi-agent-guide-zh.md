@@ -4,11 +4,12 @@ date: 2026-03-12T20:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "Claude Code", "Multi-Agent", "context-passing", "token-optimization", "agent-orchestration", "API", "Development Tools"]
-summary: "多 Agent Token 優化系列 pt.5：深入探索選擇性 Context 傳遞策略，從依賴關係映射、結構化輸出到相關性過濾，提供完整實作範例，幫助你大幅降低 Agent 間通訊的 Token 消耗。"
+tags: ["AI", "Claude Code", "Multi-Agent", "token-optimization", "agent-orchestration", "API", "Developer Tools"]
 description: "多 Agent Token 優化系列 pt.5：深入探索選擇性 Context 傳遞策略，從依賴關係映射、結構化輸出到相關性過濾，提供完整實作範例，幫助你大幅降低 Agent 間通訊的 Token 消耗。"
 readTime: "28 min"
 ---
+
+本文對 Claude Code 功能的描述以 2026-03 的文件為準，產品每月更新。
 
 在前一篇文章《多 Agent 系統的 Token 用量調優指南》中，我們介紹了 **選擇性 Context 傳遞** 作為多 Agent 系統中最具影響力的優化策略之一。本文將深入實作層面，探討如何在真實系統中建構精確的 Context 傳遞機制，讓每個 Agent 只接收完成任務所需的最小資訊集合。
 
@@ -1604,7 +1605,7 @@ def create_adaptive_orchestrator(task: str) -> SelectiveContextOrchestrator:
 ## 效能比較與分析
 
 ```
-選擇性 Context 傳遞效益分析：
+選擇性 Context 傳遞效益分析（示意，未實測；各情境的 token 數為假設值）：
 
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    Token 使用量對比                                  │

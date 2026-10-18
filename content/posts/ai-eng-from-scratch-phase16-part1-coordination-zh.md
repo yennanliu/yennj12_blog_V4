@@ -5,7 +5,7 @@ draft: false
 weight: 34
 description: "深入解析多 Agent 系統協調工程：Supervisor/Peer-to-Peer/Market 協調模式、Agent 間通訊協議、衝突解決、任務分配與共識機制"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multi-Agent", "Coordination", "Swarm", "Agent Communication", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Multi-Agent", "Swarm", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "14 min"
 series: ["ai-eng-from-scratch"]
@@ -30,7 +30,7 @@ series: ["ai-eng-from-scratch"]
 
 | 情境 | 問題 | 數字 |
 |------|------|------|
-| 超長 context | 精度隨 token 數下降 | > 32K tokens 後 recall 掉 15–30% |
+| 超長 context | 精度隨 token 數下降 | 長 context 的中段資訊容易被忽略（示意量級：> 32K tokens 後 recall 掉 15–30%）|
 | 串行任務鏈 | 無法利用並行，延遲線性增長 | 10 步 × 3s = 30s |
 | 異構技能需求 | 同一 Agent 無法同時是程式碼專家與法律專家 | prompt 膨脹、精度下降 |
 | 長時間運行 | 上下文視窗耗盡，需要切割狀態 | 超過 4 小時任務必須外化記憶 |
@@ -155,7 +155,7 @@ queue.publish("task.search.done", {
 def handle_search_done(msg):
     process(msg["results"])
 ```
-- 延遲：5–50ms（Redis Streams），10–100ms（Kafka）
+- 延遲：1–5ms（Redis Streams），10–50ms（Kafka）
 - 優點：解耦、可重播、天然背壓
 - 適用：跨服務、需要審計軌跡的場景
 

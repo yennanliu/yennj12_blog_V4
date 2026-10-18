@@ -5,8 +5,7 @@ draft: false
 weight: 1
 authors: ["yen"]
 categories: ["all", "business", "creative"]
-tags: ["Synthwave", "復古合成器", "80年代", "賽博龐克", "YouTube", "24/7直播", "遊戲音樂", "Streaming", "music"]
-summary: "系列第一篇：深入探索 Synthwave 文化起源、為什麼它是 2026 年的黃金利基市場、如何精準定位高價值受眾（遊戲玩家、程式設計師、創作者），以及建立差異化品牌策略。"
+tags: ["Synthwave", "80年代", "賽博龐克", "YouTube", "24/7直播", "Streaming"]
 description: "系列第一篇：深入探索 Synthwave 文化起源、為什麼它是 2026 年的黃金利基市場、如何精準定位高價值受眾（遊戲玩家、程式設計師、創作者），以及建立差異化品牌策略。"
 readTime: "23 min"
 ---
@@ -63,11 +62,11 @@ Synthwave:
   • 電影配樂革命
     - Blade Runner (1982) - Vangelis
     - The Terminator (1984) - Brad Fiedel
-    - Drive (2011 回顧) - Cliff Martinez
+    （Drive 是 2011 年作品，見下方 2010s 復興）
 
   • 電子遊戲音樂
     - Outrun (1986)
-    - Streets of Rage (1991)
+    - Streets of Rage (1991，已屬 1990 年代初，常被視為延續 80s 風格)
     - Final Fight (1989)
 
   • 合成器技術爆發
@@ -96,7 +95,7 @@ Synthwave:
     - The Midnight
 
   • 網路文化推波助瀾
-    - Reddit r/outrun (500K+ 成員)
+    - Reddit r/outrun（約 40.6 萬成員，2026-10）
     - YouTube "synthwave radio" 頻道
     - Spotify 演算法推薦
 
@@ -304,7 +303,7 @@ YouTube 數據:
     - 市場仍未飽和（相比 Lofi）
 
 Reddit 社群:
-  • r/outrun: 685K 成員（高活躍）
+  • r/outrun: 約 40.6 萬成員（2026-10，高活躍）
   • r/synthwave: 123K 成員
   • r/Cyberpunk: 1.2M 成員
   • r/VaporwaveAesthetics: 890K 成員
@@ -326,9 +325,9 @@ Reddit 社群:
 
 ### 競爭對手深度分析
 
-**Top 3 現有頻道（2026 年；數字為示意估算，請以頻道頁面為準）**
+**三類現有頻道（匿名化為頻道 A/B/C；訂閱、CCV 與創立時間均為示意數字，非任何真實頻道的實測資料）**
 
-#### 1. The Bootleg Boy
+#### 1. 頻道 A（早期進入者型）
 
 ```yaml
 訂閱者: 1.8M
@@ -360,7 +359,7 @@ Reddit 社群:
   → 多元變現模式
 ```
 
-#### 2. Neon Nights
+#### 2. 頻道 B（視覺導向型）
 
 ```yaml
 訂閱者: 950K
@@ -391,7 +390,7 @@ Reddit 社群:
   → 定位更精準（如：專為程式設計師）
 ```
 
-#### 3. RetroWave Radio
+#### 3. 頻道 C（復古定位型）
 
 ```yaml
 訂閱者: 680K

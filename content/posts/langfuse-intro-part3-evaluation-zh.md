@@ -4,7 +4,7 @@ date: 2026-06-30T14:00:00+08:00
 draft: false
 description: "LLM 應用最難的問題:你怎麼知道它『答得好不好』?本篇拆解 Langfuse 的評估體系——用 Score 量化品質、用 LLM-as-a-Judge 自動評分、用人工標註校準、再用 Dataset + Experiment 在上線前做回歸測試,把『我覺得改好了』變成『數據證明改好了』。"
 categories: ["all", "ai", "engineering"]
-tags: ["Langfuse", "LLM", "Evaluation", "LLM-as-a-Judge", "Dataset", "Score", "Testing", "LLMOps", "AI Engineering"]
+tags: ["Langfuse", "LLM", "Evaluation", "LLM-as-a-Judge", "Testing", "LLMOps", "AI Engineering"]
 authors: ["yen"]
 readTime: "11 min"
 ---

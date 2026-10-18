@@ -2,12 +2,14 @@
 title: "AWS VPC Complete Guide: Enterprise Networking Patterns & VPC Peering"
 date: 2025-09-29T08:35:54+08:00
 draft: false
-tags: ["AWS", "VPC", "Networking", "Cloud Architecture", "Enterprise", "DevOps", "Java", "Cloud Computing"]
+tags: ["AWS", "VPC", "Cloud Architecture", "Enterprise", "DevOps", "Java", "Cloud Computing"]
 categories: ["all", "infrastructure"]
 authors: ["yen"]
 description: "Comprehensive guide to AWS VPC types, enterprise network design patterns, VPC peering, and Java implementations for production-ready cloud networking."
 readTime: "16 min"
 ---
+
+> Versions, APIs and prices in this guide are as of 2025-09 (the post date); AWS services and SDKs change frequently — verify against the current docs.
 
 ## Introduction
 
@@ -314,11 +316,13 @@ VPC peering connection is a networking connection between two VPCs that enables 
 |----------|-------------|----------|
 | **Cross-Region Connectivity** | Connect VPCs in different regions | Global application architecture |
 | **Multi-Account Architecture** | Connect VPCs across AWS accounts | Organizational isolation |
-| **Hybrid Cloud Integration** | Connect cloud and on-premises | Gradual cloud migration |
+| **Hybrid Cloud Integration** | ❌ Not a peering use case — peering only joins VPCs; on-premises connectivity needs Site-to-Site VPN or Direct Connect (usually via Transit Gateway) | — |
 | **Microservices Communication** | Service-to-service communication | Secure inter-service networking |
 | **Data Sharing** | Share databases or data lakes | Controlled data access |
 
 ### VPC Peering Configuration
+
+> **Caveat:** `setupPeeringMonitoring` at the end of this block creates an alarm on an `AWS/VPC` namespace metric `VPCPeeringConnectionState` — neither the namespace nor the metric exists. Peering health is checked with `DescribeVpcPeeringConnections` (status code) and traffic across the peering is observed through VPC Flow Logs, not CloudWatch metrics.
 
 ```java
 @Service
@@ -484,6 +488,8 @@ public class VPCPeeringService {
 
 ### 1. VPC Lifecycle Management
 
+> **Caveat:** the Flow Log format in `enableFlowLogs` uses `${windowstart} ${windowend} ${flowlogstatus}`, which are not Flow Log fields — the real names are `${start} ${end} ${log-status}`. A CloudWatch Logs destination also requires `deliverLogsPermissionArn` (an IAM role Flow Logs can assume), which the request omits.
+
 ```java
 @Service
 public class VPCLifecycleManager {
@@ -628,6 +634,8 @@ public class NetworkSecurityManager {
 ## Monitoring and Troubleshooting
 
 ### VPC Monitoring Dashboard
+
+> **Caveat:** there is no `AWS/VPC` namespace and no `NetworkPacketsIn{VpcId}` metric. Per-instance traffic lives in `AWS/EC2` (`NetworkPacketsIn` by `InstanceId`), NAT Gateway and Transit Gateway have their own namespaces, and VPC-wide traffic is derived from Flow Logs with CloudWatch Logs Insights. Treat the dashboard JSON as a layout sketch.
 
 ```java
 @Service

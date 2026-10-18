@@ -5,9 +5,9 @@ draft: false
 weight: 49
 description: "深度解析企業 RAG 系統中的向量資料漂移問題：Lambda Vector Architecture、HNSW Graph Drift 監控、Blue-Green Index Deployment，以及如何在零停機的前提下維持百萬級知識庫的索引精準度。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "Vector Search", "Data Pipeline", "MLOps", "Vertex AI"]
+tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "Vertex AI", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "26 min"
+readTime: "25 min"
 ---
 
 > 大多數工程師的直覺：「索引過期了？重新跑一次 Re-indexing 就好。」
@@ -192,11 +192,11 @@ readTime: "26 min"
 | 元件 | 用途 | 月成本增量 |
 |------|------|-----------|
 | Cloud Pub/Sub | 解耦事件觸發與處理 | ~$5 |
-| Firestore Blacklist | O(1) 刪除 ID 過濾 | ~$8 |
+| Firestore Blacklist | 刪除 ID 的來源（onSnapshot 推送到查詢中台記憶體，查詢路徑不讀 Firestore） | ~$8 |
 | 查詢中台 API（Cloud Run） | 合併 Vector 結果 + Blacklist 過濾 | ~$20 |
 | Cloud Scheduler + Cloud Run Re-indexing | 每日自動重建 | ~$15 |
 
-**Phase 2 成本**：~$183/月
+**Phase 2 成本**：~$133/月（$85 + $5 + $8 + $20 + $15）
 
 **解決的問題**：
 
@@ -253,7 +253,7 @@ readTime: "26 min"
 │               │  │         ↓                            │    │  │
 │               │  │  合併 Top-K 候選集（去重）             │    │  │
 │               │  │         ↓                            │    │  │
-│               │  │  Blacklist 過濾（O(1)，Firestore）    │    │  │
+│               │  │  Blacklist 過濾（記憶體 Set）         │    │  │
 │               │  │         ↓                            │    │  │
 │               │  │  重新排序 + 回傳 Top-K                │    │  │
 │               │  └──────────────────────────────────────┘    │  │
@@ -350,7 +350,6 @@ async def parallel_vector_search(query_embedding, k=20):
     combined = merge_and_deduplicate(base_results, delta_results)
     # Delta 的結果優先（更新的文件應覆蓋舊版本）
 
-    # Blacklist 過濾（Firestore O(1) 讀取）
     deleted_ids = firestore.get_blacklist()
     filtered = [r for r in combined if r.doc_id not in deleted_ids]
 
@@ -361,8 +360,32 @@ async def parallel_vector_search(query_embedding, k=20):
 **關鍵細節**：
 
 - Parallel Query 的額外延遲開銷：**+5–10ms**（相比單索引查詢）
-- Firestore Blacklist 讀取延遲：< 3ms（得益於 Firestore 的記憶體快取）
+- Blacklist 過濾在查詢中台的記憶體內完成（< 0.1ms）：Firestore 是來源，透過 onSnapshot 監聽把變更推到每個中台實例的本地 Set；查詢路徑不打 Firestore——以 > 1,000 QPS × 20 個候選計算，若每個候選都讀一次 Firestore，一個月是 5 × 10¹⁰ 次讀取、數萬美元，而不是 $8
 - 合併 + 去重的時間複雜度：O(2k log 2k)，k=20 時幾乎可忽略
+
+### 3.3 陷阱：Delta Index 向量版本衝突
+
+當同一份文件在 1 小時內被連續修改 3 次時，Delta Index 中可能同時存在同一 doc_id 的 3 個版本向量。Parallel Query 的合併邏輯如果不正確處理版本，三個版本都可能出現在 Top-K 結果中，讓 LLM 看到矛盾的知識片段。
+
+**正確防護**：
+
+```python
+# 向量寫入時帶入版本號（使用 timestamp 毫秒）
+vector_metadata = {
+    "doc_id": doc_id,
+    "version_ts": int(time.time() * 1000),  # 毫秒時間戳
+    "chunk_index": chunk_idx
+}
+
+# 合併時以 (doc_id, chunk_index) 為 key 保留最新版本
+def merge_and_deduplicate(base_results, delta_results):
+    merged = {}
+    for r in base_results + delta_results:
+        key = (r.doc_id, r.chunk_index)
+        if key not in merged or r.version_ts > merged[key].version_ts:
+            merged[key] = r
+    return sorted(merged.values(), key=lambda x: x.score, reverse=True)
+```
 
 ---
 
@@ -428,6 +451,19 @@ notification_channels:
   - pubsub_topic: rebalance-trigger-topic  # 同時觸發自動修復
 ```
 
+### 4.3 陷阱：搜尋廣度參數未跟隨 Delta 大小調整
+
+在 HNSW 類向量庫（pgvector、Qdrant 等）這個參數叫 `ef_search`，決定搜尋時探索的節點數；Vertex AI（ScaNN）對應的是 `leafNodesToSearchPercent` / `approximateNeighborsCount`，機制不同（分區掃描比例與候選數），但同樣要跟著 Delta 大小調。以下以 HNSW 的 `ef_search` 說明。Delta Index 剛啟動時只有幾百個向量，ef_search=100 完全夠用；但當 Delta 增長至 90K 向量時，ef_search=100 會造成嚴重的鄰域搜尋不足，RECALL 大幅下滑。
+
+**正確防護**：動態調整 ef_search，根據 Delta Index 當前向量數量設定：
+
+| Delta 向量數 | 建議 ef_search | 預期 RECALL@10 |
+|------------|--------------|--------------|
+| < 10K | 50 | > 95% |
+| 10K–50K | 100 | > 92% |
+| 50K–80K | 150 | > 90% |
+| > 80K | 觸發緊急 Rebalance | — |
+
 ---
 
 ## 五、Cloud Dataflow 串流管線設計
@@ -490,6 +526,31 @@ notification_channels:
 
 **吞吐量上限**：理論最高 **3,000 個 chunks/分鐘**，相當於每分鐘處理約 **200 頁 PDF**。
 
+### 5.3 生產事故 Post-Mortem 範例
+
+**事故名稱**：2025-Q3 某企業客戶知識庫 RECALL 崩盤事件
+
+**事故時間線**：
+
+```
+09:00  客戶批量上傳 8,000 份新法規 PDF（觸發大量 Embed 任務）
+09:05  Cloud Dataflow 因 Gecko API QPS 超限（429 錯誤），部分任務失敗並重試
+09:30  重試機制累積，Delta Index 中存在大量重複向量（同一 chunk 寫入 3–5 次）
+11:00  Delta Index 向量數衝破 80K 監控門檻，觸發緊急 Rebalance
+11:05  但 Rebalance DAG 未正確去重，將重複向量也合併入 Green Index
+11:30  Green Index 通過 RECALL 驗證（Golden Query Set 不包含法規類 query，盲點）
+12:00  流量切換完成，但 Agent 開始回傳重複且混亂的法規條文，客戶大規模投訴
+13:30  值班工程師手動回滾至 Blue Index，事故解除
+```
+
+**Root Cause**：Dataflow 重試機制 + Delta Index 去重邏輯缺失 + Golden Query Set 覆蓋率不足（只有 0.3%）。
+
+**改善措施**：
+
+1. Dataflow 增加冪等寫入（Idempotent Upsert），以 `(doc_id, chunk_index, content_hash)` 三聯鍵去重
+2. Golden Query Set 擴充至涵蓋所有一級文件分類，覆蓋率從 0.3% 提升至 3.5%
+3. 新增 Delta Index 向量去重率監控，超過 20% 重複率立即告警
+
 ---
 
 ## 六、Blue-Green Index Deployment 零停機切換
@@ -525,7 +586,7 @@ notification_channels:
 │  05:31  ┌───────────────────▼─────────────────────────┐   │
 │  切換   │ 流量切換：Blue → Green                        │   │
 │         │ → 更新查詢中台的 Base Index Endpoint 指標     │   │
-│         │ → 使用 Cloud Run 環境變數熱更新（< 5 秒）     │   │
+│         │ → 中台監聽 Firestore 版本指標文件（< 5 秒）  │   │
 │         │ → 清空 Delta Index（重置為空）                │   │
 │         │ → 清空 Firestore Blacklist                    │   │
 │         └───────────────────┬─────────────────────────┘   │
@@ -570,7 +631,7 @@ check_delta_size
 
 ### 7.1 為什麼 Firestore 而非其他方案
 
-刪除黑名單是整個架構中最高頻讀取的元件。每一次用戶查詢都必須在 Blacklist 中過濾結果。
+刪除黑名單是整個架構中最高頻讀取的元件。每一次用戶查詢都必須在 Blacklist 中過濾結果——所以 Firestore 只能當**來源**，不能當**查詢路徑**：每個查詢中台實例啟動時載入整份 Blacklist 到記憶體 Set，之後靠 Firestore 的 onSnapshot 監聽接收增量（只對變更的文件計費），查詢時在本地 O(1) 過濾。
 
 **效能要求**：
 
@@ -590,7 +651,7 @@ Document: {doc_id}        ← 以 doc_id 作為 Document ID（天然 O(1)）
     reason: String        ← "user_delete" | "system_purge"
 ```
 
-**查詢方式**：
+**查詢方式**（單筆核對／除錯用；線上查詢路徑走上述的記憶體 Set）：
 
 ```python
 # O(1) 單次讀取，不掃描全集合
@@ -609,7 +670,17 @@ Blacklist 在每日夜間重建完成後會被清空。但在清空前，必須�
 
 **清空時機的競態條件（Race Condition）防護**：
 
-使用 Firestore Transaction 確保「清空 Blacklist」和「更新 Index Endpoint」是原子操作。若 Transaction 失敗，回滾至安全狀態，不清空 Blacklist。
+把「目前的 Base Index Endpoint」和「Blacklist 世代（epoch）」放在同一份 Firestore 版本指標文件裡，在一個 Transaction 內同時更新；查詢中台監聽這份文件，讀到新 epoch 才切換 Endpoint 並改用新的（空的）Blacklist 世代。Firestore Transaction 只能涵蓋 Firestore 自己的文件，不能把 Cloud Run 環境變數或部署動作包進去，所以切換的單一真相必須是這份文件，而不是環境變數。
+
+### 7.3 陷阱：Blacklist 清空時機過早
+
+最常見的事故模式是：夜間重建的 Airflow DAG 在 Green Index 建立完成後，立即清空了 Blacklist，但在 30 秒後才完成流量切換（更新 Endpoint）。在這 30 秒的空窗期內：
+
+- 查詢仍然打到 Blue Index
+- 但 Blacklist 已清空
+- 導致已刪除文件的向量重新出現在搜尋結果中
+
+**正確防護**：不要分兩步「清空 Blacklist → 更新 Endpoint」，而是在一個 Firestore Transaction 內同時寫入新的 Endpoint 指標與新的 Blacklist epoch；舊 epoch 的黑名單文件留著，等所有中台實例都回報已切到新 epoch 後再由夜間任務刪除。這樣任一時刻查詢中台看到的 Endpoint 與 Blacklist 永遠是同一個世代。
 
 ---
 
@@ -618,7 +689,7 @@ Blacklist 在每日夜間重建完成後會被清空。但在清空前，必須�
 | 設計決策 | 選 X | 不選 Y | Flip Condition |
 |---------|------|--------|---------------|
 | **雙索引 vs 單索引即時更新** | Lambda Vector Architecture（Base + Delta 分離） | 單一索引持續 Upsert | 若向量總數 < 50K 且每日更新 < 500 筆，單索引維護成本更低，直接用 Phase 1 |
-| **Firestore Blacklist vs 向量直接刪除** | Firestore O(1) 過濾，刪除延遲 < 10 秒 | 直接從向量索引刪除（Tombstone 機制） | 若 Blacklist 超過 50K 條且不做夜間清空，改用 Redis Set 降低 Firestore 讀取成本 |
+| **Firestore Blacklist vs 向量直接刪除** | Firestore 為來源 + 中台記憶體 Set 過濾，刪除延遲 < 10 秒 | 直接從向量索引刪除（Tombstone 機制） | 若 Blacklist 超過 50K 條且不做夜間清空，記憶體 Set 改為 Redis Set（多實例共享一份，避免每個實例各載一份） |
 | **Cloud Dataflow vs Cloud Run 串流** | Dataflow：背壓控制、自動擴縮、At-Least-Once 語意 | Cloud Run：無內建背壓，突發流量易丟失事件 | 若每日更新量 < 1,000 份文件，Cloud Run 的冷啟動成本可接受，Dataflow 過於昂貴 |
 | **HDD Base Index vs SSD Base Index** | HDD Base：查詢 P99 < 80ms，成本低 60% | SSD Base：P99 < 20ms 但成本高 3x | 若 SLA 要求查詢 P99 < 30ms（如即時對話場景），必須升級為 SSD Base |
 | **Blue-Green 切換 vs 滾動更新** | Blue-Green：舊索引完整保留，驗證失敗可立即回滾 | 滾動更新：新舊向量混合，驗證困難，回滾複雜 | 向量索引不支援部分回滾，Blue-Green 幾乎是唯一合理選擇，無 Flip |
@@ -644,101 +715,7 @@ Blacklist 在每日夜間重建完成後會被清空。但在清空前，必須�
 
 > 以上為示意估算，非實測結果。
 
----
-
-## 十、面試答題要點
-
-> *「面對百萬向量的 RAG 知識庫，頻繁更新帶來的索引退化問題，核心解法是 **Lambda Vector Architecture**：將索引分為 Base（批次重建、唯讀、精準度高）與 Delta（即時寫入、允許輕度 Graph Drift）兩層，查詢時 Parallel Query 同時打兩個索引再合併去重，透過 Firestore Blacklist 實現 O(1) 的刪除過濾，把文件刪除到 Agent 不再引用的延遲從 4 小時壓縮至 10 秒。演進路徑上，Phase 1 的單索引方案適合 < 10K 文件驗證業務價值；Phase 2 在單索引基礎上加入 Blacklist 機制，用 60 秒延遲換零架構複雜度；Phase 3 才引入雙索引，成本增至約 $783/月，但換來零停機與 RECALL@10 長期穩定在 93% ± 2%。最關鍵的風險不是索引速度，而是 HNSW Graph Drift 的靜默劣化——我們用 Golden Query Set 每 30 分鐘評估一次 RECALL@10，一旦下滑 5% 就自動觸發 Cloud Composer DAG 進行 Blue-Green Re-indexing，整個切換過程對用戶完全透明，停機時間為零。」*
-
----
-
-## 十一、常見陷阱與生產事故分析
-
-### 11.1 三個高頻踩坑場景
-
-**陷阱一：Blacklist 清空時機過早**
-
-最常見的事故模式是：夜間重建的 Airflow DAG 在 Green Index 建立完成後，立即清空了 Blacklist，但在 30 秒後才完成流量切換（更新 Endpoint）。在這 30 秒的空窗期內：
-
-- 查詢仍然打到 Blue Index
-- 但 Blacklist 已清空
-- 導致已刪除文件的向量重新出現在搜尋結果中
-
-**正確防護**：使用 Firestore Transaction 將「清空 Blacklist」和「更新 Endpoint 環境變數」打包成原子操作。若任一步驟失敗，整個 Transaction 回滾。
-
----
-
-**陷阱二：Delta Index 向量版本衝突**
-
-當同一份文件在 1 小時內被連續修改 3 次時，Delta Index 中可能同時存在同一 doc_id 的 3 個版本向量。Parallel Query 的合併邏輯如果不正確處理版本，三個版本都可能出現在 Top-K 結果中，讓 LLM 看到矛盾的知識片段。
-
-**正確防護**：
-
-```python
-# 向量寫入時帶入版本號（使用 timestamp 毫秒）
-vector_metadata = {
-    "doc_id": doc_id,
-    "version_ts": int(time.time() * 1000),  # 毫秒時間戳
-    "chunk_index": chunk_idx
-}
-
-# 合併時以 (doc_id, chunk_index) 為 key 保留最新版本
-def merge_and_deduplicate(base_results, delta_results):
-    merged = {}
-    for r in base_results + delta_results:
-        key = (r.doc_id, r.chunk_index)
-        if key not in merged or r.version_ts > merged[key].version_ts:
-            merged[key] = r
-    return sorted(merged.values(), key=lambda x: x.score, reverse=True)
-```
-
----
-
-**陷阱三：HNSW ef_search 參數未跟隨 Delta 大小調整**
-
-Vertex AI Vector Search 的 `approximateNeighborsCount`（即 ef_search）參數決定 HNSW 圖在搜尋時探索的節點數。Delta Index 剛啟動時只有幾百個向量，ef_search=100 完全夠用；但當 Delta 增長至 90K 向量時，ef_search=100 會造成嚴重的鄰域搜尋不足，RECALL 大幅下滑。
-
-**正確防護**：動態調整 ef_search，根據 Delta Index 當前向量數量設定：
-
-| Delta 向量數 | 建議 ef_search | 預期 RECALL@10 |
-|------------|--------------|--------------|
-| < 10K | 50 | > 95% |
-| 10K–50K | 100 | > 92% |
-| 50K–80K | 150 | > 90% |
-| > 80K | 觸發緊急 Rebalance | — |
-
----
-
-### 11.2 生產事故 Post-Mortem 範例
-
-**事故名稱**：2025-Q3 某企業客戶知識庫 RECALL 崩盤事件
-
-**事故時間線**：
-
-```
-09:00  客戶批量上傳 8,000 份新法規 PDF（觸發大量 Embed 任務）
-09:05  Cloud Dataflow 因 Gecko API QPS 超限（429 錯誤），部分任務失敗並重試
-09:30  重試機制累積，Delta Index 中存在大量重複向量（同一 chunk 寫入 3–5 次）
-11:00  Delta Index 向量數衝破 80K 監控門檻，觸發緊急 Rebalance
-11:05  但 Rebalance DAG 未正確去重，將重複向量也合併入 Green Index
-11:30  Green Index 通過 RECALL 驗證（Golden Query Set 不包含法規類 query，盲點）
-12:00  流量切換完成，但 Agent 開始回傳重複且混亂的法規條文，客戶大規模投訴
-13:30  值班工程師手動回滾至 Blue Index，事故解除
-```
-
-**Root Cause**：Dataflow 重試機制 + Delta Index 去重邏輯缺失 + Golden Query Set 覆蓋率不足（只有 0.3%）。
-
-**改善措施**：
-
-1. Dataflow 增加冪等寫入（Idempotent Upsert），以 `(doc_id, chunk_index, content_hash)` 三聯鍵去重
-2. Golden Query Set 擴充至涵蓋所有一級文件分類，覆蓋率從 0.3% 提升至 3.5%
-3. 新增 Delta Index 向量去重率監控，超過 20% 重複率立即告警
-
----
-
-## 十二、成本優化策略與規模化路徑
-
-### 12.1 分階段成本拆解
+### 9.1 分階段成本拆解
 
 在邁向百萬向量規模的過程中，成本的主要驅動因素會隨著規模改變：
 
@@ -764,7 +741,7 @@ Vertex AI Vector Search 的 `approximateNeighborsCount`（即 ef_search）參數
 └────────────────────────────────────────────────────────────┘
 ```
 
-### 12.2 三個高效成本優化手段
+### 9.2 三個高效成本優化手段
 
 **優化一：Embedding 快取**
 
@@ -793,7 +770,7 @@ def embed_with_cache(chunks: List[str]) -> List[np.ndarray]:
 
 超過 180 天未被任何查詢命中的向量，可以標記為「冷向量」，從 Base Index 移出，存入 Cloud Storage（GCS）作為壓縮向量備份。僅在用戶明確要求搜尋歷史文件時，才按需載入。100 萬向量中通常有 **20–35%** 是冷向量，這個策略可以節省約 $50–70/月的向量儲存費用。
 
-### 12.3 規模化時的架構變更
+### 9.3 規模化時的架構變更
 
 當系統規模超過 1M 向量（即 Phase 3 的上限）時，需要考慮：
 
@@ -807,23 +784,19 @@ def embed_with_cache(chunks: List[str]) -> List[np.ndarray]:
 
 不要按照文件 ID 雜湊分片（會讓語意相近的文件分散在不同 Shard，查詢時需要廣播到所有 Shard）。應按照**文件語意類別**分片（例如：法規類、產品類、技術類），使得 90% 的查詢只需打 1–2 個 Shard，而非全廣播。
 
+---
+
+## 十、答題骨架
+
+- 先指出題目前提的不精確（Vertex AI Vector Search 底層是 ScaNN），再用 §一 把問題定義為兩個時間維度的解耦。
+- 主幹照 §二 的三個演進階段講：單索引驗證、加 Blacklist、再上雙索引。
+- 核心架構接 §三 的 Lambda Vector Architecture（Base + Delta、Parallel Query 合併去重）與 §七 的 Firestore Blacklist。
+- 「長期維持索引健康」用 §四 的 RECALL@10 監控觸發 §六 的 Blue-Green 重建回答；即時攝取接 §五 的 Dataflow 管線。
+- 百萬向量時的調整引 §九 9.1–9.3 的成本拆解與規模化路徑；選型理由用 §八；收尾用 §九 的前後對比給數字。
+
 ## 相關文章與正典版本
 
 - 機制與原理（正典；數字與機制以正典版本為準） — [FDE core topic — Vector Drift & Blue-Green Indexing](/posts/fde-core-concept-15-vector-drift-blue-green-zh/)
-
----
-
-## 十三、系列回顧：FDE Interview Guide 知識地圖
-
-本篇是 FDE Interview Guide 系列的第 49 篇。系列涵蓋的核心主題已超過 45 個生產級架構設計問題，從 Phase 1 快速驗證到 Phase 3 百萬用戶規模，每篇都提供具體數字、Why-X-not-Y 決策框架，以及面試可直接使用的 RKK 模型答案。
-
-本篇的核心貢獻：
-
-- **Lambda Vector Architecture** 的完整三階段演進路徑，帶具體成本數字
-- **HNSW Graph Drift** 的量化監控方法（RECALL@10 + Golden Query Set）
-- **Blue-Green Index Deployment** 的零停機切換詳細時序
-- **Firestore Blacklist** 的生命週期管理與競態條件防護
-- **三個生產陷阱**的成因分析與防護模式
 
 ---
 

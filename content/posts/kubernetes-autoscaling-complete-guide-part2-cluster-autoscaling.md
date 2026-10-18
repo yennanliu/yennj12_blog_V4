@@ -5,22 +5,23 @@ draft: false
 weight: 2
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "Autoscaling", "Cluster Autoscaler", "Karpenter", "EKS", "GKE", "Cloud Native", "Infrastructure", "Cost Optimization", "DevOps", "Cloud"]
-summary: "Part 2 of the Kubernetes Autoscaling series: Comprehensive guide to cluster-level autoscaling covering Cluster Autoscaler, Karpenter, cloud provider-specific solutions (EKS, GKE, AKS), and emerging technologies for intelligent node provisioning and cost optimization."
-description: "Part 2 of the Kubernetes Autoscaling series: Comprehensive guide to cluster-level autoscaling covering Cluster Autoscaler, Karpenter, cloud provider-specific solutions (EKS, GKE, AKS), and emerging technologies for intelligent node provisioning and cost optimization."
+tags: ["Kubernetes", "Autoscaling", "EKS", "GKE", "Infrastructure", "Cost Optimization", "DevOps", "Cloud"]
+description: "Scale nodes, not just pods: Cluster Autoscaler vs Karpenter, plus EKS, GKE and AKS native options, compared on provisioning speed, bin packing and Spot support."
 readTime: "32 min"
 ---
+
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
 
 ## Series Overview
 
 This is **Part 2** of the Kubernetes Autoscaling Complete Guide series:
 
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Application-level autoscaling with HPA, custom metrics, and KEDA
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Application-level autoscaling with HPA, custom metrics, and KEDA
 - **Part 2 (This Post)**: Cluster Autoscaling & Cloud Providers - Infrastructure-level autoscaling with Cluster Autoscaler, Karpenter, and cloud-specific solutions
 
 ---
 
-While Horizontal Pod Autoscaler (HPA) manages application-level scaling by adjusting pod replicas (covered in [Part 1](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)), production Kubernetes environments require intelligent cluster-level autoscaling that dynamically provisions and deprovisions compute resources. This comprehensive guide explores advanced autoscaling strategies across node management, cloud provider integrations, and cutting-edge autoscaling technologies.
+While Horizontal Pod Autoscaler (HPA) manages application-level scaling by adjusting pod replicas (covered in [Part 1](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)), production Kubernetes environments require intelligent cluster-level autoscaling that dynamically provisions and deprovisions compute resources. This comprehensive guide explores advanced autoscaling strategies across node management, cloud provider integrations, and cutting-edge autoscaling technologies.
 
 ## The Complete Autoscaling Picture
 
@@ -60,7 +61,7 @@ Effective Kubernetes autoscaling operates across three interconnected layers:
 
 ### Why Cluster Autoscaling Matters
 
-**Business Impact:**
+**Business Impact** (illustrative ranges, commonly cited but unsourced — measure your own baseline):
 
 | Metric | Without Cluster Autoscaling | With Cluster Autoscaling |
 |--------|----------------------------|--------------------------|
@@ -348,6 +349,11 @@ command:
 - --nodes=0:5:my-cluster-gpu-asg           # GPU nodes
 - --nodes=2:8:my-cluster-memory-asg        # Memory-optimized
 
+```
+
+> **Priority semantics:** the `priority` expander picks the node group whose pattern sits under the **highest** number, so as written (spot 10, general 50, GPU 100) this ConfigMap scales GPU nodes **first** and spot last. To prefer spot, give spot the highest number (e.g. spot 100, general 50, GPU 10).
+
+```yaml
 # Priority-based expander configuration
 ---
 apiVersion: v1
@@ -358,11 +364,11 @@ metadata:
 data:
   priorities: |
     10:
-      - .*-spot-.*        # Prefer spot instances
+      - .*-spot-.*
     50:
-      - .*-general-.*     # Then general purpose
+      - .*-general-.*
     100:
-      - .*-gpu-.*         # GPU nodes last resort
+      - .*-gpu-.*
 ```
 
 ### Preventing Unwanted Scale-Down
@@ -404,7 +410,7 @@ spec:
 | **Mature & Stable** | 5+ years production use | Battle-tested reliability |
 | **Cloud-Agnostic** | Works on all major clouds | Portability across providers |
 | **Active Community** | Official CNCF project | Regular updates, wide support |
-| **Cost Optimization** | Automatic scale-down | 40-60% infrastructure savings |
+| **Cost Optimization** | Automatic scale-down | Commonly cited 40-60% savings (unsourced; varies by baseline) |
 | **PDB Awareness** | Respects disruption budgets | Safe scaling operations |
 
 **Limitations:**
@@ -1023,7 +1029,7 @@ requirements:
 
 | Benefit | Description | Impact |
 |---------|-------------|--------|
-| **Fast Provisioning** | 30-60s vs 3-5min | 5x faster scale-out |
+| **Fast Provisioning** | ~30-60s vs several min (illustrative, depends on AMI and instance type) | Faster scale-out |
 | **Cost Optimization** | Right-sized nodes | 20-40% additional savings |
 | **No Node Groups** | Direct EC2 API | Simplified management |
 | **Intelligent Consolidation** | Automatic bin-packing | Continuous optimization |
@@ -1034,7 +1040,7 @@ requirements:
 
 | Challenge | Impact | Consideration |
 |-----------|--------|---------------|
-| **AWS-Specific** | EKS only (currently) | Not portable to other clouds |
+| **Provider-Specific** | Originated on AWS; an Azure provider (AKS node auto-provisioning) also exists | Not a drop-in across every cloud |
 | **Newer Technology** | Less battle-tested | Thorough testing required |
 | **Complexity** | More configuration options | Learning curve |
 | **Breaking Changes** | Rapid API evolution | Stay updated on versions |
@@ -1058,7 +1064,8 @@ requirements:
 # Phase 4: Scale down old ASGs
 # Phase 5: Remove Cluster Autoscaler
 
-# Coexistence example
+# Coexistence example (illustrative label — not a documented Karpenter setting;
+# verify the current coexistence guidance in the Karpenter docs)
 kubectl label nodes -l eks.amazonaws.com/nodegroup=old-ng \
   karpenter.sh/managed=false
 ```
@@ -1176,8 +1183,10 @@ spec:
 
 **Serverless Kubernetes:**
 
+> **Caveat:** a Fargate profile is an EKS API object, not a Kubernetes resource — applying the ConfigMap below creates an inert ConfigMap. Create the profile with `aws eks create-fargate-profile` or CDK `cluster.addFargateProfile()`; the JSON only illustrates the selector shape.
+
 ```yaml
-# Fargate profile
+# Fargate profile (shape only — see caveat above)
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -1216,7 +1225,7 @@ spec:
 # No node management needed!
 ```
 
-**Fargate Pricing Model:**
+**Fargate Pricing Model** (us-east-1 Linux/x86 list price as of 2025-11):
 
 ```
 Cost = (vCPU × $0.04048/hour) + (GB RAM × $0.004445/hour)
@@ -1275,7 +1284,7 @@ resourceLimits:
 - resourceType: memory
   minimum: 1
   maximum: 1000
-- resourceType: nvidia-tesla-k80
+- resourceType: nvidia-tesla-k80   # retired GPU type; substitute a current accelerator
   minimum: 0
   maximum: 4
 
@@ -1321,7 +1330,7 @@ kubectl apply -f deployment.yaml
 # - Handles node upgrades
 ```
 
-**Autopilot Pricing:**
+**Autopilot Pricing** (illustrative — the unit prices below are not verified against the current list price, and the GKE cluster management fee is billed separately):
 
 ```
 Cost = Sum of pod resource requests
@@ -1335,9 +1344,8 @@ Example Deployment:
 = $185/month
 
 Includes:
-- Compute resources
-- GKE management fee
-- Networking egress (within limits)
+- Compute resources (pod requests)
+- Not included: the per-cluster GKE management fee, egress
 ```
 
 ### Pros and Cons
@@ -1428,7 +1436,7 @@ spec:
 | **Spot Instance Support** | ✅ Excellent | ✅ Preemptible | ✅ Spot VMs |
 | **Provisioning Speed** | 2-5 min (30s Karpenter) | 1-3 min | 2-4 min |
 | **Cost Optimization** | Karpenter best-in-class | NAP intelligent | Standard |
-| **Multi-Architecture** | ✅ ARM64 support | ✅ ARM64 support | Limited |
+| **Multi-Architecture** | ✅ ARM64 support | ✅ ARM64 support | ✅ ARM64 support |
 
 ## Emerging Autoscaling Technologies
 
@@ -1527,7 +1535,7 @@ priorities:
   4. Reserved instances for baseline
   5. Savings Plans for predictable workloads
 
-# Example cost breakdown
+# Example cost breakdown (illustrative figures; the $15,000 static baseline is assumed, not measured)
 baseline: 10 on-demand nodes (reserved) = $1,500/month
 dynamic: 0-50 spot nodes (Karpenter) = $500-3000/month
 burst: Fargate for spikes = $200/month
@@ -1568,6 +1576,8 @@ spec:
         summary: "Cluster autoscaler is down"
 
     - alert: NodeProvisioningDelayed
+      # Illustrative metric names — check the Karpenter v1 metrics reference
+      # (e.g. karpenter_nodeclaims_created_total) before using
       expr: |
         sum(karpenter_pending_pods_total) > 10
         AND
@@ -1609,14 +1619,14 @@ aws ec2 terminate-instances --instance-ids i-xxxxx
 For comprehensive Kubernetes knowledge, explore these related posts:
 
 ### Horizontal Pod Autoscaling
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Deep dive into HPA, KEDA, custom metrics, and event-driven autoscaling
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Deep dive into HPA, KEDA, custom metrics, and event-driven autoscaling
 
 ### Kubernetes Fundamentals
-- **[Kubernetes Complete Guide (Part 1): Introduction](./kubernetes-complete-guide-part1-introduction-zh.md)** - Architecture, concepts, installation (Traditional Chinese)
-- **[Kubernetes Complete Guide (Part 3): Advanced Features](./kubernetes-complete-guide-part3-advanced-zh.md)** - RBAC, monitoring, production practices (Traditional Chinese)
+- **[Kubernetes Complete Guide (Part 1): Introduction](/posts/kubernetes-complete-guide-part1-introduction-zh/)** - Architecture, concepts, installation (Traditional Chinese)
+- **[Kubernetes Complete Guide (Part 3): Advanced Features](/posts/kubernetes-complete-guide-part3-advanced-zh/)** - RBAC, monitoring, production practices (Traditional Chinese)
 
 ### Production Kubernetes
-- **[Building Production Kubernetes Platform on AWS EKS](./building-production-kubernetes-platform-aws-eks-cdk.md)** - Complete EKS architecture with CDK implementation
+- **[Building Production Kubernetes Platform on AWS EKS](/posts/building-production-kubernetes-platform-aws-eks-cdk/)** - Complete EKS architecture with CDK implementation
 
 ## Conclusion
 

@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "LLM 的輸出沒有唯一標準答案，該怎麼客觀評估？本文介紹 BLEU、ROUGE、Perplexity、BERTScore 及 LLM-as-a-Judge 等方法，幫助你從多個維度評估語言模型的真實能力。"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "NLP", "BLEU", "ROUGE", "BERTScore", "LLM-as-a-Judge", "Evaluation", "繁體中文"]
+tags: ["AI", "LLM", "NLP", "BLEU", "ROUGE", "LLM-as-a-Judge", "Evaluation"]
 authors: ["yen"]
 readTime: "15 min"
 ---
@@ -100,7 +100,7 @@ ROUGE 常用於**摘要任務**，與 BLEU 相反，它更偏重召回率（參�
 
 困惑度衡量的是模型對文字的「不確定性」——直觀理解就是：**模型在預測下一個字時，平均有幾個字需要考慮？**
 
-$$\text{Perplexity} = \exp\left(-\frac{1}{N}\sum_{i=1}^{N}\log P(w_i | w_1, ..., w_{i-1})\right)$$
+`Perplexity = exp( −(1/N) × Σ_{i=1..N} log P(w_i | w_1, …, w_{i−1}) )`
 
 - **Perplexity = 10**：模型每次預測下一個字時，平均在約 10 個候選詞之間猶豫。
 - **Perplexity = 1**：模型完全確定下一個字是什麼（完美預測）。
@@ -303,6 +303,8 @@ def evaluate_llm_output(question, model_output, reference=None):
     
     return results
 ```
+
+> 注意：`rouge_score` 的預設 tokenizer 只保留 `[a-z0-9]`，直接餵中文會把整句切成空字串、分數永遠是 0.0。評中文時要先用 `jieba` 之類的斷詞工具切好、以空格相接再丟進去（或傳入自訂 `tokenizer`）；上面的範例是以英文為前提的示意。`judge_response_quality` 則是第四節 LLM-as-a-Judge 函式的佔位，需自行實作。
 
 ---
 

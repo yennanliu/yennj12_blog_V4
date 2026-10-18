@@ -2,14 +2,16 @@
 title: "TypeScript Best Practices: A Comprehensive Guide to Type-Safe Development"
 date: 2025-11-30T10:00:00Z
 draft: false
-description: "Master TypeScript development with comprehensive best practices covering configuration, type system, design patterns, code style, and advanced techniques. Learn to write type-safe, maintainable, and scalable TypeScript applications."
+description: "Write TypeScript that catches bugs before runtime: strict tsconfig settings, type system idioms, design patterns, generics, utility types and pitfalls to avoid."
 categories: ["all", "engineering"]
-tags: ["TypeScript", "JavaScript", "Type Safety", "Design Patterns", "Code Quality", "Best Practices", "Software Architecture", "Frontend"]
+tags: ["TypeScript", "JavaScript", "Design Patterns", "Best Practices", "Software Architecture", "Frontend"]
 authors: ["yen"]
 readTime: "21 min"
 ---
 
 ## 🎯 Introduction
+
+> Written against TypeScript 5.3 (the `package.json` at the end pins `^5.3.0`). Two things have moved since: TypeScript 5.5 (June 2024) infers type predicates from simple `filter` callbacks, and ESLint 9 replaced `.eslintrc` with flat config — see the notes at those two spots.
 
 TypeScript has revolutionized JavaScript development by bringing static typing and advanced tooling to the ecosystem. However, leveraging TypeScript's full potential requires understanding not just the syntax, but the principles and patterns that lead to maintainable, type-safe code.
 
@@ -277,6 +279,8 @@ function getArea(shape: Shape): number {
 ```
 
 ### 🧩 Generics Best Practices
+
+A note on the mapped-type examples in this block: `Readonly<T>` and `Partial<T>` are written out under the built-in names to show how they work. Doing that in your own code is a "Duplicate identifier" error in a script-mode file and silently shadows the global in a module — use a different name (`MyReadonly`, `MyPartial`) and keep the built-ins.
 
 ```typescript
 // ✅ GOOD: Generic function with constraints
@@ -787,6 +791,8 @@ getUserById(postId); // ❌ Error: Type 'PostId' is not assignable to type 'User
 
 ### 🧪 Conditional Types and Inference
 
+Same caveat here: `ReturnType`, `Awaited` and `Parameters` are re-derived under their built-in names for illustration only; rename them if you copy them.
+
 ```typescript
 // ✅ GOOD: Extract return type
 type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
@@ -999,11 +1005,13 @@ const config3: Config = {}; // ❌ Error: retries is required
 
 ### ⚠️ Pitfall 4: Array Methods and Type Narrowing
 
+Since TypeScript 5.5 (inferred type predicates, June 2024) the "bad" example below actually narrows to `string[]` on its own; the explicit predicate is still needed for guards the compiler cannot infer (multi-step checks, guards on nested properties, or anything the callback returns through a helper).
+
 ```typescript
-// ❌ BAD: Filter doesn't narrow types automatically
+// ❌ BAD (before TypeScript 5.5): Filter doesn't narrow types automatically
 const values: (string | null)[] = ['a', null, 'b', null];
 const strings = values.filter(v => v !== null);
-// Type is still (string | null)[]
+// Type was still (string | null)[] in TS <= 5.4
 
 // ✅ GOOD: Use type predicate
 function isNotNull<T>(value: T | null): value is T {
@@ -1067,6 +1075,8 @@ npx tsx src/index.ts
 ```
 
 ### 🎨 ESLint Configuration for TypeScript
+
+This is the ESLint 8 `.eslintrc` format matching the `^8.0.0` pin above; ESLint 9 (and `typescript-eslint` v8) use flat config (`eslint.config.js`) instead, and ESLint 8 reached end-of-life in 2024.
 
 ```json
 {

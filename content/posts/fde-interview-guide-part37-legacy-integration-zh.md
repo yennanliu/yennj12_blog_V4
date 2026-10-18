@@ -3,11 +3,11 @@ title: "FDE 面試準備指南（三十七）：RKK 實戰——企業 AI 的「
 date: 2026-06-05T15:00:00+08:00
 draft: false
 weight: 37
-description: "以系統設計視角拆解 FDE 最常遇到的現場問題：如何把 ADK Agent 接上 SAP、Oracle DB、Mainframe CSV 等 Legacy 資料孤島；API 橋接層的選型邏輯；安全邊界連接工程（Private Service Connect、VPC-SC、CMEK）；以及每種整合模式對系統效能、穩定性、成本和風險的影響"
+description: "把 ADK Agent 接上 SAP、Oracle 直連與 Mainframe CSV 這類 Legacy 孤島的整合層設計:API 橋接層選型、Private Service Connect / VPC-SC / CMEK 安全邊界,以及每種整合模式對效能、穩定性與成本的影響。"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Integration", "Legacy", "API", "GCP", "VPC", "Security", "Enterprise", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "API", "Security", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "14 min"
+readTime: "11 min"
 ---
 
 > Demo 時 Agent 很漂亮。  
@@ -251,7 +251,7 @@ DB 帳號權限設計：
 問題：Agent 在 GCP 上，客戶的 Oracle 在內部。
       如何讓資料不走公共網路？
 
-Private Service Connect 架構：
+私有連線架構（Direct VPC egress → Cloud VPN / Interconnect）：
 
   ┌──────────────────────────────────────────────────────────────┐
   │  GCP（Cloud Run / ADK Agent）                                 │
@@ -260,11 +260,6 @@ Private Service Connect 架構：
   │  （所有 Outbound traffic 走 VPC，不走 Public Internet）        │
   └──────────────────────────┬───────────────────────────────────┘
                              │ 私有網路（不走 Public Internet）
-                             ▼
-  ┌──────────────────────────────────────────────────────────────┐
-  │  Private Service Connect Endpoint                            │
-  └──────────────────────────┬───────────────────────────────────┘
-                             │
                              ▼
   ┌──────────────────────────────────────────────────────────────┐
   │  Cloud VPN / Cloud Interconnect                              │
@@ -277,6 +272,10 @@ Private Service Connect 架構：
   │  ├── Oracle DB（允許 AI_SERVICE_ACCOUNT 連接）                │
   │  └── SAP Application Server                                  │
   └──────────────────────────────────────────────────────────────┘
+
+  註：Private Service Connect 不在這條路徑上——PSC 是讓 VPC 內的工作負載
+      用私有 IP 存取雲端廠商的 API（例如 Vertex AI，見 Part 30 §六）或他人發布的服務，
+      不是通往 on-prem 的路由。
 
 VPC-SC vs IAM vs CMEK：選哪個，為什麼
 
@@ -295,7 +294,7 @@ VPC-SC vs IAM vs CMEK：選哪個，為什麼
   ──────────────────────────────────────────────────────────────────
 
   三者是互補的，不是互斥的。
-  一般企業：IAM + Private Service Connect（必要）
+  一般企業：IAM + 私有連線（Direct VPC egress + VPN/Interconnect；對 Vertex AI 等雲端 API 則用 PSC）
   高合規要求（金融/醫療）：加上 VPC-SC
   政府/金融的金鑰主權要求：加上 CMEK
 ```
@@ -330,17 +329,13 @@ VPC-SC vs IAM vs CMEK：選哪個，為什麼
 
 ---
 
-## 八、面試答題要點
+## 八、答題骨架
 
-> *「這道題考的是 FDE 如何讓 AI 系統在真實企業環境中落地，而不只是在 Demo 環境裡跑。*
->
-> *三種資料來源，三種整合模式：SAP 用 API 橋接層（隱藏認證複雜性、Rate Limiting、Cache）；Oracle 用 Stored Procedure 層（防 SQL Injection、最小權限、索引優化）；Mainframe CSV 用批次攝取 Pipeline（GCS → Schema 驗證 → BigQuery，Agent 查 BigQuery 不讀原始 CSV）。*
->
-> *安全設計：Cloud Run 透過 Direct VPC egress（現行建議做法，舊做法是 Serverless VPC Access Connector）走私有網路，不讓資料經過公共網路。Credentials 存在 Secret Manager，Agent 代碼裡沒有任何密碼。Oracle DB 帳號只有 EXECUTE 特定 SP 的權限，沒有任何 SELECT/UPDATE 權限。*
->
-> *批次資料的資料新鮮度：Tool docstring 說明「每日凌晨更新，非即時」，讓 LLM 在回答時主動告知用戶資料截止時間，管理預期。*
->
-> *橋接層的 Trade-off：多了 2-3 天設計成本，但讓 Agent 和 Legacy 系統之間有一個穩定的隔離層——SAP 改版了，只需要改橋接層，不需要改所有 Agent 代碼。」*
+- 先用 §一 拆出三種挑戰，再用 §二 的選型框架把三個資料來源對應到三種模式。
+- 逐一展開：SAP 走 §三 的 API 橋接層、Oracle 走 §四 的 Stored Procedure 層、Mainframe CSV 走 §五 的批次攝取 Pipeline。
+- 安全邊界統一用 §六 回答：私有網路出口、Secret Manager、DB 帳號最小權限。
+- 批次資料的新鮮度與用戶預期管理，引 §五 的 Tool docstring 做法。
+- 收尾用 §七 的系統效應講橋接層的 Trade-off：多幾天設計成本，換 Legacy 改版時的隔離。
 
 ---
 

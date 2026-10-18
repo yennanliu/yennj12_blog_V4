@@ -5,7 +5,7 @@ draft: false
 weight: 12
 description: "以系統設計視角拆解 AI Agent 的 Evaluation Pipeline：核心問題是什麼、RAG 評估三角怎麼設計、LLM-as-Judge 的取捨、以及怎麼讓 eval 成為持續整合的一環——含完整架構圖"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Evaluation", "Metrics", "RAG", "LLM", "Observability", "System Design", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Agent", "LLM", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
 readTime: "15 min"
 ---
@@ -306,7 +306,7 @@ CI/CD 整合：
 
 **客戶問：「Faithfulness 0.85 夠好嗎？」**
 
-> *「0.85 意思是每 100 個回答裡，有大約 15 個包含了知識庫以外的資訊。夠不夠好取決於你的業務風險：*
+> *「0.85 意思是平均每個回答裡，有 15% 的陳述在檢索到的文件裡找不到依據——這 15% 可能集中在少數回答，也可能散佈在大多數回答，要看分佈才知道。夠不夠好取決於你的業務風險：*
 > - *內部 IT 幫助台：0.85 可能夠，偶爾的不準確用戶可以自行驗證*
 > - *客戶面的產品問答：建議 0.90+，避免給錯誤資訊影響用戶信任*
 > - *法律或醫療建議：0.95+，甚至不適合用 RAG，需要更嚴格的管控*

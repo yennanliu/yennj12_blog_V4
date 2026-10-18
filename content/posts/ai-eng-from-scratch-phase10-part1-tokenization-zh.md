@@ -5,7 +5,7 @@ draft: false
 weight: 19
 description: "深入解析 LLM Tokenization：BPE/WordPiece/SentencePiece 演算法、詞彙表大小的工程取捨、多語言 Token 效率與 Tiktoken 生產實作"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "Tokenization", "BPE", "SentencePiece", "Vocabulary", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "LLM", "BPE", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "15 min"
 series: ["ai-eng-from-scratch"]
@@ -28,11 +28,11 @@ Tokenization 是 LLM pipeline 的第一步，也是最容易被低估的一步�
 
 **為什麼 Tokenization 很重要？**
 
-1. **模型容量分配**：詞彙表大小直接決定 Embedding 層的參數量。vocab_size=50K、embedding_dim=4096 時，Embedding 層就佔了 50K × 4096 × 2 bytes ≈ 400MB，相當於整個模型參數的 5–10%。
+1. **模型容量分配**：詞彙表大小直接決定 Embedding 層的參數量。vocab_size=50K、embedding_dim=4096 時，Embedding 層就佔了 50K × 4096 × 2 bytes ≈ 400MB，相當於 7B 模型參數的約 3%（50K × 4096 = 205M ÷ 7B = 2.9%；vocab 放大到 128K 則是 7.5%，見 §六的表）。
 
 2. **序列長度放大器**：同樣一段中文，GPT-4 的 tokenizer（cl100k_base；GPT-4o 之後的 OpenAI 模型改用約 200K 詞彙的 o200k_base）平均每個漢字消耗約 1.5 tokens，而設計不良的 tokenizer 可能消耗 3–4 tokens（逐字節切割）。context window 128K tokens，有效利用率差了 2–3 倍。
 
-3. **訓練成本乘數**：預訓練是以 token 數計算的。用同樣 1TB 的中文語料，高效 tokenizer 產生 500B tokens，低效 tokenizer 產生 1.5T tokens，訓練時間差了 3 倍，費用差了 $2M–$6M。
+3. **訓練成本乘數**：預訓練是以 token 數計算的。同樣 1TB 的 UTF-8 中文語料約 3,300 億個字（1 TB ÷ 3 bytes/字），每字 1.3 token 的 tokenizer 產生約 0.43T tokens，每字 2.9 token 的產生約 0.97T tokens，訓練計算量差 2.2 倍；以 70B 模型估算（6·N·D，A100 $2/GPU-h、MFU 45%），費用差約 $0.9M（$1.6M vs $0.7M）。
 
 4. **推理能力邊界**：某些數學推理任務中，把數字切成單獨 digit tokens（"123" → ["1","2","3"]）比切成整體 token 有更好的算術表現，因為模型能看到每一位的結構。
 
@@ -87,7 +87,7 @@ l-o-w (5), l-o-w-e-r (2), n-e-w-e-s-t (6), w-i-d-e-s-t (3)
          ↓
 計算相鄰對頻率：
 (e,s): 6+3=9  ← 最高頻
-(e,w): 2+6=8
+(w,e): 2+6=8
 (l,o): 5+2=7
 ...
 
@@ -203,7 +203,7 @@ Unigram LM 從一個「足夠大」的候選詞彙表開始（通常是 BPE 訓�
 
 **Token 效率（Fertility Rate）**：
 
-Fertility Rate = 原始詞數 / Token 數。越低代表越高效（同樣詞語用更少 token 表示）。
+Fertility Rate = Token 數 / 原始詞數（平均每個詞被切成幾個 token）。越低代表越高效（同樣詞語用更少 token 表示），1.0 表示每個詞剛好一個 token。
 
 | 語言 | vocab=32K | vocab=65K | vocab=128K |
 |------|----------|----------|-----------|
@@ -214,10 +214,10 @@ Fertility Rate = 原始詞數 / Token 數。越低代表越高效（同樣詞語
 
 **訓練效率**：
 
-同樣 1TB 語料，不同 vocab_size 產生的 token 數：
-- vocab=32K：約 1.4T tokens
-- vocab=65K：約 1.1T tokens  
-- vocab=128K：約 0.9T tokens
+同樣 1TB 以中文為主的語料（約 3,300 億字），不同 vocab_size 產生的 token 數（示意估算）：
+- vocab=32K：約 0.47T tokens
+- vocab=65K：約 0.37T tokens  
+- vocab=128K：約 0.30T tokens
 
 Token 數減少 → 訓練 step 數減少 → 訓練時間縮短。128K vs 32K 可節省約 35% 訓練計算量，但 Embedding 層增大 4× 可能增加通訊開銷。
 
@@ -421,7 +421,7 @@ ID N+1– : 正常詞彙 token（按頻率或合併順序排列）
 
 | 選擇 | 選 Tiktoken 的理由 | 選 SentencePiece 的理由 |
 |------|-----------------|----------------------|
-| 速度 | Rust 實作，比 Python HF tokenizers 快 5–10× | C++ 實作，也很快 |
+| 速度 | Rust 實作，官方 README 稱比 HF tokenizers 快 3–6× | C++ 實作，也很快 |
 | 生態 | OpenAI 模型完全相容 | LLaMA、T5、PaLM 生態 |
 | 格式 | .tiktoken 格式（base64 編碼） | .model + .vocab 格式 |
 | 擴充性 | 不支援官方的增量詞彙擴充 | 可以 fine-tune 詞彙表 |
@@ -439,9 +439,9 @@ ID N+1– : 正常詞彙 token（按頻率或合併順序排列）
 |------|----------------------------------|--------------------------|---------|
 | 中文 tokens/字 | 2.9 | 1.3 | **55% 減少** |
 | 同等 context 可容納中文字數 | 32K tokens → 11K 字 | 32K tokens → 24K 字 | **2.2× 提升** |
-| 1TB 中文語料產生 token 數 | 2.9T tokens | 1.3T tokens | **55% 減少** |
-| 預訓練總計算量（FLOPs） | 100%（基準）| 52% | **節省 48%** |
-| 預訓練費用估算（A100 集群）| $8M | $4.2M | **節省 $3.8M** |
+| 1TB 中文語料（≈ 3,300 億字）產生 token 數 | 0.97T tokens | 0.43T tokens | **55% 減少** |
+| 預訓練總計算量（FLOPs，∝ token 數） | 100%（基準）| 45% | **節省 55%** |
+| 預訓練費用估算（70B 模型，6·N·D，A100 $2/GPU-h、MFU 45%）| ~$1.6M | ~$0.7M | **節省 ~$0.9M** |
 | 推理延遲（100 字中文輸入）| 290ms | 130ms | **55% 加速** |
 | API 成本（1M 中文字符）| $2.90 | $1.30 | **節省 55%** |
 | lm_head 推理時間佔比 | 8%（32K）| 22%（128K）| **增加 14%** |

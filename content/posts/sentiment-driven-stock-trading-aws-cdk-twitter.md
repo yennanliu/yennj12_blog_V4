@@ -4,9 +4,9 @@ date: 2026-01-24T14:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["AWS", "CDK", "Stock Trading", "Twitter", "X.com", "Machine Learning", "Bedrock", "Kinesis", "Lambda", "Sentiment Analysis", "NLP", "EventBridge"]
+tags: ["AWS", "CDK", "ML", "Bedrock", "Kinesis", "Lambda", "NLP", "EventBridge"]
 summary: "Build an intelligent US stock trading system using AWS CDK that analyzes real-time X.com posts, performs sentiment analysis with ML models, and executes trades based on social media sentiment for configured stocks like TSLA, GOOG, and more."
-description: "Learn how to architect a production-ready sentiment-driven stock trading platform that streams X.com posts in real-time, analyzes market sentiment using AWS Bedrock and HuggingFace, and automatically executes trades on US stocks based on social media signals."
+description: "Stream X.com posts through Kinesis, score sentiment with Bedrock and HuggingFace, weight authors by influence and trade with risk limits, all on AWS via CDK."
 readTime: "27 min"
 ---
 

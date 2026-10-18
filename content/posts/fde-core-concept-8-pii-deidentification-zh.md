@@ -50,7 +50,7 @@ readTime: "18 min"
 │  生物特徵              IP 位址               政治傾向           │
 │                                                                │
 │  單一欄位即可識別        組合可識別：           本身敏感，         │
-│  → 必須最高優先處理      zip+age+gender        即使無法識別身份   │
+│  → 必須最高優先處理      zip+生日+性別         即使無法識別身份   │
 │                         → 87% 可唯一識別       也受法規保護      │
 │                           美國人（Sweeney）                    │
 └────────────────────────────────────────────────────────────────┘
@@ -59,7 +59,7 @@ readTime: "18 min"
 Latanya Sweeney 1997 年的研究顯示，僅用郵遞區號、出生年月日、性別三個欄位，就能唯一識別美國 87% 的人口。這個數字之所以重要：即使一份資料集把姓名、電話全刪掉，留著這三個欄位，法律上仍然可能算個人資料。面試中能說出這個數字並解釋其含義的候選人非常少，卻是區分「真的懂」與「背術語」的關鍵分水嶺。
 
 **k-匿名性（k-Anonymity）的數學意義：**
-一個資料集滿足 k-匿名性，代表每一條記錄都至少和另外 k-1 條記錄的準識別符組合完全相同。當 k = 5，即使攻擊者知道某人在資料集中，也有至少 5 個候選人，無法確定是哪一個。GDPR safe harbor 通常要求 k ≥ 5，醫療資料建議 k ≥ 10。
+一個資料集滿足 k-匿名性，代表每一條記錄都至少和另外 k-1 條記錄的準識別符組合完全相同。當 k = 5，即使攻擊者知道某人在資料集中，也有至少 5 個候選人，無法確定是哪一個。GDPR 本身沒有規定 k 值（Recital 26 採「合理手段能否重新識別」的測試）；k ≥ 5 是常見的實務慣例，醫療資料建議 k ≥ 10。注意「Safe Harbor」是 HIPAA §164.514(b) 的去識別化方法（移除 18 類識別符；另一條路是 Expert Determination），不是 GDPR 的概念。
 
 ### 去識別化光譜與技術取捨
 
@@ -81,7 +81,7 @@ Latanya Sweeney 1997 年的研究顯示，僅用郵遞區號、出生年月日�
 |------|--------|-----------|-----------|---------|---------|
 | Suppression | 否 | 否 | 免於限制 | 完全不需該欄位 | 欄位有分析價值時改用偽名化 |
 | Pseudonymization | 是（需 DEK） | 是（token 一致） | 仍屬個人資料 | AI 推論、跨表分析 | 需對外公開時改匿名化 |
-| Anonymization | 否 | 否 | Safe harbor | 對外發布資料集、研究 | 需追蹤個人軌跡時不可用 |
+| Anonymization | 否 | 否 | 不再是個人資料（Recital 26） | 對外發布資料集、研究 | 需追蹤個人軌跡時不可用 |
 | Synthetic Data | 否（原始） | 否（原始） | 不適用 | 模型訓練、測試環境 | 分佈差異過大時需重評 |
 
 ### 格式保留加密（Format-Preserving Encryption，FPE）演算法原理
@@ -109,12 +109,12 @@ FF1 演算法核心流程：
    字元集：Unicode   字元集：數字      字元集：英數
         │                │                 │
         ▼                ▼                 ▼
-   TKN_a7f2c       TKN_b8d91        TKN_c3e47
+   林承恩          0471-882-903     B294817306
         │                │                 │
         └────────────────┴─────────────────┘
                          ▼
-輸出：「TKN_a7f2c 的電話是 TKN_b8d91，身分證 TKN_c3e47」
-（格式保留、確定性 — 同一人跨所有記錄永遠得到相同 token）
+輸出：「林承恩的電話是 0471-882-903，身分證 B294817306」
+（格式保留：長度與字元集不變，可寫回原欄位、照常 JOIN；確定性 — 同一人跨所有記錄永遠得到相同 token）
 ```
 
 **密鑰管理三層架構：**
@@ -163,7 +163,7 @@ Cloud Sensitive Data Protection（原 DLP API）採用兩層混合偵測：
 
 ### 差分隱私如何保護 Embedding 向量
 
-即使 LLM prompt 已 tokenize，向量嵌入（embedding）本身也可能洩漏 PII。以文字嵌入模型為例：「王小明住在台北」和「王小美住在台北」這兩個句子的 embedding 向量在高維空間中非常接近，攻擊者透過向量相似度搜尋就能推斷「TKN_a7f2c 的姓氏可能是王」。
+即使 LLM prompt 已 tokenize，向量嵌入（embedding）本身也可能洩漏 PII。以文字嵌入模型為例：「王小明住在台北」和「王小美住在台北」這兩個句子的 embedding 向量在高維空間中非常接近，攻擊者透過向量相似度搜尋就能推斷「token『林承恩』背後的真實姓氏可能是王」。
 
 差分隱私（Differential Privacy）透過在 embedding 輸出層加入校準雜訊解決這個問題：
 
@@ -204,7 +204,7 @@ Cloud Sensitive Data Protection（原 DLP API）採用兩層混合偵測：
 
 **代價與限制：**
 - Regex 漏掉非結構化姓名（自然語言中的人名無法用 regex 偵測）
-- 漏掉準識別符組合（zip+age+gender 各自都是「正常」資料，只有組合才危險）
+- 漏掉準識別符組合（zip + 出生日期 + 性別各自都是「正常」資料，只有組合才危險）
 - 語意標籤讓 LLM 失去部分脈絡（「[REDACTED_PHONE] 的訂單 #1234」中 LLM 無法關聯同一人的多筆訂單）
 - 完全無法做 JOIN 分析或事後稽核還原
 - Recall 約 70–80%，遠低於 ML-based 方案
@@ -268,7 +268,7 @@ Cloud Sensitive Data Protection（原 DLP API）採用兩層混合偵測：
 **成本：**
 - Cloud DLP API：~$3/GB 掃描量
 - Cloud Spanner：~$0.30/node-hour（建議 3 節點以上 HA）
-- Cloud KMS：~$0.06/10,000 次密鑰操作
+- Cloud KMS：~$0.03/10,000 次密鑰操作（軟體金鑰版本另計 $0.06/版本/月）
 - 中型產品（每日 10GB 掃描）每月約 $1,200–2,500
 
 ### Layer 3 — 企業級（Enterprise-Grade）
@@ -336,11 +336,11 @@ Token 攜帶同意狀態元資料 `consent_status: {active | withdrawn | expired
 
 | 錯誤模式 | 後果 | 正確做法 |
 |---------|------|---------|
-| 只遮蔽直接識別符，忽略準識別符 | zip+age+gender 組合仍可重新識別 87% 用戶，GDPR 仍算個人資料，合規仍然失敗 | 執行準識別符風險評估，在分析資料集發布前通過 k-匿名性測試（k ≥ 5） |
+| 只遮蔽直接識別符，忽略準識別符 | zip + 出生日期 + 性別組合仍可重新識別 87% 用戶，GDPR 仍算個人資料，合規仍然失敗 | 執行準識別符風險評估，在分析資料集發布前通過 k-匿名性測試（k ≥ 5） |
 | 用隨機假名化（非確定性）替換 PII | 同一個人在不同記錄有不同 token，跨表 JOIN 全部失效，分析報表數字錯誤 | 使用 FPE（FF1 演算法）確保確定性：相同輸入 + 相同 DEK → 永遠相同 token |
 | tokenization 只做 inbound，忘記 outbound | LLM 回應可能從 RAG 檢索到 PII chunk，或模型記憶化訓練資料中的 PII，outbound 成為洩漏通道 | Inbound + outbound 雙向掃描，outbound 做反向還原後才返回用戶 |
 | DEK 與 token map 放在同一個資料庫 | 資料庫被竊取 = 密鑰與密文同時外洩，tokenization 形同虛設，所有 token 可立即還原 | DEK 只存 Cloud KMS 的 HSM 中，token map 與密文分離儲存在不同服務 |
-| 以為「刪欄位 = 匿名化」 | 仍有 quasi-identifier 重識別風險；若可從其他欄位推導，GDPR 不認定為匿名，safe harbor 不成立 | 需通過 k-匿名性測試且所有準識別符組合都達標，才能主張 GDPR safe harbor |
+| 以為「刪欄位 = 匿名化」 | 仍有 quasi-identifier 重識別風險；若可從其他欄位推導，GDPR（Recital 26）不認定為匿名 | 需通過 k-匿名性測試且所有準識別符組合都達標，才能主張資料已匿名化、脫離 GDPR 適用範圍 |
 | DLP 掃描放在 embedding 之後 | embedding 向量已編碼 PII 的語意表示；向量資料庫被竊取等同 PII 語意外洩，且無法補救 | DLP 掃描 + FPE tokenization 必須在 embedding 之前完成，順序不可逆轉 |
 | 忘記 DEK 輪換策略 | 舊 DEK 永久有效；一旦某日 DEK 洩漏，所有歷史 token 均可還原，等同全量 PII 外洩 | 每 90 天輪換 DEK；新 DEK 用於新 token；舊 DEK 保留於 KMS 僅供 detokenization，設定自動過期 |
 
@@ -364,7 +364,7 @@ Token 攜帶同意狀態元資料 `consent_status: {active | withdrawn | expired
 | LLM prompt 中明文 PII 率 | 100% | < 0.5% | DLP recall > 97%，剩餘為 FP/FN |
 | GDPR 資料外洩風險等級 | Critical | Medium | pseudonymization 仍算個人資料 |
 | 跨表 JOIN 成功率 | 100% | 100% | FPE 確定性保留 JOIN 能力 |
-| 端到端請求延遲（p99） | 120ms | 180ms | +60ms（inbound 30ms + outbound 30ms DLP）|
+| 端到端請求延遲（p99） | ~175ms（LLM 120 + Embedding 45 + Vector Search 12） | ~235ms（見十、Traces） | +60ms（inbound 28 + outbound 25 ms DLP + KMS/FPE ~5 ms）|
 | 向量嵌入品質（Recall@10） | 0.89 | 0.87 | tokenized text 語意略有差異（-2.2%）|
 | 稽核還原能力 | 無 | 完整（需 DEK） | 支援合規稽核與客訴處理 |
 | 被遺忘權執行時間 | 數週（逐系統刪除） | < 1 分鐘（撤銷 DEK） | DEK 撤銷即等同全量匿名化 |
@@ -396,16 +396,16 @@ Token 攜帶同意狀態元資料 `consent_status: {active | withdrawn | expired
 
 ## 八、與其他核心主題的關聯
 
-- **向量資料庫設計（Part 6）**：向量嵌入本身可能保留 PII 語意特徵；FPE tokenization 必須在 embedding 前完成，否則向量資料庫本身成為 PII 儲存庫，即使加密儲存也有語意洩漏風險。
-- **RAG 管線架構（Part 5）**：RAG 的 Retrieval 步驟從向量資料庫取回 chunk，這些 chunk 可能含有殘留 PII；送進 LLM 的 context 需要再次過 DLP 掃描，才能確保 prompt 完全乾淨。
-- **資料治理與血緣（Part 11）**：PII token 的 provenance 元資料（來源系統、處理時間、法律依據、同意狀態）是資料治理血緣圖的核心節點；沒有血緣追蹤，「被遺忘權」的執行就無法自動化。
-- **LLM 微調資料準備（Part 15）**：微調訓練資料集必須先通過 anonymization（而非僅 pseudonymization），否則模型可能記憶化 PII；k-匿名性驗證是訓練資料集發布的前置門檻，否則即使微調後的模型也可能成為 PII 洩漏通道。
+- **向量資料庫設計**（本系列 [Vector Drift & Blue-Green Indexing](/posts/fde-core-concept-15-vector-drift-blue-green-zh/)）：向量嵌入本身可能保留 PII 語意特徵；FPE tokenization 必須在 embedding 前完成，否則向量資料庫本身成為 PII 儲存庫，即使加密儲存也有語意洩漏風險。
+- **RAG 管線架構**（本系列 [Hybrid Search & RRF](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)）：RAG 的 Retrieval 步驟從向量資料庫取回 chunk，這些 chunk 可能含有殘留 PII；送進 LLM 的 context 需要再次過 DLP 掃描，才能確保 prompt 完全乾淨。
+- **資料治理與血緣**：PII token 的 provenance 元資料（來源系統、處理時間、法律依據、同意狀態）是資料治理血緣圖的核心節點；沒有血緣追蹤，「被遺忘權」的執行就無法自動化。
+- **LLM 微調資料準備**：微調訓練資料集必須先通過 anonymization（而非僅 pseudonymization），否則模型可能記憶化 PII；k-匿名性驗證是訓練資料集發布的前置門檻，否則即使微調後的模型也可能成為 PII 洩漏通道。
 
 ---
 
 ## 九、面試一句話（Killer Phrase）
 
-> *「PII 去識別化在 AI 管線中的核心取捨是三條線：suppression 最安全但斷掉分析可用性；FPE pseudonymization 透過 FF1 演算法的確定性（相同輸入 + 相同 DEK → 永遠相同 token）保留跨表 JOIN 能力，讓 LLM 可安全推論，但在 GDPR 下仍屬個人資料、需要同意機制；真正的 anonymization 需通過 k-匿名性測試（k ≥ 5）且不可逆，才能達到 GDPR safe harbor。實作上，Cloud DLP 掃描延遲約 30ms/KB、FPE tokenization < 1ms/欄位，inbound + outbound 雙向掃描合計約增加 60ms p99 延遲，整體在 200ms 預算內可行；「被遺忘權」技術實現的最優解是撤銷 DEK 而非物理刪除資料，DEK 消失即等同全量匿名化，執行時間從數週縮短至一分鐘以內。」*
+> *「PII 去識別化在 AI 管線中的核心取捨是三條線：suppression 最安全但斷掉分析可用性；FPE pseudonymization 透過 FF1 演算法的確定性（相同輸入 + 相同 DEK → 永遠相同 token）保留跨表 JOIN 能力，讓 LLM 可安全推論，但在 GDPR 下仍屬個人資料、需要同意機制；真正的 anonymization 需通過 k-匿名性測試（實務慣例 k ≥ 5）且不可逆，才脫離 GDPR 的適用範圍（Recital 26）；HIPAA 則有 Safe Harbor 的 18 類識別符清單可循。實作上，Cloud DLP 掃描延遲約 30ms/KB、FPE tokenization < 1ms/欄位，inbound + outbound 雙向掃描合計約增加 60ms p99 延遲，整體在 200ms 預算內可行；「被遺忘權」技術實現的最優解是撤銷 DEK 而非物理刪除資料，DEK 消失即等同全量匿名化，執行時間從數週縮短至一分鐘以內。」*
 
 ---
 
@@ -447,7 +447,7 @@ Token 攜帶同意狀態元資料 `consent_status: {active | withdrawn | expired
   Total p99:                235ms
 
 告警情況：KMS DEK Fetch 突增至 80ms
-根因：KMS 配額限流（預設 600 req/min），需要申請提升或加入本地 DEK 快取
+根因：KMS 配額限流（軟體金鑰預設 60,000 req/min，高流量下仍會觸頂），需要申請提升或加入本地 DEK 快取
 ```
 
 ## 相關文章與正典版本

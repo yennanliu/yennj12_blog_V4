@@ -5,18 +5,19 @@ draft: false
 weight: 1
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "HPA", "Autoscaling", "VPA", "KEDA", "Performance", "Cloud Native", "Scalability", "DevOps"]
-summary: "Part 1 of the Kubernetes Autoscaling series: Deep dive into Horizontal Pod Autoscaler (HPA) approaches, comparing resource-based, custom metrics, external metrics, and event-driven autoscaling with KEDA. Learn when to use each approach with real-world examples and production best practices."
-description: "Part 1 of the Kubernetes Autoscaling series: Deep dive into Horizontal Pod Autoscaler (HPA) approaches, comparing resource-based, custom metrics, external metrics, and event-driven autoscaling with KEDA. Learn when to use each approach with real-world examples and production best practices."
+tags: ["Kubernetes", "HPA", "Autoscaling", "VPA", "Performance", "Cloud Native", "Scalability", "DevOps"]
+description: "Choose the right pod autoscaler: resource-based HPA, custom and external metrics via Prometheus Adapter, KEDA event-driven scaling and VPA, compared."
 readTime: "34 min"
 ---
+
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
 
 ## Series Overview
 
 This is **Part 1** of the Kubernetes Autoscaling Complete Guide series:
 
 - **Part 1 (This Post)**: Horizontal Pod Autoscaler - Application-level autoscaling with HPA, custom metrics, and KEDA
-- **[Part 2: Cluster Autoscaling & Cloud Providers](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Infrastructure-level autoscaling with Cluster Autoscaler, Karpenter, and cloud-specific solutions (EKS, GKE, AKS)
+- **[Part 2: Cluster Autoscaling & Cloud Providers](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Infrastructure-level autoscaling with Cluster Autoscaler, Karpenter, and cloud-specific solutions (EKS, GKE, AKS)
 
 ---
 
@@ -1184,7 +1185,7 @@ spec:
 
 | Benefit | Description | Business Value |
 |---------|-------------|----------------|
-| **Scale to Zero** | Eliminate idle costs | 60-90% cost reduction for bursty workloads |
+| **Scale to Zero** | Eliminate idle costs | Commonly cited 60-90% cost reduction for bursty workloads (unsourced) |
 | **Event-Driven** | True reactive scaling | Sub-minute response to events |
 | **Rich Ecosystem** | 50+ built-in scalers | Rapid integration with existing systems |
 | **Multi-Trigger** | Combine multiple signals | Intelligent scaling decisions |
@@ -1262,6 +1263,8 @@ While this guide focuses on horizontal scaling, VPA deserves mention as a comple
 
 **VPA Use Cases:**
 
+Note on update modes: VPA has five — `Off`, `Initial`, `Recreate`, `Auto` and `InPlaceOrRecreate`. `Auto` currently behaves like `Recreate` (evict and recreate); in-place resizing comes only via `InPlaceOrRecreate` (VPA 1.4+, feature-gated), see Part 5.
+
 ```yaml
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
@@ -1274,7 +1277,7 @@ spec:
     name: webapp
 
   updatePolicy:
-    updateMode: "Auto"  # Auto, Recreate, Initial, Off
+    updateMode: "Auto"  # Off, Initial, Recreate, Auto, InPlaceOrRecreate
 
   resourcePolicy:
     containerPolicies:
@@ -1292,7 +1295,7 @@ spec:
 | Aspect | VPA | HPA |
 |--------|-----|-----|
 | **Scaling Direction** | Vertical (resources) | Horizontal (replicas) |
-| **Pod Disruption** | Requires pod restart | No disruption |
+| **Pod Disruption** | Pod restart in `Recreate`/`Auto`; in-place with `InPlaceOrRecreate` | No disruption |
 | **Stateful Applications** | Suitable | Complex |
 | **Cost Optimization** | Right-sizing | Capacity matching |
 | **Use Together?** | Yes, with caution | Complementary |
@@ -1336,7 +1339,7 @@ graph TD
 | Criteria | Resource HPA | Custom Metrics HPA | External Metrics HPA | KEDA |
 |----------|--------------|-------------------|---------------------|------|
 | **Setup Complexity** | ⭐ Simple | ⭐⭐⭐ Complex | ⭐⭐⭐⭐ Very Complex | ⭐⭐ Moderate |
-| **Latency** | 30-60s | 15-30s | 60-120s | 10-30s |
+| **Latency** (illustrative, unmeasured) | ~30-60s | ~15-30s | ~60-120s | ~10-30s |
 | **Scale to Zero** | ❌ No | ❌ No | ❌ No | ✅ Yes |
 | **Cost (Idle)** | Medium | Medium | Medium | **Zero** |
 | **Event-Driven** | ❌ Reactive | ⚠️ Partial | ⚠️ Partial | ✅ Native |
@@ -1454,6 +1457,8 @@ groups:
       summary: "HPA {{ $labels.horizontalpodautoscaler }} cannot fetch metrics"
 
   # Rapid scaling activity (possible thrashing)
+  # Caveat: current_replicas is a gauge, so rate() is meaningless here —
+  # use changes(kube_horizontalpodautoscaler_status_current_replicas[15m]) > 6 instead
   - alert: HPAScalingThrashing
     expr: |
       rate(kube_horizontalpodautoscaler_status_current_replicas[15m]) > 0.5
@@ -1577,14 +1582,14 @@ Savings: $720 - $315 = $405/month (56% reduction)
 For comprehensive Kubernetes learning, explore these related topics covered in other posts:
 
 ### Kubernetes Fundamentals
-- **[Kubernetes Complete Guide (Part 1): Introduction](./kubernetes-complete-guide-part1-introduction-zh.md)** - Kubernetes architecture, core concepts, and installation
-- **[Kubernetes Complete Guide (Part 2): Core Resources](./kubernetes-complete-guide-part2-resources-zh.md)** - Pods, Deployments, Services, and resource management
+- **[Kubernetes Complete Guide (Part 1): Introduction](/posts/kubernetes-complete-guide-part1-introduction-zh/)** - Kubernetes architecture, core concepts, and installation
+- **[Kubernetes Complete Guide (Part 2): Core Resources](/posts/kubernetes-complete-guide-part2-resources-zh/)** - Pods, Deployments, Services, and resource management
 
 ### Advanced Kubernetes Topics
-- **[Kubernetes Complete Guide (Part 3): Advanced Features & Production Practices](./kubernetes-complete-guide-part3-advanced-zh.md)** - RBAC, Network Policies, Helm, monitoring with Prometheus/Grafana, and production best practices
+- **[Kubernetes Complete Guide (Part 3): Advanced Features & Production Practices](/posts/kubernetes-complete-guide-part3-advanced-zh/)** - RBAC, Network Policies, Helm, monitoring with Prometheus/Grafana, and production best practices
 
 ### Production Kubernetes on AWS
-- **[Building Production Kubernetes Platform on AWS EKS](./building-production-kubernetes-platform-aws-eks-cdk.md)** - Complete EKS architecture with CDK, multi-service orchestration, observability stack, and operational excellence
+- **[Building Production Kubernetes Platform on AWS EKS](/posts/building-production-kubernetes-platform-aws-eks-cdk/)** - Complete EKS architecture with CDK, multi-service orchestration, observability stack, and operational excellence
 
 ## Troubleshooting Common Issues
 

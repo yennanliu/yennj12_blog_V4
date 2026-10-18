@@ -5,7 +5,7 @@ draft: false
 weight: 1
 description: "RAG 壞掉時多半是檢索壞掉。本篇把 RAG 管線拆成切塊、檢索、重排、評估四個決策，附最小可跑範例，並替每個主題指向站內最深入的那篇文章。"
 categories: ["all", "ai", "engineering"]
-tags: ["RAG", "LLM", "Vector Database", "Embeddings", "Python", "繁體中文"]
+tags: ["RAG", "LLM", "Vector Database", "Embeddings", "Python"]
 authors: ["yen"]
 readTime: "8 min"
 aliases: ["/posts/rag-series-part3-advanced-retrieval-zh/", "/posts/rag-series-part4-optimization-zh/"]

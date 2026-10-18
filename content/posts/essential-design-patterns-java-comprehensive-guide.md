@@ -2,9 +2,9 @@
 title: "Essential Design Patterns in Java: A Comprehensive Guide to Creational, Structural, and Behavioral Patterns"
 date: 2025-09-29T07:45:06+08:00
 draft: false
-description: "Master essential design patterns in Java with practical implementations. Learn Singleton, Factory, Builder, Observer, Strategy, Decorator, and more patterns with real-world examples, best practices, and performance considerations."
+description: "Implement the Gang of Four patterns in modern Java: Singleton, Factory, Builder, Decorator, Observer, Strategy and more, with thread-safe code."
 categories: ["all", "engineering", "architecture"]
-tags: ["Java", "Design Patterns", "Software Architecture", "Object-Oriented Programming", "Gang of Four", "Creational Patterns", "Structural Patterns", "Behavioral Patterns"]
+tags: ["Java", "Design Patterns", "Software Architecture"]
 authors: ["yen"]
 readTime: "28 min"
 ---
@@ -42,7 +42,7 @@ graph TD
 
 **1. Enum Singleton (Recommended):**
 
-> **Caution:** The enum-singleton *mechanism* is the recommended one, but do not copy the *example* as-is. A single shared `java.sql.Connection` is not safe to use from many threads at once, and it will not recover when the database drops the connection. Real code should hold a pooled `DataSource` (e.g. HikariCP) and borrow a connection per unit of work. In Spring, the container's default singleton scope replaces most hand-written singletons like this one.
+> **Caution:** The enum-singleton *mechanism* is the recommended one, but do not copy the *example* as-is. A single shared `java.sql.Connection` is not safe to use from many threads at once, and it will not recover when the database drops the connection. Real code should hold a pooled `DataSource` (e.g. HikariCP) and borrow a connection per unit of work. In Spring, the container's default singleton scope replaces most hand-written singletons like this one. Note also that the lazy `getConnection()` below is double-checked locking on a field that is **not** `volatile` — the exact broken-DCL case the `ConfigurationManager` example later avoids by declaring `instance` as `volatile`; without it, a second thread can observe a partially constructed `Connection`.
 
 ```java
 public enum DatabaseManager {
@@ -228,13 +228,13 @@ public class ConfigurationManager {
 
 **🎯 Use Cases:**
 - Configuration managers
-- Database connection pools
 - Logging systems
 - Cache managers
+- (A database connection *pool* is usually a container-managed bean, not a hand-written singleton — see the caution above.)
 
-### 🏭 Factory Method Pattern
+### 🏭 Factory Method Pattern (shown here as a static Simple Factory)
 
-The Factory Method pattern creates objects without specifying the exact class to create.
+The Factory Method pattern creates objects without specifying the exact class to create. Strictly, the GoF *Factory Method* is an abstract `create()` that subclasses override; what the example below implements is the simpler **static Simple Factory** (one class with a `switch` on type). The distinction matters when you need to add a product type without touching the factory: the Simple Factory must be edited, the real Factory Method just needs a new subclass.
 
 ```mermaid
 graph TD
@@ -253,7 +253,7 @@ graph TD
     style G fill:#feca57
 ```
 
-#### 🛠️ Factory Method Implementation
+#### 🛠️ Simple Factory Implementation
 
 ```java
 // Notification interface
@@ -1652,8 +1652,8 @@ graph TD
 
 | Pattern | Complexity | Use Cases | Performance Impact |
 |---------|-----------|-----------|-------------------|
-| **Singleton** | Low | Configuration, Logging, Database connections | Minimal |
-| **Factory** | Medium | Object creation abstraction, Plugin systems | Low |
+| **Singleton** | Low | Configuration, Logging | Minimal |
+| **Factory** (Simple Factory as shown; Factory Method when subclasses decide) | Medium | Object creation abstraction, Plugin systems | Low |
 | **Builder** | Medium | Complex object construction, Immutable objects | Low |
 | **Decorator** | Medium | Feature addition, Middleware systems | Low-Medium |
 | **Adapter** | Low | Legacy system integration, API compatibility | Minimal |

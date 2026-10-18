@@ -5,10 +5,12 @@ draft: false
 weight: 2
 description: "深入探討 Kubernetes 核心資源對象，包含 Pod、Deployment、Service、Ingress、Volume 等完整操作指南，搭配大量 kubectl 指令範例與 YAML 配置，從基礎到實戰全面掌握。"
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "kubectl", "Pod", "Deployment", "Service", "Ingress", "Volume", "實務操作", "YAML", "DevOps"]
+tags: ["Kubernetes", "Deployment", "實務操作", "YAML", "DevOps"]
 authors: ["yen"]
 readTime: "28 min"
 ---
+
+> 本文的指令與版本以 2025-10 為準；Kubernetes 每季都有變動，請以官方文件為主。
 
 ## 🎯 前言
 
@@ -504,7 +506,8 @@ kubectl autoscale deployment nginx --min=2 --max=10 --cpu-percent=80
 
 # 更新映像
 kubectl set image deployment/nginx nginx=nginx:1.25
-kubectl set image deployment/nginx nginx=nginx:1.25 --record
+# --record 已棄用（1.22 起），請改以 annotation 記錄變更原因
+kubectl annotate deployment/nginx kubernetes.io/change-cause="Update to nginx:1.25"
 
 # 編輯 Deployment
 kubectl edit deployment nginx
@@ -592,6 +595,8 @@ spec:
 | **適用場景** | 無狀態 | 資料庫、叢集 |
 
 ### DaemonSet - 每節點一個 Pod
+
+> 注意：下例容忍的 `node-role.kubernetes.io/master` taint 已在 Kubernetes 1.24 改名為 `node-role.kubernetes.io/control-plane`；新叢集請改用後者（或兩者都列出以相容舊節點）。
 
 ```yaml
 apiVersion: apps/v1
@@ -1036,6 +1041,8 @@ graph TB
 ```
 
 ### StorageClass 配置
+
+> 注意：下例的 `kubernetes.io/aws-ebs` 是 in-tree provisioner，已自 Kubernetes 1.27 移除；現行 EKS 請安裝 EBS CSI driver 並改用 `provisioner: ebs.csi.aws.com`（參數鍵值相同）。
 
 ```yaml
 apiVersion: storage.k8s.io/v1

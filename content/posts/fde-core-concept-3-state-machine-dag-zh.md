@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "解析為何 ReAct 自由迴圈在生產環境中危險，以及如何以有向無環圖（DAG）建構可稽核、可測試的 Agent 行為確定性邊界。涵蓋 LangGraph、ADK 2.0、反思迴圈收斂條件與並行分支狀態隔離。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "LangGraph", "ADK", "StateMachine"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "LangGraph", "ADK"]
 authors: ["yen"]
 readTime: "18 min"
 ---
@@ -51,7 +51,7 @@ P(next_action | current_observation, history, temperature)
 
 **無窮迴圈風險**：LLM 可能反覆呼叫同一個工具，觀察到相同結果，卻因為 prompt 中沒有足夠的終止信號而無法自行跳出。以示意量級來說，平均工具呼叫次數可能落在 **12 次/query** 左右，極端案例可達 30+ 次（實際數字依任務與工具設計而異，請以自己系統的 trace 為準）。
 
-**成本不可預期**：同一示意情境中，DAG 約束後可降至約 **4 次/query**，成本差距 **3×**。以 gpt-4o-mini 計算，12 次工具呼叫大約消耗 8,000–15,000 input tokens（含每次工具呼叫的 context 累積），費用約 $0.012–0.020；4 次呼叫費用約 $0.004–0.007。在百萬 QPS 規模下，這個差距達到數千美元/天。
+**成本不可預期**：同一示意情境中，DAG 約束後可降至約 **4 次/query**，成本差距 **3×**。以 gpt-4o-mini 計算，12 次工具呼叫大約消耗 8,000–15,000 input tokens（含每次工具呼叫的 context 累積），費用約 $0.012–0.020；4 次呼叫費用約 $0.004–0.007。以每天 100 萬次查詢計，差距 ≈ ($0.016 − $0.0055) × 10⁶ ≈ $10,500/天。
 
 **無法單元測試**：相同輸入在不同推論溫度下可能走完全不同的路徑，導致測試覆蓋率形同虛設。
 
@@ -156,7 +156,7 @@ graph.add_conditional_edges(
 
 **MAX\_ITERATIONS = 5 守衛**的工程意涵：當品質在 3–5 次迭代後仍未達標，通常意味著任務超出了當前 Agent 的能力邊界，繼續執行只是浪費成本。5 次是業界常見的保守值，適合多數文本品質任務；複雜推理任務可設 3 次，因為超過 3 次通常說明問題定義本身有問題。
 
-**ADK 2.0 的原生支援**
+**ADK 的原生支援**
 
 ```python
 from google.adk.agents import LoopAgent, SequentialAgent, ParallelAgent
@@ -182,7 +182,7 @@ pipeline = SequentialAgent(
 )
 ```
 
-ADK 2.0 把這三種基本 Agent 拓撲（Sequential、Parallel、Loop）作為一等公民提供，對應 DAG 理論中的三種基本模式：鏈（Chain）、並行（Parallel）、有守衛的迴圈（Guarded Loop）。
+ADK 把這三種基本 Agent 拓撲（Sequential、Parallel、Loop）作為一等公民提供，對應 DAG 理論中的三種基本模式：鏈（Chain）、並行（Parallel）、有守衛的迴圈（Guarded Loop）。注意 `LoopAgent` 的建構參數只有 `name` / `sub_agents` / `max_iterations`，並沒有 `should_continue_condition` 這類參數：提前跳出迴圈的正式做法是由子 agent（例如 `evaluate_agent` 的工具）在分數達標時設定 `tool_context.actions.escalate = True`，LoopAgent 收到 escalate 即停止迭代；上面範例中的 lambda 只是把這個條件寫成一行示意。
 
 ### 2.5 Checkpoint 的持久化成本
 
@@ -427,7 +427,7 @@ graph TD
 
 **Context Management（fde-interview-guide-part10）**：State schema 的設計直接決定哪些 context 在節點間傳遞、哪些被截斷。DAG 架構強迫工程師在 schema 定義時思考 context 邊界——每個欄位代表一個 context 決策，而非在 prompt 裡隱性累積所有歷史。`feedback: Annotated[list[str], operator.add]` 這個欄位定義同時回答了「歷史回饋要保留多少」的問題。
 
-**Prompt Injection（fde-interview-guide-part13）**：DAG 把路由邏輯從 LLM prompt 移到 Python conditional edge，消除了「攻擊者透過 prompt 操控 Agent 走到非預期分支」這整類攻擊面。攻擊者可以污染 Node 內的 LLM 輸出，但無法改變 Graph 的邊定義——這是架構層的防禦，比 prompt-level 的防禦更難繞過。具體來說：即使 `evaluate_node` 被注入讓其輸出 `score = 1.0`，conditional edge 的邏輯（`score > 0.8` → approve）仍然按照工程師定義的方式運作，無法被繞過到非預期的節點。
+**Prompt Injection（fde-interview-guide-part13）**：DAG 把路由邏輯從 LLM prompt 移到 Python conditional edge，消除了「攻擊者透過 prompt 操控 Agent 走到非預期分支」這整類攻擊面。攻擊者可以污染 Node 內的 LLM 輸出，但無法改變 Graph 的邊定義——這是架構層的防禦，比 prompt-level 的防禦更難繞過。但要分清楚邊界：攻擊者無法新增或改寫邊，卻仍可能操控邊的**輸入**——若 `evaluate_node` 被注入而輸出 `score = 1.0`，conditional edge 會忠實地把它路由到 approve，這本身就是一次繞過。所以 DAG 消除的是「走到未定義節點」這類攻擊，評估節點本身仍要加固：用獨立模型、不把未受信任內容餵給評估 prompt、對高風險分支加上非 LLM 的硬性檢查。
 
 **Multi-Agent 協調（fde-interview-guide-part31 ADK 章節）**：單一 Agent 的 DAG 是這個系列的基礎；Multi-Agent 系統是把多個 DAG 組合成更大的 Graph，每個 Sub-Agent 本身是一個封裝好的 DAG。ADK 的 `SequentialAgent`、`ParallelAgent`、`LoopAgent` 的組合等同於用 DAG 原語拼裝出任意拓撲的 Multi-Agent 系統。
 

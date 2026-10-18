@@ -276,7 +276,7 @@ Score < 0.1 → 直接 evict（hard delete from Vector Search）
 
 - **fde-interview-guide Part 35–38（Production Engineering）**：Consolidation Job 的 Cloud Run Job 設計、Redis Cluster 的 HA 配置、CMEK key rotation 的 Terraform 實作，都在 Part 35–38 的生產工程章節有完整的 runbook。
 
-- **Core Topic 5 — RAG Pipeline**（後續篇）：RAG 是 Semantic Memory 的延伸——RAG 存的是外部知識庫，Semantic Memory 存的是 per-user 個人化知識；兩者共用 embedding + ANN 的基礎設施，但索引隔離、TTL 策略、更新頻率截然不同。
+- **RAG 檢索管線**（本系列 [Hybrid Search & RRF](/posts/fde-core-concept-4-hybrid-search-rrf-zh/)、[RAG Triad Metrics](/posts/fde-core-concept-20-rag-triad-metrics-zh/)）：RAG 是 Semantic Memory 的延伸——RAG 存的是外部知識庫，Semantic Memory 存的是 per-user 個人化知識；兩者共用 embedding + ANN 的基礎設施，但索引隔離、TTL 策略、更新頻率截然不同。
 
 ---
 

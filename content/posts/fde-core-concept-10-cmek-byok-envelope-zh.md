@@ -90,12 +90,14 @@ readTime: "18 min"
 
 ### CMEK vs BYOK 架構對比
 
+下圖中的 DEK 快取與 Confidential VM 設計適用於**自建推論服務**（GKE / Compute Engine 上的 Confidential VM，自己呼叫 KMS unwrap DEK）。若使用受管的 Vertex AI，客戶能控制的只有 `encryptionSpec.kmsKeyName`（指定 KEK）與 Key Access Justifications / EKM 政策；DEK 的產生、快取與輪換由平台在內部處理，沒有客戶可見的 enclave 或 DEK 快取。
+
 ```
 CMEK 路徑（KEK 在 Cloud KMS）
 ─────────────────────────────────────────────────────────────
  客戶 VPC 內
   ┌─────────────────────────────────────────────────────┐
-  │  Vertex AI Inference Pod（Confidential VM / AMD SEV）│
+  │  自建推論 Pod（GKE Confidential VM / AMD SEV）      │
   │  ┌─────────────────────────────────────────────┐    │
   │  │  encrypted_DEK（從 GCS 讀取）                │    │
   │  │       │ unwrap request（HTTPS）               │    │
@@ -116,10 +118,10 @@ BYOK / EKM 路徑（KEK 在客戶 HSM）
   │  on-premise HSM    │            │  Cloud EKM（代理層）    │
   │  （KEK 永遠在此）   │◀──────────▶│  不持有 KEK，只轉發     │
   │  Thales Luna /     │  Dedicated │  unwrap 請求 / 回應     │
-  │  AWS CloudHSM      │  Interconnect └──────────┬──────────┘
+  │  Utimaco           │  Interconnect └──────────┬──────────┘
   └────────────────────┘  < 5 ms 延遲             │ plaintext DEK
                                                   ▼
-                                  Vertex AI Confidential VM
+                                  自建推論 Confidential VM
                                   （DEK 在記憶體，1hr TTL）
   安全優勢：平台無法接觸 KEK，沒有技術能力單方解密
 ```
@@ -142,7 +144,7 @@ DEK（AES-256-GCM，Confidential VM 記憶體，1hr TTL）
 三層隔離的故障域優勢：
 - Root KEK 洩露需要 HSM 物理入侵，極難；即使發生，Regional KEK 仍是屏障
 - Regional KEK 輪換只影響該 region 的 DEK 重新包裹，不影響其他 region 服務
-- DEK 每小時輪換，洩露視窗從 90 天（預設）縮短至 1 小時
+- DEK 每小時輪換，洩露視窗從「隨 KEK 版本週期」（Cloud KMS 預設 90 天自動輪換的是 KEK 版本，不是 DEK）縮短至 1 小時
 
 ### Vertex AI 整合範圍
 
@@ -265,22 +267,22 @@ ELSE:
 - 在 Cloud KMS 建立 Customer-Managed KEK（軟體保護，非 HSM）
 - 在 GCS bucket 設定 `defaultKmsKeyName`，新物件自動套用 CMEK
 - Vertex AI Dataset 和 Vector Search index 建立時指定 `encryptionSpec.kmsKeyName`
-- 保留預設 DEK 輪換政策（90 天）
+- 保留 Cloud KMS 預設的 KEK 版本自動輪換（90 天）；DEK 由平台管理，不自行輪換
 - 不啟用 Confidential VM（先不管記憶體加密）
 
 **解決的問題：**
 - 雲端平台員工若未持有 KMS 密鑰 IAM 權限，無法解讀原始資料
-- 滿足 HIPAA Safe Harbor、SOC 2 Type II 基礎稽核要求
+- 滿足 HIPAA Security Rule 的靜態加密要求、SOC 2 Type II 基礎稽核要求
 - 比平台預設加密（GMEK）多一層客戶控制
 
 **遺留的問題：**
 - KEK 由雲端 KMS 管理，平台理論上仍可存取
-- DEK 輪換 90 天，洩露視窗長
+- DEK 不主動輪換（只跟著 KEK 版本走），洩露視窗長
 - Confidential VM 未啟用，記憶體中的明文資料仍有被 hypervisor 讀取的風險
 - 不適用「不信任雲端平台」的威脅模型
 
 **成本 / 複雜度：**
-- Cloud KMS：~$1 / 密鑰版本 / 月 + $0.03 / 10,000 操作
+- Cloud KMS：~$0.06 / 軟體密鑰版本 / 月（HSM 等級 $1.00）+ $0.03 / 10,000 操作
 - 實作時間：1–2 天（主要是 Terraform / IaC 修改）
 - 無額外 VM 費用
 
@@ -291,7 +293,7 @@ ELSE:
 在 Layer 1 基礎上新增：
 
 **密鑰管理強化：**
-- DEK 輪換頻率縮短至 **1 小時**（洩露視窗從 90 天降至 1 小時）
+- 自建推論服務的 DEK 輪換頻率縮短至 **1 小時**（洩露視窗從隨 KEK 版本週期降至 1 小時）
 - 設定 KMS 密鑰銷毀保護（`destroyScheduledDuration` 設為 30 天）
 - 啟用 Cloud KMS 自動密鑰版本輪換，舊版本保留 90 天後自動禁用
 
@@ -305,7 +307,7 @@ ELSE:
 - 不同服務使用**不同 DEK**（Vector Search、Context Cache、Training Data 各一把）
 
 **解決的問題：**
-- DEK 洩露視窗：90 天 → 1 小時
+- DEK 洩露視窗：隨 KEK 版本（90 天）→ 1 小時
 - 記憶體明文資料：hypervisor 無法讀取（AMD SEV 加密記憶體）
 - 誤刪密鑰：有 30 天緩衝期，可恢復
 - 密鑰使用全程可稽核
@@ -326,7 +328,7 @@ ELSE:
 在 Layer 2 基礎上新增：
 
 **密鑰主權完全轉移：**
-- **Cloud EKM（External Key Manager）**：KEK 移至客戶 on-premise HSM（Thales Luna Network HSM 7 / Utimaco / AWS CloudHSM）
+- **Cloud EKM（External Key Manager）**：KEK 移至客戶 on-premise HSM（Thales Luna Network HSM 7 / Utimaco）
 - Cloud EKM 只做 API 橋接，不持有任何密鑰材料
 - Cloud KMS 的 `protectionLevel: EXTERNAL` 模式
 

@@ -5,7 +5,7 @@ draft: false
 weight: 7
 description: "一家台灣戶外用品電商，12,000 個 SKU、跑在 Vercel + Shopify Headless 上。電商 GEO 的兩個獨有難題：長尾商品頁怎麼模板化才不變成薄內容，以及價格與庫存怎麼讓模型抓到最新的。"
 categories: ["all", "ai", "business"]
-tags: ["GEO", "AIO", "電商", "Shopify", "Next.js", "Product Schema", "SKU", "案例研究", "繁體中文", "SEO", "Case Study", "E-commerce"]
+tags: ["GEO", "AIO", "電商", "Shopify", "Next.js", "案例研究", "SEO", "Case Study"]
 authors: ["yen"]
 readTime: "13 min"
 ---
@@ -414,11 +414,13 @@ facet 分類頁生成邏輯            9      含 noindex 規則
 合計                           45 人天（約 2.5 個月，2 人）
 ```
 
-**注意投入結構**：34 人天是工程（一次性，惠及全站），只有 16 人天是內容。這和 Part 5 案例 A（B2B SaaS，內容佔 48/78 人天）完全相反。**電商 GEO 是工程密集，不是內容密集。**
+**注意投入結構**：29 人天是工程（一次性，惠及全站），只有 16 人天是內容。這和 Part 5 案例 A（B2B SaaS，內容佔 48/72 人天）完全相反。**電商 GEO 是工程密集，不是內容密集。**
 
 ---
 
 ## 五、三個 insight
+
+> 數字為示意量級，請以自己的基線為準。
 
 ### 1. 電商的 GEO 是「資料渲染問題」，不是「內容生產問題」
 

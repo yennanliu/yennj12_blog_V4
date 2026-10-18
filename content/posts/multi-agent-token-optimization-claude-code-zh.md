@@ -4,12 +4,13 @@ date: 2026-03-12T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "Claude Code", "Multi-Agent", "token-optimization", "Cost Optimization", "Prompt Engineering", "API", "效能調優", "agent-orchestration", "Development Tools"]
-summary: "多 Agent Token 優化系列總覽：深入解析 Token 用量優化策略，涵蓋 Prompt Caching、Context 壓縮、Agent 專責化、模型分層、選擇性 Context 傳遞等方法，幫助你建構高效且低成本的多 Agent 系統。"
+tags: ["AI", "Claude Code", "Multi-Agent", "token-optimization", "Cost Optimization", "API", "agent-orchestration", "Developer Tools"]
 description: "多 Agent Token 優化系列總覽：深入解析 Token 用量優化策略，涵蓋 Prompt Caching、Context 壓縮、Agent 專責化、模型分層、選擇性 Context 傳遞等方法，幫助你建構高效且低成本的多 Agent 系統。"
 readTime: "25 min"
 aliases: ["/posts/orchestration-agents-claude-code-comprehensive-guide/"]
 ---
+
+本文對 Claude Code 功能的描述以 2026-03 的文件為準，產品每月更新。
 
 在使用 Claude Code API 建構多 Agent 系統時，**Token 用量**往往是影響成本、延遲與系統可靠性的關鍵因素。隨著 Agent 數量增加、任務複雜度提升，Token 消耗可能以指數級成長，若不加以優化，很快就會遇到成本爆炸或 Context Window 耗盡的問題。
 
@@ -59,7 +60,7 @@ Token 計算參考：
 │  + 協調層 (Orchestrator) 的 tokens                         │
 │                                                             │
 │  ⚠️ 警告：若未優化，10 個 Agent 的系統                     │
-│          可能消耗單 Agent 的 10–30 倍 tokens               │
+│          可能消耗單 Agent 的數倍到數十倍 tokens（約略）     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -604,7 +605,7 @@ class AdaptiveAgentRouter:
 | 面向 | 評估 |
 |------|------|
 | ✅ 成本效益最大化 | 低複雜度任務可節省 75% 以上費用 |
-| ✅ 速度提升 | Haiku 回應速度約為 Opus 的 3–5 倍 |
+| ✅ 速度提升 | Haiku 回應速度明顯快於 Opus（倍數依任務而定，未實測） |
 | ✅ 彈性擴展 | 簡單任務可大規模並行 |
 | ❌ 分類錯誤風險 | 錯誤分類可能影響輸出品質 |
 | ❌ 品質差異 | 不同模型的輸出風格可能不一致 |

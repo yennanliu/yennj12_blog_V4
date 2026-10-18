@@ -5,7 +5,7 @@ draft: false
 weight: 6
 description: "一家 3,000 人製造業集團的六語系官網，跑在 AWS CloudFront + WAF 上。看 GEO 在大企業環境的真正瓶頸：不是技術，是治理。附 WAF 規則、hreflang 與實體一致性的實作。"
 categories: ["all", "ai", "engineering", "business"]
-tags: ["GEO", "AIO", "企業官網", "AWS", "CloudFront", "WAF", "多語系", "hreflang", "案例研究", "繁體中文", "SEO", "Case Study"]
+tags: ["GEO", "AIO", "AWS", "WAF", "案例研究", "SEO", "Case Study"]
 authors: ["yen"]
 readTime: "13 min"
 ---
@@ -367,6 +367,8 @@ JSON-LD 模板               3      AEM 廠商
 ---
 
 ## 五、這個案例的三個 insight
+
+> 數字為示意量級，請以自己的基線為準。
 
 ### 1. 大企業的 GEO 分數低，通常是「防禦設定的副作用」
 

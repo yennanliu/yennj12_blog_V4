@@ -2,9 +2,9 @@
 title: "AI System on Native AWS - Part 2 - 智慧文件處理 IDP 管線"
 date: 2026-07-19T09:00:00+08:00
 draft: false
-description: "當你的『知識』不是乾淨的 Markdown,而是幾百萬張掃描的 PDF、發票、合約時,RAG 那套餵不進去。本篇用純 AWS 原生服務打造一條智慧文件處理(IDP)管線:S3 觸發、Step Functions 編排、Textract 抽文字與表格、Comprehend 做實體與分類、Bedrock 做結構化萃取與摘要,全部用 CDK(CloudFormation)描述,並談事件驅動、冪等、非同步大檔與人工複核。"
+description: "掃描 PDF、發票、合約餵不進 RAG 時怎麼辦:Textract 抽表格與 key-value、Comprehend 認實體、Bedrock 正規化成 JSON、Step Functions 串成可重試狀態機,信心分數太低自動轉人工,全部以 CDK 部署。"
 categories: ["all", "ai", "engineering"]
-tags: ["AWS", "CDK", "CloudFormation", "Textract", "Comprehend", "Bedrock", "Step Functions", "IDP", "Serverless", "AI Engineering"]
+tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "IDP", "Serverless", "AI Engineering"]
 authors: ["yen"]
 readTime: "13 min"
 ---

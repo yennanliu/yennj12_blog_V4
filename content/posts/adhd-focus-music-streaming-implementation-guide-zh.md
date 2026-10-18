@@ -4,8 +4,7 @@ date: 2026-01-18T16:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "business", "creative"]
-tags: ["ADHD", "專注音樂", "YouTube", "24/7直播", "實作指南", "雙耳節拍", "音頻設計", "Streaming", "Tutorial"]
-summary: "手把手教你建立 ADHD 友善專注音樂 24/7 直播頻道：從科學原理、音頻設計、視覺製作到實際上線，包含完整技術實作步驟與優化策略。"
+tags: ["ADHD", "YouTube", "24/7直播", "Streaming", "Tutorial"]
 description: "手把手教你建立 ADHD 友善專注音樂 24/7 直播頻道：從科學原理、音頻設計、視覺製作到實際上線，包含完整技術實作步驟與優化策略。"
 readTime: "60 min"
 ---
@@ -75,7 +74,7 @@ readTime: "60 min"
      → 節奏幫助建立時間感
 
   4. 減少焦慮
-     → 舒緩音樂降低皮質醇（壓力荷爾蒙）
+     → 舒緩音樂可能有助減輕壓力感（皮質醇相關研究結果不一，非定論）
 ```
 
 ### 有效的音頻成分
@@ -238,7 +237,7 @@ BPM 與專注力關係:
 
 # 選項 3: Brain.fm API（進階）
 
-價格: $6.99/月（個人）+ API 費用
+價格: $14.99/月（個人，2026-10 牌價）+ API 費用
 特色:
   ✓ 科學研究支持
   ✓ 真正的功能性音樂
@@ -776,7 +775,7 @@ ADHD 頻道在那套堆疊上只有三個自己的參數：
 🎧 專為 ADHD 族群設計的 24/7 專注音樂直播
 
 我們提供為 ADHD 聽眾設計的音樂，結合：
-✓ 40Hz 雙耳節拍（提升專注力）
+✓ 40Hz 雙耳節拍（部分聽眾反映有助專注，研究尚無定論）
 ✓ 褐噪音（遮蔽環境干擾）
 ✓ 70-75 BPM 節奏（穩定心率）
 
@@ -1226,7 +1225,10 @@ Social Blade:
   "ADHD Focus Music 24/7 - Study & Concentration"
 
 實驗組:
-  "ADHD Focus Music 24/7 - Boost Focus by 30% | Scientifically Proven"
+  "ADHD Focus Music 24/7 - 40Hz + Brown Noise | Headphones Recommended"
+
+註: 標題不可使用「Scientifically Proven」「Boost Focus by 30%」這類無法證實的療效宣稱，
+    既與前文「目前沒有定論」矛盾，也違反 YouTube 的誤導性內容政策
 
 測試方法:
   • 運行每個標題 7 天
@@ -1341,7 +1343,7 @@ Rules:
 # 目標 Subreddits
 
 主要目標（高度相關）:
-  r/ADHD (1.2M members)
+  r/ADHD (約 230 萬 members，2026-10)
   - 發文頻率: 每週 1 次
   - 類型: 分享個人故事 + 軟性推廣
 
@@ -1469,7 +1471,7 @@ Rules:
 
 銷售平台:
   Gumroad（推薦）:
-    • 手續費: 10% + $0.30
+    • 手續費: 10% + $0.50（2026-10 牌價）
     • 支援多種付款方式
     • 自動發送下載連結
 

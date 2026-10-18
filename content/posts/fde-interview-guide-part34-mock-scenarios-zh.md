@@ -5,7 +5,7 @@ draft: false
 weight: 34
 description: "六個完整的 FDE RKK 面試 Mock 情境，每題包含客戶場景與限制條件、面試官的追問鏈、模範答案架構，以及最常見的失分點——涵蓋金融合規、保險多 Agent、醫療 VPC、零售推薦、政府法規、教育 SaaS 六個垂直場景"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "RKK", "Mock Interview", "System Design", "Cloud", "Playbook", "Interview"]
+tags: ["AI", "FDE", "RKK", "System Design", "Cloud", "Playbook", "Interview", "fde-interview-guide"]
 authors: ["yen"]
 readTime: "25 min"
 ---
@@ -94,7 +94,7 @@ Q5（顧問題）：「客戶的法遵長說，所有 AI 的回答都必須有�
 
  第三層：Compliance Layer
   所有 Vertex AI 呼叫限定 asia-east1（台灣節點）
-  用 VPC Service Controls 確保資料不出 Region
+  用 Org Policy（gcp.resourceLocations）鎖定 Region，VPC Service Controls 限制 API 邊界
   每個 AI 呼叫記錄到 Cloud Audit Logs」
 
 追問回答：
@@ -187,9 +187,10 @@ ADK 架構設計：
 「最外層是一個 SequentialAgent，兩個步驟：
 
  Step 1：ParallelAgent，三個 LlmAgent 同時執行：
-   policy_agent → 查核保 DB → 寫入 session:policy_result
-   medical_agent → 查醫療記錄 → 寫入 session:medical_result
-   fraud_agent → 跑詐欺偵測 → 寫入 session:fraud_score
+   policy_agent → 查核保 DB → 寫入 state["policy_result"]
+   medical_agent → 查醫療記錄 → 寫入 state["medical_result"]
+   fraud_agent → 跑詐欺偵測 → 寫入 state["fraud_score"]
+   （無前綴的 key 就是 session 範圍，ADK 沒有 session: 前綴，見 Part 31）
 
  Step 2：decision_agent（LlmAgent），
    讀取三份 session state，用 Gemini Pro 做最終決策。
@@ -281,7 +282,8 @@ Q5（顧問題）：「醫師說 AI 摘要有時候漏掉了很重要的用藥�
 「我的設計有兩層隔離：
 
  第一層：PII Tokenization（在院內完成）
-  病歷進入 AI Pipeline 之前，院內的 Cloud DLP 服務
+  病歷進入 AI Pipeline 之前，院內自建的去識別化服務（regex + NER，
+  部署在院內網路；不能用 Cloud DLP——那是 Google 的 API，原始病歷送進去就違反限制）
   把所有 PII（姓名→P001、身份證→ID001、診斷→D001）替換成匿名 token。
   原始 PII 和 token 的對應表存在院內的加密 DB，不出院外。
 
@@ -289,7 +291,7 @@ Q5（顧問題）：「醫師說 AI 摘要有時候漏掉了很重要的用藥�
   Tokenized 病歷傳送到 GCP 的 asia-east1 Region，
   透過 Private Service Connect 呼叫 Vertex AI Gemini API，
   整個路徑不經過公共網路。
-  VPC-SC Perimeter 確保資料不能從 VPC 外部存取。
+  VPC-SC Perimeter 限制只有邊界內的專案與身份能呼叫這些 API。
 
  AI 回答生成後，再把 token 替換回原始 PII，
  結果只顯示在院內的顯示層，不存儲在 GCP 上。」
@@ -376,7 +378,7 @@ Q5（顧問題）：「上線兩週後，轉換率上升了 2%，但 LLM 成本�
 
  我的設計是預計算（Pre-computation）架構：
 
- 離線階段（每小時執行一次）：
+ 離線階段（每天執行一次；熱門商品變動大時可縮到每小時，呼叫量按比例上升）：
    對 Top-10,000 個熱門商品 × 主要用戶 Persona（100 個）
    預先生成推薦理由文字 → 存入 Redis Cache
 
@@ -407,7 +409,7 @@ Q5（顧問題）：「上線兩週後，轉換率上升了 2%，但 LLM 成本�
  第一步：看成本分佈——哪 20% 的商品造成了 80% 的成本？
  通常是長尾商品被過度預計算了。
  解法：只對 Top-1,000 熱門商品做 Gemini Pro 預計算，
- 其他商品改用 Gemini Flash（成本低 5 倍），
+ 其他商品改用 Gemini Flash（單價低一個數量級以上，Part 29 的試算約 40 倍），
  或者用規則式文字模板。
  目標：把成本壓回 2 倍以內，同時保留 Top 商品的 AI 推薦品質。」
 ```
@@ -596,7 +598,7 @@ Memory 設計：
 「每個 session 的資料 key 是 session_id（UUID），不是 student_id。
  學習 profile 存在 Firestore，key 是 anonymized_id（學生 ID 的 hash，不可逆）。
  即使 Firestore 被存取，拿到的是 hash，無法對應到真實學生。
- Session State 用 session: scope，session 結束後自動清除。」
+ Session State 用無前綴的 key（即 session 範圍），session 結束後自動清除。」
 
 顧問題（Q5）：
 「家長投訴這件事要認真對待。我的回應分三個層次：

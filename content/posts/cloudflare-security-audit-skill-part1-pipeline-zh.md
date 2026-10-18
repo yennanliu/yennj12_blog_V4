@@ -4,7 +4,7 @@ date: 2026-06-29T09:00:00+08:00
 draft: false
 description: "Cloudflare 開源了內部 AI 安全稽核系統 security-audit-skill——一個教科書級的六階段 Multi-Agent Pipeline：Recon→Hunt→Validate→Report→Structured Output→Verify，本篇拆解整個架構設計與核心設計決策"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Security", "Multi-Agent", "Pipeline", "LLM", "Cloudflare", "System Design", "Open Source"]
+tags: ["AI", "Agent", "Security", "Multi-Agent", "Pipeline", "LLM", "Cloudflare", "System Design"]
 authors: ["yen"]
 readTime: "18 min"
 ---

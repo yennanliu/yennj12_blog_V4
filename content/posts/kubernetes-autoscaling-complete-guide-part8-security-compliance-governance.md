@@ -5,23 +5,24 @@ draft: false
 weight: 8
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "Security", "RBAC", "Compliance", "Governance", "Policy", "Audit", "Multi-tenancy", "OPA", "Gatekeeper", "DevOps"]
-summary: "Part 8 of the Kubernetes Autoscaling series: Complete guide to securing autoscaling infrastructure with RBAC, policy enforcement, compliance frameworks (PCI-DSS, HIPAA, SOC2), multi-tenancy patterns, audit logging, and governance best practices for enterprise Kubernetes."
-description: "Part 8 of the Kubernetes Autoscaling series: Complete guide to securing autoscaling infrastructure with RBAC, policy enforcement, compliance frameworks (PCI-DSS, HIPAA, SOC2), multi-tenancy patterns, audit logging, and governance best practices for enterprise Kubernetes."
+tags: ["Kubernetes", "Security", "RBAC", "Compliance", "Governance", "Multi-tenancy", "OPA", "DevOps"]
+description: "Keep autoscaling from becoming a cost or security hole: RBAC scopes, OPA Gatekeeper limits on maxReplicas, multi-tenant quotas, compliance and audit logs."
 readTime: "30 min"
 ---
+
+> Versions, APIs and prices in this guide are as of 2025-11 (the post date); Kubernetes, Karpenter, KEDA and the AWS services change frequently — verify against the current docs.
 
 ## Series Overview
 
 This is **Part 8** (Final) of the Kubernetes Autoscaling Complete Guide series:
 
-- **[Part 1: Horizontal Pod Autoscaler](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)** - Application-level autoscaling theory
-- **[Part 2: Cluster Autoscaling & Cloud Providers](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)** - Infrastructure-level autoscaling
-- **[Part 3: Hands-On HPA Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)** - Practical implementation
-- **[Part 4: Monitoring, Alerting & Threshold Tuning](./kubernetes-autoscaling-complete-guide-part4-monitoring-alerting.md)** - Production observability
-- **[Part 5: VPA & Resource Optimization](./kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization.md)** - Right-sizing strategies
-- **[Part 6: Advanced Autoscaling Patterns](./kubernetes-autoscaling-complete-guide-part6-advanced-patterns.md)** - Complex architectures
-- **[Part 7: Production Troubleshooting & War Stories](./kubernetes-autoscaling-complete-guide-part7-troubleshooting-war-stories.md)** - Real-world incidents
+- **[Part 1: Horizontal Pod Autoscaler](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)** - Application-level autoscaling theory
+- **[Part 2: Cluster Autoscaling & Cloud Providers](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)** - Infrastructure-level autoscaling
+- **[Part 3: Hands-On HPA Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)** - Practical implementation
+- **[Part 4: Monitoring, Alerting & Threshold Tuning](/posts/kubernetes-autoscaling-complete-guide-part4-monitoring-alerting/)** - Production observability
+- **[Part 5: VPA & Resource Optimization](/posts/kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization/)** - Right-sizing strategies
+- **[Part 6: Advanced Autoscaling Patterns](/posts/kubernetes-autoscaling-complete-guide-part6-advanced-patterns/)** - Complex architectures
+- **[Part 7: Production Troubleshooting & War Stories](/posts/kubernetes-autoscaling-complete-guide-part7-troubleshooting-war-stories/)** - Real-world incidents
 - **Part 8 (This Post)**: Security, Compliance & Governance - Enterprise-grade security
 
 ---
@@ -85,6 +86,8 @@ Autoscaling without proper security and governance is a vulnerability multiplier
 ### Role Definitions
 
 #### 1. Cluster Admin (Full Control)
+
+> **Caveat:** the `aggregate-to-admin` label folds this ClusterRole into the built-in `admin` role, so every namespace admin inherits cluster-wide `*` on Karpenter NodePools and NodeClaims. Drop the label and bind the role explicitly to the platform team instead.
 
 ```yaml
 # Cluster-wide autoscaling admin
@@ -602,6 +605,8 @@ spec:
 ```
 
 ### Policy 3: Require Resource Requests for HPA
+
+> **Caveat:** the Rego below is "simplified" to the point of being wrong — it never looks up the target workload, so it denies **every** HPA that uses a CPU metric. A real version needs `data.inventory` (Gatekeeper sync) to read the Deployment's container requests before deciding.
 
 ```yaml
 apiVersion: templates.gatekeeper.sh/v1
@@ -1220,6 +1225,8 @@ rules:
 
 ### Comprehensive Audit Policy
 
+> **EKS caveat:** on EKS the control plane is managed — you cannot install an `audit.k8s.io` Policy, there is no `kube-apiserver` pod to `kubectl logs`, and no audit file on worker nodes. Audit logs go to CloudWatch Logs (the `audit` log type Part 3 enabled) and are queried with Logs Insights. The Policy, the Fluentd file tail and the `kubectl logs -l component=kube-apiserver` commands in this part apply to self-managed (kubeadm/kops) clusters only.
+
 ```yaml
 apiVersion: audit.k8s.io/v1
 kind: Policy
@@ -1291,6 +1298,8 @@ rules:
 ```
 
 ### Audit Log Aggregation
+
+> Self-managed clusters only — the file path below does not exist on EKS worker nodes (see the EKS caveat above).
 
 ```yaml
 # Fluentd for audit log shipping
@@ -1754,13 +1763,13 @@ data:
 ## Related Topics
 
 ### Autoscaling Series (Complete)
-- **[Part 1: HPA Fundamentals](./kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler.md)**
-- **[Part 2: Cluster Autoscaling](./kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling.md)**
-- **[Part 3: Hands-On Demo](./kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo.md)**
-- **[Part 4: Monitoring & Alerting](./kubernetes-autoscaling-complete-guide-part4-monitoring-alerting.md)**
-- **[Part 5: VPA & Resource Optimization](./kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization.md)**
-- **[Part 6: Advanced Patterns](./kubernetes-autoscaling-complete-guide-part6-advanced-patterns.md)**
-- **[Part 7: Troubleshooting & War Stories](./kubernetes-autoscaling-complete-guide-part7-troubleshooting-war-stories.md)**
+- **[Part 1: HPA Fundamentals](/posts/kubernetes-autoscaling-complete-guide-part1-horizontal-pod-autoscaler/)**
+- **[Part 2: Cluster Autoscaling](/posts/kubernetes-autoscaling-complete-guide-part2-cluster-autoscaling/)**
+- **[Part 3: Hands-On Demo](/posts/kubernetes-autoscaling-complete-guide-part3-hands-on-hpa-demo/)**
+- **[Part 4: Monitoring & Alerting](/posts/kubernetes-autoscaling-complete-guide-part4-monitoring-alerting/)**
+- **[Part 5: VPA & Resource Optimization](/posts/kubernetes-autoscaling-complete-guide-part5-vpa-resource-optimization/)**
+- **[Part 6: Advanced Patterns](/posts/kubernetes-autoscaling-complete-guide-part6-advanced-patterns/)**
+- **[Part 7: Troubleshooting & War Stories](/posts/kubernetes-autoscaling-complete-guide-part7-troubleshooting-war-stories/)**
 
 ## Conclusion
 

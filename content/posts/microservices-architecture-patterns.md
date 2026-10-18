@@ -4,9 +4,8 @@ date: 2025-08-10T15:28:17+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["Microservices", "Distributed Systems", "Scalability", "patterns"]
-summary: "Deep dive into proven microservices architecture patterns that help organizations scale their systems effectively while maintaining reliability and developer productivity."
-description: "Deep dive into proven microservices architecture patterns that help organizations scale their systems effectively while maintaining reliability and developer productivity."
+tags: ["Microservices", "Distributed Systems", "Scalability"]
+description: "Patterns that held up when a monolith serving millions of users was split into microservices: API gateway, service discovery, circuit breakers, observability."
 readTime: "12 min"
 ---
 
@@ -14,7 +13,7 @@ Microservices architecture has become the de facto standard for building scalabl
 
 ## The Evolution to Microservices
 
-When we started our journey towards microservices, we had a monolithic application serving millions of users. While the monolith served us well initially, we began experiencing challenges:
+The scenario below is a composite, illustrative one — a monolith that had grown large enough that the following problems appeared (no figures in this post come from a measured system). While the monolith served well initially, the challenges were:
 
 - **Deployment bottlenecks**: Every change required deploying the entire application
 - **Technology constraints**: Stuck with legacy technology stacks
@@ -115,7 +114,7 @@ func (us *UserService) CreateUser(req CreateUserRequest) error {
 
 ### 4. Circuit Breaker Pattern
 
-Prevent cascading failures in distributed systems:
+Prevent cascading failures in distributed systems. (The Go snippets in this post are sketches, not compilable code: this circuit breaker mutates `state`/`failures` with no mutex and calls an undefined `recordSuccess`, and the saga below assigns `completed` without reading it, which `go build` rejects. Use a tested library such as `sony/gobreaker` in real code.)
 
 ```go
 type CircuitBreaker struct {
@@ -167,7 +166,7 @@ services:
 
 ### Distributed Tracing
 
-Understanding request flows across services:
+Understanding request flows across services. The example uses the OpenTracing API, which was archived in 2022; new code should use OpenTelemetry (`go.opentelemetry.io/otel`), whose `tracer.Start(ctx, "process_order")` plays the same role.
 
 ```go
 func (h *Handler) ProcessOrder(w http.ResponseWriter, r *http.Request) {
@@ -275,7 +274,7 @@ func (cm *CacheManager) Get(key string) (interface{}, error) {
 
 ### Connection Pooling
 
-Manage database connections efficiently:
+Manage database connections efficiently. Caveat: `database/sql` has no `sql.Config` type and `sql.OpenDB` takes a single `driver.Connector`; the pool limits are set on the `*sql.DB` afterwards — `db := sql.OpenDB(connector); db.SetMaxOpenConns(25); db.SetMaxIdleConns(25); db.SetConnMaxLifetime(5*time.Minute); db.SetConnMaxIdleTime(5*time.Minute)`. The block below is pseudo-code for those four settings:
 
 ```go
 config := &sql.Config{

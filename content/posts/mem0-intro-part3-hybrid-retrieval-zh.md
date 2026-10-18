@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "Mem0 原始碼導讀系列第三篇：逐行拆解 _search_vector_store() 的九個步驟、BM25 的 sigmoid 正規化與查詢長度自適應參數、實體加權的完整公式與那個反懲罰項、score_and_rank 的自適應分母，以及 explain=True 怎麼用來診斷召回問題。"
 categories: ["all", "ai", "engineering"]
-tags: ["Mem0", "Hybrid Search", "BM25", "Retrieval", "AI Agent", "Memory", "繁體中文"]
+tags: ["Mem0", "Hybrid Search", "BM25", "Agent", "Memory"]
 authors: ["yen"]
 readTime: "19 min"
 ---

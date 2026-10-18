@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "如何從兩百萬個 repo 中挑對模型、用四個抽象層載入它、用 Gradio 與 FastAPI + vLLM 把它變成服務，並把自己的模型完整推上 Hub。含量化、Spaces 部署與 Model Card 撰寫範例。"
 categories: ["all", "ai", "engineering"]
-tags: ["Hugging Face", "Transformers", "Gradio", "vLLM", "TGI", "LLM", "MLOps", "Python", "繁體中文"]
+tags: ["Hugging Face", "Transformers", "Gradio", "vLLM", "TGI", "LLM", "MLOps", "Python"]
 authors: ["yen"]
 readTime: "19 min"
 series: ["hugging-face"]

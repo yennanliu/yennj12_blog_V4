@@ -5,7 +5,7 @@ draft: false
 weight: 28
 description: "深入解析 AI Agent 工程基礎：ReAct/Reflexion 思考迴圈、記憶系統四層架構（感官/工作/情節/語意）、上下文管理與 Agent 狀態機設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Memory", "ReAct", "LLM", "Autonomous", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Agent", "Memory", "ReAct", "LLM", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "15 min"
 series: ["ai-eng-from-scratch"]
@@ -38,7 +38,7 @@ LLM 本身是**無狀態**的（stateless）。每次 API 呼叫都是獨立的 
 
 - **上下文視窗有限**：GPT-4o 128K tokens，換算約 96K 中文字。長任務無法全塞。
 - **幻覺累積問題**：步驟越多，錯誤累積越嚴重，必須設計檢查點。
-- **成本爆炸**：每步驟都傳完整歷史，128K token × $5/1M input = 每步 $0.64，100 步任務 = $64/次。
+- **成本爆炸**：每步驟都傳完整歷史，128K token × $5/1M input（GPT-4o 推出時的定價；2024-08 之後的快照為 $2.5/1M，以下數字等比例減半）= 每步 $0.64，100 步任務 = $64/次。
 - **確定性需求**：「取消訂單」這種有副作用的操作不能讓 LLM 隨機決定，必須用狀態機控制。
 
 正確的 Agent 工程不是「把更多東西塞進 prompt」，而是設計一個**可靠的資訊流系統**，讓 LLM 在每個決策點都能拿到恰好足夠的上下文。

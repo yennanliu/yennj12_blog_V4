@@ -5,7 +5,7 @@ draft: false
 weight: 10
 description: "深入解析 RNN/LSTM/GRU 序列建模、Encoder-Decoder 架構、Bahdanau 注意力機制，理解 Transformer 取代 RNN 的工程動機"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "LSTM", "Seq2Seq", "Attention", "RNN", "Encoder-Decoder", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "NLP", "LSTM", "Attention", "RNN", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "18 min"
 series: ["ai-eng-from-scratch"]
@@ -290,7 +290,8 @@ Phase 2 — Decode（生成）：
   31–40 tokens： ~17
   40+ tokens：   ~11
 
-資料來源：Bahdanau et al. 2015 論文圖表
+示意數值：趨勢取自 Bahdanau et al. 2015 Fig. 2（RNNenc-30/50 曲線），
+絕對分數為示意，非論文原值
 ```
 
 問題根源：無論輸入多長，context vector 都是固定維度（512 dim）。翻譯長句時，前面的資訊被後面的覆蓋 —— 這正是注意力機制要解決的問題。
@@ -572,4 +573,4 @@ Transformer（100 token 序列）的梯度路徑：
 
 ---
 
-*本文屬於「[AI 工程從零開始](/tags/ai/)」系列，從數學基礎到生產部署，系統性建立 AI 工程能力。*
+*本文屬於「[AI 工程從零開始](/tags/ai-eng-from-scratch/)」系列，從數學基礎到生產部署，系統性建立 AI 工程能力。*

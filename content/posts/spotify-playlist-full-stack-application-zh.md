@@ -4,8 +4,7 @@ date: 2025-09-06T14:13:59+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering"]
-tags: ["AI", "spotify-api", "Machine Learning", "OAuth", "recommendation-system", "Java", "Vue.js", "full-stack", "Spring Boot", "vue"]
-summary: "使用 Spring Boot 後端與 Vue.js 前端，整合 Spotify API 打造智能音樂推薦系統，突破 Spotify 原生推薦限制，提供更主動的音樂探索體驗。"
+tags: ["AI", "ML", "OAuth", "Java", "Spring Boot"]
 description: "使用 Spring Boot 後端與 Vue.js 前端，整合 Spotify API 打造智能音樂推薦系統，突破 Spotify 原生推薦限制，提供更主動的音樂探索體驗。"
 readTime: "15 min"
 aliases: ["/posts/spotify-playlist-full-stack-application/"]
@@ -40,7 +39,7 @@ Backend (後端)
 External Services (外部服務)
 ├── Spotify Web API
 ├── Spotify OAuth 2.0
-└── Machine Learning 推薦引擎
+└── Spotify Recommendations API（seed 推薦，非自訓模型）
 ```
 
 ### 🗺️ 系統架構流程圖
@@ -51,7 +50,7 @@ graph TD
     B --> C[Spring Boot Backend]
     C --> D[Spotify OAuth Server]
     C --> E[Spotify Web API]
-    C --> F[ML Recommendation Engine]
+    C --> F[Spotify Recommendations API seed 推薦]
     D --> G[Access Token]
     G --> C
     E --> H[音樂資料]
@@ -71,7 +70,7 @@ graph TD
 ## ⭐ 核心功能特色
 
 ### 🤖 1. 智能音樂推薦系統
-- **基於機器學習的推薦演算法**
+- **基於 Spotify 推薦 API 的 seed 推薦**（本專案把種子參數轉交給 Spotify，並未自行訓練模型）
 - **多維度音樂特徵分析** (節拍、能量、舞蹈性等)
 - **使用者偏好學習與適應**
 
@@ -159,6 +158,8 @@ public class SpotifyController {
 
 ### 🎵 音樂推薦核心演算法
 
+下面多樣性篩選的程式碼有一個 API 上的錯誤：Spotify 的 `Track` 物件沒有 genres 欄位（genres 掛在 `Artist` 與 `Album` 上），`spotify-web-api-java` 也沒有 `track.getGenres()` 這個方法——實作時要先用 `track.getArtists()` 取 artist id，再查 artist 的 genres。
+
 ```java
 @Service
 public class MusicRecommendationService {
@@ -207,7 +208,7 @@ public class MusicRecommendationService {
     
     /**
      * 分析使用者音樂偏好模式
-     * 從歷史播放記錄中提取音頻特徵趋势
+     * 從歷史播放記錄中提取音頻特徵趨勢
      */
     private AudioFeaturePreferences analyzeUserPreferences(List<Track> recentTracks) {
         if (recentTracks.isEmpty()) {
@@ -379,6 +380,8 @@ public class SpotifyApiService {
 ## 💻 前端實作重點
 
 ### 🧩 Vue.js 主要元件架構
+
+安全註記：下面 `window.addEventListener('message', ...)` 沒有檢查 `event.origin`，任何頁面都能對這個視窗 `postMessage` 一個 `SPOTIFY_AUTH_SUCCESS`；上線前應只接受自己 origin 的訊息。另外後端 callback 回傳的是 JSON、並沒有 `postMessage`，所以實際上這個流程是靠每秒一次的 `authWindow.closed` 輪詢完成的。
 
 ```vue
 // SpotifyAuth.vue - 認證元件
@@ -585,7 +588,7 @@ export default {
         },
         {
           key: 'valence',
-          label: '情感僾向',
+          label: '情感傾向',
           value: 0.5,
           description: '正面情感 vs 憂鬱情感'
         },
@@ -760,6 +763,8 @@ networks:
 
 ### ⚙️ 環境配置檔案
 
+> 示意（不在 repo 中）：`springSpotifyPlayList` 的 README 與 compose 只有 Spring Boot + Vue 與 OAuth，沒有 Redis、Nginx/SSL、JWT 或資料庫；上面 compose 裡的 `redis`/`nginx` 服務與下面的 `spring.redis.*`、`app.jwt.*` 設定是作者規劃的擴充，不是現有程式碼。
+
 ```properties
 # application.properties (Spring Boot 配置)
 
@@ -803,7 +808,7 @@ app.jwt.expiration=86400000
 
 ### 🧠 1. 智能化推薦策略
 - **多維度特徵分析**: 不只依賴風格標籤，深入分析音頻特徵
-- **動態偏好學習**: 根據使用者行為持續調整推薦模型
+- **動態偏好調整**: 根據使用者行為調整送給 Spotify 推薦 API 的 seed 與參數
 - **多樣性平衡**: 在相關性與探索性之間找到最佳平衡
 
 ### 🎨 2. 使用者體驗優化
@@ -825,7 +830,7 @@ app.jwt.expiration=86400000
 - [ ] **社交功能**: 朋友間的播放清單分享與推薦
 
 ### 🎯 中期目標 (6-12 個月)
-- [ ] **機器學習模型升級**: 自建深度學習推薦系統
+- [ ] **自建推薦模型**: 目前完全依賴 Spotify 推薦 API，尚未自行訓練任何模型
 - [ ] **多平台整合**: 支援 Apple Music、YouTube Music
 - [ ] **情境感知推薦**: 基於時間、天氣、活動的智能推薦
 - [ ] **CI/CD 流水線**: 自動化測試與部署
@@ -838,7 +843,7 @@ app.jwt.expiration=86400000
 
 ## 🎉 總結與心得
 
-這個 Spotify 播放清單推薦系統不僅展示了**全端開發的完整流程**，更重要的是體現了**以使用者為中心的產品思維**。透過深度整合 Spotify API 與自建的推薦演算法，我們成功打破了傳統音樂平台的推薦局限性。
+這個 Spotify 播放清單推薦系統不僅展示了**全端開發的完整流程**，更重要的是體現了**以使用者為中心的產品思維**。透過深度整合 Spotify API，再加上自己寫的多樣性篩選邏輯（推薦本身仍來自 Spotify 的 seed 推薦端點，不是自訓的模型），我們嘗試打破傳統音樂平台的推薦局限性。
 
 ### 🔧 技術收穫
 - **OAuth 2.0 深度實作**: 深入理解第三方 API 整合的安全性考量
@@ -848,7 +853,7 @@ app.jwt.expiration=86400000
 
 ### 💎 產品價值
 - **使用者自主性**: 讓使用者主動參與音樂發現過程
-- **個人化體驗**: 基於深度學習的個人偏好建模
+- **個人化體驗**: 以使用者的 seed 選擇與歷史偏好組合推薦參數
 - **探索樂趣**: 在熟悉與新奇之間找到完美平衡
 
 這個專案證明了**技術創新與使用者需求的完美結合**，未來將持續迭代優化，為音樂愛好者帶來更豐富的聽覺體驗。

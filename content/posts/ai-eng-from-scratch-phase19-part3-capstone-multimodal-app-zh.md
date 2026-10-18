@@ -5,7 +5,7 @@ draft: false
 weight: 43
 description: "端對端構建多模態 AI 應用：圖文理解、語音介面、文件分析三合一系統的架構設計、模態融合策略、延遲優化與系列學習路線總結"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multimodal", "LLM Engineering", "Production", "Capstone", "Vision", "Speech", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Multimodal", "LLM Engineering", "Production", "Capstone", "Speech", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "17 min"
 series: ["ai-eng-from-scratch"]
@@ -326,7 +326,7 @@ class ModalRouter:
 
 將視覺 Encoder 從 FP16 量化為 INT8：推理延遲 -28%（720ms → 518ms），準確率下降 < 1.5%（在可接受範圍）。
 
-**招式 4：Speculative Decoding（視覺部分）**
+**招式 4：級聯推理（Cascade / Early-Exit，視覺部分）**
 
 使用小型視覺模型（ViT-B/32）先快速分類場景（45ms），再決定是否需要大模型（ViT-L/14）精細分析。簡單截圖（純文字截圖）只跑小模型，省去大模型調用，這類請求佔全量的 41%，平均延遲從 518ms → 220ms。
 
@@ -487,7 +487,7 @@ AI 工程從零開始：19 Phase 知識地圖（43 篇）
 
 | 業務場景 | 純文字 LLM | 多模態系統 | 提升幅度 |
 |---------|----------|----------|---------|
-| 財務圖表解讀 | 0%（無法處理） | 82% 準確率 | ∞ |
+| 財務圖表解讀 | 0%（無法處理） | 92% 準確率（§三 兩階段提取）| ∞ |
 | PDF 報告分析（含圖） | 僅文字部分（~60% 內容） | 全量（文字+圖表） | +40% 覆蓋 |
 | 語音查詢支援 | 0% | 支援，首音訊 < 600ms | ∞ |
 | 截圖問題排查 | 0% | 93% 識別率 | ∞ |

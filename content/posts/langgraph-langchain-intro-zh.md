@@ -5,7 +5,7 @@ lastmod: 2026-10-15T09:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai"]
-tags: ["LangChain", "LangGraph", "AI", "Agent", "工作流", "介紹"]
+tags: ["LangChain", "LangGraph", "AI", "Agent", "工作流"]
 description: "把 LangGraph 看成「帶 checkpointer 的狀態機」，先學會 State 與 reducer、條件邊、interrupt/Command 人工介入、持久化這四件事，就能讀懂任何 LangGraph 程式並知道何時不該用它。"
 readTime: "8 min"
 ---

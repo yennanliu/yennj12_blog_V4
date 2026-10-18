@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "RAGFlow 原始碼導讀系列第二篇：拆解 DeepDoc 的 OCR／版面辨識／表格結構辨識三層視覺管線、五條解析後端路線、14 種 chunk 模板各自的結構假設，以及 naive_merge 的切分契約與 chunk 加值管線的真實成本。"
 categories: ["all", "ai", "engineering"]
-tags: ["RAGFlow", "RAG", "AI", "DeepDoc", "OCR", "Chunking", "Document Parsing", "繁體中文"]
+tags: ["RAGFlow", "RAG", "AI", "OCR", "Chunking"]
 authors: ["yen"]
 readTime: "17 min"
 ---
@@ -516,7 +516,7 @@ RAGFlow 在 2025-10-15 加入了 "orchestrable ingestion pipeline"，程式碼�
 | `build_TOC` | 5 萬 | 每份文件一次 |
 | **合計** | **≈ 610 萬次** | |
 
-以一次呼叫平均 800 input + 100 output token、用便宜的小模型（$0.15/$0.60 per M token）估算：**約 900 美元**。用旗艦模型會是 20～40 倍。
+以一次呼叫平均 800 input + 100 output token、用便宜的小模型（$0.15/$0.60 per M token）估算：610 萬 × (800 × $0.15 + 100 × $0.60) / 1M ≈ **約 1,100 美元**。用旗艦模型會是 20～40 倍。
 
 **這就是為什麼這些開關預設全關。** 它們不是「應該打開的優化」，而是「在高價值知識庫上值得花錢的投資」。實務建議：
 

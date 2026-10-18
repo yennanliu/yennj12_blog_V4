@@ -55,6 +55,11 @@ FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 HEADING = re.compile(r"^(#{1,6})\s+(.*)$")
 MD_IMAGE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)")
 BOX_CHARS = re.compile(r"[┌┐└┘├┤│─═╔╗╚╝▶▼]")
+# A number presented as measured must say where it came from, or admit it is illustrative.
+MEASURED = re.compile(r"實測|實際測試|實際量測|我們跑了|生產環境.{0,6}平均")
+MEASURED_OK = re.compile(r"示意|估算|來源|資料來源|http|\[\d+\]|arXiv|論文|報告|benchmark|非實測|未實測"
+                         r"|你的|自己的|建議實測|必須.{0,12}實測|實測你|需實測|該實測|親自實測|實際測試的能力")
+MODEL_ANSWER = re.compile(r"面試答題要點|面試回答完整示範|完整範例回答|範例回答|最想聽到")
 MERMAID_FENCE = re.compile(r"^\s*(`{3,}|~{3,})\s*mermaid\b")
 # Case-sensitive on purpose: "Todo List" and `todo_write` are real prose.
 PLACEHOLDER = re.compile(r"\b(TODO|TBD|FIXME)\b|(?i:lorem ipsum)|待補|待填")
@@ -230,6 +235,7 @@ def split_body(lines: list[str], start: int, r: Report) -> tuple[list[tuple[int,
 def check_body(r: Report, fm: dict, lines: list[str], start: int) -> None:
     prose, blocks = split_body(lines, start, r)
 
+    measured_hits: list[int] = []
     last_level = 1
     for n, line in prose:
         h = HEADING.match(line)
@@ -240,12 +246,19 @@ def check_body(r: Report, fm: dict, lines: list[str], start: int) -> None:
             elif level > last_level + 1:
                 r.warn(n, f"heading jumps from H{last_level} to H{level}")
             last_level = level
+        if MEASURED.search(line) and not MEASURED_OK.search(line):
+            measured_hits.append(n)
         if PLACEHOLDER.search(INLINE_CODE.sub("", line)):
             r.warn(n, f"placeholder text left in prose: {line.strip()[:60]!r}")
         for src in MD_IMAGE.findall(line):
             if src.startswith("/") and not src.startswith("//"):
                 if not (STATIC / src.split("#")[0].split("?")[0].lstrip("/")).is_file():
                     r.error(n, f"image {src!r} is not a file under static/")
+
+    if measured_hits:
+        r.warn(measured_hits[0], f"「實測／實際測試」 wording on {len(measured_hits)} line(s) with no source "
+                                 f"or 示意 label on the same line (first at {measured_hits[0]}); cite the "
+                                 f"measurement or say 示意估算")
 
     # readTime drift. The house convention (CLAUDE.md) is line-based —
     # 500 lines ≈ 18 min, 700 ≈ 23, 900 ≈ 28 — because diagrams and tables
@@ -322,16 +335,17 @@ def check_series(r: Report, fm: dict, lines: list[str], prose, blocks) -> None:
         if interview_format and decisions < 4:
             r.warn(1, f"{decisions} 「為什麼選 X 不選 Y」 decisions; the standard is 4-6 with flip conditions")
         for n, l in prose:
-            if "面試答題要點" in l and l.startswith("#"):
-                r.warn(n, "「面試答題要點」 section was dropped from the standard format")
+            if l.startswith("#") and MODEL_ANSWER.search(l):
+                r.warn(n, "model-answer section (面試答題要點 / 面試回答完整示範 / 範例回答) was dropped "
+                          "from the standard format; replace with a short 答題骨架")
 
     # The "no Google" rule covers every interview-prep post: the fde-interview-guide and
     # fde-core-concept series by file name, and any other post that tags itself "Interview".
     if name.startswith(("fde-interview-guide", "fde-core-concept")) or "Interview" in tags:
-        for n, l in enumerate(lines, start=1):
-            if re.search(r"google", l, re.I):
-                r.warn(n, "interview posts must not mention Google (CLAUDE.md style rule)")
-                break
+        hits = [n for n, l in enumerate(lines, start=1) if re.search(r"google", l, re.I)]
+        if hits:
+            r.warn(hits[0], f"interview posts must not mention Google (CLAUDE.md style rule); "
+                            f"{len(hits)} line(s), first at {hits[0]}")
 
     if name.startswith("fde-interview-guide"):
         house_rules(600, 900, interview_format=True)

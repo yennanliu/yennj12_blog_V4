@@ -4,8 +4,7 @@ date: 2026-03-12T14:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "Claude Code", "Prompt Caching", "RAG", "Vector Database", "Cost Optimization", "API", "LLM-optimization", "agent-orchestration", "Development Tools"]
-summary: "多 Agent Token 優化系列 pt.2：深入探索 Prompt Caching 的實際應用，從 Claude API 原生快取、應用層記憶體快取、到 RAG 系統整合，提供完整程式碼範例，幫助你打造高效低成本的 AI 應用。"
+tags: ["AI", "Claude Code", "RAG", "Vector Database", "Cost Optimization", "API", "agent-orchestration", "Developer Tools"]
 description: "多 Agent Token 優化系列 pt.2：深入探索 Prompt Caching 的實際應用，從 Claude API 原生快取、應用層記憶體快取、到 RAG 系統整合，提供完整程式碼範例，幫助你打造高效低成本的 AI 應用。"
 readTime: "30 min"
 ---
@@ -53,6 +52,12 @@ readTime: "30 min"
 ### 基本概念
 
 Claude API 的 Prompt Caching 功能允許你快取**訊息前綴**，避免每次 API 呼叫都重新處理相同的內容。這對於包含大量固定內容（如 System Prompt、工具定義、背景知識）的應用特別有效。
+
+先把三個決定成敗的事實講清楚：
+
+1. **前綴順序是 `tools → system → messages`**，快取比對是從頭開始逐段比的。只要 `tools` 裡改了一個字（例如工具描述、參數 schema），後面的 system 與 messages 快取全部失效；改了 system，messages 的快取也跟著失效。所以把最少變動的內容排最前面，把會變的放最後。
+2. **快取不是免費的**：寫入快取（`cache_creation_input_tokens`）要付一般輸入價的 **1.25 倍**（5 分鐘 TTL）或 **2 倍**（1 小時 TTL），讀取（`cache_read_input_tokens`）則只要 **0.1 倍**。損益平衡點：5 分鐘 TTL 下同一前綴至少要被讀 2 次、1 小時 TTL 下至少 3 次，才開始省錢；只用一次反而更貴。
+3. **有最小長度門檻**：可快取的前綴至少要 1,024 tokens（部分模型為 2,048 或 4,096，依模型而定，見官方文件），太短的前綴即使標了 `cache_control` 也不會被快取。判斷方法不是數字元數，而是看回應 `usage` 裡的 `cache_read_input_tokens` 是否大於 0。
 
 ```
 API 呼叫結構：
@@ -1538,6 +1543,10 @@ if __name__ == "__main__":
 │ Redis 分散式快取     │ 100%     │ 極大     │ 中       │ 多實例     │
 └──────────────────────┴──────────┴──────────┴──────────┴────────────┘
 
+註：Prompt Cache 的「90%」是快取讀取相對一般輸入的折扣（0.1×），只適用於命中的那部分 token，
+且未計入 1.25×（5 分鐘）／2×（1 小時）的寫入溢價——實際節省 = 命中率 × 90% − 寫入溢價，
+前綴只被用一次時是負的。程式碼裡 `cache_read × 0.9` 的估算同樣忽略了寫入溢價。
+
 建議實施順序：
 1. Claude Prompt Caching（最簡單，立即見效）
 2. 應用層 LRU 快取（重複查詢場景）
@@ -1553,7 +1562,7 @@ if __name__ == "__main__":
 快取實作 Checklist：
 
 基礎設定
-□ System Prompt 是否超過 1,024 tokens？若是，啟用 Prompt Caching
+□ 固定前綴是否達到模型的最小可快取長度（1,024–4,096 tokens，依模型而定）？若是，啟用 Prompt Caching 並用 usage.cache_read_input_tokens 驗證
 □ 是否定義了明確的快取鍵計算邏輯？
 □ 是否設定了合適的 TTL（存活時間）？
 

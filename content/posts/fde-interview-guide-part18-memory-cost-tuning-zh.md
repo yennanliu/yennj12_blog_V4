@@ -5,9 +5,9 @@ draft: false
 weight: 18
 description: "以系統設計視角拆解企業級 Agent 的三層記憶體設計：Working Memory 成本控制、Semantic Long-term Memory 的異步壓縮流程、Profile Memory 的結構化提取——以及每個設計決策背後的成本與延遲 trade-off"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Agent", "Memory", "Cost Optimization", "Context Cache", "LLM", "System Design", "RKK", "Interview", "Cloud"]
+tags: ["AI", "FDE", "Agent", "LLM", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
-readTime: "16 min"
+readTime: "9 min"
 ---
 
 > 「把所有歷史對話塞進 Context 再問 LLM」  
@@ -83,7 +83,7 @@ readTime: "16 min"
 │  最近 5~10 輪的完整對話                                       │
 │  ├── 直接存在 Redis（Session Cache）                          │
 │  ├── 利用 Vertex AI Context Caching 降低重複計算成本           │
-│  └── Token 上限：~5,000 tokens（可控、快速）                  │
+│  └── Token 上限：~3,000 tokens（可控、快速）                  │
 │                                                              │
 │  TTL：當次 Session（幾分鐘~幾小時）                           │
 └──────────────────────────┬───────────────────────────────────┘
@@ -91,7 +91,7 @@ readTime: "16 min"
                            │ Context miss → 向下查詢
                            ▼
 ┌──────────────────────────────────────────────────────────────┐
-│          Layer 2：Semantic Long-term Memory（情節記憶）        │
+│          Layer 2：Episodic Long-term Memory（情節記憶）        │
 │                                                              │
 │  向量化的歷史對話摘要                                          │
 │  ├── 異步壓縮管線：舊對話 → LLM 摘要 → Embedding → 向量 DB   │
@@ -104,7 +104,7 @@ readTime: "16 min"
                            │ 用當前 Query 做 Semantic Search
                            ▼
 ┌──────────────────────────────────────────────────────────────┐
-│             Layer 3：Profile Memory（實體記憶）               │
+│        Layer 3：Semantic / Profile Memory（語意記憶）         │
 │                                                              │
 │  結構化的 Key-Value 用戶資訊                                  │
 │  ├── 由 Extraction Agent 定時從對話中提煉                     │
@@ -123,7 +123,7 @@ readTime: "16 min"
 │                                                              │
 │  [System Prompt]            ~500 tokens  （固定）            │
 │  [Profile Memory]           ~300 tokens  （固定）            │
-│  [Semantic Memory Recall]  ~2,000 tokens （按需）            │
+│  [Episodic Memory Recall]  ~2,000 tokens （按需）            │
 │  [Working Memory]          ~3,000 tokens （滾動）            │
 │  [Current Query]            ~100 tokens  （即時）            │
 │  ───────────────────────────────────────                    │
@@ -203,24 +203,24 @@ readTime: "16 min"
 
 有 Context Cache 的情況：
 
-  （概念示意：實務上顯式 Context Cache 有最小可快取長度，
-    Gemini 1.5 世代為 32,768 tokens，新世代模型門檻較低，請以官方文件為準；
-    800 tokens 的 prefix 達不到門檻。真正值得快取的是數萬 tokens 級的固定前綴，
-    例如產品手冊或知識庫全文。另外 cache 還有按時間計的儲存費。）
+  （實務上顯式 Context Cache 有最小可快取長度：
+    Gemini 1.5 世代為 32,768 tokens，新世代模型門檻較低，請以官方文件為準。
+    所以 System Prompt + Profile 這種 800 tokens 的前綴達不到門檻，
+    真正值得快取的是數萬 tokens 級的固定前綴——下面以 40,000 tokens 的
+    產品手冊 + System Prompt 示意。另外 cache 還有按時間計的儲存費。）
 
-  首次：建立 Cache，System Prompt + Profile (800 tokens)
-        費用：$0.001（建立 cache 的一次性費用）
+  首次：建立 Cache，產品手冊 + System Prompt (40,000 tokens)
 
-  Request 1: [Cached(800)] + [History(2200)] + [Query(100)] = 3,100 tokens
+  Request 1: [Cached(40,000)] + [History(3,000)] + [Query(100)] = 43,100 tokens
              但 Cached 部分 費率是正常的 1/4
-             → 800 × 0.25 + 2,300 × 1.0 = 2,500 effective tokens
+             → 40,000 × 0.25 + 3,100 × 1.0 = 13,100 effective tokens
 
   Request 2,3,...: 每次都享受 Cache 折扣
 
-成本節省估算（System Prompt 500 tokens，每天 20 次請求）：
-  無 Cache：500 × 20 = 10,000 tokens/天 × $1.25/1M = $0.0125/天
-  有 Cache：500 × 20 × 0.25 = 2,500 tokens/天 × $1.25/1M = $0.003/天
-  節省 76%（在這個部分，未計 cache 儲存費）
+成本節省估算（固定前綴 40,000 tokens，每天 20 次請求，1.5 Pro $1.25/1M）：
+  無 Cache：40,000 × 20 = 800,000 tokens/天 × $1.25/1M = $1.00/天
+  有 Cache：40,000 × 20 × 0.25 = 200,000 tokens/天 × $1.25/1M = $0.25/天
+  節省 75%（= 1 − 0.25，只算前綴部分，未計 cache 儲存費）
 ```
 
 ---
@@ -284,17 +284,13 @@ TTFT 改善（示意估算，非實測）：
 
 ---
 
-## 七、面試答題要點
+## 七、答題骨架
 
-> *「這個問題的核心是：用最少的 token 讓 LLM 感覺上記得三個月的對話。我的設計是三層記憶體：*
->
-> *Layer 1，Working Memory：最近 5~10 輪完整對話存在 Redis，固定前綴夠長、達到可快取門檻時，再用 Vertex AI Context Caching 降低這部分的 token 費用。*
->
-> *Layer 2，Semantic Long-term Memory：對話結束後，異步用 Gemini Flash 壓縮成摘要、向量化後存入 Vertex AI Vector Search。下次對話時，用當前 Query 做語意搜尋，召回最相關的 3~5 條歷史摘要（約 2,000 tokens）。*
->
-> *Layer 3，Profile Memory：Extraction Agent 從對話中提煉結構化的 Key-Value 客戶資訊，存入 Firestore，每次對話固定帶入（約 300 tokens，成本完全可預測）。*
->
-> *三層合計約 5,900 tokens，對比全部塞入的 450,000 tokens，成本估計可降低約 98%，TTFT 也從秒級降到 1 秒內（示意估算）。」*
+- 先用 §一 的估算量化問題：全塞 Context 的成本、延遲與 Lost-in-the-Middle 三個代價。
+- 架構按 §二 的三層逐一講，每層說清楚存哪裡、token 上限與 TTL，最後給組合後的 Context 帳。
+- Layer 2 的機制接 §三 的異步壓縮管線，並說明為什麼異步而不是同步。
+- Layer 1 與 Layer 3 分別補 §四 的 Context Caching 門檻與 §五 的 Extraction Agent 更新邏輯。
+- 收尾用 §六 的方案 A/B 對比給出成本與 TTFT 的改善量級。
 
 ## 相關文章與正典版本
 

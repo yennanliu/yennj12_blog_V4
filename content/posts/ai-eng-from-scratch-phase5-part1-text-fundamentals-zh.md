@@ -5,7 +5,7 @@ draft: false
 weight: 9
 description: "從詞袋到詞嵌入，掌握 NLP 工程師必備的文字前處理、TF-IDF、Word2Vec/GloVe/FastText 嵌入技術與文字分類生產架構"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "Word2Vec", "Text Classification", "Embeddings", "TF-IDF", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "NLP", "Embeddings", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "20 min"
 series: ["ai-eng-from-scratch"]
@@ -279,7 +279,7 @@ vectorizer = TfidfVectorizer(
 )
 ```
 
-**參數選擇對準確率的影響（電商評論實驗）：**
+**參數選擇對準確率的影響（電商評論場景，示意估算，非實測數據）：**
 
 | 設定 | F1 Score | 訓練時間 | 向量維度 |
 |------|----------|----------|----------|
@@ -367,7 +367,7 @@ model.wv['iPhone15Pro']  # 從子詞推斷向量
 | 200 | 複雜語義任務 | 160MB | 慢 |
 | 300 | 與 GloVe 預訓練對齊 | 240MB | 慢 |
 
-**規則**：嵌入維度與詞彙量的平方根成正比。詞彙量 10K → dim≈100，詞彙量 1M → dim≈300。
+**規則**（經驗法則）：嵌入維度大致隨詞彙量的四次方根成長，dim ≈ 10 × V^0.25。詞彙量 10K → dim ≈ 100，詞彙量 1M → dim ≈ 316 ≈ 300；這也是預訓練詞向量多半停在 300 維的原因。
 
 ### 5.4 預訓練 vs 自訓練
 
@@ -537,7 +537,7 @@ vs Embedding    可解釋（哪些詞最重要）               嵌入：黑盒�
 ```
 選擇        選 jieba 的理由                不選其他的理由
 ───────────────────────────────────────────────────────────
-jieba       純 Python，零依賴，輕量        HanLP：Java/C++，部署複雜
+jieba       純 Python，零依賴，輕量        HanLP：2.x 為 PyTorch 模型，依賴重
 vs HanLP    自定義詞典簡單（一行代碼）     CKIP：僅繁體，社群小
 vs CKIP     社群最大，踩坑資料多           Stanford NLP：英文優化
             POC 到 Scale 都可用
@@ -554,7 +554,7 @@ vs CKIP     社群最大，踩坑資料多           Stanford NLP：英文優化
 FAISS          Facebook 開源，最佳記憶體效率     Milvus：需要獨立部署，運維複雜
 vs Milvus      搜尋延遲 < 5ms（100M向量）       ES：kNN 搜尋效率比 FAISS 低 5-10x
 vs ES          可直接嵌入 Python 應用            Milvus：功能更豐富但殺雞用牛刀
-               GPU 加速支援（cuFAISS）           ES：用於混合搜尋（關鍵詞+向量）
+               GPU 加速支援（faiss-gpu）           ES：用於混合搜尋（關鍵詞+向量）
 
 翻轉條件：當需要即時更新向量（新增/刪除）時，Milvus/Qdrant 更適合；
          當需要同時做關鍵詞過濾+向量搜尋時，ES 或 pgvector 最方便。
