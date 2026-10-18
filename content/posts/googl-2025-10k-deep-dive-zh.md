@@ -5,7 +5,7 @@ lastmod: 2026-09-28T09:00:00+08:00
 draft: false
 description: "Alphabet (GOOGL) FY2025 10-K:淨利 +32% 有 $241 億股權利得灌水、營業利益實際 +15%、Google Cloud 營業利益率一年翻倍至 23.7%、資本支出 +74% 吃光 FCF,加上反壟斷判決矩陣與情境分析。"
 categories: ["all", "finance"]
-tags: ["GOOGL", "Alphabet", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "雲端", "AI", "Gemini", "investing"]
+tags: ["10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "AI", "investing"]
 authors: ["yen"]
 readTime: "18 min"
 ---

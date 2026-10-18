@@ -5,7 +5,7 @@ draft: false
 weight: 10
 description: "最後一個案例沒有搜尋引擎。一家 400 人公司把 GEO 的原則用在自己的內部 AI 助手上——私有 repo、Confluence、Slack 全接進 RAG，答案卻錯得離譜。診斷結果和公開網站一模一樣：內容不是不存在，是不可引用。"
 categories: ["all", "ai", "engineering", "business"]
-tags: ["GEO", "RAG", "內部知識庫", "Vertex AI Search", "Bedrock", "Confluence", "文件工程", "案例研究", "Case Study"]
+tags: ["GEO", "RAG", "Bedrock", "案例研究", "Case Study"]
 authors: ["yen"]
 readTime: "19 min"
 ---

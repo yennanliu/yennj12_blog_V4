@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "vLLM 原始碼導讀系列第二篇：拆解 PagedAttention 的分頁機制與 kernel 記憶體佈局、Copy-on-Write 共享、自動前綴快取的 hash 鏈與 LRU 淘汰、KV cache 量化與多層卸載，以及一份能讓你算出併發上限的記憶體規劃手冊。"
 categories: ["all", "ai", "engineering"]
-tags: ["vLLM", "PagedAttention", "KV Cache", "LLM", "AI", "GPU", "Prefix Caching"]
+tags: ["vLLM", "PagedAttention", "KV Cache", "LLM", "AI", "GPU"]
 authors: ["yen"]
 readTime: "17 min"
 ---

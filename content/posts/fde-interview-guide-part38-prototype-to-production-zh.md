@@ -5,7 +5,7 @@ draft: false
 weight: 38
 description: "RAG + Agent POC 上線前必須補的五個差距:Token Budget 失控、冷啟動拖垮延遲 SLA、Session State 消失、外部 API 錯誤處理、Rollback 缺席,附 Go-Live 清單、Prompt 版本控制、模型釘選與 Canary 部署設計。"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Production", "POC", "Deployment", "Rollback", "SLA", "Token Budget", "RKK", "Interview", "Cloud", "fde-interview-guide"]
+tags: ["AI", "FDE", "Production", "POC", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
 readTime: "10 min"
 ---

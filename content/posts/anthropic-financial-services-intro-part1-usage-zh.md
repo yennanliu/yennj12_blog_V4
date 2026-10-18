@@ -4,7 +4,7 @@ date: 2026-07-04T09:00:00+08:00
 draft: false
 description: "在 Cowork 與 Claude Code 裡安裝 Anthropic 官方開源的 financial-services 套件,選對投銀、股票研究、私募、財管的 Agent 或 Vertical Plugin,並完成第一份可交給分析師審核的產出。"
 categories: ["all", "ai", "engineering"]
-tags: ["Anthropic", "Claude", "Financial Services", "Claude Code", "Cowork", "Agent", "MCP", "AI Engineering"]
+tags: ["Anthropic", "Claude", "Financial Services", "Claude Code", "Agent", "MCP", "AI Engineering"]
 authors: ["yen"]
 readTime: "4 min"
 ---

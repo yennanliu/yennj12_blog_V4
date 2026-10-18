@@ -5,7 +5,7 @@ draft: false
 weight: 2
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "MCP", "Claude Code", "Database", "API Integration", "Production", "Docker", "postgresql", "Monitoring", "Development Tools", "Automation"]
+tags: ["AI", "MCP", "Claude Code", "Database", "Production", "Docker", "Monitoring", "Developer Tools"]
 description: "Take an MCP server from toy to production for Claude Code: PostgreSQL, MySQL and SQLite query tools, REST connectors, Docker deployment, auth and audit logging."
 readTime: "33 min"
 ---

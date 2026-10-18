@@ -5,7 +5,7 @@ draft: false
 weight: 51
 description: "B2B 長對話 SaaS 的快取分層設計:L1 Redis 對話槽位、L2 Vertex AI Context Caching、L3 Firestore Snapshot,加上 LRU 結合語意重要性評分的壓縮閘道,每個升層與驅逐決策都給出數字閾值,目標帳單砍半。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "KV Cache", "LLM", "Vertex AI", "Redis", "Memory Optimization", "Eviction Policy", "fde-interview-guide"]
+tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "LLM", "Vertex AI", "fde-interview-guide"]
 authors: ["yen"]
 readTime: "26 min"
 ---

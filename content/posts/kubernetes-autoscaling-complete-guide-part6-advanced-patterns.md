@@ -5,7 +5,7 @@ draft: false
 weight: 6
 authors: ["yen"]
 categories: ["all", "engineering", "architecture", "infrastructure"]
-tags: ["Kubernetes", "K8S", "Autoscaling", "StatefulSet", "Multi-Cluster", "Cost Optimization", "Spot Instances", "FinOps", "Advanced Patterns", "Batch Jobs", "DevOps"]
+tags: ["Kubernetes", "Autoscaling", "Cost Optimization", "FinOps", "DevOps"]
 description: "Autoscale the hard cases: StatefulSets with persistent volumes, multi-cluster and multi-region, Spot-based cost cutting and queue-driven batch jobs."
 readTime: "33 min"
 ---

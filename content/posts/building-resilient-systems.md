@@ -4,7 +4,7 @@ date: 2025-08-10T15:28:17+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["resilience", "fault-tolerance", "Reliability", "Distributed Systems"]
+tags: ["resilience", "Reliability", "Distributed Systems"]
 description: "How we built systems that gracefully handle failures and maintain service availability even when components fail."
 readTime: "10 min"
 ---

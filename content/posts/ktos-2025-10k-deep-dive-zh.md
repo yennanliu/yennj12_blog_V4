@@ -5,7 +5,7 @@ lastmod: 2026-09-28T09:00:00+08:00
 draft: false
 description: "Kratos Defense (KTOS) FY2025 10-K:營收 +18.5% 破 13 億美元、還清所有負債,但營業利益率只剩 1.9%、股權薪酬 $35.5M 比營業利益還多、FCF 失血 $137M、靠 $8.87 億增發撐起零負債。故事股還是成長股?"
 categories: ["all", "finance"]
-tags: ["KTOS", "Kratos Defense", "10-K", "SEC", "財報分析", "價值投資", "美股", "國防", "無人機", "超音速", "InvestSkill", "investing"]
+tags: ["10-K", "SEC", "財報分析", "價值投資", "美股", "國防", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "18 min"
 ---

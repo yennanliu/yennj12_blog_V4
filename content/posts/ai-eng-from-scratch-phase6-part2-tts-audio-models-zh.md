@@ -5,7 +5,7 @@ draft: false
 weight: 13
 description: "深入解析 TTS 工程架構：Tacotron/FastSpeech/VITS 聲學模型、聲碼器設計、情感語音合成、音樂生成與即時語音克隆系統"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Speech", "TTS", "Audio", "Voice Cloning", "Music Generation", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Speech", "TTS", "Audio", "Music Generation", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "12 min"
 series: ["ai-eng-from-scratch"]

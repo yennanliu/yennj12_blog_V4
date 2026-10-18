@@ -5,7 +5,7 @@ lastmod: 2026-09-28T09:00:00+08:00
 draft: false
 description: "NVIDIA (NVDA) FY2026 10-K:營收 +65% 至 $2,159 億、淨利率 55%、ROIC 107%,但毛利率從 75% 退到 71.1%、兩個客戶佔 36% 營收、中國營收年減 21%、$952 億採購承諾懸掛。拆解印鈔機的裂縫。"
 categories: ["all", "finance"]
-tags: ["NVDA", "10-K", "SEC", "財報分析", "價值投資", "美股", "半導體", "AI", "GPU", "資料中心", "InvestSkill", "investing"]
+tags: ["10-K", "SEC", "財報分析", "美股", "半導體", "AI", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "18 min"
 ---

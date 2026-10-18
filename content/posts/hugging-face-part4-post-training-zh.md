@@ -5,7 +5,7 @@ draft: false
 weight: 4
 description: "後訓練不只是再微調一次。完整解析 DPO / ORPO / KTO / SimPO / GRPO 與 PPO 的差異、偏好資料怎麼準備、TRL 的完整訓練程式碼，以及如何評估對齊效果與偵測 reward hacking。"
 categories: ["all", "ai", "engineering"]
-tags: ["Hugging Face", "Post-training", "DPO", "ORPO", "GRPO", "RLHF", "TRL", "LLM", "Python"]
+tags: ["Hugging Face", "Post-training", "DPO", "ORPO", "RLHF", "TRL", "LLM", "Python"]
 authors: ["yen"]
 readTime: "21 min"
 series: ["hugging-face"]

@@ -4,7 +4,7 @@ date: 2026-01-24T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["AWS", "CDK", "Bitcoin", "Trading", "Machine Learning", "Bedrock", "Hugging Face", "Lambda", "EventBridge", "DynamoDB", "SageMaker"]
+tags: ["AWS", "CDK", "ML", "Bedrock", "Hugging Face", "Lambda", "DynamoDB", "SageMaker"]
 summary: "Build a production-ready automated Bitcoin trading system using AWS CDK that integrates ML models from Bedrock and HuggingFace for price prediction and executes trades based on real-time market events."
 description: "An event-driven Bitcoin trading pipeline on AWS with CDK: EventBridge collects prices, Bedrock and HuggingFace score them, Lambda trades within risk limits."
 readTime: "18 min"

@@ -5,7 +5,7 @@ draft: false
 weight: 3
 authors: ["yen"]
 categories: ["all", "engineering", "finance"]
-tags: ["Cryptocurrency", "Production", "Live Trading", "Machine Learning", "Optimization", "Walk-Forward Analysis", "DevOps", "Monitoring", "AWS", "Docker"]
+tags: ["Cryptocurrency", "Production", "ML", "Optimization", "DevOps", "Monitoring", "AWS", "Docker"]
 summary: "Deploy cryptocurrency trading strategies to production. Master walk-forward analysis, parameter optimization, live trading integration, real-time monitoring, and machine learning enhancements. Complete demo-grade (no backtest reported) system with AWS deployment and comprehensive risk controls."
 description: "Validate a crypto strategy before risking money: walk-forward analysis, Monte Carlo stress tests, live exchange APIs, monitoring and Docker deployment."
 readTime: "24 min"

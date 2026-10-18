@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "深入解析線性回歸、邏輯回歸、決策樹、SVM、特徵工程等傳統 ML 技術為何在結構化資料的生產 AI 系統中仍是首選，附完整決策框架與量化比較"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Machine Learning", "Linear Regression", "Decision Tree", "SVM", "Feature Engineering", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "ML", "SVM", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "18 min"
 series: ["ai-eng-from-scratch"]

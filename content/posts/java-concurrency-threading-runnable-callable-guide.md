@@ -4,7 +4,7 @@ date: 2025-01-28T02:00:00+08:00
 draft: false
 description: "Runnable vs Callable, ExecutorService pools and CompletableFuture compared with working Java code, so you pick the right threading model and avoid the traps."
 categories: ["all", "engineering", "architecture"]
-tags: ["Java", "Concurrency", "Threading", "Runnable", "Callable", "ExecutorService", "CompletableFuture", "Performance"]
+tags: ["Java", "Concurrency", "Threading", "Runnable", "Callable", "Performance"]
 authors: ["yen"]
 readTime: "28 min"
 ---

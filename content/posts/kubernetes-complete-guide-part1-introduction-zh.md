@@ -5,7 +5,7 @@ draft: false
 weight: 1
 description: "深入淺出介紹 Kubernetes 容器編排平台，涵蓋核心概念、架構設計、元件功能、與 Docker 的關係，以及完整的安裝配置教學。從零開始掌握 K8S 基礎知識。"
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "容器編排", "雲原生", "微服務", "Docker", "DevOps", "叢集管理", "基礎教學"]
+tags: ["Kubernetes", "容器編排", "微服務", "Docker", "DevOps", "基礎教學"]
 authors: ["yen"]
 readTime: "23 min"
 ---

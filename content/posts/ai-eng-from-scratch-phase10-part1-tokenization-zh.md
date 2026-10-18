@@ -5,7 +5,7 @@ draft: false
 weight: 19
 description: "深入解析 LLM Tokenization：BPE/WordPiece/SentencePiece 演算法、詞彙表大小的工程取捨、多語言 Token 效率與 Tiktoken 生產實作"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "Tokenization", "BPE", "SentencePiece", "Vocabulary", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "LLM", "BPE", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "15 min"
 series: ["ai-eng-from-scratch"]

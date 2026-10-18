@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "RAGFlow 原始碼導讀系列第三篇：拆解混合向量（0.1 檔名 + 0.9 內容）的設計理由、批次與截斷策略、以後綴驅動的動態 ES mapping、把 TF 壓成 min(freq,1) 的自訂相似度，以及支撐六種 doc engine 的儲存抽象層。"
 categories: ["all", "ai", "engineering"]
-tags: ["RAGFlow", "RAG", "AI", "Embedding", "Elasticsearch", "Vector Database", "Infinity"]
+tags: ["RAGFlow", "RAG", "AI", "Embedding", "Elasticsearch", "Vector Database"]
 authors: ["yen"]
 readTime: "18 min"
 ---

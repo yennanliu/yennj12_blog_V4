@@ -5,7 +5,7 @@ draft: false
 weight: 1
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "MCP", "Claude Code", "Development Tools", "Automation", "Python", "TypeScript", "tooling"]
+tags: ["AI", "MCP", "Claude Code", "Developer Tools", "Automation", "Python", "TypeScript"]
 description: "Set up your first Model Context Protocol server for Claude Code, from config to custom Python and TypeScript tools, so Claude can call your own systems."
 readTime: "18 min"
 ---

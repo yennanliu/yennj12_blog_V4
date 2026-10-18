@@ -4,7 +4,7 @@ date: 2026-06-29T11:00:00+08:00
 draft: false
 description: "從 Cloudflare security-audit-skill 的設計原則出發，系統化整理 LLM agent 做安全稽核時最常見的十個反模式，以及如何在 agent pipeline 設計中從根源消除這些問題"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Security", "LLM", "Cloudflare", "Anti-Pattern", "System Design", "Prompt Engineering", "Agent Pipeline"]
+tags: ["AI", "Agent", "Security", "LLM", "Cloudflare", "System Design", "Prompt Engineering", "Agent Pipeline"]
 authors: ["yen"]
 readTime: "16 min"
 ---

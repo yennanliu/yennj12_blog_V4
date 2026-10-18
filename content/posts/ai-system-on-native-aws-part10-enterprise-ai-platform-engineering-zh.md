@@ -4,7 +4,7 @@ date: 2026-07-27T09:00:00+08:00
 draft: false
 description: "五十個團隊各自接 Bedrock 會失控:用 Control Tower 多帳號落地區、集中式 LLM Gateway(路由/限流/快取/分帳)、Service Catalog 黃金路徑與 FinOps,把前九篇能力做成團隊可自助點用的內部 AI 平台。"
 categories: ["all", "ai", "engineering"]
-tags: ["AWS", "CDK", "CloudFormation", "Platform Engineering", "LLM Gateway", "FinOps", "Control Tower", "Service Catalog", "Enterprise", "AI Engineering"]
+tags: ["AWS", "CDK", "CloudFormation", "FinOps", "Enterprise", "AI Engineering"]
 authors: ["yen"]
 readTime: "12 min"
 ---

@@ -4,7 +4,7 @@ date: 2026-07-19T10:02:00+08:00
 draft: false
 description: "深拆半導體上游的特用化學與光阻這一層:光阻五雄為何全是日本廠、EUV 光阻的驗證門檻、特殊氣體與 CMP 研磨液的隱形咽喉、上游依賴與下游 fab 客戶集中度、風險與分層投資點子。"
 categories: ["all", "finance"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "光阻", "特用化學", "JSR", "美股", "InvestSkill", "investing"]
+tags: ["半導體", "供應鏈", "產業分析", "JSR", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "10 min"
 ---

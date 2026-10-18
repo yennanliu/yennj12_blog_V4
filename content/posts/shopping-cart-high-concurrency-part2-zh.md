@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "購物車吞吐量上去後怎麼保證正確性:Redisson 分散式鎖防止超賣與重複下單、AbstractRoutingDataSource + LazyConnectionDataSourceProxy 讀寫分離(含 @Transactional 的坑)、Nginx + MySQL 主從的 Docker HA 擴展。"
 categories: ["all", "engineering", "architecture"]
-tags: ["Spring Boot", "Java", "Redisson", "Distributed Lock", "Read Replica", "Docker", "Nginx", "High Concurrency", "Backend"]
+tags: ["Spring Boot", "Java", "Docker", "High Concurrency", "Backend"]
 authors: ["yen"]
 readTime: "18 min"
 ---

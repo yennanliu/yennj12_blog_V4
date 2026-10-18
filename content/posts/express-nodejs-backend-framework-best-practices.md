@@ -4,7 +4,7 @@ date: 2025-11-30T11:00:00Z
 draft: false
 description: "Structure a production Express.js API in TypeScript: config, middleware pipelines, routing, service layers, error handling, security, testing and deployment."
 categories: ["all", "engineering"]
-tags: ["Express.js", "Node.js", "Backend", "REST API", "Middleware", "Security", "Best Practices", "Web Development", "JavaScript", "TypeScript"]
+tags: ["Node.js", "Backend", "REST API", "Security", "Best Practices", "JavaScript", "TypeScript"]
 authors: ["yen"]
 readTime: "29 min"
 ---

@@ -5,7 +5,7 @@ lastmod: 2026-09-28T09:00:00+08:00
 draft: false
 description: "Ondas (ONDS) FY2025 10-K:營收 +605% 至 $5,073 萬,一半來自年中併購;一年募資近 $18 億、股數膨脹 5 倍、$8,222 萬非現金認股權證損失、$4.89 億認股權證負債、兩家客戶佔 66%。為何這是投機股而非價值標的。"
 categories: ["all", "finance"]
-tags: ["ONDS", "Ondas Holdings", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "無人機", "無線通訊", "國防", "investing"]
+tags: ["10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "國防", "investing"]
 authors: ["yen"]
 readTime: "18 min"
 ---

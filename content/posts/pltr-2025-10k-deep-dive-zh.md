@@ -5,7 +5,7 @@ lastmod: 2026-09-28T09:00:00+08:00
 draft: false
 description: "用 10k-digest 方法對 Palantir Technologies FY2025 年報做機構級深度拆解:五年從虧損到獲利的轉折、政府 vs 商業事業體、美國商業爆發、Rule of 40 破百、GAAP 獲利轉正、股權激勵與稀釋、近乎零的有效稅率、客戶集中度、估值極貴的張力與投資訊號。"
 categories: ["all", "finance"]
-tags: ["PLTR", "Palantir", "10-K", "SEC", "財報分析", "價值投資", "美股", "AI", "數據分析", "SaaS", "InvestSkill", "investing"]
+tags: ["10-K", "SEC", "財報分析", "價值投資", "美股", "AI", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "18 min"
 ---

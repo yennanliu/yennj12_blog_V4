@@ -5,7 +5,7 @@ draft: false
 weight: 35
 description: "深入解析多 Agent 系統的湧現行為：群智優化、集體推理、辯論機制、Mixture of Agents 架構與集體智慧的工程可控性"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multi-Agent", "Swarm", "Emergence", "Collective Intelligence", "Mixture of Agents", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Multi-Agent", "Swarm", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "15 min"
 series: ["ai-eng-from-scratch"]

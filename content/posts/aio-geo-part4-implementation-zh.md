@@ -5,7 +5,7 @@ draft: false
 weight: 4
 description: "八個步驟的完整實作：AI crawler 存取層與 CDN 白名單、llms.txt 產生器、JSON-LD 自動注入、chunk 邊界工程、Markdown 雙軌輸出、SSR 決策樹，附 Hugo / Next.js 可直接複製的程式碼與可放進 CI 的自動化驗收腳本。"
 categories: ["all", "ai", "engineering", "business"]
-tags: ["GEO", "AIO", "Hugo", "Next.js", "llms.txt", "JSON-LD", "SSR", "CI", "SEO"]
+tags: ["GEO", "AIO", "Next.js", "JSON-LD", "SSR", "CI", "SEO"]
 authors: ["yen"]
 readTime: "23 min"
 ---

@@ -5,7 +5,7 @@ draft: false
 weight: 4
 description: "實戰案例：一家 10 人軟體外包公司如何用 AI Agent 團隊自動化需求評估、報價、專案追蹤與客戶溝通，包含完整 Prompt、Skill 設計與執行步驟。"
 categories: ["all", "ai", "business"]
-tags: ["AI Agent", "外包公司", "Claude Code", "LangGraph", "Multi-Agent", "實戰案例", "Agent", "Case Study"]
+tags: ["Agent", "Claude Code", "LangGraph", "Multi-Agent", "實戰案例", "Case Study"]
 authors: ["yen"]
 readTime: "16 min"
 ---

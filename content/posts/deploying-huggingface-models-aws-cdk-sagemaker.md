@@ -4,7 +4,7 @@ date: 2025-11-30T12:00:00Z
 draft: false
 description: "Serve a Hugging Face model on SageMaker behind Lambda and API Gateway with CDK in TypeScript: custom inference container, stacks, monitoring and cost controls."
 categories: ["all", "ai", "engineering", "infrastructure"]
-tags: ["AWS CDK", "SageMaker", "Lambda", "Hugging Face", "Machine Learning", "MLOps", "TypeScript", "Python", "API Gateway", "AI", "Deep Learning", "AWS"]
+tags: ["SageMaker", "Hugging Face", "ML", "MLOps", "TypeScript", "Python", "AI", "AWS"]
 authors: ["yen"]
 readTime: "28 min"
 ---

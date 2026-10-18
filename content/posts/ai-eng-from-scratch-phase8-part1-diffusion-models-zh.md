@@ -5,7 +5,7 @@ draft: false
 weight: 16
 description: "深入解析擴散模型工程原理：DDPM/DDIM 前向與反向過程、Stable Diffusion 潛在空間架構、ControlNet/LoRA 微調、生產推論優化"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Generative AI", "Diffusion Models", "Stable Diffusion", "ControlNet", "Image Generation", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Generative AI", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "16 min"
 series: ["ai-eng-from-scratch"]

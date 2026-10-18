@@ -4,7 +4,7 @@ date: 2025-11-30T13:00:00Z
 draft: false
 description: "Centralise auth for every app with AWS Cognito and CDK in TypeScript: user pools, app clients, group-based RBAC and ABAC, Lambda triggers and multi-tenancy."
 categories: ["all", "engineering", "architecture", "infrastructure"]
-tags: ["AWS Cognito", "CDK", "TypeScript", "Authentication", "Authorization", "IAM", "Security", "Multi-tenant", "RBAC", "ABAC", "API Gateway", "AWS"]
+tags: ["CDK", "TypeScript", "IAM", "Security", "Multi-tenant", "RBAC", "API Gateway", "AWS"]
 authors: ["yen"]
 readTime: "32 min"
 ---

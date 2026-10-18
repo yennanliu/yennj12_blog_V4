@@ -4,7 +4,7 @@ date: 2026-07-04T13:00:00+08:00
 draft: false
 description: "每 0.5 秒更新的 SSE 進度串流怎麼用 asyncio + 原子 json_insert 撐起來、前端為何刻意用 Vanilla JS、Waymo 電影感 UI 的取捨,以及用 {{steps.N.result}} 模板把多個 AI 任務串成 pipeline。"
 categories: ["all", "ai", "engineering"]
-tags: ["SSE", "Frontend", "Pipeline", "CrewAI", "Vanilla JS", "UX", "Automation", "AI Engineering"]
+tags: ["SSE", "Frontend", "Pipeline", "CrewAI", "UX", "Automation", "AI Engineering"]
 authors: ["yen"]
 readTime: "10 min"
 ---

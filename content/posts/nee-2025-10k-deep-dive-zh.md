@@ -5,7 +5,7 @@ lastmod: 2026-09-28T09:00:00+08:00
 draft: false
 description: "NextEra Energy (NEE) FY2025 10-K:GAAP EPS 連兩年倒退但調整後 EPS +8.2%、股息再升 10%,背後是 $246 億資本支出、FCF −$121 億、$956 億債務與 2.4 倍利息保障。用公用事業的尺檢視這台舉債成長機器。"
 categories: ["all", "finance"]
-tags: ["NEE", "NextEra Energy", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "公用事業", "再生能源", "電力", "investing"]
+tags: ["NEE", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "18 min"
 ---

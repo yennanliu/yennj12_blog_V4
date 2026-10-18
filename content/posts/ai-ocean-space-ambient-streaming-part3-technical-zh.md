@@ -5,7 +5,7 @@ draft: false
 weight: 3
 authors: ["yen"]
 categories: ["all", "business", "creative"]
-tags: ["OBS", "串流", "技術設定", "自動化", "監控", "YouTube直播", "24/7", "Streaming"]
+tags: ["OBS", "自動化", "監控", "Streaming"]
 description: "系列第三篇：把音頻與 4K 視覺組裝成 OBS 場景、設定多場景輪播並完成上線檢查；編碼參數、自動重啟與監控見共用基礎建設篇。"
 readTime: "14 min"
 ---

@@ -5,7 +5,7 @@ draft: false
 weight: 28
 description: "深入解析 AI Agent 工程基礎：ReAct/Reflexion 思考迴圈、記憶系統四層架構（感官/工作/情節/語意）、上下文管理與 Agent 狀態機設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Memory", "ReAct", "LLM", "Autonomous", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Agent", "Memory", "ReAct", "LLM", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "15 min"
 series: ["ai-eng-from-scratch"]

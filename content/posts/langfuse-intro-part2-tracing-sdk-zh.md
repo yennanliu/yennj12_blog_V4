@@ -4,7 +4,7 @@ date: 2026-06-30T13:30:00+08:00
 draft: false
 description: "用 Langfuse Python SDK 把第一個 trace 送上儀表板:@observe 裝飾器、get_client 與 context manager、OpenAI 一行替換整合、LangChain callback handler,再用 Session、User、Metadata 讓 trace 可查可比。"
 categories: ["all", "ai", "engineering"]
-tags: ["Langfuse", "LLM", "Observability", "Tracing", "Python", "SDK", "OpenAI", "LangChain", "LLMOps"]
+tags: ["Langfuse", "LLM", "Observability", "Tracing", "Python", "SDK", "LangChain", "LLMOps"]
 authors: ["yen"]
 readTime: "10 min"
 ---

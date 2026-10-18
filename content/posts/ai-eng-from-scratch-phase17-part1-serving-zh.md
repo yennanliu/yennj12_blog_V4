@@ -5,7 +5,7 @@ draft: false
 weight: 36
 description: "深入解析 AI 推論服務工程：模型服務器選型（Triton/TorchServe/vLLM）、負載均衡、自動擴縮容、GPU 共享與多租戶隔離架構"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Infrastructure", "Serving", "Triton", "GPU", "Kubernetes", "Production", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Infrastructure", "Serving", "GPU", "Kubernetes", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "15 min"
 series: ["ai-eng-from-scratch"]

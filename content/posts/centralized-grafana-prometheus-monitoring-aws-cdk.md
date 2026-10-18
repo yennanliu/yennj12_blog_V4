@@ -4,7 +4,7 @@ date: 2026-01-17T11:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["Prometheus", "Grafana", "AWS", "CDK", "Monitoring", "Observability", "Metrics", "ECS", "Kubernetes", "EKS", "fargate", "Alerting"]
+tags: ["Prometheus", "AWS", "CDK", "Monitoring", "Observability", "Metrics", "Kubernetes", "EKS"]
 description: "Replace per-cluster Prometheus silos with one CDK-deployed Prometheus + Grafana platform that scrapes EKS, ECS and Lambda and dedupes alerts."
 readTime: "48 min"
 ---

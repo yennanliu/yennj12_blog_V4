@@ -5,7 +5,7 @@ draft: false
 weight: 18
 description: "深入解析強化學習工程原理：MDP/Q-Learning/Policy Gradient/PPO/RLHF，理解 ChatGPT 背後的對齊訓練機制"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Reinforcement Learning", "RLHF", "PPO", "Q-Learning", "Policy Gradient", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Reinforcement Learning", "RLHF", "PPO", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "15 min"
 series: ["ai-eng-from-scratch"]

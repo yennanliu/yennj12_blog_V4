@@ -4,7 +4,7 @@ date: 2026-06-30T10:30:00+08:00
 draft: false
 description: "把 chatPDF 的 RAG 從能跑變成能扛:PDF magic bytes 驗證與 OOM 防護、BM25 LRU 快取、多查詢擴展、檢索評分過濾、頁碼級引用、LLM gateway 重試退避,每道防線附 PR 實作。"
 categories: ["all", "ai", "engineering"]
-tags: ["RAG", "LLM", "ChatPDF", "Security", "Backend", "Production", "Multi-Query", "LRU Cache", "API Hardening"]
+tags: ["RAG", "LLM", "ChatPDF", "Security", "Backend", "Production"]
 authors: ["yen"]
 readTime: "11 min"
 ---

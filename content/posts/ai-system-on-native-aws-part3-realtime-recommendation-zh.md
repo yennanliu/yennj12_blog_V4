@@ -4,7 +4,7 @@ date: 2026-07-20T09:00:00+08:00
 draft: false
 description: "即時推薦的難點是特徵的即時性與線上線下一致:用 Kinesis 收行為事件、SageMaker Feature Store 杜絕 training-serving skew、SageMaker Endpoint 毫秒推論、DynamoDB 撐高併發,並以 CDK 部署整條管線。"
 categories: ["all", "ai", "engineering"]
-tags: ["AWS", "CDK", "CloudFormation", "SageMaker", "Kinesis", "Feature Store", "Recommendation", "DynamoDB", "MLOps", "AI Engineering"]
+tags: ["AWS", "CDK", "CloudFormation", "SageMaker", "Kinesis", "DynamoDB", "MLOps", "AI Engineering"]
 authors: ["yen"]
 readTime: "13 min"
 ---

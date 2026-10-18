@@ -5,7 +5,7 @@ draft: false
 weight: 44
 description: "200 萬 Token Context Window 不是銀彈:設計一個在 runtime 動態決定走長文本還是 RAG 的混合路由器,搭配 Vertex AI Context Caching、RRF 融合與降級策略,把 80% 查詢成本從 $2.50 壓到 $0.001。"
 categories: ["all", "ai", "engineering"]
-tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "LLM", "Vertex AI", "ContextCaching", "Vector Search", "System Design", "fde-interview-guide"]
+tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "LLM", "fde-interview-guide"]
 authors: ["yen"]
 readTime: "26 min"
 ---

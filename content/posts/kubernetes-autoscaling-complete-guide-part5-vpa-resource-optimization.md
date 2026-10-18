@@ -5,7 +5,7 @@ draft: false
 weight: 5
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "VPA", "Vertical Pod Autoscaler", "Resource Optimization", "Cost Optimization", "Right-sizing", "Performance", "FinOps", "DevOps", "Optimization"]
+tags: ["Kubernetes", "VPA", "Cost Optimization", "Performance", "FinOps", "DevOps", "Optimization"]
 description: "Right-size pod requests with Vertical Pod Autoscaler: update modes, safe VPA + HPA combinations, production configs and the monthly cost of over-provisioning."
 readTime: "35 min"
 ---

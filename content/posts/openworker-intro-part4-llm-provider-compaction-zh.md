@@ -5,7 +5,7 @@ draft: false
 weight: 4
 description: "OpenWorker 為何不用 LiteLLM 而自寫 provider 層:同步無迴圈的 ProviderClient 契約、能力矩陣驅動的 vision/PDF 降級、TokenUsage 快取拆分,以及 561 行 compaction.py 的 context 壓縮演算法。"
 categories: ["all", "ai", "engineering"]
-tags: ["OpenWorker", "LLM", "Provider Abstraction", "Context Window", "Prompt Caching", "Token", "Python"]
+tags: ["OpenWorker", "LLM", "Context Window", "Prompt Caching", "Token", "Python"]
 authors: ["yen"]
 readTime: "19 min"
 series: ["openworker-intro"]

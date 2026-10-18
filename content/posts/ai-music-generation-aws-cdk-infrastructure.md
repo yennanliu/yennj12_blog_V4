@@ -4,7 +4,7 @@ date: 2026-01-17T09:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["AI", "AWS", "CDK", "SageMaker", "Bedrock", "Machine Learning", "Music Generation", "Generative AI", "Lambda", "s3", "API Gateway"]
+tags: ["AI", "AWS", "CDK", "SageMaker", "Bedrock", "ML", "Lambda", "API Gateway"]
 description: "SageMaker or Bedrock for serving MusicGen? A CDK architecture on AWS that keeps GPU spend in check, returns tracks in 30-90 s and swaps models with no downtime."
 readTime: "21 min"
 ---

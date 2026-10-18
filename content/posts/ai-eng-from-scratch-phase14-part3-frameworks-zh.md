@@ -5,7 +5,7 @@ draft: false
 weight: 30
 description: "深入比較主流 Agent 框架：AutoGen/CrewAI/LangGraph/Semantic Kernel 的架構差異、適用場景與生產成熟度，以及何時應該自建框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "AutoGen", "CrewAI", "LangGraph", "Framework", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Agent", "CrewAI", "LangGraph", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "14 min"
 series: ["ai-eng-from-scratch"]

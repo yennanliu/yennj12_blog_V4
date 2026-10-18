@@ -4,7 +4,7 @@ date: 2026-07-04T10:00:00+08:00
 draft: false
 description: "拆解 Anthropic financial-services 套件如何用同一份 system prompt 與 skill 同時跑 Cowork 與 Managed Agents API:Agent、Skill、Command、Connector、wrapper 五層的分工、依賴與防漂移的 CI 檢查。"
 categories: ["all", "ai", "engineering"]
-tags: ["Anthropic", "Claude", "Financial Services", "MCP", "Agent Architecture", "Claude Skills", "AI Engineering"]
+tags: ["Anthropic", "Claude", "Financial Services", "MCP", "AI Engineering"]
 authors: ["yen"]
 readTime: "6 min"
 ---

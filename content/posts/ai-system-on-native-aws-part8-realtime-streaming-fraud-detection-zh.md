@@ -4,7 +4,7 @@ date: 2026-07-25T09:00:00+08:00
 draft: false
 description: "幾十毫秒內決定放行或攔截、對手還會主動規避:用 Kinesis + Managed Flink 在流上算時間窗特徵、SageMaker 毫秒評分、Neptune 圖資料庫抓詐欺團夥、規則引擎兜住已知手法,四層互補的即時風控架構。"
 categories: ["all", "ai", "engineering"]
-tags: ["AWS", "CDK", "CloudFormation", "Kinesis", "Managed Flink", "Fraud Detection", "Neptune", "SageMaker", "Streaming", "AI Engineering"]
+tags: ["AWS", "CDK", "CloudFormation", "Kinesis", "SageMaker", "Streaming", "AI Engineering"]
 authors: ["yen"]
 readTime: "12 min"
 ---

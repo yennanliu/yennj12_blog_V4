@@ -5,7 +5,7 @@ lastmod: 2026-09-28T09:00:00+08:00
 draft: false
 description: "Rocket Lab (RKLB) FY2025 10-K:營收 +38% 至 $601.8M、毛利率三年從 21% 爬到 34%,但淨損 $198M、FCF −$322M、$11.2 億 ATM 增發,整個估值押在剛炸掉燃料箱的 Neutron 上。算清跑道還剩幾年。"
 categories: ["all", "finance"]
-tags: ["RKLB", "Rocket Lab", "10-K", "SEC", "財報分析", "價值投資", "美股", "太空", "火箭", "國防", "InvestSkill", "investing"]
+tags: ["10-K", "SEC", "財報分析", "價值投資", "美股", "國防", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "18 min"
 ---

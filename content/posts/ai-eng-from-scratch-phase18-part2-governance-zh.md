@@ -5,7 +5,7 @@ draft: false
 weight: 40
 description: "深入解析 AI 治理工程：EU AI Act/NIST AI RMF 合規架構、偏見偵測與緩解技術、資料隱私工程（差分隱私/聯邦學習）與 AI 稽核框架"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Safety", "Governance", "Ethics", "Bias", "Privacy", "Compliance", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Safety", "Governance", "Ethics", "Privacy", "Compliance", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "15 min"
 series: ["ai-eng-from-scratch"]

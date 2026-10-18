@@ -4,7 +4,7 @@ date: 2026-07-19T10:06:00+08:00
 draft: false
 description: "深拆半導體 GPU / 加速器設計這一層:NVIDIA、AMD 與 CSP 自研 ASIC 的競爭格局、fabless 輕資產高毛利模式、CUDA 軟體護城河、瓶頸分數與定價權、利潤池、上下游依賴、風險與投資點子。這是全鏈價值捕獲最高、卻也最可能被工程繞過的咽喉。"
 categories: ["all", "finance"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "GPU", "NVDA", "AMD", "CUDA", "美股", "InvestSkill", "investing"]
+tags: ["半導體", "供應鏈", "產業分析", "GPU", "NVDA", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "10 min"
 ---

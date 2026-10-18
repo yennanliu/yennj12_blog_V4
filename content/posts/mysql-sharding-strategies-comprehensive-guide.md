@@ -4,7 +4,7 @@ date: 2025-09-29T07:54:22+08:00
 draft: false
 description: "Shard MySQL without regret: range, hash and directory-based sharding compared, shard key selection, cross-shard queries and when you need it at all."
 categories: ["all", "engineering", "architecture"]
-tags: ["MySQL", "Database Sharding", "Horizontal Scaling", "Database Architecture", "Distributed Systems", "Performance Optimization", "Data Partitioning", "Scalability", "Database"]
+tags: ["Database Architecture", "Distributed Systems", "Scalability", "Database"]
 authors: ["yen"]
 readTime: "25 min"
 ---

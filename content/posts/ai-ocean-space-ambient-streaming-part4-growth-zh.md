@@ -5,7 +5,7 @@ draft: false
 weight: 4
 authors: ["yen"]
 categories: ["all", "business", "creative"]
-tags: ["YouTube Shorts", "社群經營", "變現", "內容策略", "SEO", "品牌建立", "被動收入", "Streaming", "Marketing"]
+tags: ["社群經營", "變現", "內容策略", "SEO", "Streaming", "Marketing"]
 description: "系列完結篇：從 0 到 10 萬訂閱的完整增長路線圖。掌握 Shorts 病毒式傳播技巧、社群深度經營策略，以及月入 $5,000+ 的多元變現模式。"
 readTime: "45 min"
 ---

@@ -77,7 +77,14 @@ readTime: "10 min"
 | `creative` | Creative & Media | Ambient streaming, music production, visual design |
 
 Pick 1–3 canonical categories; anything more specific (`kubernetes`, `LangGraph`, `SEO`, `10-K`, …)
-belongs in `tags`, which stays open-ended. Titles, descriptions, taglines and ordering live in
+belongs in `tags`. Tags are open-ended but curated: **at most 8 per post**, reuse an existing tag
+before coining one (`grep -h "^tags:" content/posts/*.md | tr ',' '\n' | sort | uniq -c | sort -rn`),
+prefer one spelling per concept (`Agent` not `AI Agent`, `Kubernetes` not `K8S`, `半導體` not
+`Semiconductor`, `ML` not `Machine Learning`), and do not add a tag only one post will ever carry
+unless it is a ticker or a product name a reader would search for. Series tags
+(`fde-interview-guide`, `fde-core-topic`, `ai-eng-from-scratch`, `10-K`, `InvestSkill`) back the
+Series menu and must stay on every part. The October 2026 consolidation took the tag set from
+1,013 to about 430 under these rules. Titles, descriptions, taglines and ordering live in
 `content/categories/<slug>/_index.md` — that is the single source of truth, and both the nav
 "Topics" dropdown and the footer topic list are generated from it, so **do not hand-edit category
 lists in `hugo.toml` or `footer.html`**.

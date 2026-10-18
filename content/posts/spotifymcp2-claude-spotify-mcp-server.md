@@ -4,7 +4,7 @@ date: 2026-02-24T11:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "engineering", "tools"]
-tags: ["MCP", "Claude", "Spotify", "TypeScript", "AI", "Model Context Protocol", "OAuth2", "API Integration", "Open Source", "Node.js"]
+tags: ["MCP", "Claude", "TypeScript", "AI", "API Integration", "Open Source", "Node.js"]
 summary: "SpotifyMCP2 is a TypeScript MCP server that gives Claude direct control over Spotify — search tracks, manage playback, browse playlists, and queue songs through natural language. Built with full OAuth2, automatic token refresh, and 95%+ test coverage."
 description: "Let Claude search, play, queue and browse Spotify through SpotifyMCP2, a TypeScript MCP server with 8 tools, OAuth2 setup and 113 tests, plus how to extend it."
 readTime: "12 min"

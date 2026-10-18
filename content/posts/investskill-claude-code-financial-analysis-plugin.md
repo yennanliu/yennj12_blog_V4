@@ -4,7 +4,7 @@ date: 2026-02-17T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "finance", "tools"]
-tags: ["Claude Code", "AI", "Investment", "Financial Analysis", "Stock Analysis", "Plugin", "MCP", "Trading", "Economics", "Portfolio Management"]
+tags: ["Claude Code", "AI", "Investment", "Stock Analysis", "Plugin", "MCP", "Trading"]
 summary: "Discover InvestSkill, a comprehensive Claude Code plugin marketplace that brings professional investment analysis and stock evaluation capabilities directly into your AI development workflow. From fundamental analysis to technical indicators, transform Claude into your personal financial analyst."
 description: "Run stock, fundamental, technical, economic, portfolio and sector analysis from Claude Code slash commands with the InvestSkill plugin, with example sessions."
 readTime: "15 min"

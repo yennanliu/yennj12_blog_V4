@@ -5,7 +5,7 @@ draft: false
 weight: 7
 description: "深入解析 YOLO/Faster-RCNN 目標偵測架構、Mask R-CNN 語義分割、IoU/mAP 評估框架與工業部署的延遲優化策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Computer Vision", "Object Detection", "YOLO", "Segmentation", "mAP", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Computer Vision", "YOLO", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "11 min"
 series: ["ai-eng-from-scratch"]

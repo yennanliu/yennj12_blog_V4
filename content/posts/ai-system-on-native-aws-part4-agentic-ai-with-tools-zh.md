@@ -4,7 +4,7 @@ date: 2026-07-21T09:00:00+08:00
 draft: false
 description: "讓 AI 從回答升級到行動而不闖禍:Bedrock Agents 跑 ReAct 規劃迴圈、Lambda Action Groups 把 API 包成受控工具、Guardrails 攔截危險輸入輸出、IAM 鎖最小權限、關鍵動作插入人工確認,全部以 CDK 描述。"
 categories: ["all", "ai", "engineering"]
-tags: ["AWS", "CDK", "CloudFormation", "Bedrock Agents", "AI Agent", "Guardrails", "Lambda", "LLM", "Tool Use", "AI Engineering"]
+tags: ["AWS", "CDK", "CloudFormation", "Agent", "Guardrails", "Lambda", "LLM", "AI Engineering"]
 authors: ["yen"]
 readTime: "14 min"
 ---

@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "逐行讀 OpenWorker 1192 行的 agent 迴圈:訊息的真實形狀、blocking provider 如何橋接 async loop、工具呼叫的授權與併發分流、四種中斷下「不留孤兒 tool_call」的不變式,以及 canonical history 與 outbound view 的分離。"
 categories: ["all", "ai", "engineering"]
-tags: ["OpenWorker", "AI Agent", "Agent Loop", "AsyncIO", "LLM", "Python", "開源專案解析"]
+tags: ["OpenWorker", "Agent", "AsyncIO", "LLM", "Python", "開源專案解析"]
 authors: ["yen"]
 readTime: "19 min"
 series: ["openworker-intro"]

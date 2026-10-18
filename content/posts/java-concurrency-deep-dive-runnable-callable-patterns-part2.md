@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "How Runnable and Callable really execute: thread lifecycle, the Java Memory Model, happens-before, synchronisation patterns and testing concurrent code."
 categories: ["all", "ai", "engineering", "architecture"]
-tags: ["Java", "Concurrency", "Threading", "Runnable", "Callable", "Synchronization", "Memory Model", "Thread Safety", "AI"]
+tags: ["Java", "Concurrency", "Threading", "Runnable", "Callable", "AI"]
 authors: ["yen"]
 readTime: "25 min"
 ---

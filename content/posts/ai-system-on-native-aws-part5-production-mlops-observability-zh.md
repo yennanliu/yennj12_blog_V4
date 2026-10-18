@@ -4,7 +4,7 @@ date: 2026-07-22T09:00:00+08:00
 draft: false
 description: "把「能跑」的 AI 系統變成「敢上線」:SageMaker 藍綠/金絲雀部署、Bedrock 呼叫日誌與 CloudWatch/X-Ray 可觀測性、模型漂移偵測、Cost Allocation Tag 分帳,以及用 CDK Pipelines 做基礎設施 CI/CD。"
 categories: ["all", "ai", "engineering"]
-tags: ["AWS", "CDK", "CloudFormation", "MLOps", "SageMaker", "CloudWatch", "Observability", "Bedrock", "CI/CD", "AI Engineering"]
+tags: ["AWS", "CDK", "CloudFormation", "MLOps", "SageMaker", "Observability", "Bedrock", "AI Engineering"]
 authors: ["yen"]
 readTime: "12 min"
 ---

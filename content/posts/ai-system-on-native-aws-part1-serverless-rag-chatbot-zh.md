@@ -4,7 +4,7 @@ date: 2026-07-18T09:00:00+08:00
 draft: false
 description: "用 Bedrock Knowledge Bases + OpenSearch Serverless + Lambda,以 CDK 一鍵部署不需養伺服器的 RAG 問答:文件丟進 S3 自動切塊嵌入,回答附引用來源,按呼叫計費,資料不離開你的 AWS 帳號。"
 categories: ["all", "ai", "engineering"]
-tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "RAG", "OpenSearch Serverless", "Lambda", "LLM", "AI Engineering", "Serverless"]
+tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "RAG", "Lambda", "LLM", "AI Engineering"]
 authors: ["yen"]
 readTime: "15 min"
 ---

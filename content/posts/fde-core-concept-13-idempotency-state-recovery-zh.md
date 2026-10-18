@@ -5,7 +5,7 @@ draft: false
 weight: 13
 description: "深入剖析如何透過 Checkpoint + Compare-And-Swap 保證分佈式 Agent 在 Pod OOM、搶佔或網路分割後，重啟時精確跳過已完成步驟，實現零重複副作用的斷點續傳。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Distributed", "Idempotency", "LangGraph"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "LangGraph"]
 authors: ["yen"]
 readTime: "18 min"
 ---

@@ -5,7 +5,7 @@ draft: false
 weight: 40
 description: "醫院 AI 助手如何讓 PII 不流進 Prompt、Log 與向量索引:POC → MVP → Enterprise 三階段強化、敏感度分類矩陣、假名化架構、RBAC 最小存取,以及假名化 vs 匿名化、CMEK vs 預設加密的選型與成本量化。"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Security", "Privacy", "PII", "RBAC", "Compliance", "Anonymization", "RKK", "Interview", "Cloud", "fde-interview-guide"]
+tags: ["AI", "FDE", "Security", "Compliance", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
 readTime: "19 min"
 ---

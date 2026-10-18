@@ -5,7 +5,7 @@ draft: false
 weight: 37
 description: "把 ADK Agent 接上 SAP、Oracle 直連與 Mainframe CSV 這類 Legacy 孤島的整合層設計:API 橋接層選型、Private Service Connect / VPC-SC / CMEK 安全邊界,以及每種整合模式對效能、穩定性與成本的影響。"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Integration", "Legacy", "API", "GCP", "VPC", "Security", "Enterprise", "RKK", "Interview", "Cloud", "fde-interview-guide"]
+tags: ["AI", "FDE", "API", "Security", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
 readTime: "11 min"
 ---

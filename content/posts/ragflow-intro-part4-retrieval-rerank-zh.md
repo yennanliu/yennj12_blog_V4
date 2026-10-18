@@ -5,7 +5,7 @@ draft: false
 weight: 4
 description: "RAGFlow 原始碼導讀系列第四篇：逐行拆解查詢編譯器如何把一句人話變成加權布林查詢、ES 與 Infinity 兩條融合路徑的差異、三層重排的權重公式、GraphRAG 與 RAPTOR 的成本與時機，以及不依賴 LLM 服從度的引用對齊演算法。"
 categories: ["all", "ai", "engineering"]
-tags: ["RAGFlow", "RAG", "AI", "Hybrid Search", "Reranking", "GraphRAG", "RAPTOR"]
+tags: ["RAGFlow", "RAG", "AI", "Hybrid Search", "Reranking", "GraphRAG"]
 authors: ["yen"]
 readTime: "22 min"
 ---

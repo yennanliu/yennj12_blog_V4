@@ -4,7 +4,7 @@ date: 2026-07-17T09:00:00+08:00
 draft: false
 description: "深入 Ollama 的 REST API 與 Modelfile:把 Mac 變成本機 LLM 伺服器,掌握 /api/generate、/api/chat、options 調校、結構化輸出,並用 Modelfile 打造專屬模型。"
 categories: ["all", "ai", "engineering"]
-tags: ["Ollama", "LLM", "REST API", "Modelfile", "macOS", "AI Engineering", "Local LLM"]
+tags: ["Ollama", "LLM", "REST API", "macOS", "AI Engineering", "Local LLM"]
 authors: ["yen"]
 readTime: "22 min"
 ---

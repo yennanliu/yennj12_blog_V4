@@ -4,7 +4,7 @@ date: 2026-07-19T09:00:00+08:00
 draft: false
 description: "掃描 PDF、發票、合約餵不進 RAG 時怎麼辦:Textract 抽表格與 key-value、Comprehend 認實體、Bedrock 正規化成 JSON、Step Functions 串成可重試狀態機,信心分數太低自動轉人工,全部以 CDK 部署。"
 categories: ["all", "ai", "engineering"]
-tags: ["AWS", "CDK", "CloudFormation", "Textract", "Comprehend", "Bedrock", "Step Functions", "IDP", "Serverless", "AI Engineering"]
+tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "IDP", "Serverless", "AI Engineering"]
 authors: ["yen"]
 readTime: "13 min"
 ---

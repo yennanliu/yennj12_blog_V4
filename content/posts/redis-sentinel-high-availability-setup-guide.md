@@ -4,7 +4,7 @@ date: 2025-09-29T07:54:22+08:00
 draft: false
 description: "Get automatic Redis failover with Sentinel: standalone vs replica vs Sentinel vs Cluster compared, a three-node setup, Spring Boot config and failover tests."
 categories: ["all", "engineering", "architecture"]
-tags: ["Redis", "Redis Sentinel", "High Availability", "Distributed Systems", "Java", "Spring Boot", "Caching", "Database Architecture", "Failover", "Monitoring", "Database"]
+tags: ["Redis", "High Availability", "Distributed Systems", "Java", "Spring Boot", "Caching", "Monitoring", "Database"]
 authors: ["yen"]
 readTime: "29 min"
 ---

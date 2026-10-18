@@ -5,7 +5,7 @@ draft: false
 weight: 8
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "Security", "RBAC", "Compliance", "Governance", "Policy", "Audit", "Multi-tenancy", "OPA", "Gatekeeper", "DevOps"]
+tags: ["Kubernetes", "Security", "RBAC", "Compliance", "Governance", "Multi-tenancy", "OPA", "DevOps"]
 description: "Keep autoscaling from becoming a cost or security hole: RBAC scopes, OPA Gatekeeper limits on maxReplicas, multi-tenant quotas, compliance and audit logs."
 readTime: "30 min"
 ---

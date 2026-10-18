@@ -4,7 +4,7 @@ date: 2025-09-29T08:19:47+08:00
 draft: false
 description: "When AWS API Gateway beats a load balancer and when it does not: REST vs HTTP vs WebSocket APIs, Lambda and Spring Boot integration, caching and auth."
 categories: ["all", "engineering", "architecture", "infrastructure"]
-tags: ["AWS API Gateway", "Load Balancer", "Microservices", "Java", "Spring Boot", "AWS Lambda", "REST API", "System Design", "Cloud Architecture", "Serverless", "AWS"]
+tags: ["Microservices", "Java", "Spring Boot", "REST API", "System Design", "Cloud Architecture", "Serverless", "AWS"]
 authors: ["yen"]
 readTime: "30 min"
 ---

@@ -5,7 +5,7 @@ draft: false
 weight: 29
 description: "深入解析 AI Agent 規劃架構：Tree-of-Thought/Plan-and-Execute/MCTS、任務分解策略、規劃失敗診斷與動態重規劃機制"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Planning", "Tree of Thought", "Task Decomposition", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Agent", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "15 min"
 series: ["ai-eng-from-scratch"]

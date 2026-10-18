@@ -5,7 +5,7 @@ draft: false
 weight: 7
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "Troubleshooting", "Debugging", "Production", "Incidents", "War Stories", "Performance", "Autoscaling", "SRE", "DevOps"]
+tags: ["Kubernetes", "Troubleshooting", "Debugging", "Production", "Performance", "Autoscaling", "SRE", "DevOps"]
 description: "Three autoscaling incidents replayed minute by minute: HPA thrashing on Black Friday, a VPA OOMKill loop and a Spot cascade, with a debugging runbook."
 readTime: "26 min"
 ---

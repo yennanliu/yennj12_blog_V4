@@ -5,7 +5,7 @@ lastmod: 2026-09-28T09:00:00+08:00
 draft: false
 description: "AeroVironment (AVAV) FY2026 10-K:營收暴增 141% 破 20 億美元,幾乎全靠 BlueHalo 併購;同年 GAAP 虧損 2.65 億、FCF 轉負、商譽減損 2.41 億、ICFR 不利意見、股數 +79%。拆開買來的成長與長出來的成長。"
 categories: ["all", "finance"]
-tags: ["AVAV", "AeroVironment", "10-K", "SEC", "財報分析", "價值投資", "美股", "國防", "無人機", "UAS", "InvestSkill", "investing"]
+tags: ["AVAV", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "18 min"
 ---

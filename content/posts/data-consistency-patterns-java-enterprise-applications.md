@@ -4,7 +4,7 @@ date: 2025-01-28T00:00:00+08:00
 draft: false
 description: "Stop double bookings and lost updates in Java: optimistic vs pessimistic locking, JPA versioning, two-phase commit and its alternatives, with the cost of each."
 categories: ["all", "engineering", "architecture"]
-tags: ["Java", "Spring Boot", "Data Consistency", "Concurrency", "Distributed Systems", "JPA", "Two-Phase Commit"]
+tags: ["Java", "Spring Boot", "Concurrency", "Distributed Systems", "JPA"]
 authors: ["yen"]
 readTime: "25 min"
 ---

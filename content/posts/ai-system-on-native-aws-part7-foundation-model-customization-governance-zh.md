@@ -4,7 +4,7 @@ date: 2026-07-24T09:00:00+08:00
 draft: false
 description: "多數「模型不夠好」該用 RAG 而非 fine-tune:先給一個 RAG/Prompt/Fine-tune/蒸餾決策框架,再用 Bedrock 客製模型、SageMaker 微調、Model Registry、自動評估關卡與審批流程,讓每個模型版本可稽核、可回滾。"
 categories: ["all", "ai", "engineering"]
-tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "SageMaker", "Fine-tuning", "Model Governance", "MLOps", "Enterprise", "AI Engineering"]
+tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "SageMaker", "Fine-tuning", "MLOps", "AI Engineering"]
 authors: ["yen"]
 readTime: "13 min"
 ---

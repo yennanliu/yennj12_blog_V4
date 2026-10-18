@@ -4,7 +4,7 @@ date: 2025-11-30T10:00:00Z
 draft: false
 description: "Write TypeScript that catches bugs before runtime: strict tsconfig settings, type system idioms, design patterns, generics, utility types and pitfalls to avoid."
 categories: ["all", "engineering"]
-tags: ["TypeScript", "JavaScript", "Type Safety", "Design Patterns", "Code Quality", "Best Practices", "Software Architecture", "Frontend"]
+tags: ["TypeScript", "JavaScript", "Design Patterns", "Best Practices", "Software Architecture", "Frontend"]
 authors: ["yen"]
 readTime: "21 min"
 ---

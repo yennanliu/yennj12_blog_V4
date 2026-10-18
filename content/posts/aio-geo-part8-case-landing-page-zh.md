@@ -5,7 +5,7 @@ draft: false
 weight: 8
 description: "一個 3 人團隊的 SaaS 產品，全站只有一頁 Landing Page 加一份文件。內容量是最小的，資源也是最少的——這反而讓「該做什麼、不該做什麼」變得極度清楚。從 0 到被引用的 8 週實錄。"
 categories: ["all", "ai", "business"]
-tags: ["GEO", "AIO", "Landing Page", "SaaS", "Startup", "Astro", "Cloudflare", "案例研究", "SEO", "Case Study"]
+tags: ["GEO", "AIO", "SaaS", "Cloudflare", "案例研究", "SEO", "Case Study"]
 authors: ["yen"]
 readTime: "16 min"
 ---

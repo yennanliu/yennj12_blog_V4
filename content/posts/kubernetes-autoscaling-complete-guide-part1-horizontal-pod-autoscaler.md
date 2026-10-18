@@ -5,7 +5,7 @@ draft: false
 weight: 1
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "HPA", "Autoscaling", "VPA", "KEDA", "Performance", "Cloud Native", "Scalability", "DevOps"]
+tags: ["Kubernetes", "HPA", "Autoscaling", "VPA", "Performance", "Cloud Native", "Scalability", "DevOps"]
 description: "Choose the right pod autoscaler: resource-based HPA, custom and external metrics via Prometheus Adapter, KEDA event-driven scaling and VPA, compared."
 readTime: "34 min"
 ---

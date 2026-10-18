@@ -5,7 +5,7 @@ draft: false
 weight: 5
 description: "RAG 系列終章：如何用 RAGAS 框架量化評估 RAG 品質、GraphRAG 如何用知識圖譜突破向量搜尋的限制，以及 Agentic RAG 如何讓 AI Agent 主動決策何時搜尋、搜尋什麼。"
 categories: ["all", "ai", "engineering"]
-tags: ["RAG", "RAGAS", "GraphRAG", "Agentic RAG", "LangGraph", "Evaluation", "Python"]
+tags: ["RAG", "RAGAS", "GraphRAG", "LangGraph", "Evaluation", "Python"]
 authors: ["yen"]
 readTime: "15 min"
 ---

@@ -4,7 +4,7 @@ date: 2026-07-19T10:08:00+08:00
 draft: false
 description: "深拆半導體記憶體這一層:三強寡占(美光、SK 海力士、三星)、DRAM/NAND 的商品週期與長鞭效應,以及 HBM 如何把一部分業務「去週期化」、暫時奪回定價權。含瓶頸分數、利潤池、上下游依賴、風險與分層投資點子。"
 categories: ["all", "finance"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "記憶體", "HBM", "Micron", "美股", "InvestSkill", "investing"]
+tags: ["半導體", "供應鏈", "產業分析", "HBM", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "10 min"
 ---

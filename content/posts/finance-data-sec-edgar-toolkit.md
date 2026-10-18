@@ -4,7 +4,7 @@ date: 2026-02-24T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "finance", "tools"]
-tags: ["Python", "SEC", "EDGAR", "Finance", "Financial Data", "10-K", "10-Q", "13-F", "Data Engineering", "Open Source"]
+tags: ["Python", "SEC", "EDGAR", "Finance", "10-K", "Data Engineering", "Open Source"]
 summary: "Introducing finance_data — a lightweight Python toolkit that automates downloading SEC financial filings (10-K, 10-Q, 13-F) from EDGAR. Search by ticker symbol, download in bulk, and respect SEC rate limits out of the box."
 description: "Download 10-K, 10-Q and 13-F filings from SEC EDGAR by ticker with finance_data, a single-file Python toolkit that handles CIK lookup and rate limits."
 readTime: "10 min"

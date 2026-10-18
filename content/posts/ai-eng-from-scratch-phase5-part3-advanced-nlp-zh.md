@@ -5,7 +5,7 @@ draft: false
 weight: 11
 description: "深入解析 BERT/RoBERTa/DeBERTa 預訓練策略、問答系統架構、文字摘要、機器翻譯評估與 NLP 生產系統的工程挑戰"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "BERT", "Question Answering", "Text Summarization", "Machine Translation", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "NLP", "BERT", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "14 min"
 series: ["ai-eng-from-scratch"]

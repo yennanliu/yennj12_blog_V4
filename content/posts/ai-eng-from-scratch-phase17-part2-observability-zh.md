@@ -5,7 +5,7 @@ draft: false
 weight: 37
 description: "深入解析 AI 系統可觀測性工程：LLM 追蹤（Traces/Spans）、提示版本管理、模型效能漂移偵測、成本歸因分析與 AI 告警策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Infrastructure", "Observability", "Monitoring", "LLM", "Tracing", "Production", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Observability", "Monitoring", "LLM", "Tracing", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "15 min"
 series: ["ai-eng-from-scratch"]

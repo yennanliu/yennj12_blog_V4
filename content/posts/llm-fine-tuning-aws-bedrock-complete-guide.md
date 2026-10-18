@@ -4,7 +4,7 @@ date: 2025-12-21T11:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "infrastructure"]
-tags: ["AWS Bedrock", "LLM", "Fine-tuning", "Machine Learning", "AI", "Claude", "Titan", "AWS CDK", "Python", "Reinforcement Learning", "AWS", "MLOps"]
+tags: ["LLM", "Fine-tuning", "ML", "AI", "Claude", "Python", "AWS", "MLOps"]
 description: "Fine-tune a foundation model on AWS Bedrock end to end: supervised fine-tuning, continued pre-training, reinforcement fine-tuning, CDK and evaluation."
 readTime: "28 min"
 ---

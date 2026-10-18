@@ -4,7 +4,7 @@ date: 2026-07-19T10:03:00+08:00
 draft: false
 description: "深拆半導體 EDA 與 IP 這一層:Synopsys、Cadence、Siemens EDA 的設計工具雙寡占,加上 Arm 的授權+權利金模式。這是全世界每顆晶片都繞不開、卻最少人談的『安靜收費站』——玩家、競爭格局、瓶頸與定價權、~80% 毛利的利潤池、上下游依賴、地緣風險與投資點子。"
 categories: ["all", "finance"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "EDA", "IP", "Synopsys", "Cadence", "Arm", "美股", "InvestSkill", "investing"]
+tags: ["半導體", "供應鏈", "產業分析", "EDA", "IP", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "10 min"
 ---

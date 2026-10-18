@@ -4,7 +4,7 @@ date: 2025-11-30T14:00:00Z
 draft: false
 description: "One monitoring pane for Lambda, ECS and API Gateway: CloudWatch plus Grafana on Fargate via CDK in TypeScript, with metric filters, Log Insights and SNS alerts."
 categories: ["all", "engineering", "infrastructure"]
-tags: ["AWS CloudWatch", "Grafana", "CDK", "TypeScript", "Monitoring", "Observability", "Metrics", "Logging", "Alerting", "SNS", "DevOps", "AWS"]
+tags: ["Grafana", "CDK", "TypeScript", "Monitoring", "Observability", "Metrics", "DevOps", "AWS"]
 authors: ["yen"]
 readTime: "32 min"
 ---

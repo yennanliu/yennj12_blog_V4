@@ -4,7 +4,7 @@ date: 2025-01-28T01:00:00+08:00
 draft: false
 description: "Replace two-phase commit with the SAGA pattern in Spring Boot: orchestration vs choreography, compensating transactions and when SAGA is the wrong tool."
 categories: ["all", "engineering", "architecture"]
-tags: ["Java", "Spring Boot", "SAGA Pattern", "Distributed Transactions", "Microservices", "Event Sourcing", "Orchestration", "Choreography"]
+tags: ["Java", "Spring Boot", "Microservices", "Orchestration"]
 authors: ["yen"]
 readTime: "23 min"
 ---

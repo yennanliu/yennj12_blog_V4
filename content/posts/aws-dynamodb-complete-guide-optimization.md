@@ -2,7 +2,7 @@
 title: "AWS DynamoDB Complete Guide: Architecture, Indexing & Performance Optimization"
 date: 2025-09-29T10:02:35+08:00
 draft: false
-tags: ["AWS", "DynamoDB", "NoSQL", "Database", "Performance", "Optimization", "Java", "Architecture", "Cloud Computing"]
+tags: ["AWS", "DynamoDB", "Database", "Performance", "Optimization", "Java", "Architecture", "Cloud Computing"]
 categories: ["all", "engineering", "infrastructure"]
 authors: ["yen"]
 description: "Design DynamoDB tables that stay fast at scale: partition and sort key choices, GSI vs LSI tradeoffs, when DynamoDB is the wrong fit, capacity tuning in Java."

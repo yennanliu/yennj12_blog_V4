@@ -4,7 +4,7 @@ date: 2026-07-04T11:00:00+08:00
 draft: false
 description: "從 agent_auto_system 四個實戰任務學四種 agent × tool 設計模式:Shopee 賣家爬蟲的分頁修正、Google Maps 名單漏斗讓 LLM 只做最後分級、Tasker 用 Playwright 真登入投標、四代理協作產出利潤健檢 PDF。"
 categories: ["all", "ai", "engineering"]
-tags: ["CrewAI", "AI Agent", "Web Scraping", "Playwright", "Lead Generation", "Automation", "AI Engineering"]
+tags: ["CrewAI", "Agent", "Automation", "AI Engineering"]
 authors: ["yen"]
 readTime: "12 min"
 ---

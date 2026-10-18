@@ -5,7 +5,7 @@ draft: false
 weight: 5
 description: "深入拆解兩階段檢索架構——ANN 快速粗召回搭配 Cross-Encoder 精準重排，如何將 RAG 系統的 MRR@5 從 0.61 提升至 0.79，並可望明顯降低幻覺率。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "CrossEncoder", "Reranking"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "Reranking"]
 authors: ["yen"]
 readTime: "11 min"
 ---

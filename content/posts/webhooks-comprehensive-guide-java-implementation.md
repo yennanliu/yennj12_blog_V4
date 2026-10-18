@@ -4,7 +4,7 @@ date: 2025-09-29T08:06:11+08:00
 draft: false
 description: "Webhooks vs polling vs HTTP calls, then a production Spring Boot receiver with signature verification, idempotency and retries, with Stripe and GitHub examples."
 categories: ["all", "engineering", "architecture"]
-tags: ["Webhooks", "Event-Driven Architecture", "Java", "Spring Boot", "API Integration", "Real-Time Systems", "Stripe", "GitHub", "Shopify", "HTTP", "REST API", "Integration"]
+tags: ["Java", "Spring Boot", "API Integration", "GitHub", "Shopify", "HTTP", "REST API", "Integration"]
 authors: ["yen"]
 readTime: "32 min"
 ---

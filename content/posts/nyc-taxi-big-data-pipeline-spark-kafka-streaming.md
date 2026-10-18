@@ -4,7 +4,7 @@ date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering"]
-tags: ["apache-spark", "kafka", "hadoop", "hive", "AWS", "Pipeline", "stream-processing", "batch-processing", "elk-stack", "Data Engineering", "Big Data", "Streaming"]
+tags: ["kafka", "AWS", "Pipeline", "Data Engineering", "Streaming"]
 description: "Process NYC taxi trip records in batch and real time: Spark and Hive for history, Kafka and Spark Streaming for live events, Elasticsearch for search."
 readTime: "44 min"
 ---

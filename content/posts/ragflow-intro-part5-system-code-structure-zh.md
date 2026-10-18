@@ -5,7 +5,7 @@ draft: false
 weight: 5
 description: "RAGFlow 原始碼導讀系列最終篇：拆解進程拓撲與水平擴充參數、四層服務分層、Redis Stream 任務系統的 13 種任務型別、Agent Canvas 與 ingestion Pipeline 兩套 DAG 引擎，以及正在進行中的 Python → Go 遷移。"
 categories: ["all", "ai", "engineering", "architecture"]
-tags: ["RAGFlow", "RAG", "AI", "System Design", "Redis Stream", "Go", "Architecture"]
+tags: ["RAGFlow", "RAG", "AI", "System Design", "Architecture"]
 authors: ["yen"]
 readTime: "21 min"
 ---

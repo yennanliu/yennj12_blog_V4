@@ -5,7 +5,7 @@ draft: false
 weight: 4
 description: "Mem0 原始碼導讀系列第四篇：拆解向量庫／實體庫／SQL 三個儲存層的實際 schema、25 種向量庫裡哪 15 種真的支援 BM25、配置系統的組裝方式、LLM 與 embedder 的選型判準，以及自架 server 的部署與多租戶隔離。"
 categories: ["all", "ai", "engineering", "infrastructure"]
-tags: ["Mem0", "Vector Database", "pgvector", "Qdrant", "Storage", "AI Agent", "Memory"]
+tags: ["Mem0", "Vector Database", "Agent", "Memory"]
 authors: ["yen"]
 readTime: "18 min"
 ---

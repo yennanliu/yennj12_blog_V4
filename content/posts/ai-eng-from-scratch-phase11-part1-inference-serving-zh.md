@@ -5,7 +5,7 @@ draft: false
 weight: 22
 description: "深入解析 LLM 生產推論：vLLM PagedAttention、連續批次、投機解碼、量化（GPTQ/AWQ/INT4）、推論成本優化與 SLA 設計"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LLM", "Inference", "vLLM", "Quantization", "Serving", "Production", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "LLM", "Inference", "vLLM", "Quantization", "Production", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "14 min"
 series: ["ai-eng-from-scratch"]

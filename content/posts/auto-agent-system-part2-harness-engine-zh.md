@@ -4,7 +4,7 @@ date: 2026-07-04T10:00:00+08:00
 draft: false
 description: "拆解 agent_auto_system 的 Harness 引擎如何把不可靠的 LLM 變成可預測的服務:解析被 markdown 包住的 JSON、跨模型 fallback 重試、驗證失敗後自我修正、獨立 LLM 評審打分,以及每次執行的 token 成本追蹤。"
 categories: ["all", "ai", "engineering"]
-tags: ["CrewAI", "LLM", "Harness", "Reliability", "Retry", "LLM-as-Judge", "AI Engineering", "Fallback"]
+tags: ["CrewAI", "LLM", "Harness", "Reliability", "LLM-as-Judge", "AI Engineering"]
 authors: ["yen"]
 readTime: "12 min"
 ---

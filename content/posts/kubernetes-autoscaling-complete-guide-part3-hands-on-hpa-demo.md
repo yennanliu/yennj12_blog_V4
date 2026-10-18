@@ -5,7 +5,7 @@ draft: false
 weight: 3
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "HPA", "Autoscaling", "AWS", "EKS", "CDK", "TypeScript", "Tutorial", "Demo", "Apache", "DevOps"]
+tags: ["Kubernetes", "HPA", "Autoscaling", "AWS", "EKS", "CDK", "TypeScript", "DevOps"]
 description: "Watch HPA scale a real Apache-PHP app on EKS: CDK in TypeScript provisions the cluster, YAML deploys the workload, then you load-test and observe 1 to 10 pods."
 readTime: "25 min"
 ---

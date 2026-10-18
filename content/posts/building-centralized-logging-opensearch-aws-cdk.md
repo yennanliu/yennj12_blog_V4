@@ -4,7 +4,7 @@ date: 2024-12-15T14:30:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture", "infrastructure"]
-tags: ["opensearch", "AWS", "CDK", "Kubernetes", "Logging", "Kinesis", "Observability", "CloudWatch"]
+tags: ["AWS", "CDK", "Kubernetes", "Logging", "Kinesis", "Observability", "CloudWatch"]
 summary: "Deep dive into architecting a production-ready centralized logging solution using OpenSearch, Kinesis Data Firehose, and AWS CDK for comprehensive Kubernetes cluster observability."
 description: "Ship Kubernetes logs into one searchable OpenSearch cluster via Kinesis Data Firehose and a Lambda transform, all in AWS CDK, with retention and cost decisions."
 readTime: "16 min"

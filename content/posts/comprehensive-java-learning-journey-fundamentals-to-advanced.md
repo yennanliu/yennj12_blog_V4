@@ -4,7 +4,7 @@ date: 2025-09-27T10:00:00Z
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering"]
-tags: ["java-fundamentals", "oop", "Design Patterns", "Concurrency", "Testing", "frameworks", "reactive-programming", "Microservices", "Java", "programming", "software-engineering"]
+tags: ["Design Patterns", "Concurrency", "Testing", "Microservices", "Java"]
 description: "Work through Java from syntax to architecture with runnable examples: OOP, design patterns, concurrency, testing, Spring and reactive programming."
 readTime: "25 min"
 ---

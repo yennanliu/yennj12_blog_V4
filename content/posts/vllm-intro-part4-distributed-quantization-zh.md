@@ -5,7 +5,7 @@ draft: false
 weight: 4
 description: "vLLM 原始碼導讀系列第四篇：拆解 TP／PP／DP／EP 四種平行度的切法與通訊量、多機部署與 NCCL 排錯、量化方法與硬體支援矩陣、torch.compile 的 piecewise CUDA Graph 為什麼切在 attention 上，以及 attention backend 的選擇邏輯。"
 categories: ["all", "ai", "engineering", "infrastructure"]
-tags: ["vLLM", "Distributed Inference", "Tensor Parallelism", "Quantization", "FP8", "CUDA Graph", "torch.compile"]
+tags: ["vLLM", "Distributed Inference", "Quantization"]
 authors: ["yen"]
 readTime: "18 min"
 ---

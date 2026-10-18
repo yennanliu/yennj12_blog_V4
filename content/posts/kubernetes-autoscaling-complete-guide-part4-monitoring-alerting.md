@@ -5,7 +5,7 @@ draft: false
 weight: 4
 authors: ["yen"]
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Kubernetes", "K8S", "Monitoring", "Prometheus", "Grafana", "Alerting", "EKS", "Observability", "Metrics", "Dashboard", "AlertManager", "DevOps"]
+tags: ["Kubernetes", "Monitoring", "Prometheus", "Grafana", "EKS", "Observability", "Metrics", "DevOps"]
 description: "See and tune autoscaling on EKS: Prometheus and Grafana via CDK, HPA-specific dashboards, AlertManager rules for thrashing and capacity, and threshold tuning."
 readTime: "30 min"
 ---

@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "Implement Producer-Consumer, Observer, Command, Strategy and enterprise patterns on Java thread interfaces, with BlockingQueue and executor code."
 categories: ["all", "engineering", "architecture"]
-tags: ["Java", "Concurrency", "Design Patterns", "Threading", "Runnable", "Callable", "Producer-Consumer", "Observer", "Command Pattern"]
+tags: ["Java", "Concurrency", "Design Patterns", "Threading", "Runnable", "Callable"]
 authors: ["yen"]
 readTime: "29 min"
 ---

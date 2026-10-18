@@ -5,7 +5,7 @@ draft: false
 weight: 43
 description: "端對端構建多模態 AI 應用：圖文理解、語音介面、文件分析三合一系統的架構設計、模態融合策略、延遲優化與系列學習路線總結"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multimodal", "LLM Engineering", "Production", "Capstone", "Vision", "Speech", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Multimodal", "LLM Engineering", "Production", "Capstone", "Speech", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "17 min"
 series: ["ai-eng-from-scratch"]

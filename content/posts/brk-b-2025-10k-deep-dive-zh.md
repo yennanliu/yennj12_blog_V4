@@ -5,7 +5,7 @@ lastmod: 2026-09-28T09:00:00+08:00
 draft: false
 description: "Berkshire Hathaway (BRK.B) FY2025 10-K:淨利年減 25% 為何不代表本業轉弱、營業利益六年首次回檔、現金加國庫券 3,733 億美元創紀錄卻整年零回購、Kraft Heinz/Occidental 減損,以及巴菲特交棒 Greg Abel 的訊號。"
 categories: ["all", "finance"]
-tags: ["BRK.B", "Berkshire Hathaway", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "保險", "控股公司", "巴菲特", "investing"]
+tags: ["BRK.B", "10-K", "SEC", "財報分析", "價值投資", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "18 min"
 ---

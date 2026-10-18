@@ -4,7 +4,7 @@ date: 2025-09-29T08:28:29+08:00
 draft: false
 description: "Pick the right AWS load balancer: ALB, NLB, GWLB and CLB compared on layer, latency, routing, static IPs and cost, with health checks and Spring Boot examples."
 categories: ["all", "engineering", "architecture", "infrastructure"]
-tags: ["AWS Load Balancer", "ALB", "NLB", "GWLB", "CLB", "Application Load Balancer", "Network Load Balancer", "AWS", "High Availability", "Autoscaling", "Java", "Spring Boot"]
+tags: ["ALB", "NLB", "GWLB", "AWS", "High Availability", "Autoscaling", "Java", "Spring Boot"]
 authors: ["yen"]
 readTime: "28 min"
 ---

@@ -4,7 +4,7 @@ date: 2026-07-19T10:13:00+08:00
 draft: false
 description: "深拆半導體產業鏈下游的雲端超大規模業者（CSP）：AWS、Azure、Google Cloud、Meta、Oracle 的競爭格局、瓶頸分數與定價權、資本黑洞與利潤池、上游對 NVIDIA 的單點依賴與自研晶片反打、RPO 積壓與「先燒資本、後變現」這場豪賭、風險與分層投資點子。"
 categories: ["all", "finance"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "雲端 CSP", "AWS", "AMZN", "美股", "InvestSkill", "investing"]
+tags: ["半導體", "供應鏈", "產業分析", "AWS", "AMZN", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "10 min"
 ---

@@ -5,7 +5,7 @@ draft: false
 weight: 9
 description: "從詞袋到詞嵌入，掌握 NLP 工程師必備的文字前處理、TF-IDF、Word2Vec/GloVe/FastText 嵌入技術與文字分類生產架構"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "Word2Vec", "Text Classification", "Embeddings", "TF-IDF", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "NLP", "Embeddings", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "20 min"
 series: ["ai-eng-from-scratch"]

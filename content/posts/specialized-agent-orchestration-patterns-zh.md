@@ -4,7 +4,7 @@ date: 2026-03-19T10:00:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "ai", "tools"]
-tags: ["AI", "Claude Code", "Multi-Agent", "agent-orchestration", "token-optimization", "System Design", "API", "協作模式", "Development Tools"]
+tags: ["AI", "Claude Code", "Multi-Agent", "agent-orchestration", "token-optimization", "System Design", "API", "Developer Tools"]
 description: "多 Agent Token 優化系列 pt.7：深入探討專責化 Agent 的協作模式，涵蓋團隊組織架構、動態路由、任務分解策略、狀態管理、錯誤處理等生產級實作，幫助你打造高效協調的 Agent 團隊。"
 readTime: "29 min"
 ---

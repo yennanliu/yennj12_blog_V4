@@ -5,7 +5,7 @@ draft: false
 weight: 33
 description: "深入解析 AI 自我改進機制：Constitutional AI/Self-Refinement/RLVR，以及 2026 年生產安全技術棧：越獄防禦/提示注入防護/行動沙箱"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Safety", "Self-Improvement", "Constitutional AI", "Autonomous Systems", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Safety", "Autonomous Systems", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "14 min"
 series: ["ai-eng-from-scratch"]

@@ -5,7 +5,7 @@ draft: false
 weight: 10
 description: "深入解析 RNN/LSTM/GRU 序列建模、Encoder-Decoder 架構、Bahdanau 注意力機制，理解 Transformer 取代 RNN 的工程動機"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "NLP", "LSTM", "Seq2Seq", "Attention", "RNN", "Encoder-Decoder", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "NLP", "LSTM", "Attention", "RNN", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "18 min"
 series: ["ai-eng-from-scratch"]

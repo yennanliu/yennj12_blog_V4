@@ -55,6 +55,9 @@ FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 HEADING = re.compile(r"^(#{1,6})\s+(.*)$")
 MD_IMAGE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)")
 BOX_CHARS = re.compile(r"[┌┐└┘├┤│─═╔╗╚╝▶▼]")
+# A number presented as measured must say where it came from, or admit it is illustrative.
+MEASURED = re.compile(r"實測|實際測試|實際量測|我們跑了|生產環境.{0,6}平均")
+MEASURED_OK = re.compile(r"示意|估算|來源|資料來源|http|\[\d+\]|arXiv|論文|報告|benchmark|非實測")
 MODEL_ANSWER = re.compile(r"面試答題要點|面試回答完整示範|完整範例回答|範例回答|最想聽到")
 MERMAID_FENCE = re.compile(r"^\s*(`{3,}|~{3,})\s*mermaid\b")
 # Case-sensitive on purpose: "Todo List" and `todo_write` are real prose.
@@ -231,6 +234,7 @@ def split_body(lines: list[str], start: int, r: Report) -> tuple[list[tuple[int,
 def check_body(r: Report, fm: dict, lines: list[str], start: int) -> None:
     prose, blocks = split_body(lines, start, r)
 
+    measured_hits: list[int] = []
     last_level = 1
     for n, line in prose:
         h = HEADING.match(line)
@@ -241,12 +245,19 @@ def check_body(r: Report, fm: dict, lines: list[str], start: int) -> None:
             elif level > last_level + 1:
                 r.warn(n, f"heading jumps from H{last_level} to H{level}")
             last_level = level
+        if MEASURED.search(line) and not MEASURED_OK.search(line):
+            measured_hits.append(n)
         if PLACEHOLDER.search(INLINE_CODE.sub("", line)):
             r.warn(n, f"placeholder text left in prose: {line.strip()[:60]!r}")
         for src in MD_IMAGE.findall(line):
             if src.startswith("/") and not src.startswith("//"):
                 if not (STATIC / src.split("#")[0].split("?")[0].lstrip("/")).is_file():
                     r.error(n, f"image {src!r} is not a file under static/")
+
+    if measured_hits:
+        r.warn(measured_hits[0], f"「實測／實際測試」 wording on {len(measured_hits)} line(s) with no source "
+                                 f"or 示意 label on the same line (first at {measured_hits[0]}); cite the "
+                                 f"measurement or say 示意估算")
 
     # readTime drift. The house convention (CLAUDE.md) is line-based —
     # 500 lines ≈ 18 min, 700 ≈ 23, 900 ≈ 28 — because diagrams and tables

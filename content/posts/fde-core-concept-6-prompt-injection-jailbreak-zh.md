@@ -5,7 +5,7 @@ draft: false
 weight: 6
 description: "深入剖析生產環境中 LLM 系統面臨的 Prompt Injection 與 Jailbreak 攻擊，從輸入分類器、XML 隔離、DLP 掃描到工具白名單，建構四層縱深防禦體系。"
 categories: ["all", "engineering"]
-tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Security", "Guardrails", "AI-Safety"]
+tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Security", "Guardrails"]
 authors: ["yen"]
 readTime: "10 min"
 ---

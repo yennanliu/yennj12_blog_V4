@@ -5,7 +5,7 @@ draft: false
 weight: 2
 authors: ["yen"]
 categories: ["all", "engineering", "finance"]
-tags: ["Cryptocurrency", "Bitcoin", "Ethereum", "Backtesting", "Trading Strategies", "Risk Management", "Python", "Portfolio Optimization", "Mean Reversion", "Trend Following"]
+tags: ["Cryptocurrency", "Bitcoin", "Ethereum", "Python"]
 summary: "Build demo-grade (no backtest reported) cryptocurrency trading strategies with comprehensive backtesting. Learn trend following, mean reversion, pairs trading, and arbitrage strategies. Master risk management, position sizing, and performance evaluation with real Bitcoin and Ethereum examples."
 description: "Build a crypto backtesting framework in Python and test trend following, mean reversion and pairs trading on it, with metrics that catch overfitting."
 readTime: "21 min"

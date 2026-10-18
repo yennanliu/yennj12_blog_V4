@@ -5,7 +5,7 @@ draft: false
 weight: 32
 description: "客戶問 Agent Builder、Vertex AI Search 還是自建 Gemini API RAG 該選哪個時怎麼答:Build vs Buy 決策矩陣、Gemini API 四個關鍵特性(system instruction、tool use、grounding、context caching)與部署架構。"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "FDE", "Vertex AI", "Gemini", "Agent Builder", "GCP", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
+tags: ["AI", "FDE", "Vertex AI", "System Design", "RKK", "Interview", "Cloud", "fde-interview-guide"]
 authors: ["yen"]
 readTime: "16 min"
 ---

@@ -4,7 +4,7 @@ date: 2025-09-29T07:45:06+08:00
 draft: false
 description: "Implement the Gang of Four patterns in modern Java: Singleton, Factory, Builder, Decorator, Observer, Strategy and more, with thread-safe code."
 categories: ["all", "engineering", "architecture"]
-tags: ["Java", "Design Patterns", "Software Architecture", "Object-Oriented Programming", "Gang of Four", "Creational Patterns", "Structural Patterns", "Behavioral Patterns"]
+tags: ["Java", "Design Patterns", "Software Architecture"]
 authors: ["yen"]
 readTime: "28 min"
 ---

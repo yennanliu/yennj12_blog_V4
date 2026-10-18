@@ -5,7 +5,7 @@ draft: false
 weight: 25
 description: "深入解析多模態 Agent 架構：OCR+VLM 文件理解、電腦視覺 UI 自動化、SeeAct/Computer Use 系統設計與安全邊界"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Multimodal", "Agent", "Computer Use", "VLM", "Document AI", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Multimodal", "Agent", "VLM", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "13 min"
 series: ["ai-eng-from-scratch"]

@@ -4,7 +4,7 @@ date: 2026-07-19T10:12:00+08:00
 draft: false
 description: "深拆半導體下游的系統 / 伺服器 OEM 與 ODM 這一層:戴爾、美超微、HPE 與台廠鴻海、廣達、緯穎的競爭格局、瓶頸與定價權、被上下游夾殺的薄利結構、營收 ≠ 利潤的陷阱,以及液冷與機櫃級整合這條唯一的差異化出路。"
 categories: ["all", "finance"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "伺服器", "Dell", "SMCI", "美股", "InvestSkill", "investing"]
+tags: ["半導體", "供應鏈", "產業分析", "SMCI", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "10 min"
 ---

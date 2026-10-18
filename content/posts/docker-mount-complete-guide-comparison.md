@@ -4,7 +4,7 @@ date: 2025-10-11T10:00:00+08:00
 draft: false
 description: "Choose the right Docker mount every time: volumes for production data, bind mounts for development, tmpfs for secrets, compared on performance and backup."
 categories: ["all", "engineering", "infrastructure"]
-tags: ["Docker", "Containers", "Docker Volumes", "Bind Mount", "tmpfs", "Data Persistence", "DevOps", "Container Storage", "Docker Best Practices"]
+tags: ["Docker", "Containers", "DevOps"]
 authors: ["yen"]
 readTime: "28 min"
 ---

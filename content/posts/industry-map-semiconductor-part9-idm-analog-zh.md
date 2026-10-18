@@ -4,7 +4,7 @@ date: 2026-07-19T10:09:00+08:00
 draft: false
 description: "深拆半導體 IDM / 類比這一層:德儀、ADI、英飛凌、意法、恩智浦如何靠自有晶圓廠、上萬顆長壽命料號與黏著客戶,做出約 60% 毛利的穩定生意。看它的玩家格局、瓶頸與定價權、利潤池、上下游依賴、風險與投資點子。"
 categories: ["all", "finance"]
-tags: ["半導體", "Semiconductor", "供應鏈", "產業分析", "類比IC", "TXN", "美股", "InvestSkill", "investing"]
+tags: ["半導體", "供應鏈", "產業分析", "TXN", "美股", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "16 min"
 ---

@@ -4,7 +4,7 @@ date: 2026-06-27T13:00:00+08:00
 draft: false
 description: "AVAV 從 $417 腰斬到 $142 後,Switchblade 巡飛彈的核心生意垮了嗎?拆解收購 BlueHalo 後的雙部門三表、Q3 FY2026 財報落空與 SCAR 訂單減記風險,以及國防無人機產業五力與護城河(2026/6/26)。"
 categories: ["all", "finance"]
-tags: ["Stock Analysis", "AVAV", "AeroVironment", "Drone", "Loitering Munition", "Switchblade", "Defense", "BlueHalo", "Fundamental Analysis", "InvestSkill", "Investment"]
+tags: ["Stock Analysis", "AVAV", "AeroVironment", "Drone", "Defense", "Fundamental Analysis", "InvestSkill", "Investment"]
 authors: ["yen"]
 readTime: "15 min"
 ---

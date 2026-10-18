@@ -5,7 +5,7 @@ draft: false
 weight: 6
 description: "深入解析卷積神經網路的工程直覺：卷積運算、池化、ResNet/EfficientNet 架構演進、影像資料增強與遷移學習策略"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Computer Vision", "CNN", "ResNet", "Transfer Learning", "Image Classification", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "Computer Vision", "CNN", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "16 min"
 series: ["ai-eng-from-scratch"]

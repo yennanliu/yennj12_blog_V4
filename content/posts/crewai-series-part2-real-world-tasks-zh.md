@@ -5,7 +5,7 @@ draft: false
 weight: 2
 description: "CrewAI 不只是玩具：用三個完整的生產級範例說明如何建立競爭對手情報分析系統、自動化程式碼審查流程、以及智慧客服分類與回覆系統，包含工具整合與 Hierarchical Process 實作。"
 categories: ["all", "ai", "engineering"]
-tags: ["CrewAI", "Multi-Agent", "AI Automation", "Code Review", "Customer Service", "Python", "Agent"]
+tags: ["CrewAI", "Multi-Agent", "AI Automation", "Python", "Agent"]
 authors: ["yen"]
 readTime: "15 min"
 ---

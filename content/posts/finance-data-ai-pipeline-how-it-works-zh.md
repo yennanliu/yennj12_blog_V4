@@ -4,7 +4,7 @@ date: 2026-06-30T12:00:00+08:00
 draft: false
 description: "拆解 finance_data 如何零人工產出 30+ 檔股票的繁中研究報告:GitHub Actions cron 觸發、yfinance 與 Finviz/StockAnalysis/Roic.ai 抓數據、Claude / OpenAI / Gemini 生成、MkDocs 建置部署,每個齒輪怎麼咬合。"
 categories: ["all", "ai", "engineering"]
-tags: ["LLM", "Automation", "GitHub Actions", "Cron", "yfinance", "Finance", "RAG", "Claude", "Data Pipeline", "MkDocs"]
+tags: ["LLM", "Automation", "GitHub Actions", "Cron", "Finance", "RAG", "Claude", "Data Pipeline"]
 authors: ["yen"]
 readTime: "17 min"
 ---

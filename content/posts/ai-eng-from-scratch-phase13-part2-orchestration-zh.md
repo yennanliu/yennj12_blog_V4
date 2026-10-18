@@ -5,7 +5,7 @@ draft: false
 weight: 27
 description: "深入解析 AI 工作流程編排：LangChain/LlamaIndex/Haystack 框架比較、DAG 管線設計、有狀態工作流程、錯誤重試與生產監控"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "LangChain", "LlamaIndex", "Orchestration", "Pipeline", "Workflow", "RKK", "ai-eng-from-scratch"]
+tags: ["AI", "LangChain", "Orchestration", "Pipeline", "RKK", "ai-eng-from-scratch"]
 authors: ["yen"]
 readTime: "19 min"
 series: ["ai-eng-from-scratch"]

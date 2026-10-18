@@ -4,7 +4,7 @@ date: 2025-08-10T15:28:17+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "architecture"]
-tags: ["Microservices", "Distributed Systems", "Scalability", "patterns"]
+tags: ["Microservices", "Distributed Systems", "Scalability"]
 description: "Patterns that held up when a monolith serving millions of users was split into microservices: API gateway, service discovery, circuit breakers, observability."
 readTime: "12 min"
 ---

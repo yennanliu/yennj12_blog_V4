@@ -5,7 +5,7 @@ draft: false
 weight: 1
 description: "排名第一、流量卻掉四成?釐清 SEO / AEO / GEO / LLMO 的邊界,拆解 AI Overview 與生成式引擎產生答案的流程,把衡量指標從排名換成 Citation Share,並附一套 GEO 成熟度模型。"
 categories: ["all", "ai", "business"]
-tags: ["GEO", "AIO", "AI Overview", "生成式引擎優化", "SEO", "LLM", "RAG", "Marketing"]
+tags: ["GEO", "AIO", "SEO", "LLM", "RAG", "Marketing"]
 authors: ["yen"]
 readTime: "14 min"
 ---

@@ -4,7 +4,7 @@ date: 2026-07-23T09:00:00+08:00
 draft: false
 description: "把 RAG 賣給一百家公司前要解的是授權不是檢索:比較 silo/pool/bridge 三種租戶隔離模型,用 Verified Permissions(Cedar)在檢索前算出可見範圍、metadata filtering 壓進向量查詢、語意快取與 tenant tag 分帳。"
 categories: ["all", "ai", "engineering"]
-tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "RAG", "Multi-tenancy", "Verified Permissions", "OpenSearch Serverless", "Enterprise", "AI Engineering"]
+tags: ["AWS", "CDK", "CloudFormation", "Bedrock", "RAG", "Multi-tenancy", "Enterprise", "AI Engineering"]
 authors: ["yen"]
 readTime: "13 min"
 ---

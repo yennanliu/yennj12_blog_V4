@@ -5,7 +5,7 @@ draft: false
 weight: 3
 description: "QM 如何讓 Pi、OpenCode、Codex、Claude Code 四種接法完全不同的 Agent 引擎共用一個核心:Harness 三軸能力宣告、60 欄位 HarnessTurnInput 依賴注入、Entries 與 Tape 雙軌重放、throughSeq 壓縮錨點與 runtime 三層繼承。"
 categories: ["all", "ai", "engineering"]
-tags: ["QM", "AI Agent", "Agent Harness", "Abstraction", "TypeScript", "LLM"]
+tags: ["QM", "Agent", "Agent Harness", "TypeScript", "LLM"]
 authors: ["yen"]
 readTime: "18 min"
 series: ["qm-deep-dive"]

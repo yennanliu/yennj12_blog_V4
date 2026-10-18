@@ -4,7 +4,7 @@ date: 2026-06-29T10:00:00+08:00
 draft: false
 description: "深入拆解 security-audit-skill 的 Agent 設計：Hunt phase 怎麼派 agent、sub-agent 什麼時候 spawn、adversarial validation 為什麼是 multi-agent 系統的核心防線"
 categories: ["all", "ai", "engineering"]
-tags: ["AI", "Agent", "Multi-Agent", "Security", "LLM", "Cloudflare", "System Design", "Adversarial", "Agent Pipeline"]
+tags: ["AI", "Agent", "Multi-Agent", "Security", "LLM", "Cloudflare", "System Design", "Agent Pipeline"]
 authors: ["yen"]
 readTime: "13 min"
 ---

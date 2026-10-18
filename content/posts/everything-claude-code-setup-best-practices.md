@@ -4,7 +4,7 @@ date: 2026-01-24T16:30:00+08:00
 draft: false
 authors: ["yen"]
 categories: ["all", "engineering", "tools"]
-tags: ["Claude Code", "AI", "Development Tools", "MCP", "Agents", "Automation", "Best Practices", "Productivity", "Testing", "DevOps"]
+tags: ["Claude Code", "AI", "Developer Tools", "MCP", "Agent", "Automation", "Best Practices", "DevOps"]
 summary: "Master the everything-claude-code repository: a comprehensive collection of production-ready agents, skills, hooks, and MCP configurations evolved over 10+ months of intensive use. Learn setup, best practices, and advanced techniques to supercharge your Claude Code workflow."
 description: "Install and tailor the everything-claude-code agents, skills, hooks and MCP configs, then manage the context window and run its TDD and review workflows."
 readTime: "22 min"
