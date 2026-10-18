@@ -120,7 +120,7 @@ AutoGen（Microsoft Research）的核心哲學：**把 Agent 協作建模成對�
 - **狀態不透明**：狀態藏在 messages list 裡，難以查詢特定欄位
 - **流量控制困難**：對話輪數由 LLM 決定，難以預測 token 用量
 - **生產部署複雜**：AutoGen 0.4（AgentChat）架構重寫，0.2 升 0.4 需大量重構
-- **延遲數字**：每次工具呼叫 +150–400ms overhead（HTTP to executor）；GroupChat 中每輪需一次 LLM 呼叫決定下一個 speaker，增加 ~800ms–2s
+- **延遲數字**：工具在行程內執行，框架本身的呼叫 overhead 只有毫秒級；真正的延遲來自 GroupChat 每輪多一次 LLM 呼叫決定下一個 speaker，增加 ~800ms–2s
 
 **適用規模**：POC 到 MVP 早期。日對話超過 20K 後，GroupChat 的不可預測性開始造成 P99 延遲爆炸。
 
@@ -426,7 +426,7 @@ AI 功能多樣性 Planner 強，記憶體抽象好        圖執行更靈活
 ──────────────────────────────────────────────────────────────────────
 POC 開發時間           1–2 天        1–2 天      3–5 天      5–10 天
 MVP 開發時間           2–3 週        2–3 週      3–4 週      6–10 週
-節點切換 overhead      150–400ms     100–300ms   20–50ms     < 5ms
+節點切換 overhead      毫秒級        100–300ms   20–50ms     < 5ms
 GroupChat latency      +800ms–2s     N/A         N/A         N/A
 Checkpointing          需自行實作    需自行實作  原生支援    需自行實作
 Human-in-the-loop      有（複雜）    有（有限）  原生支援    需自行實作

@@ -34,13 +34,13 @@ LLM 推論和傳統深度學習推論有本質上的差異。ResNet 做影像分
 
 **瓶頸二：KV Cache 爆炸**
 
-Transformer 的 attention 需要存每個 token 的 Key 和 Value 向量（KV Cache），讓後續 token 不必重算。70B 模型每個 token 的 KV Cache 約 0.8 MB（依模型架構不同）。2048 token 的對話 = 1.6 GB KV Cache。同時跑 40 個對話 = 64 GB，比模型本身還大。
+Transformer 的 attention 需要存每個 token 的 Key 和 Value 向量（KV Cache），讓後續 token 不必重算。Llama-2-70B（GQA，8 個 KV head）每個 token 的 KV Cache 約 0.33 MB；若是 64 個 KV head 的 MHA 架構則是 2.5 MB（推導見 §三）。2048 token 的對話 = 0.67 GB KV Cache，同時跑 100 個對話 ≈ 67 GB，接近一整張 A100-80GB。
 
 **瓶頸三：靜態批次的空洞（Static Batching Waste）**
 
 傳統做法：等一批請求湊齊，一起跑，全部跑完再接下一批。問題：請求的輸出長度不一，短的跑完要等長的，GPU 算到一半在空轉。
 
-這三個瓶頸共同造成 Naive HuggingFace `generate()` 的慘況：**GPU 使用率 10–20%、p99 延遲動輒 15–20 秒、每千 token $0.03–0.05**。
+這三個瓶頸共同造成 Naive HuggingFace `generate()` 的慘況：**GPU 使用率 10–20%、p99 延遲動輒 15–20 秒、每千 token 約 $0.03**（推導見 §九）。
 
 ---
 
@@ -61,7 +61,7 @@ Transformer 的 attention 需要存每個 token 的 Key 和 Value 向量（KV Ca
 ```
 
 - **硬體下限**：70B FP16 的 140 GB 權重一張 A100-80GB 放不下，POC 也得兩張（或先用 8B 模型單卡驗證效果）
-- **成本**：2× A100（$3.09/hr/張），QPS 約 0.5，每千 token ≈ $0.05
+- **成本**：2× A100（$3.09/hr/張），QPS 約 0.5、吞吐約 60 tok/s → 每千 token ≈ 2 × $3.09 ÷ (60 × 3.6) ≈ $0.029
 - **延遲**：p50 6 秒，p99 18 秒
 - **可接受的捷徑**：無 queue、無 SLA、無監控
 - **致命問題**：無法同時服務 > 3 個使用者
@@ -90,7 +90,7 @@ Transformer 的 attention 需要存每個 token 的 Key 和 Value 向量（KV Ca
 ```
 
 - **新增組件**：vLLM、Tensor Parallel、基本監控
-- **成本**：每千 token ≈ $0.012（比 Phase 1 低 4×）
+- **成本**：吞吐約 1,800 tok/s → 每千 token ≈ 2 × $3.09 ÷ (1,800 × 3.6) ≈ $0.001（比 Phase 1 低約 30×）
 - **延遲**：p50 1.8 秒，p99 5 秒
 - **解決問題**：記憶體碎片、批次空洞
 - **仍有問題**：沒有量化，模型佔 GPU 記憶體多；冷啟動 3 分鐘
@@ -123,7 +123,7 @@ Transformer 的 attention 需要存每個 token 的 Key 和 Value 向量（KV Ca
 ```
 
 - **新增組件**：請求佇列、模型量化、雙軌路由（吞吐 vs 延遲）、KEDA 自動擴容
-- **成本**：每千 token ≈ $0.006（比 Phase 1 低 8×）
+- **成本**：INT4 路由單卡約 3,200 tok/s → 每千 token ≈ $3.09 ÷ (3,200 × 3.6) ≈ $0.0003（比 Phase 1 低約 100×）
 - **延遲**：p50 0.9 秒，p99 3.2 秒（INT4 路由）
 - **解決問題**：INT4 量化省 75% GPU 記憶體（140 GB → 35 GB），騰出的空間留給 KV Cache，同機器塞進更多並行序列
 
@@ -137,16 +137,19 @@ KV Cache 是 LLM 推論記憶體問題的核心，必須深入理解。
 
 ```
 每個 token 的 KV Cache 大小
-= 2（K+V）× num_layers × num_heads × head_dim × dtype_bytes
+= 2（K+V）× num_layers × num_kv_heads × head_dim × dtype_bytes
 
-例：LLaMA-2-70B（FP16）
-= 2 × 80 × 64 × 128 × 2 bytes
-= 2 × 80 × 64 × 128 × 2
-= 3,276,800 bytes ≈ 3.1 MB / token
+注意是 num_kv_heads，不是 attention head 數：GQA / MQA 架構
+讓多個 query head 共用一組 K/V，KV Cache 只隨 KV head 數成長。
+
+例：Llama-2-70B（FP16，80 層，head_dim 128）
+                    MHA（64 個 KV head）        GQA（實際架構，8 個 KV head）
+每 token           2 × 80 × 64 × 128 × 2        2 × 80 × 8 × 128 × 2
+                   = 2,621,440 B ≈ 2.5 MB       = 327,680 B ≈ 0.33 MB
+2048 token 對話    ≈ 5.4 GB                     ≈ 0.67 GB
 ```
 
-2048 token 的對話 = 6.4 GB KV Cache。
-同時跑 20 個對話 = 128 GB，超過單張 A100-80GB。
+2× A100-80GB 放完 140 GB 權重後只剩約 20 GB 給 KV Cache：GQA 架構可以同時跑約 30 個 2048-token 的對話，換成 MHA 只剩 3–4 個。這就是為什麼新一代模型幾乎全部改用 GQA——同樣的 GPU，KV Cache 容量差 8 倍。
 
 **Naive 分配的問題：**
 
@@ -198,7 +201,7 @@ Seq3（已生成 50 token）→ [B004, B006, B008]
 **數字效果：**
 - 記憶體浪費從 40% 降至 < 4%（只有最後一個 block 可能不滿）
 - 相同 GPU 可同時跑的並行 sequence 數量提升 5–10×
-- vLLM 論文報告：對比 HuggingFace Text Generation Inference，**吞吐量提升 24×**
+- vLLM 發布文章（2023-06）報告：對比 HuggingFace Transformers 吞吐量最高提升 **24×**，對比 HuggingFace Text Generation Inference 最高 **3.5×**
 
 **Prefix Caching（進階）：**
 
@@ -318,7 +321,7 @@ AWQ 的洞察：不是所有權重一樣重要。少數「顯著」的權重對�
 
 結果：70B 模型 AWQ INT4 量化後：
 - 記憶體從 140 GB 降至 **35 GB**（單張 A100-80GB 就能跑）
-- 推論吞吐提升約 **1.8–2.2×**（記憶體頻寬是瓶頸，位元數減半吞吐接近翻倍）
+- 推論吞吐提升約 **1.8–2.2×**（記憶體頻寬是瓶頸，權重讀取量降到 1/4，但反量化的計算開銷吃掉一部分收益）
 - 精度損失在 MMLU、HumanEval 等 benchmark 上 **< 1%**
 
 **FP8（H100 專屬）：**
@@ -414,17 +417,17 @@ flip：流量非常穩定（方差 < 20%）用固定副本。有明顯日夜流�
 | GPU 使用率 | 12% | 65% | 72% | 78% |
 | p50 延遲 | 6.2 s | 1.4 s | 0.9 s | 0.5 s |
 | p99 延遲 | 18 s | 4.8 s | 3.1 s | 2.2 s |
-| 每千 token | $0.045 | $0.011 | $0.006 | $0.004 |
+| 每千 token（= GPU 數 × $3.09/h ÷ (tok/s × 3.6)） | $0.029 | $0.001 | $0.0003 | $0.0002 |
 | 並行 seq 數 | 8 | 120 | 240 | 240 |
 
 > 以上為以 70B 模型、A100 環境推算的示意估算，非實測數據；實際數字依模型、prompt 長度與流量分佈而定。H100/H200/B200 搭配 FP8 時，各欄的絕對吞吐都會明顯提高，但「Naive → Continuous Batching 的跳躍最大」這個相對結論不變。
 
 **關鍵洞察：**
 
-1. **最大的跳躍在 Naive → vLLM FP16**：不是量化，是 PagedAttention + Continuous Batching。光這一步吞吐提升 **15×**，成本降低 **4×**。
+1. **最大的跳躍在 Naive → vLLM FP16**：不是量化，是 PagedAttention + Continuous Batching。光這一步吞吐提升 **15×**（120 → 1,800 tok/s），GPU 數減半，每千 token 成本降低約 **30×**（$0.029 → $0.001）。
 2. **量化的貢獻是硬體效率**：從 2 張 A100 降到 1 張就能跑，節省硬體成本，但延遲改善相對有限。
 3. **投機解碼主要改善 p50**：p99 改善較小，因為長尾往往是 draft acceptance rate 低的複雜請求。
-4. **對照一個常見目標**：每千 token 從 $0.04 降到 $0.008 是可以達到的（vLLM + AWQ INT4），p99 從 18s 降到 4s 也是（vLLM FP16 就夠了）。
+4. **對照一個常見目標**：每千 token < $0.01 在 vLLM FP16 這一步就達到了（$0.029 → $0.001，前提是流量足以把批次填滿）；p99 從 18s 降到 4s 也是（vLLM FP16 就夠了）。量化與投機解碼再往下壓的是硬體數量與 p50。
 
 ## 相關文章與正典版本
 

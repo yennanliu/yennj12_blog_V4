@@ -37,7 +37,7 @@ AI 治理在過去五年從「道德宣示」進化為「法律義務」。EU AI
 - EU AI Act 分類：高風險（Annex III, 5b — access to essential private services）
 - GDPR Article 22：禁止純自動化決策影響個人法律地位，除非有明確告知和申訴機制
 - 美國 FCRA/ECOA：對抵押貸款、信用卡的公平貸款義務，違規罰款可達 $1M/天
-- 偏見訴訟：2021 年美國有 12 件 AI 信用歧視集體訴訟，和解金從 $2M 到 $98M
+- 偏見訴訟：美國近年已有多起 AI 信用歧視集體訴訟，和解金可達數千萬美元（示意量級）
 
 ---
 
@@ -139,7 +139,7 @@ P(Y=1 | Ŷ=p, A=a) = p  for all a
 **4. Individual Fairness**
 相似的個人應獲得相似的結果：`d(x_i, x_j) < ε → |f(x_i) - f(x_j)| < δ`
 
-**這四者無法同時滿足（Impossibility Theorem）**，工程師必須根據應用場景選擇。
+**這些指標無法同時滿足**：Chouldechova（2017）與 Kleinberg et al.（2016）證明，只要各群體的基礎率不同，校準（Calibration）與錯誤率平衡（Equalized Odds）就不可能同時成立；工程師必須根據應用場景選擇。
 
 ### 公平性量測程式碼片段
 
@@ -221,7 +221,6 @@ def dp_gaussian_mechanism(true_value, sensitivity, epsilon, delta):
     信用評分場景：計算群體平均分數時，sensitivity = max_score / n
     """
     # 計算高斯噪音標準差
-    # Calibrated to (epsilon, delta)-DP via analytic Gaussian mechanism
     sigma = sensitivity * np.sqrt(2 * np.log(1.25 / delta)) / epsilon
 
     noise = np.random.normal(0, sigma)
@@ -270,11 +269,13 @@ dp_mean = dp_gaussian_mechanism(true_mean, sensitivity, epsilon=1.0, delta=1e-5)
 │                                                              │
 │  隱私保證：                                                  │
 │  - 本地資料永遠不離開節點                                    │
-│  - 梯度注入 DP 噪音（ε=0.5/round，100 rounds → ε=50 累積） │
+│  - 梯度注入 DP 噪音（每輪 ε≈0.05；高斯機制在 RDP 下約按 √k │
+│    合成，100 輪後總 ε≈0.5，才對得上 ε=0.5 的全域預算）     │
 │  - Moments Accountant 追蹤累積 ε 預算                       │
 │                                                              │
 │  GDPR 合規點：                                               │
-│  - Article 44（跨境傳輸）：梯度非個人資料，合法傳輸         │
+│  - Article 44（跨境傳輸）：梯度可被反推出訓練資料，不能當作 │
+│    非個人資料；靠安全聚合 + DP 才站得住跨境傳輸             │
 │  - Article 5（資料最小化）：原始資料不流出                   │
 └──────────────────────────────────────────────────────────────┘
 ```

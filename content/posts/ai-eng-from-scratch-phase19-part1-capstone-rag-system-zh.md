@@ -92,9 +92,9 @@ series: ["ai-eng-from-scratch"]
 
 **成本**：
 - 運算：本地 MacBook，$0
-- LLM：每次查詢約 3K tokens，$0.045/次，200 次/天 = $9/天
+- LLM：每次查詢約 3K tokens 輸入 + 500 tokens 輸出，以 GPT-4o $5 / $15 per 1M 計 ≈ $0.0225/次，200 次/天 ≈ $4.5/天
 - 向量 DB：本地，$0
-- 總計：約 $270/月
+- 總計：約 $135/月
 
 **解決了什麼**：
 - 驗證了基本 RAG 流程可行
@@ -222,7 +222,7 @@ series: ["ai-eng-from-scratch"]
 │    ┌────────────────────▼──────────────────────┐                   │
 │    │           Qdrant Cluster（3 nodes）         │                   │
 │    │  Collection per tenant（3 個部門）          │                   │
-│    │  Quantization: int8（節省 50% 記憶體）      │                   │
+│    │  Quantization: int8（向量記憶體降到 1/4）   │                   │
 │    └────────────────────┬──────────────────────┘                   │
 │                         │                                           │
 │    ┌────────────────────▼──────────────────────┐                   │
@@ -396,10 +396,10 @@ series: ["ai-eng-from-scratch"]
 | 平均 chunks per doc | 24 |
 | 總 child chunks | 1,200,000 |
 | Dense vector 索引大小 | 7.3GB（原始 float32） |
-| 量化後（int8） | 3.6GB |
+| 量化後（int8，載入記憶體的部分） | 1.8GB（7.3 ÷ 4） |
 | BM25 sparse index | 1.2GB |
 | Payload + metadata | 2.1GB |
-| **Qdrant 總磁碟** | **約 12GB** |
+| **Qdrant 總磁碟**（原始 float32 向量仍留在磁碟） | **約 12GB** |
 
 ### 4.3 查詢延遲（各策略對比）
 
@@ -589,9 +589,9 @@ def should_answer(rerank_scores: list[float], threshold: float = 0.28) -> bool:
 | 串流式回應 | 0%（成本不變，體驗提升） | SSE streaming |
 
 **示意成本**：
-- 優化前：$0.18/次（3K tokens input × $0.005 + 500 tokens output × $0.015）
-- 優化後：$0.04/次（prompt cache + mini fallback + 壓縮）
-- 月成本（40 QPS × 3600s × 8hr × 30天 ÷ 10 = 約 345,600 次）：示意約 $13,800 次 × $0.04 = $552/月
+- 優化前：$0.0225/次（3K tokens input × $5/1M + 500 tokens output × $15/1M）
+- 優化後：約 $0.005/次（prompt cache + mini fallback + 壓縮，合計約 −78%）
+- 月成本：200 位使用者 × 每人每天約 10 次 ≈ 2,000 次/天 ≈ 60K 次/月 → 60K × $0.005 ≈ $300/月（與 §二 Phase 3 的 $280 同量級；40 QPS 是尖峰值，不是平均）
 
 ---
 
@@ -613,7 +613,7 @@ def should_answer(rerank_scores: list[float], threshold: float = 0.28) -> bool:
 **第一步**：從真實用戶查詢記錄中抽取 500 個問題（系統上線後第一週的 log）。
 **第二步**：人工標記每題的「正確答案」和「應包含哪些 source chunks」。
 **第三步**：清洗掉模糊問題（主觀判斷、多解答案），保留 200 題。
-**第四步**：加入 edge cases：跨文件問題（30 題）、否定語義問題（20 題）、超出範圍問題（50 題）。
+**第四步**：加入 edge cases：跨文件問題（30 題）、否定語義問題（20 題）、超出範圍問題（40 題）。
 
 最終 200 題分佈：
 - 事實查詢：80 題
@@ -710,10 +710,10 @@ def detect_embedding_drift(new_vectors, reference_vectors, threshold=0.05):
 | **Answer Relevancy** | 0.72 | 0.91 | +26% | Reranking 篩掉不相關 chunks |
 | **Faithfulness** | 0.66 | 0.94 | +42% | Citation-grounded prompt + Context Precision 提升 |
 | **P95 延遲** | 8.2s | 2.9s | -65% | 串流輸出(-3s) + int8 量化與並行搜尋(-0.4s) + Redis cache(-1.5s on cache hits) |
-| **Cost/query** | $0.18 | $0.04 | -78% | Prompt caching + mini fallback + context 壓縮 |
+| **Cost/query** | $0.0225 | $0.005 | -78% | Prompt caching + mini fallback + context 壓縮 |
 | **OCR 支援** | 無 | 有（2.1 pps） | N/A | OCRmyPDF + Celery async |
 | **可用性** | 無保證 | 99.5%（3-node Qdrant） | N/A | Cluster HA |
-| **Index size** | — | 12GB（50K docs） | — | int8 量化節省 50% |
+| **Index size** | — | 12GB（50K docs） | — | int8 量化讓記憶體中的向量降到 1/4 |
 | **查詢快取 hit rate** | 0% | 45% | — | Redis + 1hr TTL + query normalization |
 
 > *示意估算，非實測數據。*

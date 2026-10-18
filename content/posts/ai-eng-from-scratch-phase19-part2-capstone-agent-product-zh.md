@@ -88,7 +88,7 @@ series: ["ai-eng-from-scratch"]
 
 **新增元件**：FastAPI endpoint、基礎 ReAct prompt、3 個工具、SQLite 訂單 mock
 
-**成本/複雜度**：$0.8/1K sessions，2 週可上線 demo，2 人工程師
+**成本/複雜度**：約 $45/1K sessions（示意；Sonnet 全走、無快取、prompt 未壓縮），2 週可上線 demo，2 人工程師
 
 **解決的問題**：
 - 驗證 LLM 能否正確呼叫工具
@@ -150,7 +150,7 @@ series: ["ai-eng-from-scratch"]
 
 **新增元件**：Redis session store、Guardrails layer、Tool Safety Wrapper、pgvector 知識庫、結構化 logging
 
-**成本/複雜度**：$2.1/1K sessions，4 週開發，4 人工程師，增加 2 台 Redis instance
+**成本/複雜度**：約 $32/1K sessions（示意；prompt 壓縮 + 工具結果快取），4 週開發，4 人工程師，增加 2 台 Redis instance
 
 **解決的問題**：
 - 多 instance 共享對話歷史
@@ -222,7 +222,7 @@ series: ["ai-eng-from-scratch"]
 
 **新增元件**：Agent Worker Pool（水平擴展）、Tool Gateway（Circuit Breaker）、Redis Cluster、OpenTelemetry tracing、per-user token budget、Order DB read replica
 
-**成本/複雜度**：$1.4/1K sessions（規模效益，批次 embedding 預計算），6 人工程師，infrastructure 複雜度顯著上升
+**成本/複雜度**：約 $21.6/1K AI sessions（= §九 的 $14,000/月 ÷ 648K AI sessions；Sonnet/Haiku 路由 + 批次 embedding 預計算），6 人工程師，infrastructure 複雜度顯著上升
 
 **解決的問題**：
 - 水平擴展應對峰值
@@ -324,7 +324,7 @@ CRM 是第三方 SaaS（不是自建），有以下限制：
 - 回應時間：P50 = 180ms，P95 = 800ms，P99 = 2.3s（偶爾超時）
 - 沒有 webhook，只能 polling
 
-在 20K sessions/day（平均 14 sessions/min，但峰值 3×）的規模下，每個 session 平均呼叫 CRM 2.3 次，峰值需要約 96 calls/min。看似沒問題，但雙 11 峰值就是 288 calls/min，加上重試就可能打爆 rate limit。
+在 20K sessions/day（平均 14 sessions/min，但峰值 3×）的規模下，每個 session 平均呼叫 CRM 2.3 次，峰值需要約 96 calls/min。看似沒問題，但雙 11 的 80K sessions/day 用同樣算法（80K ÷ 1,440 × 3 × 2.3）就是約 380 calls/min，加上重試就可能打爆 rate limit。
 
 **解法**：在 Tool Gateway 加了 token bucket rate limiter + 本地快取（TTL 60s for read-only operations）。CRM 讀取請求命中快取率在穩定期達到 73%，有效降低了對 CRM 的實際呼叫量。
 
@@ -652,6 +652,8 @@ Grafana 上追蹤的核心指標：
 | Guardrails GPU instance | $520 |
 | 其他 infra（API GW、monitoring） | $440 |
 | **AI 總成本** | **$14,000** |
+
+以 30K sessions/day × 30 天 × 72% AI 處理率 ≈ 648K AI sessions 計，約 $21.6 / 1K AI sessions。
 
 > *示意估算，非實測數據。*
 
