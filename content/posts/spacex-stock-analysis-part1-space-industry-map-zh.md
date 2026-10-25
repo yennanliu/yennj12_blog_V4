@@ -51,7 +51,7 @@ IPO 定價       $135.00
 10-23 收盤     $147.49  ← 比 IPO 價高 9%，比高點低 30%
 ```
 
-用 2026-10-15 的流通股數（Class A 82.47 億股＋Class B 53.35 億股＝**135.81 億股**）計算，市值約 **$2.0 兆**。
+用 2026-10-15 的流通股數（Class A 8,246.5M 股＋Class B 5,334.5M 股＝**約 135.81 億股**）計算，市值約 **$2.0 兆**。
 
 這家公司其實是三個事業疊在一起，而且三個事業的成熟度差很多：
 
@@ -69,7 +69,7 @@ IPO 定價       $135.00
 FY2025 營收組成（US$ M，合計 18,674）
 Space     ████████████                        4,086   21.9%
 Connect.  ██████████████████████████████████  11,387  61.0%
-AI        ██████████                          3,201   17.1%
+AI（SI）  ██████████                          3,201   17.1%
 
 Q3 2026 營收組成（US$ M，合計 14,575）
 Space     ████████                            1,767   12.1%
@@ -100,7 +100,7 @@ SpaceX 上市才四個多月，**還沒有任何一份 10-K 年報**。可用的
 
 ### 步驟 1：跑分析技能
 
-每個技能都用 `claude -p` 在本機無人值守地執行，載入的是 InvestSkill repo 裡最新的 plugin。提示詞限定只能讀這三個檔案，需要競爭對手資料的技能才另外開放網路搜尋。
+每個技能都用 `claude -p` 在本機無人值守地執行，載入的是 InvestSkill repo 裡最新的 plugin。提示詞限定只能讀兩份申報文件與資料包，需要競爭對手資料的技能才另外開放網路搜尋。
 
 | 技能 | 用在 | 執行時間 | 訊號 |
 |---|---|---|---|
@@ -110,7 +110,7 @@ SpaceX 上市才四個多月，**還沒有任何一份 10-K 年報**。可用的
 | `bear-case` | part 5 | 2.6 分鐘 | BEARISH 3.0／SELL |
 | `catalyst-calendar` | part 5 | 3.9 分鐘 | NEUTRAL 4.5／HOLD |
 
-（`stock-valuation` 與 `fact-check` 的結果放在 part 2 與 part 4。）
+（`fact-check` 的結果在 part 2，`stock-valuation` 在 part 4。）
 
 這篇用的是 `industry-map`：它把一個產業畫成上游到下游的有向圖，標出目標公司的位置、各環節的瓶頸分數，以及利潤往哪裡移動。
 
@@ -141,7 +141,7 @@ AI 晶片 NVDA/TSM ──▶  AI 資料中心 ─────────▶    
                       （地面 → 2028 軌道）
 ```
 
-把 SpaceX 放上這張圖，會發現它**同時占了六個節點**：衛星製造、發射、LEO 寬頻、直連手機、政府太空，以及 AI 算力。換成其他產業，這相當於一家公司同時是台積電、物流公司、電信商和雲端業者。
+把 SpaceX 放上這張圖，會發現它**同時占了七個節點**：衛星製造、發射、LEO 寬頻、直連手機、政府太空、地面 AI 算力，以及規劃中的軌道 AI 算力。換成其他產業，這相當於一家公司同時是製造商、物流公司、電信商和雲端業者。
 
 `industry-map` 技能用 Mermaid 畫了更細的版本（深藍色是 SpaceX 已進入或明確規劃進入的節點）：
 
@@ -207,7 +207,7 @@ FY2025    ███████████████████████�
 
 換句話說，**發射的價值大部分沒有出現在 Space 部門的帳上，而是轉成了 Starlink 的低成本優勢**。這是理解 SpaceX 最重要的一件事，part 2 會再拆一次。
 
-還有一個值得追蹤的訊號：Q3 2026 Falcon 發射 33 次，去年同期 43 次；客戶發射從 15 次降到 12 次；入軌質量從 525 公噸降到 476 公噸（−9%）。可能的解釋是產能轉向 Starship，但 10-Q 沒有說明原因。
+還有一個值得追蹤的訊號：Q3 2026 Falcon 發射 33 次，去年同期 43 次；客戶發射從 15 次降到 12 次；入軌質量從 525 公噸降到 476 公噸（−9%）。10-Q 沒有說明原因，但公開說明書早已預告：「我們預期 Falcon 9 的發射次數會隨時間減少」，因為 Starship 進入營運後會承擔更多發射量（424B4 MD&A）。2026 Q1 的客戶發射也已經從去年同期的 12 次降到 7 次。
 
 ---
 
@@ -265,8 +265,8 @@ Q3 2026   ███████████████████████�
 
 D2C 的關鍵投入是**頻譜**，而不是火箭。手機只能用特定頻段跟衛星通訊，這些頻段是受監管的稀缺資源。SpaceX 的動作說明它看懂了這件事：
 
-- 2025-09 簽約、2026-05-22 完成交割，向 EchoStar 買下 AWS-4／H-block 等頻譜執照。
-- 總對價約 **$196 億**：約 $111 億股票（2.618 億股 Class A，每股固定 $42.40），加上最多 $85 億的 EchoStar 債務相關付款（424B4 MD&A）。
+- 2025-09 簽約，向 EchoStar 購買 AWS-4／H-block 等頻譜執照。2026-05-22 執照先移轉到一個信託（Spectrum Transfer Closing），**正式收購預計 2027-11 才完成**，屆時才發行股票並支付現金。
+- 總對價約 **$196 億**：約 $111 億股票（2.618 億股 Class A，每股固定 $42.40），加上最多 $85 億的 EchoStar 債務相關付款（424B4 MD&A；10-Q Note 6）。股票部分以固定價格 $42.40 計價，用現價 $147.49 換算約值 $386 億，所以實際經濟成本接近 $480 億。
 
 `industry-map` 技能把頻譜的瓶頸分數評為 8.5，和 AI 晶片並列第二，僅次於可回收重型發射。它的判讀是：「SpaceX 願意以約 $196 億收購 EchoStar 頻譜，表示它認為下一個瓶頸在頻譜，而不是發射。」
 
@@ -278,7 +278,7 @@ D2C 的主要對手是 AST SpaceMobile（ASTS）。依技能檢索到的 ASTS 8-
 
 這是整個故事裡最新、也最有爭議的一塊。
 
-2026-02-02，SpaceX 收購了 xAI（xAI 在 2025-03 已經併入 X，也就是原本的 Twitter）。2026-08-14 又以約 **$425 億**的股票收購 AI 程式開發工具 Cursor（Anysphere）。AI 部門因此改名為 **SI**，業務包括：
+2026-02-02，SpaceX 收購了 xAI（xAI 在 2025-03 已收購 X，也就是原本的 Twitter）。2026-08-14 又以約 **$425 億**的對價（$383 億 Class A 股票加上 $42 億替代獎酬）收購 AI 程式開發工具 Cursor（Anysphere）。AI 部門因此改名為 **SI**，業務包括：
 
 1. **GPU 雲端算力出租**：SI 部門的 nameplate compute（已安裝 GPU 的額定功率）從 2025-09-30 的 0.6 GW 增加到 2026-09-30 的 **1.7 GW**。
 2. **Grok** 前沿大型語言模型。
@@ -291,7 +291,7 @@ SI 營收從 Q3 2025 的 $813M 暴增到 Q3 2026 的 **$7,560M**，主要來自�
 
 把 AI 放回產業鏈的框架裡，問題就很清楚：
 
-- **地面 AI 算力的瓶頸在上游。** NVIDIA 的 GPU 和台積電的先進製程，加上電力。SpaceX 在這一層是**買方**，不是收過路費的人。SI 部門 Q3 營業利益率只有 5.7%，和 Connectivity 的 45% 差很遠。
+- **地面 AI 算力的瓶頸在上游。** NVIDIA 的 GPU 和台積電的先進製程，加上電力。SpaceX 在這一層是**買方**，不是收過路費的人。SI 部門 Q3 營業利益率只有 5.7%，和 Connectivity 的 45% 差很遠。這個 5.7% 有兩個來源：一是 GPU 的折舊攤銷 $2,473M，反映的正是向上游買晶片的成本；二是股份基礎薪酬 $2,038M（其中 $1,217M 來自併購 Cursor 等案的替代獎酬），占 SI 營收 27%（10-Q MD&A Non-GAAP 調節表）。
 - **軌道 AI 算力才會把瓶頸拉回發射。** SpaceX 的長期願景是把 AI 運算衛星送上太陽同步軌道，用太空太陽能供電，公開說明書寫「最早 2028 年開始部署」。如果成真，最大的成本就變成發射，而發射正是 SpaceX 的獨占優勢。但這目前沒有任何營收，屬於遠期選擇權。
 
 ---
@@ -340,9 +340,9 @@ SI 營收從 Q3 2025 的 $813M 暴增到 Q3 2026 的 **$7,560M**，主要來自�
 
 我從這張表讀出三件事：
 
-1. **寬頻是成熟的利潤池，而且 Starlink 拿走了大部分。** Starlink 一季的 Connectivity 營收（$5.2B）超過 Viasat 一整年（$4.64B），利潤率卻接近 Iridium 這類成熟營運商。傳統的同步軌道（GEO）業者營收停滯，正在被擠壓。
+1. **寬頻是成熟的利潤池，而且 Starlink 拿走了大部分。** Starlink 一季的 Connectivity 營收（$5.2B）超過 Viasat 一整年（$4.64B），以同一基準比較，Connectivity 9M 的 Segment Adjusted EBITDA 率約 64%（8,183／12,796），還高於 Iridium 的 56.8%。傳統的同步軌道（GEO）業者營收停滯，正在被擠壓。
 2. **獨立發射商很難靠發射本身賺錢。** 即使是近乎獨占的 SpaceX，發射部門帳面上也是虧損，因為它把發射當成內部成本中心。
-3. **AI 算力層目前是低利潤、高資本的生意。** SI 部門營收雖然最大，利潤大部分被上游的晶片商拿走。
+3. **AI 算力層目前是低利潤、高資本的生意。** SI 部門營收雖然最大，但 GPU 折舊吃掉很大一塊，加上併購帶來的股份基礎薪酬，營業利益率只剩個位數。
 
 ---
 
@@ -371,7 +371,7 @@ SI 營收從 Q3 2025 的 $813M 暴增到 Q3 2026 的 **$7,560M**，主要來自�
 
 - Falcon 發射次數是否回升，或者確認是產能轉向 Starship。
 - Starlink ARPU 是否止跌（技能設定的警戒線是 $60）。
-- EchoStar 頻譜何時用於下一代 Starlink Mobile 衛星。
+- EchoStar 頻譜的正式收購（預計 2027-11）與下一代 Starlink Mobile 衛星的部署時程。
 - Customer B 的營收占比，以及 SI 部門營業利益率能否維持正數。
 
 ---
@@ -393,5 +393,5 @@ SI 營收從 Q3 2025 的 $813M 暴增到 Q3 2026 的 **$7,560M**，主要來自�
 - SpaceX 424B4 最終公開說明書，2026-06-12 申報，accession 0001628280-26-042639：[SEC EDGAR](https://www.sec.gov/Archives/edgar/data/1181412/000162828026042639/spaceexplorationtechnologi.htm)
 - SpaceX Form 10-Q，季底 2026-09-30，2026-10-22 申報，accession 0001628280-26-066880：[SEC EDGAR](https://www.sec.gov/Archives/edgar/data/1181412/000162828026066880/spcx-20260930.htm)
 - 股價：Yahoo Finance chart API 日線收盤，取得於 2026-10-25
-- 競爭者數字（`industry-map` 技能網路檢索）：[Iridium 2025 年財報](https://investor.iridium.com/2026-02-12-Iridium-Announces-2025-Results-Issues-2026-Outlook)、[Viasat FY2026 10-K](https://www.sec.gov/Archives/edgar/data/0000797721/000119312526248290/vsat-20260331.htm)、[Eutelsat FY2025-26 簡報](https://www.eutelsat.com/system/files/2026-08/DOC_INVESTORS_Presentation-FY-2025-26_EN_070826.pdf)、[AST SpaceMobile 8-K](https://www.sec.gov/Archives/edgar/data/0001780312/000119312526216946/asts-ex99_1.htm)
+- 競爭者數字（`industry-map` 技能網路檢索）：[Iridium 2025 年財報](https://investor.iridium.com/2026-02-12-Iridium-Announces-2025-Results-Issues-2026-Outlook)、[Viasat FY2026 10-K](https://www.sec.gov/Archives/edgar/data/0000797721/000119312526248290/vsat-20260331.htm)、[Eutelsat FY2025-26 簡報](https://www.eutelsat.com/system/files/2026-08/DOC_INVESTORS_Presentation-FY-2025-26_EN_070826.pdf)、[AST SpaceMobile 8-K](https://www.sec.gov/Archives/edgar/data/0001780312/000119312526342540/asts-ex99_1.htm)
 - 分析工具：[InvestSkill](https://github.com/yennanliu/InvestSkill)（`fetch:edgar`、`industry-map`），執行日期 2026-10-25
