@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "KV Cache", "LLM", "Vertex AI", "Redis", "Memory Optimization", "Eviction Policy"]
 authors: ["yen"]
 readTime: "26 min"
+series: ["fde-interview-guide"]
 ---
 
 > 大多數工程師的做法：把 KV Cache 設一個固定 TTL，讓它自動過期，再出問題就加更多 GPU。

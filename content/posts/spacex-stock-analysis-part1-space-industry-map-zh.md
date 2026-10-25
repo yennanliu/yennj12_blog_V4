@@ -7,6 +7,8 @@ categories: ["all", "finance"]
 tags: ["SPCX", "SpaceX", "美股", "太空", "火箭", "Starlink", "產業分析", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "16 min"
+weight: 1
+series: ["spacex-stock-analysis"]
 ---
 
 > 大部分人談 SpaceX，談的是火箭：會降落、會回收、很酷。

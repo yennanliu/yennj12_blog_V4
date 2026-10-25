@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "ADK", "Agent", "Cloud", "Vertex AI", "Multi-Agent", "Tool", "System Design", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-interview-guide"]
 ---
 
 > ADK 不只是「Google 版的 LangGraph」。  

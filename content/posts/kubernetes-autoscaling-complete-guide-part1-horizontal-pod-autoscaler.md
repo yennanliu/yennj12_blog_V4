@@ -9,6 +9,7 @@ tags: ["Kubernetes", "K8S", "HPA", "Autoscaling", "VPA", "KEDA", "Performance", 
 summary: "Part 1 of the Kubernetes Autoscaling series: Deep dive into Horizontal Pod Autoscaler (HPA) approaches, comparing resource-based, custom metrics, external metrics, and event-driven autoscaling with KEDA. Learn when to use each approach with real-world examples and production best practices."
 description: "Part 1 of the Kubernetes Autoscaling series: Deep dive into Horizontal Pod Autoscaler (HPA) approaches, comparing resource-based, custom metrics, external metrics, and event-driven autoscaling with KEDA. Learn when to use each approach with real-world examples and production best practices."
 readTime: "34 min"
+series: ["kubernetes-autoscaling-complete-guide"]
 ---
 
 ## Series Overview

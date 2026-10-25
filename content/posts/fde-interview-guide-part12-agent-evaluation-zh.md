@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Evaluation", "Metrics", "RAG", "LLM", "Observability", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "15 min"
+series: ["fde-interview-guide"]
 ---
 
 > 你怎麼知道 Agent 可以上線？  

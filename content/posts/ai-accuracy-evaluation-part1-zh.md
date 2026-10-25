@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "Machine Learning", "Evaluation", "Precision", "Recall", "F1-Score", "RMSE", "繁體中文"]
 authors: ["yen"]
 readTime: "12 min"
+series: ["ai-accuracy-evaluation"]
 ---
 
 ## 前言：「準確率 90%」到底代表什麼？

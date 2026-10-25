@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Vector DB", "RAG", "Data Pipeline"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：向量索引的「健康度」不等於資料存在，而是指 HNSW 圖的連結品質——增量插入累積後圖結構失衡，recall 靜默下滑；Blue-Green 重建搭配 Lambda 雙索引架構，是兼顧零停機與高精度最穩健的做法（部分引擎也提供線上圖修復或定期 compaction）。**

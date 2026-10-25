@@ -8,6 +8,7 @@ categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "監測", "Analytics", "Python", "GA4", "ROI", "案例研究", "繁體中文", "SEO", "Case Study"]
 authors: ["yen"]
 readTime: "19 min"
+series: ["aio-geo"]
 ---
 
 > 大多數人的做法：改完網站，等三個月，然後憑感覺說「好像有效」。

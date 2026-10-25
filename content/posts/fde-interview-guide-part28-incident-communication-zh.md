@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Consultant", "Incident", "Debugging", "Observability", "GCP", "Vertex AI", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "16 min"
+series: ["fde-interview-guide"]
 ---
 
 > 技術問題，工程師能解。  

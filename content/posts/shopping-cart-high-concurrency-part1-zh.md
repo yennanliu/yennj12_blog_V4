@@ -8,6 +8,7 @@ categories: ["all", "engineering", "architecture"]
 tags: ["Spring Boot", "Java", "High Concurrency", "Redis", "HikariCP", "Virtual Threads", "Backend", "繁體中文"]
 authors: ["yen"]
 readTime: "17 min"
+series: ["shopping-cart-high-concurrency"]
 ---
 
 ## 前言

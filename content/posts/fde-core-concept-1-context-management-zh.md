@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "LLM", "RAG", "Token Budget"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **Context Management 的本質是：在有限的 Token 預算內，決定哪些資訊值得保留、哪些必須壓縮或捨棄——這是所有長對話 AI 系統的核心資源排程問題。**

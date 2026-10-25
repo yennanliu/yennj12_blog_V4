@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Consultant", "VPC", "Security", "Vertex AI", "GCP", "Compliance", "Architecture", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "17 min"
+series: ["fde-interview-guide"]
 ---
 
 > 大多數的架構設計課程從「最優解」出發。  

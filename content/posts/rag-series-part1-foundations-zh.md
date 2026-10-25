@@ -9,6 +9,7 @@ tags: ["RAG", "LLM", "Vector Database", "Embeddings", "Python", "繁體中文"]
 authors: ["yen"]
 readTime: "8 min"
 aliases: ["/posts/rag-series-part3-advanced-retrieval-zh/", "/posts/rag-series-part4-optimization-zh/"]
+series: ["rag-series"]
 ---
 
 > 大多數人的第一個 RAG 壞掉時，先改的是 prompt：「請根據以下資料回答，不要編造」。

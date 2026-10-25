@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "RAG", "Grounding", "Evaluation", "RAGAS", "Cost Control", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "14 min"
+series: ["fde-interview-guide"]
 ---
 
 > RAG 跑起來很容易。  

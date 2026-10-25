@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering", "business"]
 tags: ["GEO", "RAG", "內部知識庫", "Vertex AI Search", "Bedrock", "Confluence", "文件工程", "案例研究", "繁體中文", "Case Study"]
 authors: ["yen"]
 readTime: "19 min"
+series: ["aio-geo"]
 ---
 
 > 前九篇都在講怎麼讓外部引擎引用你。

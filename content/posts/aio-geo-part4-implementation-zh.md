@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering", "business"]
 tags: ["GEO", "AIO", "Hugo", "Next.js", "llms.txt", "JSON-LD", "SSR", "CI", "繁體中文", "SEO"]
 authors: ["yen"]
 readTime: "23 min"
+series: ["aio-geo"]
 ---
 
 > 大多數人的做法：讀完方法論，開一份 Notion 待辦，然後三個月後還在第一項。

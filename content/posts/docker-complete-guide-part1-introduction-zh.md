@@ -8,6 +8,7 @@ categories: ["all", "engineering", "infrastructure"]
 tags: ["Docker", "容器化", "虛擬化", "Container", "DevOps", "雲端運算", "微服務", "基礎教學"]
 authors: ["yen"]
 readTime: "22 min"
+series: ["docker-complete-guide"]
 ---
 
 ## 🎯 前言

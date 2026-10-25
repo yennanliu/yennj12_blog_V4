@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Compliance", "SovereignAI", "DataResidency"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **資料主權不是「把資料放在某個 bucket 就好」，而是一套覆蓋儲存、運算、網路傳輸、金鑰管理、審計稽核的完整地理邊界保證——任何一層缺口都讓合規承諾形同虛設。**

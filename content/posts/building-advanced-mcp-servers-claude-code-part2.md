@@ -9,6 +9,7 @@ tags: ["AI", "MCP", "Claude Code", "Database", "API Integration", "Production", 
 summary: "Advanced MCP server development covering database integration, REST API connectors, real-time data processing, and production deployment strategies for Claude Code development workflows."
 description: "Advanced MCP server development covering database integration, REST API connectors, real-time data processing, and production deployment strategies for Claude Code development workflows."
 readTime: "33 min"
+series: ["mcp-servers-claude-code"]
 ---
 
 ## 🎯 Advanced MCP Server Development

@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "LLM", "Vertex AI", "ContextCaching", "Vector Search", "System Design"]
 authors: ["yen"]
 readTime: "26 min"
+series: ["fde-interview-guide"]
 ---
 
 > 大多數工程師看到 200 萬 Token 的 Context Window，第一反應是：「RAG 已死，直接塞文件就好。」  

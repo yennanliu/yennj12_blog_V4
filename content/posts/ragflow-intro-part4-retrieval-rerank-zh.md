@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["RAGFlow", "RAG", "AI", "Hybrid Search", "Reranking", "GraphRAG", "RAPTOR", "繁體中文"]
 authors: ["yen"]
 readTime: "22 min"
+series: ["ragflow-intro"]
 ---
 
 > *大多數人談 RAG 的檢索，是「向量搜尋 top-5，然後塞進 prompt」。*

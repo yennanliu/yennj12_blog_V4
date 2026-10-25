@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Troubleshooting", "Observability", "OpenTelemetry", "SLO", "Debugging", "Reliability", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "23 min"
+series: ["fde-interview-guide"]
 ---
 
 > 「AI 系統出問題了」不是問題描述，是症狀描述。  

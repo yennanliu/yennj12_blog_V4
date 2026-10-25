@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "LangGraph", "CrewAI", "ADK", "MCP", "ReAct", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "14 min"
+series: ["fde-interview-guide"]
 ---
 
 > RAG 是知識，Agent 是行動。  

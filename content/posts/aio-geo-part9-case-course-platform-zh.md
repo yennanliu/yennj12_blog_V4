@@ -8,6 +8,7 @@ categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "線上課程", "付費牆", "Paywall", "GCP", "Cloud Run", "影片字幕", "案例研究", "繁體中文", "SEO", "Case Study"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["aio-geo"]
 ---
 
 > 「我們的內容都在付費牆後面，GEO 是不是做不了？」

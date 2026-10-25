@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Scalability", "Rate Limiting", "Multi-tenant"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：Backpressure 是下游受限資源（GPU 配額、LLM 速率上限）主動向上游發出「放慢」訊號的機制；Fair-Share 排程確保在削峰過程中每個租戶仍獲得保證的最低吞吐量，讓流量尖峰不會讓任何單一租戶將其他人餓死。**

@@ -9,6 +9,7 @@ tags: ["Kubernetes", "K8S", "Security", "RBAC", "Compliance", "Governance", "Pol
 summary: "Part 8 of the Kubernetes Autoscaling series: Complete guide to securing autoscaling infrastructure with RBAC, policy enforcement, compliance frameworks (PCI-DSS, HIPAA, SOC2), multi-tenancy patterns, audit logging, and governance best practices for enterprise Kubernetes."
 description: "Part 8 of the Kubernetes Autoscaling series: Complete guide to securing autoscaling infrastructure with RBAC, policy enforcement, compliance frameworks (PCI-DSS, HIPAA, SOC2), multi-tenancy patterns, audit logging, and governance best practices for enterprise Kubernetes."
 readTime: "30 min"
+series: ["kubernetes-autoscaling-complete-guide"]
 ---
 
 ## Series Overview

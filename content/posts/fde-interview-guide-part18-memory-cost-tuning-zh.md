@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Memory", "Cost Optimization", "Context Cache", "LLM", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "16 min"
+series: ["fde-interview-guide"]
 ---
 
 > 「把所有歷史對話塞進 Context 再問 LLM」  

@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Security", "PII", "DLP", "Compliance"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：PII 去識別化是在資料進入 LLM 嵌入或推論管線之前，透過抑制、偽名化或格式保留加密，將個人識別資訊轉化為不可直接識別的形式，同時保留資料在分析和 JOIN 場景中的可用性。**

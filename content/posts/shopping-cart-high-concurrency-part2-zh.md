@@ -8,6 +8,7 @@ categories: ["all", "engineering", "architecture"]
 tags: ["Spring Boot", "Java", "Redisson", "Distributed Lock", "Read Replica", "Docker", "Nginx", "High Concurrency", "Backend", "繁體中文"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["shopping-cart-high-concurrency"]
 ---
 
 ## 前言

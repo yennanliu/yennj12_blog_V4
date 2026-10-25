@@ -2,28 +2,27 @@
 <!-- Share Component -->
 {{ partial "share.html" . }}
 
-{{/* Series context banner — shown for weighted (series) posts */}}
-{{ if .Weight }}
-{{ $seriesTag := "" }}
-{{ $seriesTotal := 0 }}
-{{ range .Params.tags }}
-  {{ $tag := . }}
-  {{ $tagPage := site.GetPage (printf "/tags/%s" ($tag | urlize)) }}
-  {{ if $tagPage }}
-    {{ $count := len $tagPage.Pages }}
-    {{ if gt $count $seriesTotal }}
-      {{ $seriesTotal = $count }}
-      {{ $seriesTag = $tag }}
-    {{ end }}
-  {{ end }}
-{{ end }}
-{{ if and $seriesTag (gt $seriesTotal 1) }}
+{{/* Series context banner — driven only by the explicit `series` front matter.
+     The slug's display name comes from data/series.yaml; members are the posts
+     sharing the slug, ordered by weight. "Part N" is the post's position in
+     that order, not its raw weight, so a series with retired parts still reads
+     "Part 3 of 3". It used to guess the series from the post's most-used tag,
+     which labelled almost every series "AI" or "RKK". */}}
+{{ with .Params.series }}
+{{ $slug := index . 0 }}
+{{ $members := (where site.RegularPages "Params.series" "intersect" (slice $slug)).ByWeight }}
+{{ $total := len $members }}
+{{ if gt $total 1 }}
+{{ $pos := 0 }}
+{{ range $i, $p := $members }}{{ if eq $p.RelPermalink $.RelPermalink }}{{ $pos = add $i 1 }}{{ end }}{{ end }}
+{{ $name := $slug }}
+{{ with index site.Data.series $slug }}{{ $name = .title }}{{ end }}
 <div class="series-banner">
     <div class="container">
-        <a href="{{ (printf "tags/%s/" ($seriesTag | urlize)) | relURL }}" class="series-banner__link">
+        <a href="{{ "search/" | relURL }}?q={{ printf "series:%q" $slug | urlquery }}" class="series-banner__link">
             <span class="series-banner__label">Series</span>
-            <span class="series-banner__name">{{ $seriesTag }}</span>
-            <span class="series-banner__part">Part {{ .Weight }} of {{ $seriesTotal }}</span>
+            <span class="series-banner__name">{{ $name }}</span>
+            <span class="series-banner__part">Part {{ $pos }} of {{ $total }}</span>
         </a>
     </div>
 </div>

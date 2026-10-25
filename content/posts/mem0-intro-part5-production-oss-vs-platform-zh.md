@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering", "infrastructure"]
 tags: ["Mem0", "Production", "AI Agent", "Memory", "Evaluation", "MCP", "LangGraph", "繁體中文"]
 authors: ["yen"]
 readTime: "17 min"
+series: ["mem0-intro"]
 ---
 
 > *大多數人評估「要用開源版還是託管版」的方式，是比較功能清單的長度，然後選比較便宜的那個。*

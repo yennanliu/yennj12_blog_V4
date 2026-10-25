@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "Vector Search", "BM25"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **以示意量級來說，單一檢索模態可能只取得約 72% 的 Recall；混合 Dense + Sparse 搭配 RRF 融合，可將 Recall@10 推至約 84%——多出的十幾個百分點就是 RAG 系統品質的分水嶺。**（本文 72% / 68% / 84% 等數字為示意，實際提升幅度依資料集而定，需在自己的評估集上量測。）

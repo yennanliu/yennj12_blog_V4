@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["RAG", "Chunking", "Vector Database", "ChromaDB", "Pinecone", "Python", "繁體中文"]
 authors: ["yen"]
 readTime: "14 min"
+series: ["rag-series"]
 ---
 
 ## 前言

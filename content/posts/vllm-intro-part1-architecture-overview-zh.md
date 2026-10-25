@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering", "infrastructure"]
 tags: ["vLLM", "LLM", "AI", "Inference", "PagedAttention", "Architecture", "GPU", "繁體中文"]
 authors: ["yen"]
 readTime: "17 min"
+series: ["vllm-intro"]
 ---
 
 > *大多數人部署 LLM 的方式，是 `pipeline("text-generation")` 加一台 A100，跑得動就上線，跑不動就換 H100。*

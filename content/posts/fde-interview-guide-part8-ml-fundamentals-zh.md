@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Machine Learning", "Deep Learning", "Transformer", "XGBoost", "Neural Network", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-interview-guide"]
 ---
 
 > FDE 不是 ML 研究員，你不需要推導反向傳播的數學。  

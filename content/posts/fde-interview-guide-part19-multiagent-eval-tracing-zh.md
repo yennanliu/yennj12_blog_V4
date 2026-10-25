@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Evaluation", "Tracing", "Observability", "LangSmith", "OpenTelemetry", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "16 min"
+series: ["fde-interview-guide"]
 ---
 
 > 評估 RAG 系統：一個問題進去，一個答案出來，量化兩者的關係。  

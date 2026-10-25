@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "RKK", "Mock Interview", "System Design", "Cloud", "Playbook", "Interview"]
 authors: ["yen"]
 readTime: "25 min"
+series: ["fde-interview-guide"]
 ---
 
 > 這篇的用法：  

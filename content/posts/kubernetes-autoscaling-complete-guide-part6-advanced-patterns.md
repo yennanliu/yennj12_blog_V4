@@ -9,6 +9,7 @@ tags: ["Kubernetes", "K8S", "Autoscaling", "StatefulSet", "Multi-Cluster", "Cost
 summary: "Part 6 of the Kubernetes Autoscaling series: Advanced autoscaling patterns for stateful applications, multi-cluster deployments, cost optimization strategies, batch job scaling, and emerging technologies. Real-world architectures and production-grade implementations."
 description: "Part 6 of the Kubernetes Autoscaling series: Advanced autoscaling patterns for stateful applications, multi-cluster deployments, cost optimization strategies, batch job scaling, and emerging technologies. Real-world architectures and production-grade implementations."
 readTime: "33 min"
+series: ["kubernetes-autoscaling-complete-guide"]
 ---
 
 ## Series Overview

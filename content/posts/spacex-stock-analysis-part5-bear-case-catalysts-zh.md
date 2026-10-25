@@ -7,6 +7,8 @@ categories: ["all", "finance"]
 tags: ["SPCX", "SpaceX", "美股", "空方論點", "催化劑", "解禁", "Tesla", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "16 min"
+weight: 5
+series: ["spacex-stock-analysis"]
 ---
 
 > 大部分人研究一檔股票，是先決定喜歡它，再去找支持的理由。

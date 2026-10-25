@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Tool Calling", "Concurrency", "DAG", "Parallel", "ADK", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "16 min"
+series: ["fde-interview-guide"]
 ---
 
 > LLM 說「我需要查 User Profile、Order History、Risk Score」。  

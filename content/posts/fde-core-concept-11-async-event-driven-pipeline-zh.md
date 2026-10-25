@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Architecture", "Pub/Sub", "AsyncDesign"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：Async Event-Driven Pipeline 是將每個長時間運算（如 LLM 推論）拆成「接受請求 → 寫訊息佇列 → 立即回 202 → 背景 Worker 處理 → 客戶端輪詢或推送結果」五個步驟，徹底切斷 HTTP 連線與運算時間的綁定關係，讓連線池資源不再成為系統瓶頸。**

@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Async", "Long-Running", "Checkpoint", "Cloud Pub/Sub", "GKE", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
+series: ["fde-interview-guide"]
 ---
 
 > HTTP 請求的超時通常是 30~60 秒。  

@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Self-Reflection", "Hallucination", "LangGraph", "Reflexion", "Generator-Evaluator", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
+series: ["fde-interview-guide"]
 ---
 
 > LLM 的幻覺問題不會被「更好的 Prompt」完全消除。  

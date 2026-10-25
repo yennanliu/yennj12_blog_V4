@@ -7,6 +7,8 @@ categories: ["all", "finance"]
 tags: ["MRVL", "Marvell", "美股", "財報分析", "10-K", "10-Q", "半導體", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "15 min"
+weight: 2
+series: ["mrvl-stock-analysis"]
 ---
 
 > 大部分人看 Marvell 的 FY2026 年報，看到淨利 26.7 億美元、每股賺 3.07 美元，覺得 AI 終於讓它賺大錢。

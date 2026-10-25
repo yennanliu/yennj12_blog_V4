@@ -7,6 +7,8 @@ categories: ["all", "finance"]
 tags: ["SPCX", "SpaceX", "美股", "估值", "DCF", "SOTP", "Starlink", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "16 min"
+weight: 4
+series: ["spacex-stock-analysis"]
 ---
 
 > 大部分人估 SpaceX，拿特斯拉或輝達來比，說「這種公司本來就不能用本益比算」。

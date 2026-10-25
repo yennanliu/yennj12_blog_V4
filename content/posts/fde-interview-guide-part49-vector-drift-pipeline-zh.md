@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "RAG", "Vector Search", "Data Pipeline", "MLOps", "Vertex AI"]
 authors: ["yen"]
 readTime: "26 min"
+series: ["fde-interview-guide"]
 ---
 
 > 大多數工程師的直覺：「索引過期了？重新跑一次 Re-indexing 就好。」

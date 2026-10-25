@@ -8,6 +8,7 @@ categories: ["all", "creative"]
 description: "Synthwave 讀書會串流系列最終章：如何建立開發者社群、製作病毒式 Shorts、科技品牌合作，以及完整的變現路徑規劃（$0 到 $10K/月）"
 authors: ["yen"]
 readTime: "55 min"
+series: ["synthwave-study-streaming"]
 ---
 
 ## 📘 系列導覽

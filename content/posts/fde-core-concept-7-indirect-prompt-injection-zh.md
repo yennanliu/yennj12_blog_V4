@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Security", "AgentSecurity", "Sandboxing"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：攻擊者將惡意指令嵌入 Agent 會讀取的外部資料（網頁、Email、文件），LLM 便將攻擊者的指令當作合法任務執行——這就是 Indirect Prompt Injection，比直接注入更危險，因為攻擊面來自「可信工具」本身，繞過所有身份驗證屏障。**

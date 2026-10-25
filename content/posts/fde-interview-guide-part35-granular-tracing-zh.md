@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Observability", "Tracing", "OpenTelemetry", "Cloud Trace", "Vertex AI", "Agent", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "13 min"
+series: ["fde-interview-guide"]
 ---
 
 > 面試官問「P95 延遲突然升高，你怎麼辦？」  

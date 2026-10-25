@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["RAG", "RAGAS", "GraphRAG", "Agentic RAG", "LangGraph", "Evaluation", "Python", "繁體中文"]
 authors: ["yen"]
 readTime: "15 min"
+series: ["rag-series"]
 ---
 
 ## 前言

@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Consulting", "POC", "ROI"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **POC 的真正目的不是展示技術可行性——而是用三週時間產出一個可供商業決策的數字，讓「繼續投入」或「止損離場」都能有據可查，而不是靠政治談判決定。**

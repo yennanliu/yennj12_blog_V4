@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Production", "POC", "Deployment", "Rollback", "SLA", "Token Budget", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-interview-guide"]
 ---
 
 > 同一個 Agent，Demo 時跑得很好。  

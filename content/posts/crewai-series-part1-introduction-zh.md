@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "Multi-Agent", "LLM", "AI Automation", "Python", "繁體中文", "Agent"]
 authors: ["yen"]
 readTime: "12 min"
+series: ["crewai-series"]
 ---
 
 ## 前言

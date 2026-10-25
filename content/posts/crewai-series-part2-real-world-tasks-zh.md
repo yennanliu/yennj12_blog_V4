@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "Multi-Agent", "AI Automation", "Code Review", "Customer Service", "Python", "繁體中文", "Agent"]
 authors: ["yen"]
 readTime: "15 min"
+series: ["crewai-series"]
 ---
 
 ## 前言

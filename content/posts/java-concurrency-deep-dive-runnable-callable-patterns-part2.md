@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering", "architecture"]
 tags: ["Java", "Concurrency", "Threading", "Runnable", "Callable", "Synchronization", "Memory Model", "Thread Safety", "AI"]
 authors: ["yen"]
 readTime: "25 min"
+series: ["java-concurrency"]
 ---
 
 ## 🎯 Introduction

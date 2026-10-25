@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "LangGraph", "GKE", "Pub/Sub", "Spanner", "Agent", "Distributed Systems", "Async Architecture"]
 authors: ["yen"]
 readTime: "28 min"
+series: ["fde-interview-guide"]
 ---
 
 > 大多數工程師看到「購物車 Agent」，第一反應是加一個 HTTP 呼叫。

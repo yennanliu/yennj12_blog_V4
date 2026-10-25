@@ -7,6 +7,8 @@ categories: ["all", "engineering", "architecture"]
 tags: ["Java", "Concurrency", "Threading", "Runnable", "Callable", "ExecutorService", "CompletableFuture", "Performance"]
 authors: ["yen"]
 readTime: "28 min"
+weight: 1
+series: ["java-concurrency"]
 ---
 
 ## 🎯 Introduction

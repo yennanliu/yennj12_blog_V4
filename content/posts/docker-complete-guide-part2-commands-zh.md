@@ -8,6 +8,7 @@ categories: ["all", "engineering", "infrastructure"]
 tags: ["Docker", "容器化", "Docker CLI", "指令教學", "DevOps", "容器管理", "映像管理", "實務操作"]
 authors: ["yen"]
 readTime: "28 min"
+series: ["docker-complete-guide"]
 ---
 
 ## 🎯 前言

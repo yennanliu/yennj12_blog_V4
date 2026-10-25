@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Integration", "Legacy", "API", "GCP", "VPC", "Security", "Enterprise", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "14 min"
+series: ["fde-interview-guide"]
 ---
 
 > Demo 時 Agent 很漂亮。  

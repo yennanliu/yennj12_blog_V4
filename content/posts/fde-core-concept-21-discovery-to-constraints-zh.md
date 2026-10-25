@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Consulting", "Discovery", "FDE"]
 authors: ["yen"]
 readTime: "13 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：Discovery to Constraints 是將「我們想要 AI」這類模糊客戶陳述，透過結構化探索問法，轉化為可驅動架構決策的精確技術約束清單的顧問工程能力。**

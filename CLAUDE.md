@@ -60,6 +60,23 @@ readTime: "10 min"
 ---
 ```
 
+### Series
+
+A post that is part of a series adds two fields:
+
+```yaml
+weight: 3                     # its part number
+series: ["rag-series"]        # one slug, which must be a key in data/series.yaml
+```
+
+`data/series.yaml` is the registry: slug → display `title`. The "Series · Part N of M" banner
+in `single.html` reads only `series` — members are the posts sharing the slug, ordered by
+`weight`, and "Part N" is the post's position in that order (so a series with retired parts
+still counts 1…M). The banner links to `/search/?q=series:"<slug>"`, which lists the series in
+order. Starting a new series means adding its slug to `data/series.yaml` first;
+`review_posts.py` fails a `series` slug missing from the registry or a series post without a
+numeric `weight`, and warns on a `weight` with no `series`.
+
 ### Category taxonomy
 
 `categories` is a **closed set**. Only these values are allowed, and every post starts with `"all"`:

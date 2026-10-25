@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "LLM", "NLP", "BLEU", "ROUGE", "BERTScore", "LLM-as-a-Judge", "Evaluation", "繁體中文"]
 authors: ["yen"]
 readTime: "15 min"
+series: ["ai-accuracy-evaluation"]
 ---
 
 ## 前言：文字回答沒有「標準答案」

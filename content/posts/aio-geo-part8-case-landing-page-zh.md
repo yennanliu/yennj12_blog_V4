@@ -8,6 +8,7 @@ categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "Landing Page", "SaaS", "Startup", "Astro", "Cloudflare", "案例研究", "繁體中文", "SEO", "Case Study"]
 authors: ["yen"]
 readTime: "16 min"
+series: ["aio-geo"]
 ---
 
 > 一頁式網站做 GEO，聽起來像沒有勝算。

@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Consulting", "Discovery", "Stakeholder", "POC", "ValueStory", "Requirements", "RKK", "Interview"]
 authors: ["yen"]
 readTime: "21 min"
+series: ["fde-interview-guide"]
 ---
 
 > 客戶說：「我們想要 AI。」  

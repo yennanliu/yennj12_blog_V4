@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "Security", "BYOK", "CMEK", "Vertex AI", "HSM", "Encryption", "Compliance"]
 authors: ["yen"]
 readTime: "27 min"
+series: ["fde-interview-guide"]
 ---
 
 > 大多數工程師聽到「CMEK 合規」就只想到：把 Cloud KMS 打開、勾選客戶管理密鑰就完事了。

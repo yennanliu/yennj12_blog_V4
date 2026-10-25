@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Distributed", "Idempotency", "LangGraph"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：Idempotency & State Recovery 是透過「執行前寫 Checkpoint、執行後 CAS 更新狀態、恢復時重播已完成步驟」的三段式協議，確保分佈式 Agent 在任意時間點中斷並重啟後，每個工具呼叫的副作用（扣款、通知、寫 DB）恰好執行一次，不多不少。**

@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering", "business"]
 tags: ["GEO", "AIO", "Schema.org", "JSON-LD", "Entity SEO", "內容策略", "E-E-A-T", "繁體中文", "SEO", "Marketing"]
 authors: ["yen"]
 readTime: "16 min"
+series: ["aio-geo"]
 ---
 
 > 大多數人的做法：把 GEO 當成內容行銷的一個新形容詞，多寫幾篇文章。

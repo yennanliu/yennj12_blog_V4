@@ -8,6 +8,7 @@ categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "電商", "Shopify", "Next.js", "Product Schema", "SKU", "案例研究", "繁體中文", "SEO", "Case Study", "E-commerce"]
 authors: ["yen"]
 readTime: "13 min"
+series: ["aio-geo"]
 ---
 
 > 電商 GEO 的核心矛盾：

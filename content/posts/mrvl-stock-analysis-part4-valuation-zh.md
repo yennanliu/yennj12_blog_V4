@@ -7,6 +7,8 @@ categories: ["all", "finance"]
 tags: ["MRVL", "Marvell", "美股", "估值", "DCF", "本益比", "半導體", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "15 min"
+weight: 4
+series: ["mrvl-stock-analysis"]
 ---
 
 > 大部分人看 Marvell 的本益比，看到 76 倍，覺得以 AI 股來說「還算合理」。

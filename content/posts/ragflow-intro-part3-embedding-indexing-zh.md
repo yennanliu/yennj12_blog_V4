@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["RAGFlow", "RAG", "AI", "Embedding", "Elasticsearch", "Vector Database", "Infinity", "繁體中文"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["ragflow-intro"]
 ---
 
 > *大多數人處理 RAG 的儲存，是 `collection.add(documents=chunks, embeddings=vecs)`，然後就不再想這件事。*

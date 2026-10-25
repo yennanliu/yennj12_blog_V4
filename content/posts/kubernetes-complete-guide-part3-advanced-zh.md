@@ -8,6 +8,7 @@ categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "HPA", "RBAC", "Helm", "監控", "Prometheus", "Grafana", "CI/CD", "生產部署", "最佳實踐", "DevOps"]
 authors: ["yen"]
 readTime: "30 min"
+series: ["kubernetes-complete-guide"]
 ---
 
 ## 🎯 前言
