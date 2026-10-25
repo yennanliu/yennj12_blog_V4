@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering", "infrastructure"]
 tags: ["Mem0", "Vector Database", "pgvector", "Qdrant", "Storage", "AI Agent", "Memory", "繁體中文"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["mem0-intro"]
 ---
 
 > *大多數人選向量庫的方式，是看 benchmark 的 QPS 數字，或者「團隊已經在用 Postgres 了就用 pgvector」。*

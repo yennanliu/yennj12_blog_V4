@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Security", "Prompt Injection", "Dual-LLM", "Zero-Trust", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "15 min"
+series: ["fde-interview-guide"]
 ---
 
 > 面試官考這題，是在測試你知不知道：  

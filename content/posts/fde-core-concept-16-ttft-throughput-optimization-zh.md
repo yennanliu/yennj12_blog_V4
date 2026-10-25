@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "MLOps", "Inference", "Performance"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：LLM 推理服務存在兩個永遠相互拉扯的指標——TTFT（首字延遲，決定用戶感知流暢度）與 Throughput（每秒 Token 數，決定 GPU 成本與容量）；所有推理優化技術本質上都是在這兩者之間移動作業點。**

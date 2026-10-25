@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "LangGraph", "Agent", "Self-Healing", "LLM", "Reliability"]
 authors: ["yen"]
 readTime: "26 min"
+series: ["fde-interview-guide"]
 ---
 
 > 大多數工程師的方法：在工具呼叫外面包一層 `try-catch`，失敗就 retry 三次。

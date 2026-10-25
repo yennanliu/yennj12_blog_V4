@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Rate Limiting", "Multi-tenant", "Token Budget", "Fair-Share", "Redis", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "16 min"
+series: ["fde-interview-guide"]
 ---
 
 > 傳統 SaaS 的限流是「每分鐘最多 1,000 個請求」。  

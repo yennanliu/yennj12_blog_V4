@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Debugging", "Troubleshooting", "Observability", "Tracing", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
+series: ["fde-interview-guide"]
 ---
 
 > Agent debugging 和傳統程式 debug 的本質差異：  

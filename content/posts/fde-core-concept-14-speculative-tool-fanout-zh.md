@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Performance", "Fan-Out", "SpeculativeExecution"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：Speculative Tool Execution（投機工具執行）是在 Agent 大扇出場景下，透過「投機雙發」消滅慢尾端呼叫、「硬截止時間 + 部分結果標注」防止最慢的單一 API 拖垮整體回應，讓 N 個並行工具呼叫的完成時間趨近第 50 百分位而非第 99 百分位延遲。**

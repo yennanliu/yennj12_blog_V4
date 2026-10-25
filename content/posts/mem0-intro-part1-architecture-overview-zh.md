@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering", "architecture"]
 tags: ["Mem0", "AI Agent", "Memory", "LLM", "RAG", "Vector Database", "Architecture", "繁體中文"]
 authors: ["yen"]
 readTime: "17 min"
+series: ["mem0-intro"]
 ---
 
 > *大多數人給 Agent 加記憶的方式，是把對話歷史一路 append 進 prompt，等到爆 context 了再加一個摘要函式。*

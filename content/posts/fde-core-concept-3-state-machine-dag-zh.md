@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "LangGraph", "ADK", "StateMachine"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：DAG 是把 Agent 的「下一步由 LLM 在執行期決定」改成「下一步由工程師在編譯期定義」，讓系統的行為空間可靜態分析、可稽核、可成本管控。**

@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "LLM", "Prompt Engineering", "Embedding", "Token", "RAG", "CoT", "ReAct", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "15 min"
+series: ["fde-interview-guide"]
 ---
 
 > 這篇是 FDE 面試系列的最後一篇基礎知識篇。  

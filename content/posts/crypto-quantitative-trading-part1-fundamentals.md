@@ -9,6 +9,7 @@ tags: ["Cryptocurrency", "Bitcoin", "Ethereum", "Quantitative Trading", "Python"
 summary: "Master the fundamentals of cryptocurrency quantitative trading. Learn essential concepts, data collection methods, technical indicators, and build your first crypto trading analysis pipeline with Python. Complete with practical examples for Bitcoin and Ethereum."
 description: "Comprehensive guide to crypto quantitative trading fundamentals. Explore market microstructure, data sources, technical indicators, and statistical analysis. Build production-ready data pipelines for Bitcoin and Ethereum with Python, pandas, and ccxt."
 readTime: "25 min"
+series: ["crypto-quantitative-trading"]
 ---
 
 Cryptocurrency markets operate 24/7/365, generating massive amounts of data with unprecedented volatility and liquidity dynamics. Unlike traditional markets, crypto provides perfect conditions for quantitative trading: programmatic access, no market hours restrictions, and rich historical data. This three-part series will guide you from fundamental concepts to production-ready quantitative trading systems.

@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Consultant", "TCO", "ROI", "Pricing", "Vertex AI", "GCP", "Cost Optimization", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "15 min"
+series: ["fde-interview-guide"]
 ---
 
 > 工程師說：「這個架構非常優雅。」  

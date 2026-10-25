@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Scalability", "Architecture", "Cache", "Queue", "RateLimit", "Autoscaling", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "25 min"
+series: ["fde-interview-guide"]
 ---
 
 > 10,000 個內部員工用，一切都很順。  

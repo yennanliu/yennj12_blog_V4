@@ -8,6 +8,7 @@ categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "kubectl", "Pod", "Deployment", "Service", "Ingress", "Volume", "實務操作", "YAML", "DevOps"]
 authors: ["yen"]
 readTime: "28 min"
+series: ["kubernetes-complete-guide"]
 ---
 
 ## 🎯 前言

@@ -8,6 +8,7 @@ categories: ["all", "engineering", "architecture"]
 tags: ["Java", "Concurrency", "Design Patterns", "Threading", "Runnable", "Callable", "Producer-Consumer", "Observer", "Command Pattern"]
 authors: ["yen"]
 readTime: "29 min"
+series: ["java-concurrency"]
 ---
 
 ## 🎯 Introduction

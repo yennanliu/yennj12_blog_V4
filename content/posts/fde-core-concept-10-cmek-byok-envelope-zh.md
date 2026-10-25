@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Security", "CMEK", "Encryption", "HSM"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：CMEK（Customer-Managed Encryption Keys）是客戶掌控 KEK（Key Encryption Key）的信封加密架構——雲端服務商永遠只持有被加密的 DEK，而不持有明文 DEK，更不持有 KEK；即使雲端平台遭受內部威脅或法律強制，攻擊者仍無法在缺少客戶授權的情況下解密資料。**

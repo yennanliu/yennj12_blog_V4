@@ -7,6 +7,8 @@ categories: ["all", "finance"]
 tags: ["MRVL", "Marvell", "美股", "半導體", "AI 晶片", "產業分析", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "15 min"
+weight: 1
+series: ["mrvl-stock-analysis"]
 ---
 
 > 大部分人提到 Marvell，會說它是「AI 晶片股」，跟輝達、博通放在同一籃子。

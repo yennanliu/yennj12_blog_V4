@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["Mem0", "Hybrid Search", "BM25", "Retrieval", "AI Agent", "Memory", "繁體中文"]
 authors: ["yen"]
 readTime: "19 min"
+series: ["mem0-intro"]
 ---
 
 > *大多數人做記憶檢索，是「把查詢嵌入，向量庫 top-5，塞進 prompt」，然後在召回不準的時候去調 embedding 模型。*

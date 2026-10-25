@@ -7,6 +7,8 @@ categories: ["all", "finance"]
 tags: ["MRVL", "Marvell", "美股", "空方論點", "催化劑", "半導體", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "14 min"
+weight: 5
+series: ["mrvl-stock-analysis"]
 ---
 
 > 大部分人研究一檔一年內漲到三倍的股票，會問「還能漲多少」。

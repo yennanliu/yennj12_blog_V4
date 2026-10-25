@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["Mem0", "AI Agent", "Memory", "LLM", "Prompt Engineering", "spaCy", "繁體中文"]
 authors: ["yen"]
 readTime: "17 min"
+series: ["mem0-intro"]
 ---
 
 > *大多數人設計「讓 LLM 自己管理記憶」的方式，是給它一組工具——新增、更新、刪除——然後相信它會做對的事。*

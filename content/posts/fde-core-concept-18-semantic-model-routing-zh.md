@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Model Routing", "Cost Optimization", "EdgeAI"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：Semantic Model Routing 不是事前分類查詢，而是在生成過程中即時讀取 logprobs 熵值，一旦本地模型表現出高不確定性就立刻中斷並升級至雲端，用最低成本完成每一個請求。**

@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "RAG", "LLM", "RAGAS", "Faithfulness", "Hallucination", "Evaluation", "繁體中文"]
 authors: ["yen"]
 readTime: "13 min"
+series: ["ai-accuracy-evaluation"]
 ---
 
 ## 前言：RAG 帶來了新的評估挑戰

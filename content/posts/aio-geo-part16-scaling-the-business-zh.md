@@ -8,6 +8,7 @@ categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "規模化", "Agency", "單位經濟", "SOP", "SaaS", "創業", "繁體中文", "Consulting"]
 authors: ["yen"]
 readTime: "13 min"
+series: ["aio-geo"]
 ---
 
 > 大多數人的做法：接到第 5 個客戶時很開心，接到第 9 個時開始加班，第 12 個時交付品質崩壞。

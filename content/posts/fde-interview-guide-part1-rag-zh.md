@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "RAG", "LLM", "Vector DB", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "12 min"
+series: ["fde-interview-guide"]
 ---
 
 > 這是一份寫給準備 FDE 面試的人看的系列。  

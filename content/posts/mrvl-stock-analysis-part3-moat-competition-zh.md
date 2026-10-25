@@ -7,6 +7,8 @@ categories: ["all", "finance"]
 tags: ["MRVL", "Marvell", "美股", "競爭分析", "護城河", "Broadcom", "ASIC", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "14 min"
+weight: 3
+series: ["mrvl-stock-analysis"]
 ---
 
 > 大部分人看 Marvell，看到資料中心營收年增 46%，覺得它是 AI 大贏家。

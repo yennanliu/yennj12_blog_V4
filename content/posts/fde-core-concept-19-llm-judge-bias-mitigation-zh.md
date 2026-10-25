@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Evaluation", "LLMJudge", "MLOps"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：LLM-as-Judge 是用一個強大的語言模型對另一個語言模型的輸出進行自動評分，透過結構化 Prompt、分層抽樣與偏見消除技術，以 1% 的人力成本達到 80% 的人工評估一致性，是大規模 AI 產品品質監控的基礎設施。**

@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "ReAct", "Planner", "Multi-Agent", "Tool Routing", "Memory", "LangGraph", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "16 min"
+series: ["fde-interview-guide"]
 ---
 
 > Agent 面試的陷阱不是問你能不能架起來。  

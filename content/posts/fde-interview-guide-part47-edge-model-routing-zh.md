@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "LLM", "EdgeAI", "Model Routing", "vLLM", "Vertex AI", "OnPremise", "FDE"]
 authors: ["yen"]
 readTime: "26 min"
+series: ["fde-interview-guide"]
 ---
 
 > 大多數團隊的做法：讓小模型先回答，覺得不好再丟給大模型——結果是雙倍延遲加雙倍成本。  

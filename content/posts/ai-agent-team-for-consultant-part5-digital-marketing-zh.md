@@ -8,6 +8,7 @@ categories: ["all", "ai", "business"]
 tags: ["AI Agent", "數位行銷", "LangGraph", "Claude", "內容行銷", "廣告文案", "Multi-Agent", "繁體中文", "實戰案例", "Agent", "Case Study", "Marketing"]
 authors: ["yen"]
 readTime: "19 min"
+series: ["ai-agent-team-for-consultant"]
 ---
 
 ## 情境設定

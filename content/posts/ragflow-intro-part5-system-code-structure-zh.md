@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering", "architecture"]
 tags: ["RAGFlow", "RAG", "AI", "System Design", "Redis Stream", "Go", "Architecture", "繁體中文"]
 authors: ["yen"]
 readTime: "21 min"
+series: ["ragflow-intro"]
 ---
 
 > *大多數人讀開源專案的原始碼，是從 README 跳到 `main()`，看幾個函式，然後說「架構我懂了」。*

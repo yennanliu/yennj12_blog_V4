@@ -8,6 +8,7 @@ categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "產業分析", "B2B", "電商", "醫療", "金融", "顧問", "繁體中文", "Marketing"]
 authors: ["yen"]
 readTime: "13 min"
+series: ["aio-geo"]
 ---
 
 > 大多數人的做法：一套 checklist 打天下，然後困惑為什麼在律師事務所有效、在醫美診所無效。

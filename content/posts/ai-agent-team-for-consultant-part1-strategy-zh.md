@@ -8,6 +8,7 @@ categories: ["all", "ai", "business"]
 tags: ["AI Agent", "Claude Code", "Gemini CLI", "LangGraph", "AI Consultant", "Multi-Agent", "繁體中文", "Agent"]
 authors: ["yen"]
 readTime: "10 min"
+series: ["ai-agent-team-for-consultant"]
 ---
 
 ## 前言

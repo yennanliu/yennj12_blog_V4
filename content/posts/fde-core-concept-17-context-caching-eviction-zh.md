@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Vertex AI", "Caching", "Cost Optimization"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：Vertex AI Context Caching 將大型 prompt prefix 的 KV activations 固定在 TPU 記憶體，後續呼叫跳過 prefill 階段，token 成本降至 1/4——但按小時計費的機制讓閒置快取成為最隱蔽的成本炸彈，正確的驅逐策略是區分工程師與初學者的分水嶺。**

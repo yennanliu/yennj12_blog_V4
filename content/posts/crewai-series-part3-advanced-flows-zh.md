@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["CrewAI", "Flows", "Memory", "Multi-Agent", "Production", "FastAPI", "Python", "繁體中文", "Agent"]
 authors: ["yen"]
 readTime: "17 min"
+series: ["crewai-series"]
 ---
 
 ## 前言

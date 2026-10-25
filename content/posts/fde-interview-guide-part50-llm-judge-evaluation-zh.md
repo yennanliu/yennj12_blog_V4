@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "GenAI", "LLM", "Evaluation", "MLOps", "Vertex AI", "Observability"]
 authors: ["yen"]
 readTime: "26 min"
+series: ["fde-interview-guide"]
 ---
 
 > 多數工程師的做法：每次模型更新後，手動抽幾十筆對話，憑感覺評估品質有沒有退步。

@@ -1,0 +1,61 @@
+# Registry of post series — the single source of truth for series display names.
+#
+# A post joins a series with front matter `series: ["<slug>"]` plus `weight: N`
+# (its part number). The slug must be a key below: single.html reads the title
+# from here for the "Series · Part N of M" banner, and scripts/review_posts.py
+# fails a post whose series slug is missing from this file.
+#
+# Keep keys sorted.
+
+ai-accuracy-evaluation:
+  title: "如何衡量 AI 的準確度"
+ai-agent-team-for-consultant:
+  title: "用 AI Bot 打造顧問團隊"
+ai-eng-from-scratch:
+  title: "AI 工程從零開始"
+ai-ocean-space-ambient-streaming:
+  title: "AI 深海/太空環境音串流實戰"
+aio-geo:
+  title: "AIO / GEO"
+crewai-series:
+  title: "CrewAI 完全指南"
+crypto-quantitative-trading:
+  title: "Crypto Quantitative Trading"
+docker-complete-guide:
+  title: "Docker 完整指南"
+fde-core-concept:
+  title: "FDE Core Topics"
+fde-interview-guide:
+  title: "FDE 面試準備指南"
+hugging-face:
+  title: "Hugging Face 實戰"
+java-concurrency:
+  title: "Java Concurrency"
+knowledge-graph:
+  title: "Knowledge Graph 知識圖譜"
+kubernetes-autoscaling-complete-guide:
+  title: "Kubernetes Autoscaling Complete Guide"
+kubernetes-complete-guide:
+  title: "Kubernetes 完整指南"
+mcp-servers-claude-code:
+  title: "Building MCP Servers for Claude Code"
+mem0-intro:
+  title: "Mem0 Intro"
+mrvl-stock-analysis:
+  title: "Marvell 美股深度分析"
+openworker-intro:
+  title: "OpenWorker 深度解析"
+qm-deep-dive:
+  title: "QM 深度解析"
+rag-series:
+  title: "RAG 完全指南"
+ragflow-intro:
+  title: "RAGFlow Intro"
+shopping-cart-high-concurrency:
+  title: "購物車系統的高並發改造"
+spacex-stock-analysis:
+  title: "SpaceX 美股深度分析"
+synthwave-study-streaming:
+  title: "Synthwave 讀書會串流實戰"
+vllm-intro:
+  title: "vLLM Intro"

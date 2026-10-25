@@ -7,6 +7,8 @@ categories: ["all", "finance"]
 tags: ["SPCX", "SpaceX", "美股", "競爭分析", "護城河", "Starlink", "Amazon Leo", "Blue Origin", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "15 min"
+weight: 3
+series: ["spacex-stock-analysis"]
 ---
 
 > 大部分人說 SpaceX 有護城河，理由是「沒有人能像它一樣回收火箭」。

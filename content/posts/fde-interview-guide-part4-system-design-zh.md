@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "System Design", "RAG", "RBAC", "Cache", "NL2SQL", "BigQuery", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "16 min"
+series: ["fde-interview-guide"]
 ---
 
 > System Design 是 FDE 面試最能展現工程深度的地方。  

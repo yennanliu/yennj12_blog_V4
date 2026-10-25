@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering", "infrastructure"]
 tags: ["vLLM", "Production", "LoRA", "Structured Output", "Observability", "Prometheus", "Kubernetes", "繁體中文"]
 authors: ["yen"]
 readTime: "21 min"
+series: ["vllm-intro"]
 ---
 
 > *大多數人上線 LLM 服務的方式，是把 `vllm serve` 包進 Dockerfile，接上 LB，看到 200 就宣布完成。*

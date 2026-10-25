@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "RAG", "Chunking", "Embedding", "Vector DB", "Hybrid Search", "Reranking", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "15 min"
+series: ["fde-interview-guide"]
 ---
 
 > 第一篇講了 RAG 是什麼。  

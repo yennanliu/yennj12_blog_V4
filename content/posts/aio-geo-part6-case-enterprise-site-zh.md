@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering", "business"]
 tags: ["GEO", "AIO", "企業官網", "AWS", "CloudFront", "WAF", "多語系", "hreflang", "案例研究", "繁體中文", "SEO", "Case Study"]
 authors: ["yen"]
 readTime: "13 min"
+series: ["aio-geo"]
 ---
 
 > 大企業做 GEO 的難點從來不是「不知道怎麼做」。

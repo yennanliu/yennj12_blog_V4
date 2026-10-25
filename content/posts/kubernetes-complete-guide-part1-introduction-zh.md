@@ -8,6 +8,7 @@ categories: ["all", "engineering", "infrastructure"]
 tags: ["Kubernetes", "K8S", "容器編排", "雲原生", "微服務", "Docker", "DevOps", "叢集管理", "基礎教學"]
 authors: ["yen"]
 readTime: "23 min"
+series: ["kubernetes-complete-guide"]
 ---
 
 ## 🎯 前言

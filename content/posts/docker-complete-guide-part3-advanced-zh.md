@@ -8,6 +8,7 @@ categories: ["all", "engineering", "infrastructure"]
 tags: ["Docker", "Dockerfile", "Docker Compose", "容器編排", "微服務", "CI/CD", "容器安全", "效能優化", "生產部署", "DevOps"]
 authors: ["yen"]
 readTime: "29 min"
+series: ["docker-complete-guide"]
 ---
 
 ## 🎯 前言

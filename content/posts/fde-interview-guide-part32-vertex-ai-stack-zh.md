@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Vertex AI", "Gemini", "Agent Builder", "GCP", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "19 min"
+series: ["fde-interview-guide"]
 ---
 
 > FDE 的面試不是考「你知不知道 Vertex AI 有哪些產品」。  

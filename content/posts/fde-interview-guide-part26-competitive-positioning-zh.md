@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Consultant", "Vertex AI", "GCP", "Competitive", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "15 min"
+series: ["fde-interview-guide"]
 ---
 
 > 這是 FDE RKK 最常被忽略的題型。  

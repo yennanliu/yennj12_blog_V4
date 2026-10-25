@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Consulting", "SalesEngineering", "ValueSelling"]
 authors: ["yen"]
 readTime: "15 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：Value Story 不是功能清單，而是一條因果鏈——從客戶現在的痛點出發，經過你的解決方案，抵達一個可計算的財務結果；Objection Handling 則是將異議轉化為需求確認的對話技術。**

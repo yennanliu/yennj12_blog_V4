@@ -9,6 +9,7 @@ tags: ["Kubernetes", "K8S", "Autoscaling", "Cluster Autoscaler", "Karpenter", "E
 summary: "Part 2 of the Kubernetes Autoscaling series: Comprehensive guide to cluster-level autoscaling covering Cluster Autoscaler, Karpenter, cloud provider-specific solutions (EKS, GKE, AKS), and emerging technologies for intelligent node provisioning and cost optimization."
 description: "Part 2 of the Kubernetes Autoscaling series: Comprehensive guide to cluster-level autoscaling covering Cluster Autoscaler, Karpenter, cloud provider-specific solutions (EKS, GKE, AKS), and emerging technologies for intelligent node provisioning and cost optimization."
 readTime: "32 min"
+series: ["kubernetes-autoscaling-complete-guide"]
 ---
 
 ## Series Overview

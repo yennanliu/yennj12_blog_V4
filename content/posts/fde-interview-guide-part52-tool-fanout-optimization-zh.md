@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Cloud", "AI", "FDE", "Agent", "AsyncIO", "Tool Calling", "Fan-Out", "Circuit-Breaker", "LangGraph"]
 authors: ["yen"]
 readTime: "26 min"
+series: ["fde-interview-guide"]
 ---
 
 > 大多數工程師遇到「Agent 要並行呼叫 15 個 API」時，第一反應是 `asyncio.gather()`，然後假設「全部回來再合併」。  

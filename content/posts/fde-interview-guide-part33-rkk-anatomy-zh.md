@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "RKK", "Interview", "Cloud", "Playbook", "Scoring", "System Design"]
 authors: ["yen"]
 readTime: "16 min"
+series: ["fde-interview-guide"]
 ---
 
 > 這篇不是教你怎麼回答問題。  

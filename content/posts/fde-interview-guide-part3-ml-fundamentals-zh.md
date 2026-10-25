@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Machine Learning", "Transformer", "Embedding", "Evaluation", "Fine-tuning", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "13 min"
+series: ["fde-interview-guide"]
 ---
 
 > 有人覺得 FDE 只需要會包 API。  

@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Multi-Agent", "LangGraph", "State Management", "Deadlock", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-interview-guide"]
 ---
 
 > 面試官不只想聽你說「加 max_loops 限制」。  

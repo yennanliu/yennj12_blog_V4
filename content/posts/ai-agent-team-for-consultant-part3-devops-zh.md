@@ -8,6 +8,7 @@ categories: ["all", "ai", "infrastructure"]
 tags: ["AI Agent", "DevOps", "SRE", "LangSmith", "監控", "部署", "評估", "繁體中文", "Agent"]
 authors: ["yen"]
 readTime: "15 min"
+series: ["ai-agent-team-for-consultant"]
 ---
 
 ## 前言

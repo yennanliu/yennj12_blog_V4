@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI Agent", "Claude Code", "Gemini CLI", "LangGraph", "Python", "Multi-Agent", "繁體中文", "Agent"]
 authors: ["yen"]
 readTime: "16 min"
+series: ["ai-agent-team-for-consultant"]
 ---
 
 ## 前言

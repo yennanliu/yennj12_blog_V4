@@ -18,9 +18,10 @@ Two severities:
            readTime drift. Reported, but only --strict fails on them, so
            touching a legacy post does not force a rewrite of it.
 
-The closed category set is read from content/categories/<slug>/_index.md and
-author slugs from content/authors/<slug>/, so this script cannot drift from the
-site the way a hard-coded list would.
+The closed category set is read from content/categories/<slug>/_index.md,
+author slugs from content/authors/<slug>/ and series slugs from
+data/series.yaml, so this script cannot drift from the site the way a
+hard-coded list would.
 
 Usage:
   python3 scripts/review_posts.py                      # every post
@@ -69,6 +70,16 @@ def _slugs(directory: Path) -> set[str]:
 
 CATEGORIES = _slugs(CONTENT / "categories")
 AUTHORS = _slugs(CONTENT / "authors")
+
+
+def _series_slugs(path: Path) -> set[str]:
+    """Top-level keys of data/series.yaml (flat `slug:` lines; no PyYAML needed)."""
+    if not path.is_file():
+        return set()
+    return {m.group(1) for m in re.finditer(r"^([a-z0-9][a-z0-9-]*):\s*$", path.read_text(), re.M)}
+
+
+SERIES = _series_slugs(ROOT / "data" / "series.yaml")
 
 
 @dataclass
@@ -167,6 +178,19 @@ def check_front_matter(r: Report, fm: dict) -> None:
         for a in authors:
             if a not in AUTHORS:
                 r.error(1, f"front matter: author {a!r} has no content/authors/{a}/_index.md")
+
+    # Series: `series: ["<slug>"]` + `weight: N` drive the "Series · Part N of M"
+    # banner in single.html; the slug's display name lives in data/series.yaml.
+    series = fm.get("series")
+    if "series" in fm:
+        if not isinstance(series, list) or len(series) != 1:
+            r.error(1, 'front matter: `series` must be a one-item list, e.g. series: ["rag-series"]')
+        elif series[0] not in SERIES:
+            r.error(1, f"front matter: series {series[0]!r} is not in data/series.yaml; add it there")
+        if not str(fm.get("weight", "")).isdigit():
+            r.error(1, "front matter: a `series` post needs an integer `weight` (its part number)")
+    elif "weight" in fm:
+        r.warn(1, "front matter: `weight` without `series` - the series banner only reads `series`")
 
     tags = fm.get("tags")
     if "tags" in fm and not isinstance(tags, list):

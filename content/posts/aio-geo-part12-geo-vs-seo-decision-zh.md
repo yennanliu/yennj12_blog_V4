@@ -8,6 +8,7 @@ categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "SEO", "決策框架", "顧問", "預算配置", "繁體中文"]
 authors: ["yen"]
 readTime: "12 min"
+series: ["aio-geo"]
 ---
 
 > 「GEO 不就是 SEO 換個名字嗎？」

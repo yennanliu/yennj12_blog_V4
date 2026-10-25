@@ -7,6 +7,8 @@ categories: ["all", "finance"]
 tags: ["SPCX", "SpaceX", "美股", "財報分析", "10-Q", "Starlink", "xAI", "InvestSkill", "investing"]
 authors: ["yen"]
 readTime: "17 min"
+weight: 2
+series: ["spacex-stock-analysis"]
 ---
 
 > 大部分人看 SpaceX 第三季財報，只看到標題：營收年增 161%，首度單季獲利 44 億美元。

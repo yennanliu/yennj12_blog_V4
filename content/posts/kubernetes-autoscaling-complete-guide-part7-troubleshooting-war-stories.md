@@ -9,6 +9,7 @@ tags: ["Kubernetes", "K8S", "Troubleshooting", "Debugging", "Production", "Incid
 summary: "Part 7 of the Kubernetes Autoscaling series: Real-world production incidents, debugging workflows, common failure scenarios, and hard-learned lessons from operating autoscaling at scale. Battle-tested troubleshooting guides and postmortem analysis."
 description: "Part 7 of the Kubernetes Autoscaling series: Real-world production incidents, debugging workflows, common failure scenarios, and hard-learned lessons from operating autoscaling at scale. Battle-tested troubleshooting guides and postmortem analysis."
 readTime: "26 min"
+series: ["kubernetes-autoscaling-complete-guide"]
 ---
 
 ## Series Overview

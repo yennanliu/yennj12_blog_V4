@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Model Routing", "Semantic Router", "Gemma", "Gemini", "Cost Optimization", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "17 min"
+series: ["fde-interview-guide"]
 ---
 
 > 為什麼用 Gemini Pro 回答「你好！」？  

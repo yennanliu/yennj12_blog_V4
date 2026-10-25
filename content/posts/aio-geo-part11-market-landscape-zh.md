@@ -8,6 +8,7 @@ categories: ["all", "ai", "business"]
 tags: ["GEO", "AIO", "商業模式", "市場分析", "顧問", "Agency", "創業", "繁體中文", "Marketing"]
 authors: ["yen"]
 readTime: "13 min"
+series: ["aio-geo"]
 ---
 
 > 大多數人的做法：看到「GEO 市場 2031 年將達 73 億美元」，決定投入。

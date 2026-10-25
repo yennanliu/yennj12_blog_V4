@@ -8,6 +8,7 @@ categories: ["all", "ai", "business"]
 tags: ["AI Agent", "外包公司", "Claude Code", "LangGraph", "Multi-Agent", "繁體中文", "實戰案例", "Agent", "Case Study"]
 authors: ["yen"]
 readTime: "16 min"
+series: ["ai-agent-team-for-consultant"]
 ---
 
 ## 情境設定

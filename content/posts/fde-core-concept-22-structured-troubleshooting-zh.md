@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Troubleshooting", "Observability", "SRE"]
 authors: ["yen"]
 readTime: "13 min"
+series: ["fde-core-concept"]
 ---
 
 **核心定義：Structured Troubleshooting 是一種「永不猜測、逐層消除」的診斷哲學——從用戶可見的症狀出發，沿著系統堆疊自上而下，在每一層用可量測的指標排除假說，直到根因被隔離為止。**

@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Consultant", "POC", "Scoping", "Discovery", "GCP", "Vertex AI", "Interview", "Cloud", "RKK"]
 authors: ["yen"]
 readTime: "14 min"
+series: ["fde-interview-guide"]
 ---
 
 > 客戶說：「我想用 AI 讓客服更好。」  

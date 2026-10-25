@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "RAG", "Observability", "Evaluation"]
 authors: ["yen"]
 readTime: "11 min"
+series: ["fde-core-concept"]
 ---
 
 **RAG 系統沒有「準確率」這個單一指標——你需要三把尺同時量：檢索對了嗎？答案有根據嗎？答案回答了問題嗎？少量其中任何一把，幻覺或廢話就悄悄進入生產。**

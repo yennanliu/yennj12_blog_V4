@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Security", "Privacy", "PII", "RBAC", "Compliance", "Anonymization", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "23 min"
+series: ["fde-interview-guide"]
 ---
 
 > 傳統系統的 PII：存在資料庫，加密，控制誰能查。  

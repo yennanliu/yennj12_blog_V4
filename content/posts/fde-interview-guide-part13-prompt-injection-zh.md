@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Agent", "Security", "Prompt Injection", "LLM", "Defense", "OAuth", "System Design", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "15 min"
+series: ["fde-interview-guide"]
 ---
 
 > Prompt Injection 對純 LLM 的危害：讓它說奇怪的話。  

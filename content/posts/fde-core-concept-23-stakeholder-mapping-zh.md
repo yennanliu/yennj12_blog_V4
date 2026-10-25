@@ -8,6 +8,7 @@ categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "fde-core-topic", "Cloud", "Consulting", "Stakeholder", "EnterpriseAI"]
 authors: ["yen"]
 readTime: "18 min"
+series: ["fde-core-concept"]
 ---
 
 **技術方案的死因往往不是架構錯誤，而是你從未和那個能按下否決鍵的人說過話——Stakeholder Mapping 是在第一次會議之前就找到他的方法。**

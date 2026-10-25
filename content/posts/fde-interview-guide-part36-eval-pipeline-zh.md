@@ -8,6 +8,7 @@ categories: ["all", "ai", "engineering"]
 tags: ["AI", "FDE", "Evaluation", "RAGAS", "Vertex AI", "CI/CD", "Safety", "Pipeline", "RKK", "Interview", "Cloud"]
 authors: ["yen"]
 readTime: "13 min"
+series: ["fde-interview-guide"]
 ---
 
 > Eval Pipeline 和 Eval 的差別：  
