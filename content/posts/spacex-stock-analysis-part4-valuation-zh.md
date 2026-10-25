@@ -312,7 +312,7 @@ $1.35 兆的 SI 是什麼概念？大約是 Q3 年化營收的 45 倍、年化 E
 - [part 2：拆解財報：三個事業、一張合併報表](/posts/spacex-stock-analysis-part2-financials-zh/)
 - [part 3：護城河與競爭者：發射、寬頻、AI 各打一場仗](/posts/spacex-stock-analysis-part3-moat-competition-zh/)
 - **part 4：估值：兩兆美元要怎麼算才合理（本篇）**
-- part 5：空方論點、催化劑與結論
+- [part 5：空方論點、催化劑與結論](/posts/spacex-stock-analysis-part5-bear-case-catalysts-zh/)
 
 ---
 

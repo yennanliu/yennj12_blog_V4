@@ -280,8 +280,8 @@ SpaceX 的護城河是真實的，但集中在發射和 Starlink。這兩個事�
 - [part 1：太空產業全景：誰卡住瓶頸、利潤落在哪裡](/posts/spacex-stock-analysis-part1-space-industry-map-zh/)
 - [part 2：拆解財報：三個事業、一張合併報表](/posts/spacex-stock-analysis-part2-financials-zh/)
 - **part 3：護城河與競爭者：發射、寬頻、AI 各打一場仗（本篇）**
-- part 4：估值：兩兆美元要怎麼算才合理
-- part 5：空方論點、催化劑與結論
+- [part 4：估值：兩兆美元要怎麼算才合理](/posts/spacex-stock-analysis-part4-valuation-zh/)
+- [part 5：空方論點、催化劑與結論](/posts/spacex-stock-analysis-part5-bear-case-catalysts-zh/)
 
 延伸閱讀：[Rocket Lab (RKLB) 2025 10-K 深度解析](/posts/rklb-2025-10k-deep-dive-zh/)。
 
