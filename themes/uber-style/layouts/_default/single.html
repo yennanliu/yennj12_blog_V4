@@ -12,9 +12,11 @@
 {{ $slug := index . 0 }}
 {{ $members := (where site.RegularPages "Params.series" "intersect" (slice $slug)).ByWeight }}
 {{ $total := len $members }}
-{{ if gt $total 1 }}
 {{ $pos := 0 }}
 {{ range $i, $p := $members }}{{ if eq $p.RelPermalink $.RelPermalink }}{{ $pos = add $i 1 }}{{ end }}{{ end }}
+{{/* $pos is 0 only if this page is missing from its own series list (e.g. a
+     draft rendered without --buildDrafts); show no banner rather than "Part 0". */}}
+{{ if and (gt $total 1) (gt $pos 0) }}
 {{ $name := $slug }}
 {{ with index site.Data.series $slug }}{{ $name = .title }}{{ end }}
 <div class="series-banner">
