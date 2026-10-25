@@ -285,7 +285,7 @@ Marvell 的估值溢價比 SpaceX 小，而且有一個可以檢驗的目標（F
 - [part 2：拆解財報：資料中心成長與盈餘品質](/posts/mrvl-stock-analysis-part2-financials-zh/)
 - [part 3：護城河與競爭者：對上博通、Credo 與台灣設計服務廠](/posts/mrvl-stock-analysis-part3-moat-competition-zh/)
 - **part 4：估值：2,000 億美元市值隱含了什麼（本篇）**
-- part 5：空方論點、催化劑與結論
+- [part 5：空方論點、催化劑與結論](/posts/mrvl-stock-analysis-part5-bear-case-catalysts-zh/)
 
 延伸閱讀：[SpaceX 美股深度分析 part 4 - 估值](/posts/spacex-stock-analysis-part4-valuation-zh/)。
 

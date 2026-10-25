@@ -97,7 +97,7 @@ Q2×4      ███████████████████████
 | `competitor-analysis` | part 3 | 7.4 分鐘 | NEUTRAL 4.8／HOLD |
 | `stock-valuation` | part 4 | 5.6 分鐘 | BEARISH 2.5／SELL |
 | `bear-case` | part 5 | 3.3 分鐘 | BEARISH 3.8／SELL |
-| `catalyst-calendar` | part 5 | 3.6 分鐘 | （見 part 5） |
+| `catalyst-calendar` | part 5 | 3.6 分鐘 | NEUTRAL 5.5／HOLD |
 
 這篇用的是 `industry-map`：
 
@@ -262,10 +262,10 @@ CPO 和 LPO 對 Marvell 是一把雙面刃：
 ## 系列導航
 
 - **part 1：AI 資料中心晶片產業全景（本篇）**
-- part 2：拆解財報：資料中心成長與盈餘品質
-- part 3：護城河與競爭者：對上博通、Credo 與台灣設計服務廠
-- part 4：估值：2,000 億美元市值隱含了什麼
-- part 5：空方論點、催化劑與結論
+- [part 2：拆解財報：資料中心成長與盈餘品質](/posts/mrvl-stock-analysis-part2-financials-zh/)
+- [part 3：護城河與競爭者：對上博通、Credo 與台灣設計服務廠](/posts/mrvl-stock-analysis-part3-moat-competition-zh/)
+- [part 4：估值：2,000 億美元市值隱含了什麼](/posts/mrvl-stock-analysis-part4-valuation-zh/)
+- [part 5：空方論點、催化劑與結論](/posts/mrvl-stock-analysis-part5-bear-case-catalysts-zh/)
 
 延伸閱讀：[SpaceX 美股深度分析系列](/posts/spacex-stock-analysis-part1-space-industry-map-zh/)、[AMD 2025 10-K 深度解析](/posts/amd-2025-10k-deep-dive-zh/)、[InvestSkill 介紹](/posts/investskill-claude-code-financial-analysis-plugin/)。
 

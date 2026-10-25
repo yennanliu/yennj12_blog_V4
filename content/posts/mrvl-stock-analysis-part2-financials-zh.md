@@ -236,9 +236,9 @@ Marvell 的財報說的是一個「真成長、但每股價值被分走」的故
 
 - [part 1：AI 資料中心晶片產業全景：Marvell 站在哪一層](/posts/mrvl-stock-analysis-part1-ai-chip-industry-map-zh/)
 - **part 2：拆解財報：資料中心成長與盈餘品質（本篇）**
-- part 3：護城河與競爭者：對上博通、Credo 與台灣設計服務廠
-- part 4：估值：2,000 億美元市值隱含了什麼
-- part 5：空方論點、催化劑與結論
+- [part 3：護城河與競爭者：對上博通、Credo 與台灣設計服務廠](/posts/mrvl-stock-analysis-part3-moat-competition-zh/)
+- [part 4：估值：2,000 億美元市值隱含了什麼](/posts/mrvl-stock-analysis-part4-valuation-zh/)
+- [part 5：空方論點、催化劑與結論](/posts/mrvl-stock-analysis-part5-bear-case-catalysts-zh/)
 
 ---
 
