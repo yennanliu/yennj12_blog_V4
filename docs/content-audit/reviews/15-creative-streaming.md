@@ -1,0 +1,98 @@
+## Creative & Media: adhd-focus-music, ai-ocean-space-ambient (4), synthwave-study (4) — 9 posts
+
+### Series-level observations
+- **The three series are one business playbook written three times.** All nine are dated 2026-01-18, within about three hours of each other, and they share the same skeleton: market-size yaml → "science" → Suno prompts → Midjourney/Runway → OBS → Shorts → Discord/Reddit → three-tier membership → brand deals. Some blocks are near-verbatim copies. The OBS `restart_obs.bat` + Task Scheduler + `monitor.py` watchdog appears in ADHD (≈L1037–1110) and ocean part 3 (≈L769–1005). The membership ladder is identical in ADHD (L2070) and ocean part 4 (L869): same $2.99 / $6.99 / $14.99 prices and the same 1.5% / 0.8% (0.65%) / 0.3% (0.25%) conversion rates. Shorts "導流" strategy and the Reddit 90/10 playbook repeat as well. Recommendation: write one shared "24/7 串流營運" post (hardware, OBS, watchdog, YouTube setup, Shorts, memberships, policy risk). Then cut each genre post down to what really differs: audience, sound design, visual language and prompts. That removes roughly 2,500–3,000 duplicated lines across the batch.
+- **Revenue, CPM and search-volume figures are unsourced, and some are provably recycled.** Synthwave part 1 gives "synthwave music: 823,000 / synthwave radio: 246,000 / synthwave study: 165,000". Ocean part 1 gives exactly the same numbers for "ocean sounds / underwater sounds / deep ocean ambience". "outrun music 135,000" matches ADHD's "ADHD focus music 135,000". Ocean part 4 labels its growth case study 「實際案例（虛構但真實反映市場）」, but the finale then calls the plan 「經過驗證、可執行、可獲利」. No CPM range in the batch cites a source. They also contradict each other: ambient CPM is "$3–8" in ocean part 1, "$1.5–3" in synthwave part 4 and "$1–2.5" in the same post's L612 table. Label every figure as an illustrative assumption, or replace it with sourced data (YouTube Studio screenshots, public creator reports), and state the source month.
+- **The posts give no warning about YouTube monetization policy, and that is the biggest risk for the reader.** A 24/7 loop of AI-generated audio over AI-generated visuals is the exact profile of YouTube's "inauthentic / repetitious content" YPP rule, which was reworded in July 2025. It is also covered by the altered-or-synthetic-content disclosure requirement. None of the nine posts mention either. Several also make copyright claims that are too confident. ADHD's FAQ Q5 says 「就不會有版權問題」. Ocean part 4 sells a $2,999 "Exclusive License" (≈L1061) on AI-generated tracks, even though purely AI-generated audio may not be copyrightable in the US. Suno's terms and download rules changed after its 2025 label settlements. Add a policy/licensing section to the shared post and **verify** the current terms.
+- **Almost everything, prose included, sits inside ```yaml / ```markdown fences.** That is why the audit's code ratio (0.70–0.87) is so high, even though there is almost no real code. Readers get monospace, unwrapped Chinese text with horizontal scroll on mobile, no heading anchors and no search indexing of the key content. The fenced blocks also break the page: nested fences (a ```markdown block containing ```batch / ```python / ```javascript) close early and flip the rest of the section between code and prose. This happens in ADHD at L805, 938, 1052, 1119, 1256 and 1302, and it is why `# Step 3…` (L862) and `# 監控健康狀態` (L1065) render as H1s. It also happens in ocean part 2 (L605, 658), ocean part 3 (L274, 333, 783, 849, 879, 1009) and synthwave part 3 (L635, 759). Convert narrative yaml into real headings, lists and tables, and use `~~~` or four-backtick outer fences wherever a block has to contain one.
+- **Several tool and version references are already stale for Sept 2026.** Examples: "Runway Gen-3 Alpha" as 「目前最佳」; "Midjourney V7" in the prose while every prompt uses `--v 6.1`; installing obs-websocket as a separate plugin (it has been bundled since OBS 28); and fixed plan prices for Suno, Runway and Midjourney. Replace model versions with "current model" wording plus a date stamp, or verify each one.
+- **Series navigation and cross-links are inconsistent.** In ocean parts 1–3 and synthwave parts 1–3, the 「系列導航」 lists are bold text with no links. Only ocean part 4 and synthwave part 4 link their siblings. Every post's 延伸閱讀 points to the nonexistent `youtube-24-7-streaming-money-strategy-zh`, and ADHD also links two missing AWS CDK posts. The shared post suggested above is the natural target for that hub link. Otherwise, remove the link.
+- **Front matter.** Eight posts use `summary` rather than `description`. That is harmless, because `head.html` falls back to `summary`, and the summaries are real. Synthwave part 4 is the outlier: it has a `description`, a date with no time, no `authors`, no `readTime`, a shortened title (drops 「實戰」) and only `creative` as category (the others add `business`). It was clearly produced by a different run. Normalise it.
+
+### Per-post
+
+#### `adhd-focus-music-streaming-implementation-guide-zh.md`
+**Verdict:** `restructure`
+- **Remove the fabricated-looking science, and do it first.** L107–108 cite 「2023 年哈佛研究: 40Hz 雙耳節拍提升 ADHD 患者專注時間 23%」 and 「2024 年 Stanford 實驗…工作記憶提升 18%」 with no author, journal or link. The Reddit template (≈L1880) repeats "Harvard study backs this up". Other unsourced figures: 「多巴胺 10–30%」 and 「褐噪音 67% 用戶偏好」. For a post aimed at a clinical population, this is the most serious trust problem in the batch. The real literature is mixed on binaural beats and shows small effects for white/pink noise (Söderlund's moderate-brain-arousal work and a 2024 meta-analysis of noise and ADHD attention; verify both). Cite that, and soften the claims. The 40 Hz example is also listed under 「Beta 波 (13–30 Hz)」, which contradicts itself.
+- **Do not split it into more parts. Cut it instead.** Of the 2,480 lines, 步驟三 (OBS), 步驟四 (SEO/Shorts), 步驟六 (Discord/Reddit) and 步驟七 (monetization) duplicate the ocean series almost block for block. Keep what is ADHD-specific: audience, audio design (BPM, noise colour, no lyrics, no sudden transitions), ADHD-friendly visual principles (L455) and community-safety rules (L1822). Link everything else to the shared ops post. That gives a strong 800–1,000-line post. If it must stay standalone, a two-way split works: "science + audio/visual design" and "launch + growth". A three-way split would only add more duplication.
+- The binaural-beat workflow does not work as described. Suno and Udio cannot reliably produce a stereo binaural carrier (L203–205 「可生成帶雙耳節拍的音樂」), and lossy YouTube audio plus speaker playback defeats binaural beats anyway. The Audacity method B (L350) is the correct approach. Say that headphones are required, and say which method actually produces the effect.
+- Monetization errors:
+  - The membership perk 「無廣告直播間（如可行）」 is not possible, because memberships cannot remove ads.
+  - The $7,286/月 membership estimate at 50K subscribers is gross, before YouTube's 30% cut.
+  - The Gold tier offers 「每月 1 對 1 專注力諮詢」 to an ADHD audience, which comes close to health advice. The post's own rule 5 (「不提供醫療建議」) argues against it.
+- The closing claim 「Lofi Girl 曾經也只是一個學生的專案。ChilledCow 第一年只有幾十個觀眾」 treats ChilledCow and Lofi Girl as two channels. They are the same channel, renamed in 2021. Fix the anecdote or remove it.
+- There is no opening hook with a concrete outcome. L12 is a generic 「本文將手把手帶你…」. Lead with the one differentiating insight (design for ADHD, not generic lofi) and one honest expectation.
+
+#### `ai-ocean-space-ambient-streaming-part1-foundation-zh.md`
+**Verdict:** `restructure`
+- The market section (L17–63) rests on figures with no source: 「$2.8 億美元」, 「18.5%」, 「結合視覺可提升 CPM 30–50%」. The competitor profiles ("Relaxing White Noise 680 萬", "Ambient Worlds 180 萬", with CCV ranges and weaknesses) read as invented. Verify each channel and number, or present them as archetypes rather than named rivals.
+- The citations are misapplied. The 2017 *Frontiers in Human Neuroscience* pink-noise study used acoustic pulses timed to slow-wave sleep, not continuous background noise, and it does not support 「提升深度睡眠品質 75%」. The 2012 *J. Theor. Biol.* paper was about sleep stability, not memory. 「2020 年《Nature》研究…+35%」 has no identifiable paper. Either cite correctly with links or drop them. The takeaway yaml (L922) repeats "75%" and "35%" as bullet facts.
+- The 三種方法比較 table (L819) and the 3-stage method roadmap are the most useful part of the post. Move them earlier, and add a "why pure-AI vs layering" decision with its flip condition (for example: switch to layering once you see Content-ID or duplicate-content flags, or once watch time plateaus).
+- Suno feature and plan claims (「320kbps」, 「最長 4 分鐘 → 無限延伸」, the 500-track Pro tier, 「商業授權清晰」) need a date stamp. The licensing claims especially should be marked **verify**.
+- The series navigation (L911) has no links, and 「太空: 真空無介質」 is played for irony without saying the obvious: every "space sound" is synthesised. A sentence on NASA sonification assets and their licence would add real value.
+
+#### `ai-ocean-space-ambient-streaming-part2-visual-zh.md`
+**Verdict:** `restructure`
+- **The "8K" promise in the title is never delivered, and it cannot be.** YouTube Live ingests at most 4K. The workflow resizes to 3840×2160 (≈L556) and generates Runway clips at 1920×1080 (≈L803). Midjourney does not output 「原生 8K」 (L86). Retitle to 4K/1080p and delete the 「超高品質（8K 沉浸式）CTR 9.2%」 tier.
+- The 「測試數據（10,000 樣本）」 CTR and watch-time ladder at L21–47 (2.1% → 9.2%, +467%) is an unsourced benchmark presented as data. Remove it, or turn it into a hypothesis the reader can test with YouTube's thumbnail A/B tool.
+- Version drift: the prose says Midjourney V7, every prompt uses `--v 6.1` (L219 onward), and Runway "Gen-3 Alpha" is presented as 「目前最佳」. Update to current models, or describe the parameters without version pins. The `--sref https://cdn.midjourney.com/xxx.png` placeholder (L348) should say 「換成你的參考圖 URL」.
+- The loop-building section (Phase 4, L921) is where real craft lives. Crossfade length, ping-pong loops and hiding the seam are what separate a watchable 24/7 visual. Expand it, and cut the Photoshop Action click path (L525–650), which is generic.
+- Fix the nested fences at L605 and L658. They break everything after them in Phase 2.
+
+#### `ai-ocean-space-ambient-streaming-part3-technical-zh.md`
+**Verdict:** `restructure`
+- **The watchdog code is broken for copy-paste.** Step 3 installs `pip install obs-websocket-py`, but the script does `import obsws_python as obs`. That is a different package (`obsws-python`). Step 1 tells readers to download obs-websocket from GitHub releases, but it has shipped inside OBS since v28. The `restart_obs.bat` runs `del /q "%TEMP%\*"`, which wipes the user's whole temp folder, not OBS's. A daily `taskkill /F` can also trigger OBS's post-crash safe-mode prompt, which blocks `--startstreaming` (verify on OBS 30+). Fix all four problems or remove the scripts.
+- The hardware options are unrealistic without caveats. "Raspberry Pi 5 … 720p" running OBS is doubtful. "EC2 t3.medium ~$35/月" ignores two costs. It is a burstable instance with no GPU, so a continuous 1080p x264 encode drains CPU credits. And it has data egress: about 6 Mbps × 30 days ≈ 1.9 TB, which is roughly $170/月 on AWS. Give the real total, or drop the cloud option.
+- Missing operations knowledge that a 24/7 streamer really needs: YouTube only archives up to about 12h of a live stream; stream key and "persistent stream" settings decide whether a restart keeps the same URL and viewers; and chat and live-DVR behaviour after reconnects. These matter more than the Photoshop-level detail elsewhere in the series.
+- This post is the best candidate to become the shared 「24/7 串流營運」 post suggested above. Once fixed, the ADHD post's OBS section can simply link here.
+- Fix the six nested-fence breaks listed in the series observations.
+
+#### `ai-ocean-space-ambient-streaming-part4-growth-zh.md`
+**Verdict:** `rewrite/merge`
+- The revenue tables contradict each other within one post:
+  - The timeline (L823–826) assumes 50K subscribers yield "會員 $50–150/月（50 會員）".
+  - The membership section (L884–918) assumes the same 50K subscribers yield 1,200 members and $6,386/月, "擴展到 150K … $19,158/月".
+  - The finale promises 50K subscribers in month 3 and 200–500K by month 12, with no evidence.
+  
+  Pick one conservative model, label it as an assumption, and show the 30% YouTube cut.
+- 「實際案例（虛構但真實反映市場）」 (L47) and 「YouTube 官方：Shorts 佔新增訂閱 60%+」 (L62) with no link undercut the whole post. The ending 「經過驗證、可執行、可獲利的完整商業模式」 (L1697) claims validation that the post admits it does not have.
+- The membership perk 「無廣告體驗（YouTube Premium 功能）」 is not something a creator can grant. The Exclusive License at $2,999 and Commercial License at $199 per AI-generated track need a copyright and licensing caveat.
+- About 70% of the post overlaps ADHD 步驟四–七 and synthwave part 4 (Shorts types, Discord, memberships, sponsors). Merge the shared material into one growth/monetization chapter, and keep only ocean/space-specific Shorts ideas (the 類型 A/B/C matrix at L107–400 has good genre-specific hooks).
+- This is the only post in the series with a linked nav (L1708). Backport that nav to parts 1–3.
+
+#### `synthwave-study-streaming-part1-market-culture-zh.md`
+**Verdict:** `restructure`
+- The market numbers at L278–320 are recycled from ocean part 1 (identical search volumes; see the series observations). The subreddit sizes, Spotify listener counts and 「全球潛在受眾 20–30M / 願付費比例 10–15%」 are unsourced. Verify each one or delete it. The "The Bootleg Boy" competitor profile (L330) describes a lofi/chill channel, not synthwave. Verify the competitor set against real synthwave 24/7 streams.
+- The cultural history (起源與演變, L56) and 受眾心理分析 (L135) are this series' real differentiator from the ambient series. Give them more space and some grounding: named artists, films and games with years, and one or two references.
+- The 「受眾購買力 ⭐⭐⭐⭐⭐ / 收入 $50K–150K」 box presents an audience profile as fact. Say it is a positioning hypothesis, and show how to check it (YouTube Studio audience geography and device data after the first month).
+- The three positioning options (方案 A/B/C, L466–626) are a good "why X not Y". Add an explicit flip condition, for example: choose Fitness over Dev Radio if analytics show mostly mobile, evening viewing.
+- The series nav (L738) has no links.
+
+#### `synthwave-study-streaming-part2-music-production-zh.md`
+**Verdict:** `light edit`
+- It is the most craft-focused post in the batch: instrument and timbre analysis, BPM bands, playlist arc design. The section heading 「Synthwave 提示詞資料庫（50 個精選）」 (L252) delivers only 13 prompts. Retitle it or finish the list.
+- The Audacity macro (L575–640) peak-normalises to −1 dB and then applies make-up-gain compression, and the QC step then asks 「音量一致？」. Peak normalisation does not produce consistent loudness. Use Audacity's *Loudness Normalization* at −14 LUFS integrated, which the Ozone section already names as the target, with a true-peak ceiling around −1 dBTP. Also, a 3 s fade-in and 5 s fade-out on every track conflicts with the 「seamless loop」 prompts. Say which one applies to the live playlist.
+- The 延伸閱讀 link labelled 「深海/太空…（二）：音頻生成指南」 points to part 1. Fix the label. The nav (L921) has no links.
+- The Ozone ROI box (「時間價值 $500 / 淨值 $201」) is filler. Cut it.
+
+#### `synthwave-study-streaming-part3-cyberpunk-visual-zh.md`
+**Verdict:** `light edit`
+- A solid, genre-specific post. The 80 年代視覺元素圖鑑 (hex palettes, grid proportions, neon physics) is useful reference material. It has the least overlap with the ocean series, so keep its structure.
+- Fix the nested fences at L635 (AE expression) and L759. The After Effects grid recipe also contradicts itself: `Border: 40` versus 「線寬 2–3 px」 earlier. The Grid effect on a flat solid also will not produce the perspective floor the post describes. Add the 3D-layer / camera-tilt step, or use a dedicated perspective-grid technique.
+- Runway "Gen-3" and `--v 6.1` pins need the same update as ocean part 2 (or version-free wording). 「Duration: 5 seconds（Runway 限制）」 is stale. Verify it.
+- Link the nav (L1024).
+
+#### `synthwave-study-streaming-part4-community-monetization-zh.md`
+**Verdict:** `restructure`
+- **Remove the policy-violating advice.** L660–670 tells readers to put a music stream in 「Science & Technology（必選，CPM 最高）」 and to avoid Music. The description template (L675–700) says 「關鍵：大量使用程式語言和工具關鍵字」, with a hashtag dump of #Docker #Kubernetes #AWS. That is misleading metadata and keyword stuffing under YouTube's spam policy. It risks demonetisation, the opposite of the goal. Replace it with honest, relevant metadata guidance.
+- The CPM claims do not hold together. Synthwave at 「$8–15」 (L38, L620) is unsourced and sits next to the post's own table giving AdSense 「$100–500」/月. The 「週末 CPM 降低 20–30%」 and time-slot premiums (「CPM +30%」) are also unsourced. The eligibility figure 「會員制 1K（手動）/30K（內建）」 is wrong: memberships are available from the expanded-YPP tier at 500 subscribers in supported regions (verify current thresholds). It also omits the 10M-Shorts-views route to ad revenue.
+- The `XXX` placeholders (L763–839) sit inside a sponsor media-kit template, which is acceptable. Mark the block explicitly as 「範本，請填入你的數據」, and check that its `##` headings stay inside the fence so they do not leak into the page TOC.
+- Normalise the front matter to match the series: add `authors`, `readTime` and a time on `date`, restore 「實戰」 in the title, and add `business` to categories. Delete the closing 「下一篇預告：可能會寫…」 teaser, since those posts do not exist.
+- The Discord bot, Shorts and sponsor-tier content overlaps the ocean part 4 and ADHD growth sections. After the shared growth post exists, keep only the developer-specific angle: code-typing ASMR Shorts, GitHub/Coding Jam events, and dev-tool sponsors.
+
+### Top 5 highest-impact fixes in this batch
+1. **Remove or source the pseudo-scientific and financial "facts".** Top of the list: the invented Harvard and Stanford 40 Hz ADHD studies (ADHD L107–108, ≈L1880), the misapplied pink-noise and *Nature* citations (ocean part 1 L165–215), the recycled search volumes (synthwave part 1 L290–296), and the fictional growth and revenue ladders presented as validated (ocean part 4 L47, L1697).
+2. **Add a YouTube policy and licensing section** covering the July 2025 inauthentic/repetitious-content YPP rule, AI-content disclosure, copyright on AI-generated music and current Suno/Udio terms. Delete synthwave part 4's advice to miscategorise streams as Science & Technology and to keyword-stuff descriptions (L660–700).
+3. **De-duplicate the three series.** Promote a fixed ocean part 3 into one shared 「24/7 串流營運與變現」 post (OBS, watchdog, Shorts, memberships). Cut the ADHD post to its ADHD-specific core (about 900 lines) rather than splitting it, and point every 延伸閱讀 link at the shared post instead of the missing `youtube-24-7-streaming-money-strategy-zh`.
+4. **Fix the broken rendering and copy-paste code.** Correct the nested code fences (ADHD, ocean parts 2 and 3, synthwave part 3). In the watchdog, fix the `obs-websocket-py` vs `obsws_python` mismatch, remove the `del %TEMP%\*` line, and update the obs-websocket install step. Convert fenced yaml "prose" into real Markdown so it reads on mobile.
+5. **Correct the headline promises and stale versions.** Change "8K" in ocean part 2 to 4K/1080p, update or unpin Runway Gen-3 and Midjourney V7/`--v 6.1`, retitle synthwave part 2's "50 個" prompts, and link every series nav (parts 1–3 of both series).
