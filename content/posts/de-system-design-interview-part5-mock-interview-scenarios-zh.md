@@ -16,7 +16,7 @@ series: ["de-system-design-interview"]
 > 能通過的人靠的不是記得更多圖，而是**每一步都說得出這個決定是從哪個需求、哪個數字推出來的**。  
 > 這一篇不給你新的圖，而是示範同一套推導在真實對話中怎麼走完 45 分鐘。
 
-前四篇分別建立了[答題框架](/posts/de-system-design-interview-part1-framework-fundamentals-zh/)、[批次](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/)、[串流](/posts/de-system-design-interview-part3-streaming-realtime-zh/)與[儲存](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/)的判斷方式。本篇把它們放進兩場模擬面試：一場完整的 45 分鐘，一場精簡版；最後附上十一種常見題型的速查表。之後的 Part 6 到 Part 9 再各以一個產業（支付、廣告、叫車、影音串流）做完整的案例演練。
+前四篇分別建立了[答題框架](/posts/de-system-design-interview-part1-framework-fundamentals-zh/)、[批次](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/)、[串流](/posts/de-system-design-interview-part3-streaming-realtime-zh/)與[儲存](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/)的判斷方式。本篇把它們放進兩場模擬面試：一場完整的 45 分鐘，一場精簡版；最後附上十一種常見題型的速查表。之後的 Part 6 到 Part 9 再各以一個產業（支付、廣告、叫車、影音串流）做完整的案例演練。Part 10 到 Part 14 回頭把最常被追問的五個主題（新鮮度、重跑、事件正確性、Schema 演進、儲存與查詢效率）的策略選項逐一展開，Part 15 是資安 SaaS 的案例。
 
 ---
 
@@ -370,11 +370,13 @@ per-minute buckets for product p (count of views)
 
 五篇內容濃縮成練習時可以反覆自問的五個問題：
 
-1. 誰在查、要多新鮮、要多準？（Part 1）
-2. 這個作業重跑一次，結果會一樣嗎？（Part 2）
-3. 事件重複、亂序或晚到時，數字還對嗎？（Part 3）
-4. 最常見的查詢需要讀多少資料？（Part 4）
+1. 誰在查、要多新鮮、要多準？（Part 1；策略深入見 [Part 10](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/)）
+2. 這個作業重跑一次，結果會一樣嗎？（Part 2；策略深入見 [Part 11](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)）
+3. 事件重複、亂序或晚到時，數字還對嗎？（Part 3；策略深入見 [Part 12](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)）
+4. 最常見的查詢需要讀多少資料？（Part 4；策略深入見 [Part 14](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)）
 5. 我怎麼知道它壞了，壞了之後怎麼修？（本篇）
+
+這五個問題各自都還有一整組做法可以選。Part 10 到 Part 14 逐題展開不同策略的優缺點與適用條件，並補上這份清單沒列到的 [Schema 演進（Part 13）](/posts/de-system-design-interview-part13-schema-evolution-zh/)；Part 15 再用一個資安 SaaS 的案例把它們串起來。
 
 **DE 系統設計面試指南**
 
@@ -387,6 +389,12 @@ per-minute buckets for product p (count of views)
 - [Part 7：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/)
 - [Part 8：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part8-ride-hailing-geo-realtime-zh/)
 - [Part 9：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/)
+- [Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/)
+- [Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)
+- [Part 12：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)
+- [Part 13：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part13-schema-evolution-zh/)
+- [Part 14：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)
+- [Part 15：資安 SaaS 案例——多租戶威脅偵測儀表板](/posts/de-system-design-interview-part15-cybersecurity-saas-dashboard-zh/)
 
 **延伸閱讀**
 
