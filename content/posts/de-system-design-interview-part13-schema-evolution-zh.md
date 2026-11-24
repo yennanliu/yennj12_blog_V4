@@ -45,7 +45,7 @@ series: ["de-system-design-interview"]
 | 刪欄位，原本無預設值 | 刪必填 `amt` | 可，忽略 | 失敗，舊讀者找不到 | 只有 BACKWARD |
 | 改名 | `amt` → `amount` | 等同刪一個加一個；Avro 讀者可用 `aliases` 對回舊名 | 失敗或讀到 null | 破壞性 |
 | 型別放寬 | `int` → `long` | 可，Avro 允許提升 | 失敗，`int` 裝不下 `long` | 只有 BACKWARD |
-| 型別收窄 | `long` → `int` | 失敗 | 可，但可能截斷 | 視為破壞性 |
+| 型別收窄 | `long` → `int` | 失敗，`int` 裝不下舊的 `long` | 可，讀者把 `int` 提升為 `long`，不會截斷 | 只有 FORWARD；風險在生產者端：寫入前把超出範圍的值塞進 `int` 才會溢位 |
 | 同型別改語意 | 分 → 元，仍是 `long` | 可 | 可 | **Registry 全部放行，最危險** |
 | 巢狀 struct 加欄位 | `shipping.zip` | 規則同頂層 | 規則同頂層 | 結構上同上；部分查詢引擎對 struct 內部變更支援較差 |
 | enum 加值 | `status` 加 `REFUNDED` | 可 | 舊讀者遇到未知值會失敗，除非 reader 的 enum 宣告了 `default` | 只有 BACKWARD |
@@ -159,7 +159,12 @@ FORWARD: old reader can read new data
   t2  producer v2 ──writes v2──▶ topic ──▶ consumers v2   (upgrade at leisure)
 ```
 
-一個生產者、30 個消費者時，「消費者先」代表要等 30 個團隊都部署完，生產者才能開始寫新版本；「生產者先」只需要一個團隊動。所以一對多的事件串流比較適合 `FORWARD` 或 `FULL`：**生產者想改就能改，消費者照自己的節奏跟上**。反過來，當消費者只有一個（例如自家的 ETL）而生產者很多時，`BACKWARD` 比較順手。
+一個生產者、30 個消費者時，「消費者先」代表要等 30 個團隊都部署完，生產者才能開始寫新版本；「生產者先」只需要一個團隊動。所以一對多的事件串流比較適合 `FORWARD` 或 `FULL`：**生產者想改就能改，消費者照自己的節奏跟上**。但「照自己的節奏」有兩個前提，非 transitive 的 `FORWARD` 都不保證：
+
+- **落後不只一版的消費者。** `FORWARD` 只拿新版和前一版比。v2 替 `amt` 加上預設值、v3 再把它刪掉，v3 對 v2 是相容的；但還停在 v1 的消費者沒有那個預設值，讀到 v3 的資料就失敗。要讓消費者可以落後任意多版，必須用 `FORWARD_TRANSITIVE`，否則註冊下一版之前要先確認沒有人還停在更舊的版本。
+- **升級後的消費者回頭讀舊資料。** `FORWARD` 允許 v2 新增沒有預設值的必填 `channel`。消費者升到 v2 之後，只要 topic 裡還留著 v1 的紀錄（保留期內的資料、重播、從頭消費），就解不開。要嘛等舊紀錄過期或消費完再升級消費者，要嘛要求同時向後相容，也就是 `FULL`。
+
+這也是有長期保留資料的串流最後多半選 `FULL_TRANSITIVE` 的原因。反過來，當消費者只有一個（例如自家的 ETL）而生產者很多時，`BACKWARD` 比較順手。
 
 **Transitive 變體**（`BACKWARD_TRANSITIVE`、`FORWARD_TRANSITIVE`、`FULL_TRANSITIVE`）把檢查範圍從「最新一版」擴大到「所有歷史版本」。差別出現在消費者需要重讀舊資料時：
 
@@ -273,6 +278,8 @@ message OrderCompleted {
 
 隔離區那一列的「何時失效」值得展開。如果平常隔離率是 0.01%，某天突然變成 100%，代表的不是 2,000 萬筆壞資料，而是生產者部署了不相容的版本。這時應該**觸發斷路、停止消費並告警**，而不是把整天的資料都丟進隔離區，因為修好之後還得從隔離區重放全部資料。實作上就是設定一個隔離率門檻（例如 5 分鐘內超過 1% 就停）。Kafka Connect 的 sink connector 內建 `errors.tolerance=all` 與 `errors.deadletterqueue.topic.name`，但門檻判斷要自己加在監控上。
 
+外加的門檻有一個空窗：在 `errors.tolerance=all` 之下，connector 會跳過壞紀錄繼續前進並提交 offset，等監控發現並把它停下來時，前面幾分鐘的壞紀錄已經被「消費過」了。修好後如果只從已提交的 offset 重啟，那一段就永遠漏掉。所以斷路時要記下**每個分區第一筆被隔離紀錄的 offset**（DLQ 紀錄的標頭帶有原始 topic、分區與 offset），修好後把 consumer group 重設到那裡再重放；夾在其中、當時已成功寫入的正常紀錄會被重送一次，所以 sink 必須是冪等的（以主鍵 upsert）。另一條路是只重放 DLQ 裡的那幾筆。
+
 **上游是 OLTP 資料庫時（CDC）。** 用 Debezium 這類 CDC 連接器時，上游 DBA 的一個 `ALTER TABLE` 就是一次 schema 變更，而且事前通常沒人通知資料團隊。連接器讀到 DDL 後產生新版本的 schema 並嘗試註冊；如果相容模式不允許（例如 MySQL 把一個 `NOT NULL` 欄位改名，等於刪一個必填欄位再加一個），註冊失敗，connector task 停下，CDC 延遲開始上升。這其實是好的失敗方式。要防的是另一種：DBA 把欄位從 `INT` 改成 `BIGINT`、或把金額欄位的意義改了，registry 放行而下游沒人知道。對策是把資料庫 migration 也納入契約的 CI：遷移腳本的 PR 會觸發相同的影響分析。
 
 **血緣與影響分析。** 「誰在讀 `amt`？」要能在一分鐘內回答。來源有三種：dbt 的模型相依（加上 dbt 的 model contract 可在 build 時強制欄位與型別）、OpenLineage 由 Spark／Airflow 回報的執行期血緣、以及查詢引擎的查詢日誌（例如掃描 Athena 的查詢歷史找出引用該欄位的查詢）。前兩者準確但只涵蓋已接入的作業；查詢日誌涵蓋臨時查詢，適合用來找「不在名單上的消費者」。
@@ -315,13 +322,13 @@ consumer migration      = 30 jobs / ~5 per week ≈ 6 weeks of expand phase
 {"name": "amt",      "type": "long",
  "doc": "DEPRECATED 2026-12-01. Minor units (cents). Use amount + currency."},
 {"name": "amount", "type": ["null", {"type": "bytes",
-   "logicalType": "decimal", "precision": 18, "scale": 2}],
+   "logicalType": "decimal", "precision": 18, "scale": 4}],
  "default": null, "doc": "Major units, e.g. 19.99"},
 {"name": "currency", "type": ["null", "string"], "default": null,
  "doc": "ISO 4217"}
 ```
 
-順手加上 `currency`。整數「分」假設每種貨幣都有兩位小數，但日圓沒有小數、有些貨幣有三位；既然都要改，就一次把單位講清楚。
+順手加上 `currency`。整數「分」假設每種貨幣都有兩位小數，但日圓沒有小數、科威特第納爾有三位；既然都要改，就一次把單位講清楚。這也是 `scale` 取 4 而不是 2 的原因：scale 2 表示不了三位小數貨幣的一個最小單位（0.001），而 ISO 4217 目前定義的最小單位位數最多是 4。新舊欄位之間的換算因此不是固定乘除 100，而是依貨幣的小數位數（下面以一張 `dim_currency(currency, minor_unit)` 對照表表示）。
 
 一個常見的錯誤是「順便把 `amt` 改成 `["null","long"]`，方便之後刪除」。這在 Avro 不是 FORWARD 相容的：舊讀者的 `long` 讀不了寫者 union 中的 `null` 分支，registry 會拒絕。另一個錯誤是給 `amt` 加上 `"default": 0`：預設值本身相容，但萬一有作業還在讀 `amt`，之後讀到不含它的資料會得到 0 而不是報錯——營收靜默歸零。
 
@@ -329,27 +336,34 @@ consumer migration      = 30 jobs / ~5 per week ≈ 6 weeks of expand phase
 
 ```sql
 SELECT count(*) AS mismatches
-FROM silver.order_completed
-WHERE event_date = current_date
-  AND amt IS NOT NULL
-  AND (amount IS NULL OR CAST(amount * 100 AS BIGINT) <> amt);
+FROM silver.order_completed o
+-- dim_currency.minor_unit: JPY 0, USD 2, KWD 3
+LEFT JOIN dim_currency c ON c.currency = o.currency
+-- filter by arrival time, not event_date
+WHERE o.ingested_at >= current_timestamp - INTERVAL '1' HOUR
+  AND o.amt IS NOT NULL
+  AND (o.amount IS NULL OR c.minor_unit IS NULL
+       OR CAST(o.amount * power(10, c.minor_unit) AS BIGINT) <> o.amt);
 -- expected 0; any row means the producer's conversion is wrong
--- (JPY etc. need currency-aware minor units: check by currency)
 ```
+
+對帳的範圍用**到達時間**切，而不是 `event_date = current_date`。雙寫出錯的事件如果今天才到、但 `event_date` 是昨天，依事件日期過濾就永遠看不到它，不一致的筆數會一直是 0。
 
 **步驟三：分批遷移消費者。** 從血緣拿到 30 個作業的清單，依風險排序：先遷移推薦特徵這類容錯高的，最後才是財務月結。倉儲端的消費者可以先不改程式，改讀一個相容性 view：
 
 ```sql
 CREATE OR REPLACE VIEW gold.order_completed_v1_compat AS
-SELECT order_id, CAST(amount * 100 AS BIGINT) AS amt, ...
-FROM silver.order_completed;
+SELECT o.order_id,
+       CAST(o.amount * power(10, c.minor_unit) AS BIGINT) AS amt, ...
+FROM silver.order_completed o
+JOIN dim_currency c ON c.currency = o.currency;
 ```
 
 每遷移一批，比對該作業新舊版本的輸出（例如每日營收差異應為 0），再進行下一批。
 
 **步驟四：Contract。** 血緣與查詢日誌確認 `amt` 連續兩週無人讀取，而且所有消費者部署的 reader schema 都已不含 `amt` 之後，才移除舊欄位，資料集版本升 MAJOR。注意這一步依第一節的表是「刪除無預設值的欄位」，**只有 BACKWARD 相容**：新 schema 讀得了舊資料，但仍以舊 reader schema 解碼的消費者會失敗。所以這次註冊要把 subject 暫時切到 `BACKWARD_TRANSITIVE`，而「消費者先升級」這個前提，正是步驟三已經用血緣驗證過的事。如果是 Protobuf，把編號與名稱加入 `reserved`。
 
-資料湖的歷史分區不必為此重寫：銀層提供 `COALESCE(amount, CAST(amt AS DECIMAL(18,2)) / 100)` 的欄位，舊分區照樣有 `amount`。只有在要真正刪除 `amt` 實體欄位時，才需要一次性回補舊分區（Iceberg 上的 `UPDATE` 會重寫那些檔案）。
+資料湖的歷史分區不必為此重寫：銀層提供 `COALESCE(amount, CAST(amt AS DECIMAL(18,4)) / power(10, minor_unit))` 的欄位（舊事件沒有 `currency`，要先依當時的規則補上，例如當時只有單一幣別），舊分區照樣有 `amount`。只有在要真正刪除 `amt` 實體欄位時，才需要一次性回補舊分區（Iceberg 上的 `UPDATE` 會重寫那些檔案）。
 
 **回退方案**：步驟一到三的任何一點，生產者都還在寫 `amt`，所以回退只是讓消費者改回讀舊欄位。只有步驟四是單向的，這也是它要等兩週的原因。
 
@@ -362,7 +376,7 @@ FROM silver.order_completed;
 | 某欄的 null 比例從 0.1% 跳到 100%，從某個日期分區開始 | 上游改名；依名稱讀取的引擎找不到舊名 | 比對該分區前後檔案 footer 的 schema（`pyarrow.parquet.read_schema`）；查 registry 的版本歷史 | 在銀層對應新舊名；Iceberg 表用 rename 而非新增欄位 |
 | 新欄位只在部分分區有值，其他分區是 null | Hive／Glue 表層級加了欄位，舊分區 schema 未更新；或 Spark 沒開 `mergeSchema` | 比對表與分區的 schema（Glue `GetPartition`） | `ADD COLUMNS ... CASCADE`，或遷到 Iceberg |
 | 作業在轉型時失敗：`Found long, expecting int`、`HIVE_PARTITION_SCHEMA_MISMATCH` | 型別被放寬，但讀者還是舊 schema；或分區間型別不一致 | 看錯誤從哪個分區、哪個 schema id 開始 | 消費者先升級（BACKWARD 的順序）；統一分區 schema |
-| 隔離率從 0.01% 跳到 100% | 生產者部署了不相容的版本，且繞過了 registry 檢查 | 隔離區樣本的 schema id 與 registry 比對 | 觸發斷路；回退生產者；修好後從 offset 重放，而非從隔離區重放 |
+| 隔離率從 0.01% 跳到 100% | 生產者部署了不相容的版本，且繞過了 registry 檢查 | 隔離區樣本的 schema id 與 registry 比對 | 觸發斷路；回退生產者；修好後把 offset 重設到第一筆被隔離的位置再重放（sink 要冪等），而非整批從隔離區重放 |
 | 營收一夜變成 100 倍或 1/100，所有結構檢查都通過 | 同型別改單位（分 ↔ 元） | 金額中位數與分佈的日對日變化；與交易系統或帳本總額對帳（見 Part 6） | 修正後回補受影響日期；在契約中加上單位與值域規則 |
 | 營收剛好變成 2 倍 | 雙寫期間有消費者同時讀了新舊兩份：以正則訂閱 `orders.*` 讀到 v1 與 v2，或把 `amt/100` 與 `amount` 相加 | 依 `order_id` 計算重複筆數；檢查訂閱清單 | 消費者只讀一份；對 `order_id` 去重（見 Part 12） |
 | CDC 延遲持續上升，connector task 狀態為 FAILED | 上游 `ALTER TABLE` 產生的新 schema 註冊失敗 | Connector 日誌中的 registry 錯誤；DBA 的 migration 紀錄 | 依相容模式調整（例如先加預設值）；把 DB migration 納入契約 CI |
@@ -380,7 +394,7 @@ FROM silver.order_completed;
 | 新欄位一次到位（名稱、型別、單位、幣別）vs 分三次變更 | 30 個消費者只遷移一次 | 每次遷移都要 6 週與一次對帳；三次就是一個季度 | 某個變更有急迫的合規期限，必須先單獨上線 |
 | Bronze 保留原始資料 + 銀層強制 schema vs 只在入口強制 | 入口擋不住的語意錯誤，修正後可從原始資料重算 | 只在入口強制時，已被接受但解讀錯的資料無法重建 | 原始資料含不能保留的個資，必須在落地前轉換 |
 | Iceberg 欄位 ID vs Hive 表加 Parquet | 改名、刪除、調換順序不重寫資料、不錯位；schema 只有一份 | Hive 表的分區各有 schema，依名稱讀改名變 null、依位置讀可能錯位 | 表很小、schema 幾乎不變，且讀取引擎不支援 Iceberg |
-| 隔離率門檻斷路 vs 一律隔離後繼續 | 大規模不相容時停下，修好後從 offset 重放即可 | 一律隔離會把整天資料搬進隔離區，重放更複雜，且下游看到的是殘缺資料 | 來源是不可重送的外部推送，停止消費就會遺失資料 |
+| 隔離率門檻斷路 vs 一律隔離後繼續 | 大規模不相容時停下，修好後從第一筆被隔離的 offset 重放即可 | 一律隔離會把整天資料搬進隔離區，重放更複雜，且下游看到的是殘缺資料 | 來源是不可重送的外部推送，停止消費就會遺失資料 |
 
 ---
 

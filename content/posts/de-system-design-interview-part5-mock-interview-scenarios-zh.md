@@ -376,7 +376,7 @@ per-minute buckets for product p (count of views)
 4. 最常見的查詢需要讀多少資料？（Part 4；策略深入見 [Part 14](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)）
 5. 我怎麼知道它壞了，壞了之後怎麼修？（本篇）
 
-這五個問題各自都還有一整組做法可以選。Part 10 到 Part 14 逐題展開不同策略的優缺點與適用條件，並補上這份清單沒列到的 [Schema 演進（Part 13）](/posts/de-system-design-interview-part13-schema-evolution-zh/)；Part 15 再用一個資安 SaaS 的案例把它們串起來。
+前四個問題各自都還有一整組做法可以選。Part 10、11、12、14 逐題展開不同策略的優缺點與適用條件；第五個問題沒有獨立成篇，它的做法分散在各篇的監控與「症狀到診斷」段落裡。另外補上這份清單沒列到的 [Schema 演進（Part 13）](/posts/de-system-design-interview-part13-schema-evolution-zh/)；Part 15 再用一個資安 SaaS 的案例把它們串起來。
 
 **DE 系統設計面試指南**
 

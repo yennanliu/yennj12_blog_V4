@@ -175,16 +175,20 @@ SLO example       : p95(per-event lag) ≤ 3 h over a rolling 7 days
 -- heartbeat_observations: one row per synthetic event,
 -- visible_at = first time the probe saw it in the serving table
 SELECT
+  -- SLO: share of ALL judged heartbeats visible within 3 h;
+  -- a missing heartbeat (visible_at IS NULL) counts as a miss
+  count_if(date_diff('second', event_time, visible_at) <= 10800) * 1.0
+    / count(*)                                      AS on_time_ratio,
+  -- diagnostic only: aggregates skip NULLs, so this ignores missing ones
   approx_percentile(date_diff('second', event_time, visible_at), 0.95)
-    AS p95_lag_s,
-  max(date_diff('second', event_time, visible_at)) AS max_lag_s,
+    AS p95_lag_s_of_seen,
   count_if(visible_at IS NULL)                      AS never_seen
 FROM heartbeat_observations
 WHERE event_time > current_timestamp - INTERVAL '1' DAY
   AND event_time < current_timestamp - INTERVAL '3' HOUR;  -- only judged ones
 ```
 
-最後一行的條件很重要：最近 3 小時內的心跳還沒到 SLO 的期限，`visible_at` 為空是正常的，不能算成遺失。
+兩個細節決定這個查詢量到的是不是 SLO。第一，最後一行的條件：最近 3 小時內的心跳還沒到期限，`visible_at` 為空是正常的，不能算成遺失。第二，達標與否看的是 `on_time_ratio ≥ 0.95`，而不是百分位數：聚合函數會略過 NULL，如果 100 筆心跳中有 10 筆永遠沒出現，只對看得到的 90 筆算 p95 會得到一個漂亮的數字。**沒出現的心跳必須留在分母裡。**
 
 **告警分兩級**，以 3 小時 SLO 為例：
 
@@ -192,7 +196,9 @@ WHERE event_time > current_timestamp - INTERVAL '1' DAY
 |---|---|---|
 | 警告 | staleness > 2 h（預算用掉三分之二） | 通知頻道，白天處理 |
 | 呼叫 | staleness > 2 h 30 min，或連續兩次執行失敗 | 叫醒值班人員 |
-| 缺席告警 | 30 分鐘內沒有新的心跳被看到 | 叫醒值班人員：管線整段停了 |
+| 缺席告警 | 超過「發佈間隔 + 一次執行時間 + 緩衝」沒有新的心跳被看到（每小時發佈的管線約 1 h 30 min；分鐘級管線才用 5–10 分鐘） | 叫醒值班人員：管線整段停了 |
+
+缺席告警的門檻要跟著發佈節奏走。每小時才發佈一次的表，心跳本來就是一小時出現一批，把門檻設成 30 分鐘會在正常運作時每小時誤叫一次。
 
 ### 症狀到診斷
 
@@ -224,12 +230,12 @@ wait     3 d    █████████████████████�
 
 | 層級 | 定義 | 典型來源 | 可以用來 | 不可以用來 |
 |---|---|---|---|---|
-| 近似 | 有界誤差的估計，例如 HyperLogLog 不重複人數 | 串流聚合 | 看趨勢、發現異常 | 對帳、計費 |
+| 近似 | 誤差可用統計描述的估計，例如 HyperLogLog 不重複人數 | 串流聚合 | 看趨勢、發現異常 | 對帳、計費 |
 | 暫定 | 對已到達資料的精確計算，但資料還沒到齊 | 分鐘級或小時級路徑 | 營運決策、即時監控 | 對外揭露、獎金 |
 | 最終 | 過了晚到截止時間後的精確計算 | 每日批次 | 財報、對帳、正式 KPI | — |
 | 重述 | 最終值因 bug 或極晚資料被修正後的新版本 | 回補作業 | 取代舊的最終值 | 默默覆蓋而不留記錄 |
 
-近似值的誤差可以事先算出來：HyperLogLog 用 2^14 個暫存器時，標準誤差約 1.04 / √16384 ≈ 0.81%，每個計數器約 12 KB。暫定值的誤差則取決於晚到分佈，事前只能估計，所以必須**標示**。
+近似值的誤差可以事先描述，但它是統計量而不是上限：HyperLogLog 用 2^14 個暫存器時，**標準誤差**約 1.04 / √16384 ≈ 0.81%，每個計數器約 12 KB。意思是約三分之二的估計落在真值 ±0.81% 內、約 95% 落在 ±1.6% 內，個別估計仍可能更遠。暫定值的誤差則取決於晚到分佈，事前只能估計，所以必須**標示**。
 
 **重述要有規則**。最終值一旦發佈，就只能透過重述改變，而重述需要：改變的原因、前後差異、受影響的日期範圍，並通知下游。最常見的事故不是數字錯，而是同一個數字在週一和週三被兩個人截圖，兩張截圖不一樣，卻沒有任何記錄說明為什麼。
 
@@ -239,7 +245,7 @@ wait     3 d    █████████████████████�
 
 多數真實系統不會只有一個層級，而是**熱路徑提供暫定值、冷路徑提供最終值**，服務層讓最終值優先。[Part 3](/posts/de-system-design-interview-part3-streaming-realtime-zh/) 已經說明這個形狀；這裡補上讓它在儀表板上可用的三個細節。
 
-**一、在資料列上標示狀態，並以最終值的截止點切分。**
+**一、在資料列上標示狀態，並以明確發佈的截止點切分。**
 
 ```sql
 CREATE OR REPLACE VIEW revenue_hourly AS
@@ -249,10 +255,15 @@ UNION ALL
 SELECT p.hour, p.channel, p.gmv, p.orders, 'provisional' AS status,
        p.updated_at AS as_of
 FROM revenue_hourly_provisional p
-WHERE p.hour > (SELECT max(hour) FROM revenue_hourly_final);
+WHERE p.hour > (
+  -- one-row table, updated in the same commit that publishes final rows;
+  -- coalesce keeps provisional rows visible before the first publication
+  SELECT coalesce(max(finalized_through), TIMESTAMP '1970-01-01 00:00:00')
+  FROM revenue_final_watermark
+);
 ```
 
-`WHERE` 條件確保同一個小時不會同時出現兩個版本；最終值發佈後，對應的暫定列自動退出檢視，不必去刪它。
+切分點是批次作業**明確宣告**的 `finalized_through`（「這個小時以前、所有通路都已定稿」），和最終資料在同一次提交中發佈，而不是從資料推斷的 `max(hour)`。用 `max(hour)` 有兩個洞：最終表還是空的時候它是 NULL，比較結果會把所有暫定列都濾掉，儀表板一片空白；如果通路 A 已寫到 10 點而通路 B 還沒寫，B 的暫定列會被 A 的進度一起濾掉，卻沒有最終列補上。有了這個截止點，同一個小時不會同時出現兩個版本；最終值發佈後，對應的暫定列自動退出檢視，不必去刪它。
 
 **二、儀表板顯示狀態**：暫定的區段用虛線或不同底色，並在標題旁顯示「資料更新至 HH:MM，最近 N 小時為暫定值」。這一行字能避免大部分「數字為什麼變了」的詢問。
 
@@ -323,7 +334,7 @@ WHERE p.hour > (SELECT max(hour) FROM revenue_hourly_final);
 └─────────────────────────────┘
 ```
 
-**新增**：常駐的小叢集（或倉儲）每 15 分鐘做增量 MERGE；第六節的狀態標示與檢視；心跳與 staleness 告警；每日 compaction。**成本**：運算約 6 倍（約 $1,400／月，依第一節假設），多出 3–4 個元件；需要自動重試，夜間的失敗由下一次執行自然補上。**解決**：活動問題 30 分鐘內可見；財務數字不受影響。**仍存在**：若之後要做「自動暫停壞掉的活動」，30 分鐘對機器來說太慢。
+**新增**：常駐的小叢集（或倉儲）每 15 分鐘做增量 MERGE；第六節的狀態標示與檢視；心跳與 staleness 告警；每日 compaction。**成本**：運算約 6 倍（約 $1,400／月，依第一節假設），多出 3–4 個元件；需要自動重試，夜間的失敗由下一次執行自然補上。**解決**：活動問題通常在 30–45 分鐘內可見（SLO 為 p95 ≤ 45 分鐘）；財務數字不受影響。**仍存在**：若之後要做「自動暫停壞掉的活動」，30 分鐘對機器來說太慢。
 
 ```
 ╔══════════════════════════════════════════════════════════════════════╗
@@ -421,7 +432,7 @@ hourly   : 1 − 0.99^24  ≈ 21%   → about one failing day per week
 | 數字的準確度 | 幾乎全是暫定值，最終值要另建批次 | 最近一天暫定、其餘為最終值 |
 | 交付時間 | 數個月 | 數週 |
 
-面試的收尾可以這樣說：「我不會把整個儀表板改成即時。財務與管理層維持每日最終值；活動經理需要的是 30 分鐘內發現活動壞掉，所以我加一個 15 分鐘的暫定層級，明確標示、每天與最終值比對，並以 p95 端到端延遲定 SLO。如果之後要讓系統自動暫停活動，那一個消費者才值得秒級路徑。」**這個回答拒絕了字面上的需求，卻滿足了真正的需求，而且說得出在什麼條件下會改變主意。**
+面試的收尾可以這樣說：「我不會把整個儀表板改成即時。財務與管理層維持每日最終值；活動經理希望大約半小時內發現活動壞掉，所以我加一個 15 分鐘的暫定層級——端到端實際是 30–45 分鐘，這個落差我會先和對方確認可以接受——明確標示、每天與最終值比對，並以 p95 端到端延遲定 SLO。如果之後要讓系統自動暫停活動，那一個消費者才值得秒級路徑。」**這個回答拒絕了字面上的需求，卻滿足了真正的需求，而且說得出在什麼條件下會改變主意。**
 
 **本篇重點**
 

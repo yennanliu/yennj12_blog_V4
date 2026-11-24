@@ -190,6 +190,8 @@ WHERE date(event_ts) = current_date - INTERVAL '1' DAY
 WHERE dt = date_format(current_date - INTERVAL '1' DAY, '%Y-%m-%d')
 ```
 
+這個改寫成立的前提是 **`dt` 就是事件日期**（寫入時由 `event_ts` 以同一個時區導出），本文的情境採用這個假設。如果表是依**到達日期**分區，兩個條件選到的列並不相同：昨天發生、今天才到的事件在今天的分區裡，改寫後會被漏掉。這時要保留 `event_ts` 的條件，另外加上一段涵蓋晚到範圍的分區條件來裁剪，例如 `dt BETWEEN 昨天 AND 昨天 + 3 天`（晚到上限見 [Part 12](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)）。
+
 引擎只在條件能對應到分區欄的值時才能跳過分區。三種常見的失效寫法：條件寫在非分區欄（如上）；對分區欄套函數或做運算；分區欄與比較值的型別不一致而被隱式轉換（行為依引擎而定）。Iceberg 的隱藏分區（`day(event_ts)`）能自動把 `event_ts` 的範圍條件換算成分區過濾，所以遷移到 Iceberg 分區規格後，應該寫**原始欄位上的範圍條件**（`event_ts >= ... AND event_ts < ...`），而不是對它套 `date()`。
 
 修正後 Q2 只讀一天：`80 GB × 5% = 4 GB/run`，每月從 $10,512 降到 `4 GB × 24 × 30 = 2.88 TB × $5 ≈ $14`。一行 SQL 省下四分之一的帳單——這就是 Phase 1 要先做的原因。
@@ -314,6 +316,8 @@ Q3 每次都要重讀 30 天的 `user_id` 來算精確的不重複數。HyperLog
 
 ```sql
 -- 每日建一列 sketch（Trino / Athena engine v3）
+-- 重建某一天時先刪後寫（或 INSERT OVERWRITE 該分區），不可只追加
+DELETE FROM gold.daily_user_hll WHERE dt = '2026-11-23';
 INSERT INTO gold.daily_user_hll
 SELECT dt, country, CAST(approx_set(user_id) AS varbinary) AS hll
 FROM silver.events
@@ -325,6 +329,8 @@ SELECT cardinality(merge(CAST(hll AS HyperLogLog))) AS mau
 FROM gold.daily_user_hll
 WHERE dt >= '2026-10-25';
 ```
+
+sketch 表的更新必須是**取代**而不是追加。sketch 只能合併、不能扣除：某一天因修正而少了一批使用者，重跑時若只是再 `INSERT` 一次，舊的 sketch 還留在表裡，之後的 `merge` 會把新舊兩份一起併進去，被移除的使用者仍然算在內。所以重建某一天要連同該天所有國家的列一起換掉，而且最好是原子的（Iceberg 上的 `INSERT OVERWRITE` 或一次 `MERGE`）；上面的先刪後寫在兩個陳述式之間有一小段空窗。
 
 Trino 的 HLL 標準誤差約在 1.6%–2.3% 之間（`approx_distinct` 預設 2.3%，可用參數調低，代價是 sketch 變大）。百分位數（p50、p95 延遲）對應的是 t-digest 或 KLL 這類分位數 sketch，同樣可以合併。
 

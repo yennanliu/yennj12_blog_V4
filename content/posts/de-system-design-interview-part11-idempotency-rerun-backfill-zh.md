@@ -276,7 +276,7 @@ SELECT * FROM lake.fx_rates VERSION AS OF 8744213902560
 **快照保留期是這個方法的上限。** 快照會過期：Iceberg 需要定期執行 `expire_snapshots` 清掉舊檔案，Delta Lake 的 `VACUUM` 預設只保留 7 天內不再被引用的檔案。要能釘選 90 天前的輸入，有兩種做法：
 
 - 輸入層本身是**不可變的每日分區**（原始層只追加、每天一個分區），那麼「日期參數」就等於快照，不需要時間旅行。
-- 對關鍵輸入定期打**標籤**並設定保留期，例如 Iceberg 的 `ALTER TABLE ... CREATE TAG ... AS OF VERSION ... RETAIN 400 DAYS`，讓月結時的版本保留一年以上。
+- 對**manifest 引用到的每一個快照**打標籤並設定保留期，例如 Iceberg 的 `ALTER TABLE ... CREATE TAG ... AS OF VERSION ... RETAIN 400 DAYS`。標籤只保住它指向的那一個快照：只在月結時打一個標籤，其餘 29 天的 manifest 所引用的快照照樣會過期，90 天後的回補就讀不到。所以要嘛由作業在寫 manifest 時順手替輸入快照打標籤，要嘛把表的快照保留期（`history.expire.max-snapshot-age-ms`）設得比最長的回補範圍還長，並接受多出來的儲存成本。
 
 **回補時該釘哪一版？** 這是一個業務問題，不是技術問題，面試時要主動提出：
 
@@ -297,7 +297,7 @@ SELECT * FROM lake.fx_rates VERSION AS OF 8744213902560
 
 在表內，接收端是 table format 的提交或 Kafka 的交易（Flink 的兩階段提交 sink 就是這個組合）。在表外，接收端是別人的系統，你必須自己提供冪等的依據。
 
-情境中的分潤對帳單是典型例子。如果作業的最後一步是「對每個合作夥伴寄信」，那麼回補 90 天會寄出 3 個月份 × 1,200 家 = 3,600 封信，其中大部分內容和上次一樣。做法是 **outbox 模式**：作業不直接寄信，而是把「應該寄什麼」寫進一張 outbox 表，和資料在同一次提交中完成；另一個獨立的發送程式讀 outbox、帶著冪等鍵呼叫外部系統，並記錄已發送。
+情境中的分潤對帳單是典型例子。如果作業的最後一步是「對每個合作夥伴寄信」，那麼回補 90 天會寄出 3 個月份 × 1,200 家 = 3,600 封信，其中大部分內容和上次一樣。做法是 **outbox 模式**：作業不直接寄信，而是把「應該寄什麼」寫進 outbox，和資料在同一次提交中完成；另一個獨立的發送程式讀 outbox、帶著冪等鍵呼叫外部系統，並記錄已發送。
 
 ```
 ┌──────────────────────────┐ same commit ┌──────────────────────────┐
@@ -313,11 +313,14 @@ SELECT * FROM lake.fx_rates VERSION AS OF 8744213902560
 └──────────────────────────┘   present     └──────────────────────────┘
 ```
 
-設計重點有三個：
+「同一次提交」要看儲存層做不做得到。Iceberg 的交易範圍是**單一張表**：對帳單表與 outbox 表分兩次提交，中間失敗就會留下有對帳單沒事件、或有事件沒對帳單的狀態。可行的做法有三種：把 outbox 欄位（冪等鍵、核准狀態）直接放在對帳單表的同一批資料列上，一次單表提交就涵蓋兩者，圖中的兩個方框其實是同一張表的兩組欄位；改用支援多表交易的儲存（Redshift、Postgres 這類倉儲或資料庫）；或使用 Project Nessie 這類支援多表提交的 catalog。
+
+設計重點有五個：
 
 - **冪等鍵包含內容雜湊。** 鍵是 `hash(partner_id, month, content_hash)`：重跑產出相同內容時鍵相同，發送程式直接略過；修 bug 後金額改變，鍵不同，才會進入「需要發更正」的流程，而不是悄悄重寄一封新的對帳單。
 - **自己保存已發送紀錄。** 不少付款與通知服務支援 `Idempotency-Key` 標頭，但服務端只保留這些鍵一段有限的時間（例如 Stripe 文件說明鍵在至少 24 小時後可能被清除）。90 天的回補遠超過這個範圍，所以不能只依賴對方去重。
-- **回補預設關閉副作用。** 回補任務以 `side_effects=off` 執行，只寫表與 outbox；要不要發更正通知，由人在看過差異報告後決定。
+- **「已被對方接受、但自己沒記到」是不確定狀態，要有對帳的方法。** 發送程式在呼叫前先寫一筆 `sending`（意圖），成功後改成 `sent` 並記下對方回傳的 `provider_id`。若在兩者之間當掉，重啟時這筆是「不知道有沒有送出」：先用冪等鍵或自訂的參考編號向對方查詢，查得到就補記，查不到才重送。對方的鍵若已過期又無法查詢，就不能自動重送，要轉人工，或讓接收端自己去重（例如信件帶對帳單編號與版本，收件端系統以它為鍵）。
+- **回補預設關閉副作用，而且由發送程式把關。** `side_effects=off` 只擋得住作業本身；outbox 的列還是會寫進去，而發送程式是獨立輪詢的。所以每一列要帶核准狀態：回補寫入的列是 `pending_approval`，發送程式**只送 `approved` 的列**。要不要發更正通知，由人在看過差異報告後把狀態改成 `approved` 或 `cancelled`。
 
 ---
 
@@ -327,7 +330,7 @@ SELECT * FROM lake.fx_rates VERSION AS OF 8744213902560
 
 | | 就地覆寫（in-place） | 影子表 + 比對 + 切換（shadow） |
 |---|---|---|
-| 怎麼做 | 對 90 個日期分區逐一 `INSERT OVERWRITE` 正式表 | 寫到 `fct_daily_revenue__bf`，比對後一次切換 |
+| 怎麼做 | 對 90 個日期分區逐一 `INSERT OVERWRITE` 正式表 | 寫到 `fct_daily_revenue__bf`，比對後一次發佈：只把這 90 個分區以一次提交換進正式表，或整表切換（影子表要先補齊範圍外的分區） |
 | 下游在過程中看到 | 新舊混雜，持續約一小時 | 全舊，切換後全新 |
 | 回退 | 靠 table format 快照回退；快照過期就沒了 | 舊表留著，切回去即可 |
 | 能否先審核差異 | 不能，寫了就是正式資料 | 能，差異報告通過才切換 |
@@ -365,6 +368,7 @@ run twice + diff    ~ $8 to $10 in total
        │
  2. shadow      run new code into fct_daily_revenue__bf
                 inputs pinned to the original manifests
+                (whole-table swap only: seed partitions older than 90 d)
        │
  3. determinism run step 2 twice -> row count + checksum must match
        │
@@ -373,13 +377,17 @@ run twice + diff    ~ $8 to $10 in total
  5. downstream  rebuild agg_monthly_revenue__bf from the shadow,
                 in lineage order; statements -> outbox, side effects off
        │
- 6. publish     swap fct + agg together; dashboard cache refresh
+ 6. publish     pause the daily job; copy partitions it committed since
+                step 2 into the shadow; swap fct + agg together;
+                resume the daily job; dashboard cache refresh
        │
  7. corrections closed month: adjustment entry, not restatement
                 partners: correction notice for changed keys only
 ```
 
 幾個步驟需要展開：
+
+**發佈時不能弄丟回補範圍以外的資料。** 整表切換有兩個容易漏掉的洞。第一，正式表通常有超過 90 天的歷史分區，影子表只算了 90 天，直接切換會讓更早的資料消失：要嘛先把範圍外的分區補進影子表，要嘛不換整張表，只把 90 個分區以一次原子提交換進正式表（Iceberg 的 `ReplacePartitions` 一次提交可以涵蓋多個分區）。第二，影子表建置的那一小時裡，每日作業仍在對正式表寫入今天的分區；影子表準備好之後才提交的分區，切換後就不見了。所以步驟 6 要先暫停每日作業、把這段期間新提交的分區補進影子表，再切換、再恢復。只換分區的做法沒有第二個問題，因為今天的分區根本不在被換的範圍內。
 
 **順序與並行度。** 這個作業每天的輸出只依賴當天的輸入，90 天彼此獨立，可以並行；並行度受兩件事限制：叢集佇列（回補要用獨立佇列，不能擠掉每天早上的正式作業）與同一張表的提交衝突（第三節）。如果作業帶有**跨日狀態**——累計營收、客戶生命週期價值、依賴前一天輸出的 SCD 表——就必須依日期**循序**執行，因為第 N 天的正確輸入是重算後的第 N−1 天。面試時先問「這張表有沒有讀自己的前一個分區」，答案決定能不能並行。
 
