@@ -1,14 +1,15 @@
 ---
-title: "DE 系統設計面試指南 Part 8：叫車業案例——即時位置、供需與行程資料"
+title: "DE 系統設計面試指南 Part 13：叫車業案例——即時位置、供需與行程資料"
 date: 2026-11-21T15:00:00+08:00
 draft: false
-weight: 8
+weight: 13
 description: "叫車平台的資料系統模擬面試：百萬司機每 4 秒回報位置，如何算出每個區域的即時供需、保存軌跡並建立行程資料倉儲，示範地理格網、狀態差量、寧新勿全的取捨與常見追問。"
 categories: ["all", "engineering", "architecture"]
 tags: ["RKK", "Interview", "Data Engineering", "System Design", "Mock Interview", "Geospatial", "Ride-Hailing", "Flink", "Data Modeling", "AWS"]
 authors: ["yen"]
 readTime: "13 min"
 series: ["de-system-design-interview"]
+aliases: ["/posts/de-system-design-interview-part8-ride-hailing-geo-realtime-zh/"]
 ---
 
 > 多數人看到「每秒 25 萬筆位置更新」，就開始設計一個不能掉任何一筆的管線。  
@@ -16,7 +17,7 @@ series: ["de-system-design-interview"]
 > 位置資料的特性是**最新的一筆才重要，舊的會自己過期**；用處理金流的標準來處理它，只會得到一個又貴又慢的系統。  
 > 這一題考的是你能不能依資料的性質選擇保證等級，而不是把 exactly-once 當成預設答案。
 
-這是產業案例的第三篇。[Part 6](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/) 的支付題是「量小、每筆都重要」，[Part 7](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/) 的廣告題是「量大、其中 1% 重要」。叫車題的即時部分則是第三種：**量大，而且單筆幾乎不重要，重要的是現在的狀態**。同一題裡還有一個完全相反的部分——行程與車資——必須精確。
+這是產業案例的第三篇。[Part 11](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/) 的支付題是「量小、每筆都重要」，[Part 12](/posts/de-system-design-interview-part12-adtech-click-billing-attribution-zh/) 的廣告題是「量大、其中 1% 重要」。叫車題的即時部分則是第三種：**量大，而且單筆幾乎不重要，重要的是現在的狀態**。同一題裡還有一個完全相反的部分——行程與車資——必須精確。
 
 ---
 
@@ -274,7 +275,7 @@ fact_trip_adjustment (grain: one row per adjustment, append-only)
 >
 > 另外，報表的『一天』要用城市的當地日期。時間戳一律存 UTC，另存一個依城市時區換算的當地日期欄位作為報表的日期鍵，否則跨時區的城市合計會在午夜前後錯位。」
 
-**評註**：軌跡佈局從最重要的查詢出發，並說明為何不選看似自然的空間分區。行程表混用了「里程碑可更新」與「金額不可改、另記調整」兩種策略，與 Part 6 的原則一致。
+**評註**：軌跡佈局從最重要的查詢出發，並說明為何不選看似自然的空間分區。行程表混用了「里程碑可更新」與「金額不可改、另記調整」兩種策略，與 Part 11 的原則一致。
 
 ---
 
@@ -343,16 +344,16 @@ fact_trip_adjustment (grain: one row per adjustment, append-only)
 - [Part 2：批次管線、資料擷取與可重跑設計](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/)
 - [Part 3：串流與即時系統](/posts/de-system-design-interview-part3-streaming-realtime-zh/)
 - [Part 4：儲存、倉儲與 Lakehouse 設計](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/)
-- [Part 5：完整模擬面試與常見情境](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/)
-- [Part 6：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/)
-- [Part 7：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/)
-- **Part 8：叫車業案例——即時位置、供需與行程資料**（本篇）
-- [Part 9：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/)
-- [Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/)
-- [Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)
-- [Part 12：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)
-- [Part 13：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part13-schema-evolution-zh/)
-- [Part 14：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)
+- [Part 5：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part5-freshness-sla-tiers-zh/)
+- [Part 6：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part6-idempotency-rerun-backfill-zh/)
+- [Part 7：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part7-dedup-ordering-late-data-zh/)
+- [Part 8：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part8-schema-evolution-zh/)
+- [Part 9：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part9-storage-query-efficiency-zh/)
+- [Part 10：完整模擬面試與常見情境](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/)
+- [Part 11：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/)
+- [Part 12：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part12-adtech-click-billing-attribution-zh/)
+- **Part 13：叫車業案例——即時位置、供需與行程資料**（本篇）
+- [Part 14：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part14-streaming-media-feature-platform-zh/)
 - [Part 15：資安 SaaS 案例——多租戶威脅偵測儀表板](/posts/de-system-design-interview-part15-cybersecurity-saas-dashboard-zh/)
 
 **延伸閱讀**

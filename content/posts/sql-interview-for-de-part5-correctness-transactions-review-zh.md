@@ -398,4 +398,4 @@ UNION ALL
 - Hal Berenson et al., "A Critique of ANSI SQL Isolation Levels"（SIGMOD 1995）
 - Martin Kleppmann, *Designing Data-Intensive Applications* 第 7 章（Transactions）
 - dbt 文件：Data tests、Unit tests
-- [DE 系統設計面試指南 Part 5：完整模擬面試與常見情境](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/)
+- [DE 系統設計面試指南 Part 10：完整模擬面試與常見情境](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/)

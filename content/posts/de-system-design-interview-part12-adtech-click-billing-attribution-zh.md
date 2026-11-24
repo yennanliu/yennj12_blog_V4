@@ -1,14 +1,15 @@
 ---
-title: "DE 系統設計面試指南 Part 7：廣告業案例——點擊計費、預算控制與歸因"
+title: "DE 系統設計面試指南 Part 12：廣告業案例——點擊計費、預算控制與歸因"
 date: 2026-11-21T14:30:00+08:00
 draft: false
-weight: 7
+weight: 12
 description: "廣告平台的資料系統模擬面試：每天 100 億次曝光與 1 億次點擊，如何做到計費不多收、預算花完一分鐘內停投、轉換歸因可重算，逐段示範追問與候選人對快與準的取捨。"
 categories: ["all", "engineering", "architecture"]
 tags: ["RKK", "Interview", "Data Engineering", "System Design", "Mock Interview", "AdTech", "Billing", "Attribution", "Flink", "AWS"]
 authors: ["yen"]
 readTime: "13 min"
 series: ["de-system-design-interview"]
+aliases: ["/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/"]
 ---
 
 > 多數人設計廣告資料系統時，把曝光、點擊、轉換當成同一種事件，丟進同一條管線。  
@@ -16,7 +17,7 @@ series: ["de-system-design-interview"]
 > 正確的切入點是先分辨**哪些數字是錢、哪些只是統計**，再分辨**哪些決定要在幾秒內做、哪些可以等到明天**。  
 > 同一個點擊同時是計費依據、預算扣款與歸因的起點，而這三個用途對快與準的要求各不相同。
 
-這是產業案例的第二篇。[Part 6](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/) 的支付題資料量小、正確性要求極高；廣告題則是**量極大，而且其中一小部分同樣是錢**。這一題考的是你能不能把一條事件流依用途拆開，分別給它們剛好夠用的保證。
+這是產業案例的第二篇。[Part 11](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/) 的支付題資料量小、正確性要求極高；廣告題則是**量極大，而且其中一小部分同樣是錢**。這一題考的是你能不能把一條事件流依用途拆開，分別給它們剛好夠用的保證。
 
 ---
 
@@ -206,7 +207,7 @@ overspend       ≈ $10 × 30 = $300      (3% of a $10,000 daily budget)
 >
 > **面試官**：「三天後風控團隊判定某個來源的點擊全是機器流量，但帳單已經開出去了。」
 >
-> **候選人**：「已開出的帳單不改。我會產生一筆**調整項**：負數金額、指向被判定無效的點擊、註明原因與判定時間，計入下一期帳單或作為退款。這和 Part 6 的沖銷分錄是同一個原則——已發出的財務紀錄不可變，修正以新的紀錄表達。
+> **候選人**：「已開出的帳單不改。我會產生一筆**調整項**：負數金額、指向被判定無效的點擊、註明原因與判定時間，計入下一期帳單或作為退款。這和 Part 11 的沖銷分錄是同一個原則——已發出的財務紀錄不可變，修正以新的紀錄表達。
 >
 > 資料模型上，可計費點擊表不會被改寫，而是另外有一張無效判定表，以 `click_id` 記錄判定結果與時間。任何時間點的『有效計費金額』都是兩張表連接的結果，所以也可以重現『帳單開出當時』的數字。」
 >
@@ -320,16 +321,16 @@ report for day D:  provisional until ~D+10, restated daily until then
 - [Part 2：批次管線、資料擷取與可重跑設計](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/)
 - [Part 3：串流與即時系統](/posts/de-system-design-interview-part3-streaming-realtime-zh/)
 - [Part 4：儲存、倉儲與 Lakehouse 設計](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/)
-- [Part 5：完整模擬面試與常見情境](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/)
-- [Part 6：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/)
-- **Part 7：廣告業案例——點擊計費、預算控制與歸因**（本篇）
-- [Part 8：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part8-ride-hailing-geo-realtime-zh/)
-- [Part 9：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/)
-- [Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/)
-- [Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)
-- [Part 12：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)
-- [Part 13：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part13-schema-evolution-zh/)
-- [Part 14：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)
+- [Part 5：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part5-freshness-sla-tiers-zh/)
+- [Part 6：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part6-idempotency-rerun-backfill-zh/)
+- [Part 7：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part7-dedup-ordering-late-data-zh/)
+- [Part 8：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part8-schema-evolution-zh/)
+- [Part 9：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part9-storage-query-efficiency-zh/)
+- [Part 10：完整模擬面試與常見情境](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/)
+- [Part 11：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/)
+- **Part 12：廣告業案例——點擊計費、預算控制與歸因**（本篇）
+- [Part 13：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part13-ride-hailing-geo-realtime-zh/)
+- [Part 14：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part14-streaming-media-feature-platform-zh/)
 - [Part 15：資安 SaaS 案例——多租戶威脅偵測儀表板](/posts/de-system-design-interview-part15-cybersecurity-saas-dashboard-zh/)
 
 **延伸閱讀**

@@ -1,14 +1,15 @@
 ---
-title: "DE 系統設計面試指南 Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略"
+title: "DE 系統設計面試指南 Part 6：重跑一次結果會一樣嗎——冪等、確定性與回補策略"
 date: 2026-11-24T09:30:00+08:00
 draft: false
-weight: 11
+weight: 6
 description: "把「重跑結果會一樣嗎」拆成冪等寫入、確定性計算與輸入釘選三件事：六種寫入策略的優缺點與失效條件、八種非確定性來源、外部副作用的 outbox 與冪等鍵，以及 90 天營收重算如何用影子表比對後原子切換，不弄壞下游儀表板。"
 categories: ["all", "engineering", "architecture"]
 tags: ["RKK", "Interview", "Data Engineering", "System Design", "Idempotency", "Backfill", "Iceberg", "Spark", "Data Quality", "AWS"]
 authors: ["yen"]
 readTime: "18 min"
 series: ["de-system-design-interview"]
+aliases: ["/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/"]
 ---
 
 > 多數人被問到可重跑，答案是「用 INSERT OVERWRITE，日期用參數傳進來」。  
@@ -16,7 +17,7 @@ series: ["de-system-design-interview"]
 > 覆寫只保證**寫入**不重複，它不保證**計算**每次相同，也不保證**讀到的輸入**每次相同，更管不到寫進表以外的副作用。  
 > 「重跑結果一樣」是三個條件同時成立，回補則是在這三個條件之上，再加一套切換與比對的流程。
 
-這是「策略深入」組的第二篇，展開 [Part 5](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/) 結尾五個自問中的第二題：「這個作業重跑一次，結果會一樣嗎？」[Part 2](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/) 已經講過基本功——日期參數化、分區覆寫、以鍵 MERGE、先刪後寫、回補就是迴圈。本篇不重複這些，而是往下挖：每種寫入策略**什麼時候會壞**、計算結果為什麼會悄悄變動、輸入怎麼釘住、表外的副作用怎麼處理，以及大範圍回補怎麼做才不會讓下游看到中間狀態。
+這是「策略深入」組的第二篇，處理的問題是（也是 [Part 10](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/) 結尾自我檢查清單的第二題）：「這個作業重跑一次，結果會一樣嗎？」[Part 2](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/) 已經講過基本功——日期參數化、分區覆寫、以鍵 MERGE、先刪後寫、回補就是迴圈。本篇不重複這些，而是往下挖：每種寫入策略**什麼時候會壞**、計算結果為什麼會悄悄變動、輸入怎麼釘住、表外的副作用怎麼處理，以及大範圍回補怎麼做才不會讓下游看到中間狀態。
 
 ---
 
@@ -393,7 +394,7 @@ run twice + diff    ~ $8 to $10 in total
 
 **下游依血緣順序重算。** 月營收表讀 `fct_daily_revenue` 的 30 個分區，所以要在日表的影子完成後才算，而且也算到影子裡。如果只切換日表、月表晚一天才重算，CFO 儀表板上的日加總和月數字就會對不起來——這正是面試官說的「半新半舊」，只是發生在表與表之間，而不是分區之間。所以日表與月表要**一起切換**：Iceberg 單一表的提交是原子的，但多張表的同時切換需要額外機制，例如在支援交易式 DDL 的倉儲（如 Redshift）中把兩次 rename 放進同一個交易，或讓儀表板讀一個由發佈步驟一次更新的 view，或使用 Project Nessie 這類支援多表提交的 catalog。注意 Snowflake 的 DDL 會自動提交，兩個 `SWAP` 放進同一個交易並不會變成原子操作。
 
-**已關帳的月份不重編。** 回補範圍裡如果有已經關帳、已交給稽核的月份，通常不能直接改寫那個月的數字。財務的慣例是在**當期**記一筆調整，並保留原始數字可追溯（這和 [Part 6](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/) 講的「關帳後的數字可重現」是同一件事）。資料平台要做的是：正式表存「以目前所知」的正確數字，另外有一張依關帳版本凍結的報表或一個標籤版本，兩者並存。
+**已關帳的月份不重編。** 回補範圍裡如果有已經關帳、已交給稽核的月份，通常不能直接改寫那個月的數字。財務的慣例是在**當期**記一筆調整，並保留原始數字可追溯（這和 [Part 11](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/) 講的「關帳後的數字可重現」是同一件事）。資料平台要做的是：正式表存「以目前所知」的正確數字，另外有一張依關帳版本凍結的報表或一個標籤版本，兩者並存。
 
 ---
 
@@ -470,16 +471,16 @@ GROUP BY dt;
 - [Part 2：批次管線、資料擷取與可重跑設計](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/)
 - [Part 3：串流與即時系統](/posts/de-system-design-interview-part3-streaming-realtime-zh/)
 - [Part 4：儲存、倉儲與 Lakehouse 設計](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/)
-- [Part 5：完整模擬面試與常見情境](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/)
-- [Part 6：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/)
-- [Part 7：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/)
-- [Part 8：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part8-ride-hailing-geo-realtime-zh/)
-- [Part 9：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/)
-- [Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/)
-- **Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略**（本篇）
-- [Part 12：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)
-- [Part 13：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part13-schema-evolution-zh/)
-- [Part 14：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)
+- [Part 5：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part5-freshness-sla-tiers-zh/)
+- **Part 6：重跑一次結果會一樣嗎——冪等、確定性與回補策略**（本篇）
+- [Part 7：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part7-dedup-ordering-late-data-zh/)
+- [Part 8：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part8-schema-evolution-zh/)
+- [Part 9：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part9-storage-query-efficiency-zh/)
+- [Part 10：完整模擬面試與常見情境](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/)
+- [Part 11：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/)
+- [Part 12：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part12-adtech-click-billing-attribution-zh/)
+- [Part 13：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part13-ride-hailing-geo-realtime-zh/)
+- [Part 14：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part14-streaming-media-feature-platform-zh/)
 - [Part 15：資安 SaaS 案例——多租戶威脅偵測儀表板](/posts/de-system-design-interview-part15-cybersecurity-saas-dashboard-zh/)
 
 **延伸閱讀**

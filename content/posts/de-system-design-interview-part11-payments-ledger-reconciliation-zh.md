@@ -1,14 +1,15 @@
 ---
-title: "DE 系統設計面試指南 Part 6：支付業案例——帳本、對帳與可稽核的資料平台"
+title: "DE 系統設計面試指南 Part 11：支付業案例——帳本、對帳與可稽核的資料平台"
 date: 2026-11-21T14:00:00+08:00
 draft: false
-weight: 6
+weight: 11
 description: "支付業的資料平台模擬面試：每天 5,000 萬筆交易的帳本同步、與銀行清算檔的三方對帳、關帳後的數字可重現，逐段示範追問與候選人的取捨，重點在正確性與可稽核而非吞吐量。"
 categories: ["all", "engineering", "architecture"]
 tags: ["RKK", "Interview", "Data Engineering", "System Design", "Mock Interview", "Payments", "Reconciliation", "Ledger", "Bitemporal", "AWS"]
 authors: ["yen"]
 readTime: "13 min"
 series: ["de-system-design-interview"]
+aliases: ["/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/"]
 ---
 
 > 多數人遇到金融題，第一反應是把它當成「資料量比較小的點擊流」。  
@@ -16,7 +17,7 @@ series: ["de-system-design-interview"]
 > 支付資料平台的難處不在每秒幾筆，而在**每一分錢都要說得出來歷，而且去年說過的話今年還要能原樣重說一遍**。  
 > 這一題考的是你會不會把「不可變、可對帳、可重現」當成設計的起點。
 
-[Part 5](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/) 用電商點擊流示範了完整的 45 分鐘。從本篇開始的四篇各換一個產業，用同一套六步框架走一遍，重點放在**該產業特有的限制、面試官的追問，以及候選人怎麼說明取捨**。本篇是支付業：資料量不大，但錯一筆就是真的錢。
+[Part 10](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/) 用電商點擊流示範了完整的 45 分鐘。從本篇開始的五篇各換一個產業，用同一套六步框架走一遍，重點放在**該產業特有的限制、面試官的追問，以及候選人怎麼說明取捨**。本篇是支付業：資料量不大，但錯一筆就是真的錢。
 
 ---
 
@@ -28,7 +29,7 @@ series: ["de-system-design-interview"]
 
 ## 一、這一題在考什麼
 
-把它和 Part 5 的點擊流放在一起比較，就能看出評分重點完全不同。
+把它和 Part 10 的點擊流放在一起比較，就能看出評分重點完全不同。
 
 | 面向 | 點擊流 | 支付 |
 |---|---|---|
@@ -327,16 +328,16 @@ external_ref    string     -- 收單銀行的參考號，對帳用
 - [Part 2：批次管線、資料擷取與可重跑設計](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/)
 - [Part 3：串流與即時系統](/posts/de-system-design-interview-part3-streaming-realtime-zh/)
 - [Part 4：儲存、倉儲與 Lakehouse 設計](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/)
-- [Part 5：完整模擬面試與常見情境](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/)
-- **Part 6：支付業案例——帳本、對帳與可稽核的資料平台**（本篇）
-- [Part 7：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/)
-- [Part 8：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part8-ride-hailing-geo-realtime-zh/)
-- [Part 9：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/)
-- [Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/)
-- [Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)
-- [Part 12：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)
-- [Part 13：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part13-schema-evolution-zh/)
-- [Part 14：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)
+- [Part 5：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part5-freshness-sla-tiers-zh/)
+- [Part 6：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part6-idempotency-rerun-backfill-zh/)
+- [Part 7：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part7-dedup-ordering-late-data-zh/)
+- [Part 8：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part8-schema-evolution-zh/)
+- [Part 9：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part9-storage-query-efficiency-zh/)
+- [Part 10：完整模擬面試與常見情境](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/)
+- **Part 11：支付業案例——帳本、對帳與可稽核的資料平台**（本篇）
+- [Part 12：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part12-adtech-click-billing-attribution-zh/)
+- [Part 13：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part13-ride-hailing-geo-realtime-zh/)
+- [Part 14：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part14-streaming-media-feature-platform-zh/)
 - [Part 15：資安 SaaS 案例——多租戶威脅偵測儀表板](/posts/de-system-design-interview-part15-cybersecurity-saas-dashboard-zh/)
 
 **延伸閱讀**

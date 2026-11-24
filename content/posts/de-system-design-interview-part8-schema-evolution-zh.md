@@ -1,14 +1,15 @@
 ---
-title: "DE 系統設計面試指南 Part 13：Schema 演進——契約、相容性與變更流程"
+title: "DE 系統設計面試指南 Part 8：Schema 演進——契約、相容性與變更流程"
 date: 2026-11-24T10:30:00+08:00
 draft: false
-weight: 13
+weight: 8
 description: "Schema 變更的難處不在改欄位，而在 30 個下游誰先升級。講清楚各類變更的安全性、BACKWARD/FORWARD/FULL 相容模式、Avro 與 Protobuf 的解析規則、Iceberg 欄位 ID，以及 expand–contract 等變更策略。"
 categories: ["all", "engineering", "architecture"]
 tags: ["RKK", "Interview", "Data Engineering", "System Design", "Schema Evolution", "Schema Registry", "Avro", "Protobuf", "Iceberg", "Data Contracts", "AWS"]
 authors: ["yen"]
 readTime: "16 min"
 series: ["de-system-design-interview"]
+aliases: ["/posts/de-system-design-interview-part13-schema-evolution-zh/"]
 ---
 
 > 多數人談 schema 演進，答案是「上 schema registry，規定只能加欄位」。  
@@ -16,7 +17,7 @@ series: ["de-system-design-interview"]
 > Registry 只檢查**結構**；最貴的事故是結構完全相容、**語意**卻變了的那一種。  
 > 好的回答把 schema 當成契約來管：分類變更、決定升級順序、用 expand–contract 讓新舊並存，再用對帳證明沒有算錯。
 
-這是「策略深入」組的第四篇，展開 [Part 5](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/) 模擬面試中那句「Schema 之後會變，你怎麼處理？」。[Part 2](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/) 講過「只做加可為空欄位的變更」這條基本規則，[Part 4](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/) 講過 Iceberg 以 ID 追蹤欄位。本篇處理基本規則擋不住的情況：改名、改型別、改語意，以及一個生產者對應幾十個消費者時的變更流程。
+這是「策略深入」組的第四篇，處理一個幾乎每場面試都會出現的追問：「Schema 之後會變，你怎麼處理？」（[Part 10](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/) 的模擬面試裡也會遇到）。[Part 2](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/) 講過「只做加可為空欄位的變更」這條基本規則，[Part 4](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/) 講過 Iceberg 以 ID 追蹤欄位。本篇處理基本規則擋不住的情況：改名、改型別、改語意，以及一個生產者對應幾十個消費者時的變更流程。
 
 ---
 
@@ -377,8 +378,8 @@ JOIN dim_currency c ON c.currency = o.currency;
 | 新欄位只在部分分區有值，其他分區是 null | Hive／Glue 表層級加了欄位，舊分區 schema 未更新；或 Spark 沒開 `mergeSchema` | 比對表與分區的 schema（Glue `GetPartition`） | `ADD COLUMNS ... CASCADE`，或遷到 Iceberg |
 | 作業在轉型時失敗：`Found long, expecting int`、`HIVE_PARTITION_SCHEMA_MISMATCH` | 型別被放寬，但讀者還是舊 schema；或分區間型別不一致 | 看錯誤從哪個分區、哪個 schema id 開始 | 消費者先升級（BACKWARD 的順序）；統一分區 schema |
 | 隔離率從 0.01% 跳到 100% | 生產者部署了不相容的版本，且繞過了 registry 檢查 | 隔離區樣本的 schema id 與 registry 比對 | 觸發斷路；回退生產者；修好後把 offset 重設到第一筆被隔離的位置再重放（sink 要冪等），而非整批從隔離區重放 |
-| 營收一夜變成 100 倍或 1/100，所有結構檢查都通過 | 同型別改單位（分 ↔ 元） | 金額中位數與分佈的日對日變化；與交易系統或帳本總額對帳（見 Part 6） | 修正後回補受影響日期；在契約中加上單位與值域規則 |
-| 營收剛好變成 2 倍 | 雙寫期間有消費者同時讀了新舊兩份：以正則訂閱 `orders.*` 讀到 v1 與 v2，或把 `amt/100` 與 `amount` 相加 | 依 `order_id` 計算重複筆數；檢查訂閱清單 | 消費者只讀一份；對 `order_id` 去重（見 Part 12） |
+| 營收一夜變成 100 倍或 1/100，所有結構檢查都通過 | 同型別改單位（分 ↔ 元） | 金額中位數與分佈的日對日變化；與交易系統或帳本總額對帳（見 Part 11） | 修正後回補受影響日期；在契約中加上單位與值域規則 |
+| 營收剛好變成 2 倍 | 雙寫期間有消費者同時讀了新舊兩份：以正則訂閱 `orders.*` 讀到 v1 與 v2，或把 `amt/100` 與 `amount` 相加 | 依 `order_id` 計算重複筆數；檢查訂閱清單 | 消費者只讀一份；對 `order_id` 去重（見 Part 7） |
 | CDC 延遲持續上升，connector task 狀態為 FAILED | 上游 `ALTER TABLE` 產生的新 schema 註冊失敗 | Connector 日誌中的 registry 錯誤；DBA 的 migration 紀錄 | 依相容模式調整（例如先加預設值）；把 DB migration 納入契約 CI |
 
 前三列是**大聲的失敗**：作業會報錯或數字明顯歸零，通常當天就被發現。後兩列是**安靜的失敗**：所有檢查都綠燈，數字卻錯了。面試中要主動指出，只有安靜的失敗需要額外的偵測機制——分佈檢查與對帳——而 registry 對它們毫無作用。
@@ -427,16 +428,16 @@ JOIN dim_currency c ON c.currency = o.currency;
 - [Part 2：批次管線、資料擷取與可重跑設計](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/)
 - [Part 3：串流與即時系統](/posts/de-system-design-interview-part3-streaming-realtime-zh/)
 - [Part 4：儲存、倉儲與 Lakehouse 設計](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/)
-- [Part 5：完整模擬面試與常見情境](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/)
-- [Part 6：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/)
-- [Part 7：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/)
-- [Part 8：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part8-ride-hailing-geo-realtime-zh/)
-- [Part 9：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/)
-- [Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/)
-- [Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)
-- [Part 12：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)
-- **Part 13：Schema 演進——契約、相容性與變更流程**（本篇）
-- [Part 14：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)
+- [Part 5：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part5-freshness-sla-tiers-zh/)
+- [Part 6：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part6-idempotency-rerun-backfill-zh/)
+- [Part 7：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part7-dedup-ordering-late-data-zh/)
+- **Part 8：Schema 演進——契約、相容性與變更流程**（本篇）
+- [Part 9：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part9-storage-query-efficiency-zh/)
+- [Part 10：完整模擬面試與常見情境](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/)
+- [Part 11：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/)
+- [Part 12：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part12-adtech-click-billing-attribution-zh/)
+- [Part 13：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part13-ride-hailing-geo-realtime-zh/)
+- [Part 14：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part14-streaming-media-feature-platform-zh/)
 - [Part 15：資安 SaaS 案例——多租戶威脅偵測儀表板](/posts/de-system-design-interview-part15-cybersecurity-saas-dashboard-zh/)
 
 **延伸閱讀**

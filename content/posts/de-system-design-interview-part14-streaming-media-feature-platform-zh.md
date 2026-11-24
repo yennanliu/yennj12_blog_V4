@@ -1,14 +1,15 @@
 ---
-title: "DE 系統設計面試指南 Part 9：影音串流案例——觀看事件、特徵平台與實驗指標"
+title: "DE 系統設計面試指南 Part 14：影音串流案例——觀看事件、特徵平台與實驗指標"
 date: 2026-11-21T15:30:00+08:00
 draft: false
-weight: 9
+weight: 14
 description: "影音平台的資料系統模擬面試：每天 180 億筆播放心跳如何壓縮成觀看紀錄、推薦模型的線上與離線特徵如何一致且不洩漏未來資料、A/B 實驗指標如何正確歸因，附追問與取捨。"
 categories: ["all", "engineering", "ai"]
 tags: ["RKK", "Interview", "Data Engineering", "System Design", "Mock Interview", "Feature Store", "A/B Testing", "Streaming", "Machine Learning", "AWS"]
 authors: ["yen"]
 readTime: "13 min"
 series: ["de-system-design-interview"]
+aliases: ["/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/"]
 ---
 
 > 多數人設計機器學習的資料管線時，把重點放在「特徵算得夠不夠快」。  
@@ -16,7 +17,7 @@ series: ["de-system-design-interview"]
 > 服務模型的資料系統，最難的不是速度，而是**訓練時看到的世界必須和線上預測時看到的世界一模一樣**。  
 > 這一題考的是時間：每一個特徵值，在哪一刻才算「已經知道」。
 
-這是產業案例的最後一篇。前三篇的消費者是財務、廣告主與定價服務；這一篇的消費者是**機器學習模型與實驗分析**，它們對資料提出了一種前面沒出現過的要求——時間點上的正確性。
+這是產業案例的第四篇。前三篇的消費者是財務、廣告主與定價服務；這一篇的消費者是**機器學習模型與實驗分析**，它們對資料提出了一種前面沒出現過的要求——時間點上的正確性。
 
 ---
 
@@ -192,7 +193,7 @@ is_foreground boolean
 >
 > 對特徵則要小心：這些三天前的觀看行為是**今天才知道的**。寫入離線特徵儲存時，時間戳要用得知的時間而不是觀看發生的時間，否則訓練資料會以為三天前就知道這件事。」
 
-**評註**：最後一段把離線觀看連結到下一個主題——「何時得知」。這與 [Part 6](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/) 的業務時間與記錄時間是同一個概念，候選人能跨題目認出相同的結構。
+**評註**：最後一段把離線觀看連結到下一個主題——「何時得知」。這與 [Part 11](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/) 的業務時間與記錄時間是同一個概念，候選人能跨題目認出相同的結構。
 
 ---
 
@@ -333,15 +334,15 @@ wrong join (by calendar date): "Tuesday's value" computed Wed 03:00    -> 210
 | 新增一個實驗的成本 | 撰寫並驗證新的查詢 | 註冊實驗即可，共用指標表 |
 | 樣本比例問題 | 靠分析者自行察覺 | 每日自動檢查，異常時隱藏指標 |
 
-Part 5 到 Part 9 的五個案例放在一起看，會發現架構圖彼此相似，真正不同的是每一題對資料的要求。這張表可以當作拿到新題目時的定位工具。
+Part 10 到 Part 14 的五個案例放在一起看，會發現架構圖彼此相似，真正不同的是每一題對資料的要求。這張表可以當作拿到新題目時的定位工具。
 
 | 案例 | 資料的性質 | 最關鍵的保證 | 這一題獨有的概念 |
 |---|---|---|---|
-| 點擊流（Part 5） | 量大、單筆價值低、會晚到 | 去重與依事件時間重算 | 落地與歸屬分離 |
-| 支付（Part 6） | 量小、每筆都是錢 | 不可變、可對帳、可重現 | 業務時間與記錄時間 |
-| 廣告（Part 7） | 量大，其中 1% 是錢 | 依用途拆分：快的近似、慢的精確 | 自帶簽章的上下文；調整項 |
-| 叫車（Part 8） | 量大、只有最新狀態重要 | 寧新勿全；狀態可自我修正 | 事件流轉狀態差量；地理格網 |
-| 影音（Part 9） | 量大、消費者是模型與實驗 | 時間點正確；線上離線一致 | 生效時間；曝光與分組 |
+| 點擊流（Part 10） | 量大、單筆價值低、會晚到 | 去重與依事件時間重算 | 落地與歸屬分離 |
+| 支付（Part 11） | 量小、每筆都是錢 | 不可變、可對帳、可重現 | 業務時間與記錄時間 |
+| 廣告（Part 12） | 量大，其中 1% 是錢 | 依用途拆分：快的近似、慢的精確 | 自帶簽章的上下文；調整項 |
+| 叫車（Part 13） | 量大、只有最新狀態重要 | 寧新勿全；狀態可自我修正 | 事件流轉狀態差量；地理格網 |
+| 影音（Part 14） | 量大、消費者是模型與實驗 | 時間點正確；線上離線一致 | 生效時間；曝光與分組 |
 
 拿到任何新題目時，先問三個問題就能找到它在這張表上的位置：**單筆資料值多少？舊資料還有沒有用？消費者會不會被「當時還不知道的事」誤導？**
 
@@ -351,16 +352,16 @@ Part 5 到 Part 9 的五個案例放在一起看，會發現架構圖彼此相�
 - [Part 2：批次管線、資料擷取與可重跑設計](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/)
 - [Part 3：串流與即時系統](/posts/de-system-design-interview-part3-streaming-realtime-zh/)
 - [Part 4：儲存、倉儲與 Lakehouse 設計](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/)
-- [Part 5：完整模擬面試與常見情境](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/)
-- [Part 6：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/)
-- [Part 7：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/)
-- [Part 8：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part8-ride-hailing-geo-realtime-zh/)
-- **Part 9：影音串流案例——觀看事件、特徵平台與實驗指標**（本篇）
-- [Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/)
-- [Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)
-- [Part 12：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)
-- [Part 13：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part13-schema-evolution-zh/)
-- [Part 14：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)
+- [Part 5：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part5-freshness-sla-tiers-zh/)
+- [Part 6：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part6-idempotency-rerun-backfill-zh/)
+- [Part 7：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part7-dedup-ordering-late-data-zh/)
+- [Part 8：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part8-schema-evolution-zh/)
+- [Part 9：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part9-storage-query-efficiency-zh/)
+- [Part 10：完整模擬面試與常見情境](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/)
+- [Part 11：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/)
+- [Part 12：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part12-adtech-click-billing-attribution-zh/)
+- [Part 13：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part13-ride-hailing-geo-realtime-zh/)
+- **Part 14：影音串流案例——觀看事件、特徵平台與實驗指標**（本篇）
 - [Part 15：資安 SaaS 案例——多租戶威脅偵測儀表板](/posts/de-system-design-interview-part15-cybersecurity-saas-dashboard-zh/)
 
 **延伸閱讀**

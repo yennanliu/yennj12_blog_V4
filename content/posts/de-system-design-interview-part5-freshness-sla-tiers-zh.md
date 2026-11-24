@@ -1,14 +1,15 @@
 ---
-title: "DE 系統設計面試指南 Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構"
+title: "DE 系統設計面試指南 Part 5：誰在查、要多新鮮、要多準——依新鮮度選架構"
 date: 2026-11-24T09:00:00+08:00
 draft: false
-weight: 10
+weight: 5
 description: "新鮮度不是一個可以隨意調的旋鈕，而是一條有斷崖的成本曲線。從 T+1、數小時、15 分鐘、1 分鐘到秒級，逐層比較架構、怎麼量新鮮度、成本、維運負擔與正確性代價，並示範如何回應「把日報改成即時」的要求。"
 categories: ["all", "engineering", "architecture"]
 tags: ["RKK", "Interview", "Data Engineering", "System Design", "Data Freshness", "SLA", "Streaming", "Micro-batch", "Lakehouse", "AWS"]
 authors: ["yen"]
 readTime: "16 min"
 series: ["de-system-design-interview"]
+aliases: ["/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/"]
 ---
 
 > 多數人聽到「我們要即時」，就開始畫 Kafka、Flink 與即時 OLAP。  
@@ -16,7 +17,7 @@ series: ["de-system-design-interview"]
 > 新鮮度不是一個可以連續調整的旋鈕，而是一條有**斷崖**的成本曲線——跨過某些點，成本與維運負擔會整段跳上去。  
 > 正確的答案是：**替每個消費者選它能容忍的最慢層級**，而不是替整個平台選最快的那一層。
 
-[Part 5](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/) 的結尾把整個系列濃縮成五個自問題，第一題就是「誰在查、要多新鮮、要多準？」。Part 10 到 Part 14 是「策略深入」：每篇把其中一題展開成完整的選項清單。本篇處理第一題。批次與串流的基本機制分別在 [Part 2](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/) 與 [Part 3](/posts/de-system-design-interview-part3-streaming-realtime-zh/)，這裡不重講，而是聚焦在「該選哪一層、跨層的代價是什麼、什麼條件會讓選擇翻轉」。
+Part 1 到 Part 4 建立了基本功。Part 5 到 Part 9 是「策略深入」：每篇取一個面試中最常被追問的問題，展開成完整的選項清單（這些問題在 [Part 10](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/) 的結尾會整理成一份自我檢查清單）。本篇處理第一題：「誰在查、要多新鮮、要多準？」批次與串流的基本機制分別在 [Part 2](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/) 與 [Part 3](/posts/de-system-design-interview-part3-streaming-realtime-zh/)，這裡不重講，而是聚焦在「該選哪一層、跨層的代價是什麼、什麼條件會讓選擇翻轉」。
 
 ---
 
@@ -88,7 +89,7 @@ seconds      ██████████████████████�
 | 數字差 1% 會怎樣？會拿去對帳、計算獎金或對外揭露嗎？ | 決定準確度層級，見第五節 | 「會拿去對帳」→ 需要最終值與重述流程 |
 | 數字之後被修正，可以接受嗎？ | 決定能不能用暫定值 | 「不行」→ 只能等資料到齊，新鮮度會變差 |
 
-**機器做決策時是另一回事**。風控擋交易、廣告預算控制、推薦特徵，這些消費者在秒級內自動行動，秒級新鮮度是真實需求（見 [Part 7](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/) 的預算控制）。但它們通常不是「儀表板」，而是一個有狀態的線上系統。**當有人說「即時儀表板」，看的人是人；人的決策節奏很少快於 5 分鐘。**
+**機器做決策時是另一回事**。風控擋交易、廣告預算控制、推薦特徵，這些消費者在秒級內自動行動，秒級新鮮度是真實需求（見 [Part 12](/posts/de-system-design-interview-part12-adtech-click-billing-attribution-zh/) 的預算控制）。但它們通常不是「儀表板」，而是一個有狀態的線上系統。**當有人說「即時儀表板」，看的人是人；人的決策節奏很少快於 5 分鐘。**
 
 把答案對應到層級的一個簡化規則：
 
@@ -380,7 +381,7 @@ hourly   : 1 − 0.99^24  ≈ 21%   → about one failing day per week
 15 min   : 1 − 0.99^96  ≈ 62%   → most days have at least one failure
 ```
 
-每日作業失敗可以等人來處理；15 分鐘的作業若每次失敗都要人介入，值班人員會被告警淹沒。所以頻率越高，越需要**冪等的增量處理**——失敗的那一次不必修，下一次會把它的範圍一起處理掉（[Part 11](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/) 會展開）。另外，在 Airflow 類的排程器上每 15 分鐘產生一個 DAG run，排程器本身的負載與「上一次還沒跑完」的重疊都會成為問題；這時改用長駐的串流或 `availableNow` 作業、由引擎自己追蹤進度，通常比讓排程器高頻觸發更穩定。
+每日作業失敗可以等人來處理；15 分鐘的作業若每次失敗都要人介入，值班人員會被告警淹沒。所以頻率越高，越需要**冪等的增量處理**——失敗的那一次不必修，下一次會把它的範圍一起處理掉（[Part 6](/posts/de-system-design-interview-part6-idempotency-rerun-backfill-zh/) 會展開）。另外，在 Airflow 類的排程器上每 15 分鐘產生一個 DAG run，排程器本身的負載與「上一次還沒跑完」的重疊都會成為問題；這時改用長駐的串流或 `availableNow` 作業、由引擎自己追蹤進度，通常比讓排程器高頻觸發更穩定。
 
 **檔案大小與小檔案。** 以每天 50 GB 的 Parquet 為例：
 
@@ -448,16 +449,16 @@ hourly   : 1 − 0.99^24  ≈ 21%   → about one failing day per week
 - [Part 2：批次管線、資料擷取與可重跑設計](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/)
 - [Part 3：串流與即時系統](/posts/de-system-design-interview-part3-streaming-realtime-zh/)
 - [Part 4：儲存、倉儲與 Lakehouse 設計](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/)
-- [Part 5：完整模擬面試與常見情境](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/)
-- [Part 6：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/)
-- [Part 7：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/)
-- [Part 8：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part8-ride-hailing-geo-realtime-zh/)
-- [Part 9：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/)
-- **Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構**（本篇）
-- [Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)
-- [Part 12：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)
-- [Part 13：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part13-schema-evolution-zh/)
-- [Part 14：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)
+- **Part 5：誰在查、要多新鮮、要多準——依新鮮度選架構**（本篇）
+- [Part 6：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part6-idempotency-rerun-backfill-zh/)
+- [Part 7：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part7-dedup-ordering-late-data-zh/)
+- [Part 8：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part8-schema-evolution-zh/)
+- [Part 9：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part9-storage-query-efficiency-zh/)
+- [Part 10：完整模擬面試與常見情境](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/)
+- [Part 11：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/)
+- [Part 12：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part12-adtech-click-billing-attribution-zh/)
+- [Part 13：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part13-ride-hailing-geo-realtime-zh/)
+- [Part 14：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part14-streaming-media-feature-platform-zh/)
 - [Part 15：資安 SaaS 案例——多租戶威脅偵測儀表板](/posts/de-system-design-interview-part15-cybersecurity-saas-dashboard-zh/)
 
 **延伸閱讀**
