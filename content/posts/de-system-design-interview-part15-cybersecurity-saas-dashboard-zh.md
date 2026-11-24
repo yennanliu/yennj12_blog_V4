@@ -16,7 +16,7 @@ series: ["de-system-design-interview"]
 > 資安 SaaS 的難處不在偵測規則本身，而在**同一套管線要同時服務 2,000 個大小差一千倍、彼此絕不能看見對方資料的客戶，而且成本要算得出每 GB 多少錢**。  
 > 這一題考的是你會不會把「隔離、新鮮度分層、單位成本」當成三個同等重要的設計輸入。
 
-Part 6 到 Part 9 的四個產業案例，消費者都在公司內部。本篇換成 **B2B SaaS**：消費者是 2,000 家客戶的資安分析師，資料是客戶的、規則是我們的、帳單依 GB 計價。它把 [Part 10](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/) 的新鮮度分級、[Part 12](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/) 的晚到處理、[Part 13](/posts/de-system-design-interview-part13-schema-evolution-zh/) 的 schema 演進和 [Part 14](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/) 的儲存效率放進同一題，基本概念請回到各篇，本篇只談它們在多租戶資安情境下的取捨。
+Part 11 到 Part 14 的四個產業案例，消費者都在公司內部。本篇換成 **B2B SaaS**：消費者是 2,000 家客戶的資安分析師，資料是客戶的、規則是我們的、帳單依 GB 計價。它把 [Part 5](/posts/de-system-design-interview-part5-freshness-sla-tiers-zh/) 的新鮮度分級、[Part 7](/posts/de-system-design-interview-part7-dedup-ordering-late-data-zh/) 的晚到處理、[Part 8](/posts/de-system-design-interview-part8-schema-evolution-zh/) 的 schema 演進和 [Part 9](/posts/de-system-design-interview-part9-storage-query-efficiency-zh/) 的儲存效率放進同一題，基本概念請回到各篇，本篇只談它們在多租戶資安情境下的取捨。
 
 ---
 
@@ -30,7 +30,7 @@ Part 6 到 Part 9 的四個產業案例，消費者都在公司內部。本篇�
 
 和前面的案例並排，就看得出這題多了哪些維度。
 
-| 面向 | 點擊流（Part 5） | 支付（Part 6） | 資安 SaaS（本篇） |
+| 面向 | 點擊流（Part 10） | 支付（Part 11） | 資安 SaaS（本篇） |
 |---|---|---|---|
 | 資料屬於誰 | 公司自己 | 公司自己 | **每個租戶各自擁有**，互不可見 |
 | 一筆資料的價值 | 極低 | 每筆都是錢 | 平常極低；**某一筆**可能就是入侵的唯一證據 |
@@ -89,7 +89,7 @@ monthly ingest           = 3 TB × 30                   = 90 TB = 90,000 GB
 
 > **候選人**：「三個數字決定設計。第一，尖峰每秒十萬筆、約 100 MB/s，一個中型的 Kafka 加串流叢集就處理得了，吞吐量不是難點。第二，熱層 30 天如果用倒排索引約 198 TB，用欄式儲存約 22.5 TB，差了將近 9 倍，這個選擇會主導每 GB 的成本，我等一下會專門討論。第三，最小租戶每秒只有 2 筆，最大的每秒上千筆，所以『每個租戶一套表』在長尾端會產生大量的小檔與小分片，而『全部共用』在頭部會有吵鬧鄰居，兩端要用不同的策略。」
 
-**評註**：估算直接導出三個後續要深挖的主題，而且每個都附了數字。注意候選人沒有在吞吐量上多花時間——這和 [Part 6](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/) 用估算排除方向是同一個技巧。
+**評註**：估算直接導出三個後續要深挖的主題，而且每個都附了數字。注意候選人沒有在吞吐量上多花時間——這和 [Part 11](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/) 用估算排除方向是同一個技巧。
 
 ---
 
@@ -118,7 +118,7 @@ raw_ref            string     -- 原始資料在 S3 的位置（檔案 + 位移�
 >
 > **面試官**：「某家防火牆廠商更新韌體，日誌多了兩個欄位、改了一個欄位名稱。」
 >
-> **候選人**：「新增欄位不影響：解析器不認得的欄位進 `unmapped`，資料不會丟。改名比較危險，舊解析器會把那個欄位當成缺值，如果它是來源 IP，網路規則就靜悄悄地失效。所以每個 `(tenant, source_type, parser_version)` 都要監控解析失敗率和**關鍵欄位的空值率**；空值率從 0% 跳到 100% 是比解析錯誤更常見的訊號。修好解析器後發佈新版，對受影響時段從 `raw_ref` 重放。schema 相容規則本身沿用 [Part 13](/posts/de-system-design-interview-part13-schema-evolution-zh/) 的做法。」
+> **候選人**：「新增欄位不影響：解析器不認得的欄位進 `unmapped`，資料不會丟。改名比較危險，舊解析器會把那個欄位當成缺值，如果它是來源 IP，網路規則就靜悄悄地失效。所以每個 `(tenant, source_type, parser_version)` 都要監控解析失敗率和**關鍵欄位的空值率**；空值率從 0% 跳到 100% 是比解析錯誤更常見的訊號。修好解析器後發佈新版，對受影響時段從 `raw_ref` 重放。schema 相容規則本身沿用 [Part 8](/posts/de-system-design-interview-part8-schema-evolution-zh/) 的做法。」
 
 **評註**：採用既有標準而不是自創 schema，是資深的訊號；「關鍵欄位空值率」比「解析失敗率」更貼近真實事故。資安情境下，缺資料最危險的地方在於它看起來就是「沒有威脅」。
 
@@ -287,7 +287,7 @@ MATCH_RECOGNIZE (
 
 這個樣式要求五次失敗與成功**緊鄰**：`MATCH_RECOGNIZE` 預設是嚴格連續比對，中間只要夾了一筆其他登入事件（例如 MFA 挑戰）就不會命中。所以輸入要先篩到只剩登入成功與失敗兩種事件，或在樣式中加入一個可略過的變數。
 
-> **候選人**：「兩個不明顯的地方。第一，`PARTITION BY` 一定包含 `tenant_id`，否則兩家公司都有叫 `admin` 的帳號，會被當成同一個人。第二，`is_new_country` 是在擴充階段算好的：查這個使用者過去 30 天出現過的國家，而且**只能用這筆事件之前的資料**。如果基準是每天批次算的，它的生效時間是算完寫入的那一刻，不是它描述的那一天——和 [Part 9](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/) 的特徵生效時間是同一個陷阱。」
+> **候選人**：「兩個不明顯的地方。第一，`PARTITION BY` 一定包含 `tenant_id`，否則兩家公司都有叫 `admin` 的帳號，會被當成同一個人。第二，`is_new_country` 是在擴充階段算好的：查這個使用者過去 30 天出現過的國家，而且**只能用這筆事件之前的資料**。如果基準是每天批次算的，它的生效時間是算完寫入的那一刻，不是它描述的那一天——和 [Part 14](/posts/de-system-design-interview-part14-streaming-media-feature-platform-zh/) 的特徵生效時間是同一個陷阱。」
 >
 > **面試官**：「狀態會有多大？」
 
@@ -329,9 +329,9 @@ MTTD for one incident (laptop offline two days)
 >
 > **面試官**：「今天威脅情資更新，某個 IP 被標為惡意。上週就有人連過它。」
 >
-> **候選人**：「這要分清楚兩個問題。上週那筆事件被擴充時，這個 IP 還不在 IOC 清單上，事件上的 `enrich_version.ioc` 記錄了當時的版本——這是事實，不能改寫，否則上週的報表會變。今天新增的 IOC 觸發一個**回溯獵捕**：用新 IOC 對熱層 30 天的資料搜尋，命中的產生新的告警，類型標記為 `retro_ioc_match`，並連回原始事件。『當時知道什麼』與『現在知道什麼』分開保存，和 [Part 6](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/) 的業務時間與記錄時間是同一個結構。」
+> **候選人**：「這要分清楚兩個問題。上週那筆事件被擴充時，這個 IP 還不在 IOC 清單上，事件上的 `enrich_version.ioc` 記錄了當時的版本——這是事實，不能改寫，否則上週的報表會變。今天新增的 IOC 觸發一個**回溯獵捕**：用新 IOC 對熱層 30 天的資料搜尋，命中的產生新的告警，類型標記為 `retro_ioc_match`，並連回原始事件。『當時知道什麼』與『現在知道什麼』分開保存，和 [Part 11](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/) 的業務時間與記錄時間是同一個結構。」
 
-**評註**：這一段的資歷訊號有四個：`PARTITION BY` 帶租戶、擴充基準的生效時間、把 MTTD 拆成擷取與偵測兩段、IOC 回溯不改寫歷史。晚到與去重的一般策略見 [Part 12](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)，這裡的重點是它們在多租戶資安情境下的具體選擇。
+**評註**：這一段的資歷訊號有四個：`PARTITION BY` 帶租戶、擴充基準的生效時間、把 MTTD 拆成擷取與偵測兩段、IOC 回溯不改寫歷史。晚到與去重的一般策略見 [Part 7](/posts/de-system-design-interview-part7-dedup-ordering-late-data-zh/)，這裡的重點是它們在多租戶資安情境下的具體選擇。
 
 ---
 
@@ -347,7 +347,7 @@ MTTD for one incident (laptop offline two days)
 | 欄式（ClickHouse 類） | 依排序鍵存欄位，壓縮後掃描，可加 bloom filter 跳讀索引 | 壓縮約 8 倍，22.5 TB；彙總與時間範圍查詢快；物化視圖做儀表板 | 任意子字串搜尋要靠 token / ngram bloom filter，比倒排索引慢；更新與刪除成本高 | 約 $11K / 月 | 結構化事件、儀表板彙總、欄位過濾的調查查詢 | 大量自由文字的模糊搜尋是核心功能 |
 | S3 + Iceberg + Athena | Parquet 檔 + table format，按掃描量計費 | 儲存最便宜、可存數年；同一份資料可給多種引擎 | 互動延遲數秒到數分鐘；每次查詢按 TB 掃描付費 | 不作熱層；一年冷層約 $2.5K / 月 | 長範圍獵捕、合規報表、系統紀錄 | 需要秒級互動 |
 
-> **候選人**：「熱層表的設計是：依天分區，排序鍵 `(tenant_id, class_uid, time, event_uid)`——結尾的 `event_uid` 不能省，去重表引擎是以整個排序鍵判斷重複的，少了它，同租戶同類別同一毫秒的兩筆不同事件會在合併時被丟掉一筆——對主機、使用者、IP 欄位加 bloom filter 跳讀索引，對原始訊息加 token bloom filter 應付偶爾的關鍵字搜尋。儀表板不直接查事件表，而是查物化視圖：以 `(tenant_id, 分鐘, severity, rule_id)` 預先彙總，儀表板一次查詢只讀幾千列。分割與排序的原理在 [Part 14](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)。」
+> **候選人**：「熱層表的設計是：依天分區，排序鍵 `(tenant_id, class_uid, time, event_uid)`——結尾的 `event_uid` 不能省，去重表引擎是以整個排序鍵判斷重複的，少了它，同租戶同類別同一毫秒的兩筆不同事件會在合併時被丟掉一筆——對主機、使用者、IP 欄位加 bloom filter 跳讀索引，對原始訊息加 token bloom filter 應付偶爾的關鍵字搜尋。儀表板不直接查事件表，而是查物化視圖：以 `(tenant_id, 分鐘, severity, rule_id)` 預先彙總，儀表板一次查詢只讀幾千列。分割與排序的原理在 [Part 9](/posts/de-system-design-interview-part9-storage-query-efficiency-zh/)。」
 >
 > **面試官**：「每個租戶的保留期不同，冷層怎麼刪？」
 >
@@ -446,16 +446,16 @@ same design with an inverted-index hot tier
 - [Part 2：批次管線、資料擷取與可重跑設計](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/)
 - [Part 3：串流與即時系統](/posts/de-system-design-interview-part3-streaming-realtime-zh/)
 - [Part 4：儲存、倉儲與 Lakehouse 設計](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/)
-- [Part 5：完整模擬面試與常見情境](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/)
-- [Part 6：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/)
-- [Part 7：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/)
-- [Part 8：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part8-ride-hailing-geo-realtime-zh/)
-- [Part 9：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/)
-- [Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/)
-- [Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)
-- [Part 12：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)
-- [Part 13：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part13-schema-evolution-zh/)
-- [Part 14：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)
+- [Part 5：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part5-freshness-sla-tiers-zh/)
+- [Part 6：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part6-idempotency-rerun-backfill-zh/)
+- [Part 7：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part7-dedup-ordering-late-data-zh/)
+- [Part 8：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part8-schema-evolution-zh/)
+- [Part 9：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part9-storage-query-efficiency-zh/)
+- [Part 10：完整模擬面試與常見情境](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/)
+- [Part 11：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/)
+- [Part 12：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part12-adtech-click-billing-attribution-zh/)
+- [Part 13：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part13-ride-hailing-geo-realtime-zh/)
+- [Part 14：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part14-streaming-media-feature-platform-zh/)
 - **Part 15：資安 SaaS 案例——多租戶威脅偵測儀表板**（本篇）
 
 **延伸閱讀**

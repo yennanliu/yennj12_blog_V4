@@ -1,14 +1,15 @@
 ---
-title: "DE 系統設計面試指南 Part 12：重複、亂序與晚到——事件正確性的處理策略"
+title: "DE 系統設計面試指南 Part 7：重複、亂序與晚到——事件正確性的處理策略"
 date: 2026-11-24T10:00:00+08:00
 draft: false
-weight: 12
+weight: 7
 description: "重複、亂序、晚到是三個不同的問題，各有自己的策略選單：event_id 去重的狀態大小、跨分區重複、MERGE 與 Bloom filter、版本號取代到達順序、晚到分佈決定回溯天數與定案規則，附依用途選策略的決策表。"
 categories: ["all", "engineering", "architecture"]
 tags: ["RKK", "Interview", "Data Engineering", "System Design", "Deduplication", "Late Data", "Watermark", "Streaming", "Data Quality", "AWS"]
 authors: ["yen"]
 readTime: "16 min"
 series: ["de-system-design-interview"]
+aliases: ["/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/"]
 ---
 
 > 多數人把「重複、亂序、晚到」當成同一個問題，用一句「我會用 watermark 加去重」帶過。  
@@ -16,7 +17,7 @@ series: ["de-system-design-interview"]
 > 正確的作法是把三個問題拆開：各自從哪裡來、影響哪個指標、哪個策略在這個指標上最便宜。  
 > 很多時候最好的去重，是把指標設計成根本不怕重複。
 
-這是「策略深入」的第三篇，展開 [Part 5](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/) 第十節的第三個自問：「事件重複、亂序或晚到時，數字還對嗎？」[Part 3](/posts/de-system-design-interview-part3-streaming-realtime-zh/) 已經說明 event time、watermark 與視窗的基本機制；本篇不重複這些，而是把每個問題的**策略選單**攤開：怎麼做、花多少、什麼時候失效、什麼條件下該換一個。
+這是「策略深入」的第三篇，處理的問題是（也是 [Part 10](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/) 結尾自我檢查清單的第三題）：「事件重複、亂序或晚到時，數字還對嗎？」[Part 3](/posts/de-system-design-interview-part3-streaming-realtime-zh/) 已經說明 event time、watermark 與視窗的基本機制；本篇不重複這些，而是把每個問題的**策略選單**攤開：怎麼做、花多少、什麼時候失效、什麼條件下該換一個。
 
 ---
 
@@ -366,7 +367,7 @@ run at D+4 02:00 recomputes =  event_date D, D+1, D+2, D+3   (4 partitions)
 | 暫定 | D+1 到 D+4 | 批次值，標示「可能上修」 | 每天 MERGE 晚到資料 |
 | 定案 | D+4 02:00 之後 | 不再變動 | 更晚的事件只計數，不改歷史 |
 
-定案後還是有東西會到：時鐘錯得離譜的事件、回補時發現的 bug。兩種政策：**不重述**（只記在「過晚事件」表並監控比例），或**重述並留記錄**（重算後在變更記錄寫下哪天、改了多少、為什麼）。計費類數字通常不改已結帳的期間，而是在當期記一筆調整，與 [Part 6](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/) 帳本的沖銷原則相同。
+定案後還是有東西會到：時鐘錯得離譜的事件、回補時發現的 bug。兩種政策：**不重述**（只記在「過晚事件」表並監控比例），或**重述並留記錄**（重算後在變更記錄寫下哪天、改了多少、為什麼）。計費類數字通常不改已結帳的期間，而是在當期記一筆調整，與 [Part 11](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/) 帳本的沖銷原則相同。
 
 ---
 
@@ -384,7 +385,7 @@ run at D+4 02:00 recomputes =  event_date D, D+1, D+2, D+3   (4 partitions)
 | ML 訓練資料 | 精確去重 | 版本號 | **以特徵值可用的時間作為「何時可知」** | 0 洩漏 |
 | ML 線上特徵 | 短 TTL 去重 | 可交換聚合 | 丟棄 | 數 % |
 
-ML 訓練那一列值得多說一句：一筆週五發生、週日才到的事件，在週六做預測時是不可能看到的。訓練資料若依 `event_time` 回填，就把未來的資訊放進了過去——這正是 [Part 9](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/) 的時間點正確性問題。所以特徵的 as-of join 不能用 `event_time`。用 `server_received_at` 也還不夠：事件可能在預測前就到了伺服器，卻在預測之後才被算進線上特徵。正確的截止點是**這個特徵值在線上儲存中生效的時間**——每個特徵版本要記下它何時可被讀到，as-of join 取預測時刻之前最後一個已生效的版本；`event_time` 只用來決定事件屬於特徵的哪個時間窗。
+ML 訓練那一列值得多說一句：一筆週五發生、週日才到的事件，在週六做預測時是不可能看到的。訓練資料若依 `event_time` 回填，就把未來的資訊放進了過去——這正是 [Part 14](/posts/de-system-design-interview-part14-streaming-media-feature-platform-zh/) 的時間點正確性問題。所以特徵的 as-of join 不能用 `event_time`。用 `server_received_at` 也還不夠：事件可能在預測前就到了伺服器，卻在預測之後才被算進線上特徵。正確的截止點是**這個特徵值在線上儲存中生效的時間**——每個特徵版本要記下它何時可被讀到，as-of join 取預測時刻之前最後一個已生效的版本；`event_time` 只用來決定事件屬於特徵的哪個時間窗。
 
 ---
 
@@ -452,16 +453,16 @@ ML 訓練那一列值得多說一句：一筆週五發生、週日才到的事�
 - [Part 2：批次管線、資料擷取與可重跑設計](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/)
 - [Part 3：串流與即時系統](/posts/de-system-design-interview-part3-streaming-realtime-zh/)
 - [Part 4：儲存、倉儲與 Lakehouse 設計](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/)
-- [Part 5：完整模擬面試與常見情境](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/)
-- [Part 6：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/)
-- [Part 7：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/)
-- [Part 8：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part8-ride-hailing-geo-realtime-zh/)
-- [Part 9：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/)
-- [Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/)
-- [Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)
-- **Part 12：重複、亂序與晚到——事件正確性的處理策略**（本篇）
-- [Part 13：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part13-schema-evolution-zh/)
-- [Part 14：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)
+- [Part 5：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part5-freshness-sla-tiers-zh/)
+- [Part 6：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part6-idempotency-rerun-backfill-zh/)
+- **Part 7：重複、亂序與晚到——事件正確性的處理策略**（本篇）
+- [Part 8：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part8-schema-evolution-zh/)
+- [Part 9：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part9-storage-query-efficiency-zh/)
+- [Part 10：完整模擬面試與常見情境](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/)
+- [Part 11：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/)
+- [Part 12：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part12-adtech-click-billing-attribution-zh/)
+- [Part 13：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part13-ride-hailing-geo-realtime-zh/)
+- [Part 14：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part14-streaming-media-feature-platform-zh/)
 - [Part 15：資安 SaaS 案例——多租戶威脅偵測儀表板](/posts/de-system-design-interview-part15-cybersecurity-saas-dashboard-zh/)
 
 **延伸閱讀**

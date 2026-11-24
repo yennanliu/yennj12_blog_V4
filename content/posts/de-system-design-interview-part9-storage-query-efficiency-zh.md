@@ -1,14 +1,15 @@
 ---
-title: "DE 系統設計面試指南 Part 14：儲存與查詢效率——讀得少、算得少、存得巧"
+title: "DE 系統設計面試指南 Part 9：儲存與查詢效率——讀得少、算得少、存得巧"
 date: 2026-11-24T11:00:00+08:00
 draft: false
-weight: 14
+weight: 9
 description: "倉儲帳單一年漲四倍、儀表板要 40 秒，先別換引擎。從查詢記錄找出前 N 個查詢與各自的掃描量，再從三個槓桿挑解法：讀得少（裁剪、叢集、Parquet 統計值、檔案大小）、算得少（rollup、物化視圖、sketch、快取、join 策略）、存得巧（壓縮、分層、保留與降採樣）。附 Athena 成本試算。"
 categories: ["all", "engineering", "architecture"]
 tags: ["RKK", "Interview", "Data Engineering", "System Design", "Query Optimization", "Cost Optimization", "Parquet", "Iceberg", "Athena", "AWS"]
 authors: ["yen"]
 readTime: "19 min"
 series: ["de-system-design-interview"]
+aliases: ["/posts/de-system-design-interview-part14-storage-query-efficiency-zh/"]
 ---
 
 > 多數人看到倉儲帳單暴漲，第一個反應是「換一個比較快、比較便宜的引擎」。  
@@ -16,7 +17,7 @@ series: ["de-system-design-interview"]
 > 成本與延遲幾乎都來自三件事：**讀了不需要的資料、重複算同一個答案、用最貴的方式存放沒人看的資料**。  
 > 先從查詢記錄量出是哪幾個查詢在燒錢，再為每個查詢挑對槓桿——引擎是最後才換的那一個。
 
-這是「策略深入」組的第五篇，展開 [Part 5](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/) 第十節的第四個自問題：「最常見的查詢需要讀多少資料？」[Part 4](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/) 已經講過 table format、分區、排序、star schema 與 S3 儲存類別的基礎，本篇不重複，而是把「讓查詢更省」整理成一份可以逐項套用的策略清單：每個策略怎麼運作、代價是什麼、什麼條件下會失效。
+這是「策略深入」組的第五篇，處理的問題是（也是 [Part 10](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/) 結尾自我檢查清單的第四題）：「最常見的查詢需要讀多少資料？」[Part 4](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/) 已經講過 table format、分區、排序、star schema 與 S3 儲存類別的基礎，本篇不重複，而是把「讓查詢更省」整理成一份可以逐項套用的策略清單：每個策略怎麼運作、代價是什麼、什麼條件下會失效。
 
 ---
 
@@ -111,7 +112,7 @@ monthly cost = Σ over query families ( runs per month × bytes per run × $ per
        └──▶ Athena: ad hoc and long tail, with per-team scan limits
 ```
 
-**新增**：一個常駐的服務引擎只承接已經縮小的 Gold 資料；依團隊歸屬成本；新查詢上線前檢查掃描量。**成本與複雜度**：多一個要維運的系統與一條同步管線，Gold 資料多存一份。**解決**：儀表板延遲穩定、成本可預測、新的浪費在上線前被攔下。**仍存在**：同步延遲與兩份資料的一致性，要用 [Part 10](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/) 的新鮮度分級來決定可以接受多少。
+**新增**：一個常駐的服務引擎只承接已經縮小的 Gold 資料；依團隊歸屬成本；新查詢上線前檢查掃描量。**成本與複雜度**：多一個要維運的系統與一條同步管線，Gold 資料多存一份。**解決**：儀表板延遲穩定、成本可預測、新的浪費在上線前被攔下。**仍存在**：同步延遲與兩份資料的一致性，要用 [Part 5](/posts/de-system-design-interview-part5-freshness-sla-tiers-zh/) 的新鮮度分級來決定可以接受多少。
 
 ---
 
@@ -190,7 +191,7 @@ WHERE date(event_ts) = current_date - INTERVAL '1' DAY
 WHERE dt = date_format(current_date - INTERVAL '1' DAY, '%Y-%m-%d')
 ```
 
-這個改寫成立的前提是 **`dt` 就是事件日期**（寫入時由 `event_ts` 以同一個時區導出），本文的情境採用這個假設。如果表是依**到達日期**分區，兩個條件選到的列並不相同：昨天發生、今天才到的事件在今天的分區裡，改寫後會被漏掉。這時要保留 `event_ts` 的條件，另外加上一段涵蓋晚到範圍的分區條件來裁剪，例如 `dt BETWEEN 昨天 AND 昨天 + 3 天`（晚到上限見 [Part 12](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)）。
+這個改寫成立的前提是 **`dt` 就是事件日期**（寫入時由 `event_ts` 以同一個時區導出），本文的情境採用這個假設。如果表是依**到達日期**分區，兩個條件選到的列並不相同：昨天發生、今天才到的事件在今天的分區裡，改寫後會被漏掉。這時要保留 `event_ts` 的條件，另外加上一段涵蓋晚到範圍的分區條件來裁剪，例如 `dt BETWEEN 昨天 AND 昨天 + 3 天`（晚到上限見 [Part 7](/posts/de-system-design-interview-part7-dedup-ordering-late-data-zh/)）。
 
 引擎只在條件能對應到分區欄的值時才能跳過分區。三種常見的失效寫法：條件寫在非分區欄（如上）；對分區欄套函數或做運算；分區欄與比較值的型別不一致而被隱式轉換（行為依引擎而定）。Iceberg 的隱藏分區（`day(event_ts)`）能自動把 `event_ts` 的範圍條件換算成分區過濾，所以遷移到 Iceberg 分區規格後，應該寫**原始欄位上的範圍條件**（`event_ts >= ... AND event_ts < ...`），而不是對它套 `date()`。
 
@@ -339,7 +340,7 @@ Trino 的 HLL 標準誤差約在 1.6%–2.3% 之間（`approx_distinct` 預設 2
 | 不重複數 | `COUNT(DISTINCT)`，每次重讀 | HLL sketch 合併 | 約 1–2%（依參數） | 計費、對帳、合約數字 |
 | 百分位數 | 排序全部值 | t-digest、KLL | 依參數，尾端通常較準 | 法規或 SLA 判定的臨界值 |
 
-Q3 從每月 $1,728 降到不到 $1。面試中要主動說出誤差，並確認使用者接受：儀表板上的 MAU 差 2% 通常沒問題，但同一個數字若要拿去開發票，就必須精確計算（見 [Part 7](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/) 的計費設計）。
+Q3 從每月 $1,728 降到不到 $1。面試中要主動說出誤差，並確認使用者接受：儀表板上的 MAU 差 2% 通常沒問題，但同一個數字若要拿去開發票，就必須精確計算（見 [Part 12](/posts/de-system-design-interview-part12-adtech-click-billing-attribution-zh/) 的計費設計）。
 
 ### 5.3 結果快取
 
@@ -483,7 +484,7 @@ Druid 可在寫入時 rollup，Pinot 有預先聚合的 star-tree 索引——�
 | **掃描費合計** | **$40,000** | | **約 $10,500（−74%）** |
 | 儲存費 | $1,343 | 90 天後轉 Glacier IR | 約 $371 |
 
-延遲方面：Q1 從每次讀 192 GB 變成讀一個幾 MB 的 rollup，主要時間只剩 Athena 的排隊與規劃開銷；Phase 3 把 rollup 同步到常駐引擎後，設計目標是 p95 低於 1 秒。這些延遲數字是設計目標，要以實際負載量測驗收。新增的維運工作：查詢記錄匯出、合併與排序作業、rollup 與 sketch 的建置及晚到資料重算（見 [Part 11](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)）、快照過期、生命週期規則，以及 Phase 3 的同步管線。
+延遲方面：Q1 從每次讀 192 GB 變成讀一個幾 MB 的 rollup，主要時間只剩 Athena 的排隊與規劃開銷；Phase 3 把 rollup 同步到常駐引擎後，設計目標是 p95 低於 1 秒。這些延遲數字是設計目標，要以實際負載量測驗收。新增的維運工作：查詢記錄匯出、合併與排序作業、rollup 與 sketch 的建置及晚到資料重算（見 [Part 6](/posts/de-system-design-interview-part6-idempotency-rerun-backfill-zh/)）、快照過期、生命週期規則，以及 Phase 3 的同步管線。
 
 **本篇重點**
 
@@ -499,16 +500,16 @@ Druid 可在寫入時 rollup，Pinot 有預先聚合的 star-tree 索引——�
 - [Part 2：批次管線、資料擷取與可重跑設計](/posts/de-system-design-interview-part2-batch-pipeline-ingestion-zh/)
 - [Part 3：串流與即時系統](/posts/de-system-design-interview-part3-streaming-realtime-zh/)
 - [Part 4：儲存、倉儲與 Lakehouse 設計](/posts/de-system-design-interview-part4-storage-warehouse-lakehouse-zh/)
-- [Part 5：完整模擬面試與常見情境](/posts/de-system-design-interview-part5-mock-interview-scenarios-zh/)
-- [Part 6：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part6-payments-ledger-reconciliation-zh/)
-- [Part 7：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/)
-- [Part 8：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part8-ride-hailing-geo-realtime-zh/)
-- [Part 9：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/)
-- [Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/)
-- [Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)
-- [Part 12：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)
-- [Part 13：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part13-schema-evolution-zh/)
-- **Part 14：儲存與查詢效率——讀得少、算得少、存得巧**（本篇）
+- [Part 5：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part5-freshness-sla-tiers-zh/)
+- [Part 6：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part6-idempotency-rerun-backfill-zh/)
+- [Part 7：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part7-dedup-ordering-late-data-zh/)
+- [Part 8：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part8-schema-evolution-zh/)
+- **Part 9：儲存與查詢效率——讀得少、算得少、存得巧**（本篇）
+- [Part 10：完整模擬面試與常見情境](/posts/de-system-design-interview-part10-mock-interview-scenarios-zh/)
+- [Part 11：支付業案例——帳本、對帳與可稽核的資料平台](/posts/de-system-design-interview-part11-payments-ledger-reconciliation-zh/)
+- [Part 12：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part12-adtech-click-billing-attribution-zh/)
+- [Part 13：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part13-ride-hailing-geo-realtime-zh/)
+- [Part 14：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part14-streaming-media-feature-platform-zh/)
 - [Part 15：資安 SaaS 案例——多租戶威脅偵測儀表板](/posts/de-system-design-interview-part15-cybersecurity-saas-dashboard-zh/)
 
 **延伸閱讀**
