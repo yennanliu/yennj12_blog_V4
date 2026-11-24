@@ -356,6 +356,12 @@ exactly-once    each record's effect is applied once
 - [Part 7：廣告業案例——點擊計費、預算控制與歸因](/posts/de-system-design-interview-part7-adtech-click-billing-attribution-zh/)
 - [Part 8：叫車業案例——即時位置、供需與行程資料](/posts/de-system-design-interview-part8-ride-hailing-geo-realtime-zh/)
 - [Part 9：影音串流案例——觀看事件、特徵平台與實驗指標](/posts/de-system-design-interview-part9-streaming-media-feature-platform-zh/)
+- [Part 10：誰在查、要多新鮮、要多準——依新鮮度選架構](/posts/de-system-design-interview-part10-freshness-sla-tiers-zh/)
+- [Part 11：重跑一次結果會一樣嗎——冪等、確定性與回補策略](/posts/de-system-design-interview-part11-idempotency-rerun-backfill-zh/)
+- [Part 12：重複、亂序與晚到——事件正確性的處理策略](/posts/de-system-design-interview-part12-dedup-ordering-late-data-zh/)
+- [Part 13：Schema 演進——契約、相容性與變更流程](/posts/de-system-design-interview-part13-schema-evolution-zh/)
+- [Part 14：儲存與查詢效率——讀得少、算得少、存得巧](/posts/de-system-design-interview-part14-storage-query-efficiency-zh/)
+- [Part 15：資安 SaaS 案例——多租戶威脅偵測儀表板](/posts/de-system-design-interview-part15-cybersecurity-saas-dashboard-zh/)
 
 **延伸閱讀**
 
