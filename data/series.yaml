@@ -57,6 +57,8 @@ shopping-cart-high-concurrency:
   title: "購物車系統的高並發改造"
 spacex-stock-analysis:
   title: "SpaceX 美股深度分析"
+sql-interview-for-de:
+  title: "DE SQL 面試指南"
 synthwave-study-streaming:
   title: "Synthwave 讀書會串流實戰"
 vllm-intro:
