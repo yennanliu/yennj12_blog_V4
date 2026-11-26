@@ -7,7 +7,7 @@ description: "資深與否的差別，在於能不能證明一個查詢是對的
 categories: ["all", "engineering"]
 tags: ["RKK", "Interview", "Data Engineering", "SQL", "Transaction", "Isolation Level", "Code Review", "Debugging", "Data Quality", "Best Practices"]
 authors: ["yen"]
-readTime: "12 min"
+readTime: "16 min"
 series: ["sql-interview-for-de"]
 ---
 
@@ -302,6 +302,89 @@ GROUP BY 1;
 | 依賴沒有 `ORDER BY` 的結果順序 | 順序取決於執行計畫，隨時會變 | 需要順序就明確排序 |
 | `LIMIT` 沒有完整的排序鍵 | 同值的列每次回傳不同的組合 | 排序鍵加上唯一欄位 |
 | 用字串比較日期或數字 | `'10' < '9'`；`'2026-1-5' > '2026-01-10'` | 使用正確的型別 |
+
+### 補充：為什麼「對欄位套函數」會讓索引與分區裁剪失效
+
+[Part 2](/posts/sql-interview-for-de-part2-query-optimization-execution-plan-zh/) 講過 sargable 的定義，這裡從正確性的角度再走一次：改寫之後跑得快只是一半，另一半是**改寫後的條件必須與原本的條件等價**。不等價的改寫會很快地算出錯的數字。
+
+原則只有一句：**欄位單獨站在比較運算子的一邊，運算都移到常數那一邊。**
+
+```
+索引（B-tree）依 order_date 的原始值排序：
+
+  2026-01-05 10:12 │ 2026-01-15 08:30 │ 2026-01-15 21:47 │ 2026-02-10 09:00 │ ...
+                     ▲───────── 連續的一段 ─────────▲
+
+WHERE order_date >= '2026-01-15' AND order_date < '2026-01-16'
+  → 在樹上找到起點，往後讀到終點就停          （Index Cond，讀幾頁）
+
+WHERE DATE(order_date) = '2026-01-15'
+  → 樹裡沒有 DATE(order_date) 這個值，
+    只能每一列都算一次 DATE() 再比較           （Seq Scan + Filter，讀整張表）
+```
+
+分區裁剪是同一個道理，只是單位從「索引上的一段」換成「整個分區」：引擎在規劃階段拿條件去比對每個分區的範圍，條件若是 `分區欄位 >= 常數 AND 分區欄位 < 常數`，不相交的分區直接跳過；欄位被函數包住，引擎就得證明這個函數與分區範圍的關係，多數情況下它不做這個證明，於是每個分區都要讀。兩者是不同的機制：分區裁剪決定**讀哪些分區**，索引決定**分區內讀哪些列**，一個查詢可以兩者都用上，也可以只用上一個。
+
+#### 常見寫法與等價的改寫
+
+| 不建議 | 改寫 | 要注意的等價條件 |
+|---|---|---|
+| `DATE(order_date) = '2026-01-15'` | `order_date >= '2026-01-15' AND order_date < '2026-01-16'` | 欄位是 `TIMESTAMPTZ` 時，`DATE()` 依 session 時區切日，範圍常數也要寫明同一個時區（第六節） |
+| `YEAR(order_date) = 2026` | `order_date >= '2026-01-01' AND order_date < '2027-01-01'` | 同上 |
+| `YEAR(order_date) = 2026 AND MONTH(order_date) = 1` | `order_date >= '2026-01-01' AND order_date < '2026-02-01'` | 只寫 `MONTH(order_date) = 1` 是「每一年的一月」，改不成單一範圍 |
+| `LOWER(email) = 'abc@test.com'` | `email = 'abc@test.com'` | **只在寫入時已統一轉小寫才等價**；否則會漏掉 `ABC@test.com` |
+| `CAST(user_id AS VARCHAR) = '123'` | `user_id = 123` | 常數的型別要與欄位一致，否則引擎可能改成對欄位做隱含轉型 |
+| `price * 1.1 > 100` | `price > 100 / 1.1` | 乘數必須是正數（負數時不等號要反向）；注意常數除法的精度 |
+
+範圍一律用半開區間 `>= 起點 AND < 終點`，不用 `BETWEEN`。原因在第六節：`BETWEEN` 包含兩端，遇到帶小數秒的時間戳記，不是漏掉最後一天，就是把下一天的整點算進來。
+
+#### 兩個容易改錯的例子
+
+**大小寫。** `LOWER(email) = 'abc@test.com'` 改成 `email = 'abc@test.com'` 跑得比較快，但只有在資料已經正規化時結果才相同。資料大小寫混雜、又必須不分大小寫比對時，正確的作法是讓索引去配合函數，而不是拿掉函數：
+
+```sql
+-- PostgreSQL: an expression index makes LOWER(email) itself sargable.
+CREATE INDEX idx_users_email_lower ON users (LOWER(email));
+
+SELECT * FROM users WHERE LOWER(email) = 'abc@test.com';  -- uses the index
+```
+
+MySQL 8.0.13 以後可以建立 functional key part（`INDEX ((LOWER(email)))`）；MySQL 的預設定序本來就不分大小寫，`email = 'ABC@test.com'` 已經會比對到小寫的值。另一條路是寫入時統一轉小寫，從根源讓兩種寫法等價。所以「把函數移走」的真正意思是：**索引上存的是什麼，條件就比較什麼**。
+
+**型別轉換。** `CAST(user_id AS VARCHAR) = '123'` 很少有人刻意這樣寫，常見的是反過來的隱含轉型：欄位是 `VARCHAR`，常數卻寫成數字。
+
+```sql
+-- MySQL, phone is VARCHAR and indexed.
+SELECT * FROM users WHERE phone = 912345678;    -- casts every phone to a number: full scan
+SELECT * FROM users WHERE phone = '0912345678'; -- same type: index lookup
+```
+
+第一行除了用不上索引，結果也不一樣：轉成數字後開頭的 `0` 消失，`'0912345678'` 與 `'912345678'` 會被當成同一個值。這是效能問題與正確性問題同時出現的典型例子。
+
+#### 確認改寫真的有效
+
+改寫之後要看執行計畫，不要只看 SQL。以 PostgreSQL 為例：
+
+```sql
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT * FROM orders
+WHERE order_date >= '2026-01-15' AND order_date < '2026-01-16';
+```
+
+| 看什麼 | 代表什麼 |
+|---|---|
+| `Index Scan` / `Index Only Scan` / `Bitmap Index Scan` | 用上了索引 |
+| `Index Cond:` 裡出現你的條件 | 條件被用來定位，而不是讀出來之後才過濾 |
+| `Filter:` 加上很大的 `Rows Removed by Filter` | 讀了很多不需要的列，條件多半不 sargable |
+| `Seq Scan` | 全表掃描 |
+| 計畫裡只列出部分分區（或 `Subplans Removed: N`） | 分區裁剪生效 |
+| `Buffers: shared hit/read` | 實際讀了多少資料頁，比執行時間更穩定的比較基準 |
+
+資料倉儲沒有傳統索引，看的是掃描量：BigQuery 的 dry run 會在執行前回報 bytes processed，Snowflake 的 query profile 會列出 partitions scanned / partitions total。改寫前後各看一次，數字應該明顯下降。
+
+最後一個常見的誤解：**sargable 不保證一定用索引**。條件留下的比例很高時（例如一年的資料查其中十一個月），最佳化器選全表掃描是正確的決定（[Part 2](/posts/sql-interview-for-de-part2-query-optimization-execution-plan-zh/) 第四節）。Sargable 的意義是讓最佳化器**有得選**；不 sargable 時，它連選的機會都沒有。
+
+面試被問到時，可以這樣回答：「對欄位套函數會讓條件變得不 sargable，索引和分區裁剪都用不上。我會把運算移到常數那一邊，例如把 `DATE(order_date) = '2026-01-15'` 改成半開區間，並確認改寫前後在時區、大小寫、型別上是等價的。改完再用執行計畫確認 `Index Cond` 或被掃描的分區數真的變了。」
 
 ---
 
